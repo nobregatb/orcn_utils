@@ -204,7 +204,7 @@ def baixar_pdfs(page, requerimento):
     # Busca todos os links de PDF
     pdf_links = page.query_selector_all("a[href*='.pdf'], a[href*='download']")
 
-    ops = page.get_by_role("button", name="Manutal do Produto")
+    ops = page.get_by_role("button", name="Manual do Produto")
     
     
     if not pdf_links:

@@ -2,6 +2,8 @@ from openpyxl import load_workbook
 from playwright.sync_api import sync_playwright
 import os
 import time
+import re
+from datetime import datetime
 
 CHROME_PATH = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 FILES_FOLDER = r"C:\Users\tbnobrega\OneDrive - ANATEL\Anatel\_ORCN"
@@ -197,49 +199,193 @@ def primefaces_click(page, element, description="elemento"):
 def baixar_pdfs(page, requerimento):
     """Baixa todos os PDFs da página de anexos"""
     num, ano = requerimento.split("/")
-    pasta_destino = os.path.join(FILES_FOLDER, f"Requerimentos\\{ano}.{num}")
+    pasta_destino = os.path.join(FILES_FOLDER, f"Requerimentos\\_{ano}.{num}")
     
     print(f"   📥 Buscando PDFs para baixar...")
     
-    # Busca todos os links de PDF
-    pdf_links = page.query_selector_all("a[href*='.pdf'], a[href*='download']")
-
-    ops = page.get_by_role("button", name="Manual do Produto")
+    # Lista de botões que revelam PDFs
+    botoes_pdf = [
+        "Outros",
+        "ART", 
+        "Selo ANATEL",
+        "Relatório de Avaliação da Conformidade - RACT",
+        "Manual do Produto",
+        "Certificado de Conformidade Técnica - CCT",
+        "Contrato Social",
+        "Fotos internas",
+        "Relatório de Ensaio",
+        "Fotos do produto"
+    ]
     
+    total_pdfs_baixados = 0
     
-    if not pdf_links:
-        print(f"   ⚠ Nenhum PDF encontrado")
-        return
-    
-    print(f"   📄 {len(pdf_links)} PDF(s) encontrado(s)")
-    
-    for idx, link in enumerate(pdf_links, start=1):
+    # Percorre cada botão para revelar PDFs
+    for nome_botao in botoes_pdf:
+        print(f"   🔍 Procurando botão: {nome_botao}")
+        
         try:
-            # Pega o nome do arquivo
-            href = link.get_attribute('href')
-            texto = link.inner_text().strip()
+            # Busca o botão pelo nome/texto
+            botao = page.get_by_role("button", name=nome_botao)
             
-            # Configura download
-            with page.expect_download() as download_info:
-                link.click()
-            
-            download = download_info.value
-            
-            # Define nome do arquivo
-            nome_arquivo = download.suggested_filename
-            if not nome_arquivo or nome_arquivo == "":
-                nome_arquivo = f"anexo_{idx}.pdf"
-            
-            # Salva o arquivo
-            caminho_completo = os.path.join(pasta_destino, nome_arquivo)
-            download.save_as(caminho_completo)
-            
-            print(f"   ✅ Baixado: {nome_arquivo}")
-            
+            # Verifica se o botão existe e está visível
+            if botao.count() > 0:
+                print(f"   🎯 Clicando em: {nome_botao}")
+                
+                # Clica no botão
+                botao.first.click()
+                
+                # Aguarda o carregamento dos PDFs
+                time.sleep(1)
+                wait_primefaces_ajax(page)
+                
+                # Busca todos os links de PDF que foram revelados
+                pdf_links = page.query_selector_all("a[href*='.pdf'], a[href*='download']")
+
+                # Extrai informações da tabela
+                tabela = page.query_selector("table.analiseTable")
+                linhas_dados = []
+                
+                if tabela:
+                    # Pega todas as linhas da tabela (exceto cabeçalho)
+                    linhas = tabela.query_selector_all("tr")
+                    
+                    # Identifica o cabeçalho (primeira linha)
+                    if len(linhas) > 0:
+                        cabecalho = linhas[0].query_selector_all("th, td")
+                        headers = [col.inner_text().strip() for col in cabecalho]
+                        print(f"   📋 Cabeçalho da tabela: {headers}")
+                        
+                        # Processa as linhas de dados (exceto cabeçalho)
+                        for linha in linhas[1:]:
+                            colunas = linha.query_selector_all("th, td")
+                            dados = [col.inner_text().strip() for col in colunas]
+                            
+                            if len(dados) >= len(headers):
+                                linha_info = {}
+                                for i, header in enumerate(headers):
+                                    if i < len(dados):
+                                        linha_info[header] = dados[i]
+                                linhas_dados.append(linha_info)
+                    
+                    print(f"   📊 {len(linhas_dados)} linha(s) de dados extraída(s)")
+                
+                if pdf_links:
+                    print(f"   📄 {len(pdf_links)} PDF(s) encontrado(s) para {nome_botao}")
+                    
+                    # Verifica se há correspondência entre PDFs e linhas da tabela
+                    if len(pdf_links) != len(linhas_dados):
+                        print(f"   ⚠ AVISO: {len(pdf_links)} PDFs mas {len(linhas_dados)} linhas na tabela!")
+                    
+                    # Baixa cada PDF encontrado
+                    for idx, link in enumerate(pdf_links):
+                        try:
+                            # Verifica se o link está visível/disponível
+                            if not link.is_visible():
+                                continue
+                            
+                            # Pega informações da linha correspondente da tabela
+                            linha_info = None
+                            if idx < len(linhas_dados):
+                                linha_info = linhas_dados[idx]
+                            
+                            # Pega o nome do arquivo original
+                            href = link.get_attribute('href')
+                            texto = link.inner_text().strip()
+                            
+                            # Configura download
+                            with page.expect_download() as download_info:
+                                link.click()
+                            
+                            download = download_info.value
+                            
+                            # Define nome do arquivo baseado na tabela
+                            nome_arquivo = download.suggested_filename
+                            if not nome_arquivo or nome_arquivo == "":
+                                nome_arquivo = f"anexo_{idx + 1}.pdf"
+                            
+                            # Extrai nome base e extensão
+                            nome_base, extensao = os.path.splitext(nome_arquivo)
+                            
+                            # Gera novo nome baseado nas informações da tabela
+                            if linha_info:
+                                try:
+                                    # Extrai informações da tabela
+                                    doc_id = linha_info.get("ID", f"#{idx + 1}")
+                                    tipo_doc = linha_info.get("Tipo de Documento", "Documento")
+                                    data_hora = linha_info.get("Data - Hora", "")
+                                    
+                                    # Processa a data para formato yyyy.mm.dd
+                                    data_formatada = ""
+                                    if data_hora:
+                                        try:
+                                            # Remove espaços extras e separa data da hora
+                                            data_parte = data_hora.split()[0] if data_hora else ""
+                                            
+                                            # Padrões de data comuns
+                                            padroes = [
+                                                r"(\d{2})/(\d{2})/(\d{4})",  # dd/mm/yyyy
+                                                r"(\d{4})-(\d{2})-(\d{2})",  # yyyy-mm-dd
+                                                r"(\d{2})-(\d{2})-(\d{4})",  # dd-mm-yyyy
+                                            ]
+                                            
+                                            for padrao in padroes:
+                                                match = re.search(padrao, data_parte)
+                                                if match:
+                                                    if padrao == padroes[0] or padrao == padroes[2]:  # dd/mm/yyyy ou dd-mm-yyyy
+                                                        dia, mes, ano = match.groups()
+                                                    else:  # yyyy-mm-dd
+                                                        ano, mes, dia = match.groups()
+                                                    
+                                                    data_formatada = f"{ano}.{mes.zfill(2)}.{dia.zfill(2)}"
+                                                    break
+                                            
+                                            if not data_formatada:
+                                                data_formatada = "0000.00.00"
+                                                print(f"   ⚠ Não foi possível processar a data: {data_hora}")
+                                        except Exception as e:
+                                            data_formatada = "0000.00.00"
+                                            print(f"   ⚠ Erro ao processar data: {str(e)[:50]}")
+                                    else:
+                                        data_formatada = "0000.00.00"
+                                    
+                                    # Limpa caracteres inválidos para nome de arquivo
+                                    tipo_doc_limpo = re.sub(r'[<>:"/\\|?*]', '_', tipo_doc)
+                                    doc_id_limpo = re.sub(r'[<>:"/\\|?*]', '_', str(doc_id))
+                                    
+                                    # Monta o novo nome: {yyyy.mm.dd}[{tipo} - ID {id}] {nome_base}{extensao}
+                                    nome_arquivo = f"[{tipo_doc_limpo}][{data_formatada} - ID {doc_id_limpo}] {nome_base} [req {num} de  {ano}]{extensao}"
+                                    
+                                except Exception as e:
+                                    print(f"   ⚠ Erro ao processar informações da tabela: {str(e)[:50]}")
+                                    # Fallback para nome simples
+                                    nome_arquivo = f"[{nome_botao}] {nome_base}{extensao}"
+                            else:
+                                # Fallback quando não há informação da tabela
+                                nome_arquivo = f"[{nome_botao}] {nome_base}{extensao}"
+                            
+                            # Salva o arquivo
+                            caminho_completo = os.path.join(pasta_destino, nome_arquivo)
+                            download.save_as(caminho_completo)
+                            
+                            print(f"   ✅ Baixado: {nome_arquivo}")
+                            total_pdfs_baixados += 1
+                            
+                        except Exception as e:
+                            print(f"   ❌ Erro ao baixar PDF {idx + 1} de {nome_botao}: {str(e)[:50]}")
+                else:
+                    print(f"   ℹ Nenhum PDF encontrado para: {nome_botao}")
+                    
+            else:
+                print(f"   ⚠ Botão não encontrado: {nome_botao}")
+                
         except Exception as e:
-            print(f"   ❌ Erro ao baixar PDF {idx}: {str(e)[:50]}")
+            print(f"   ❌ Erro ao processar botão {nome_botao}: {str(e)[:50]}")
+            continue
     
-    print(f"   💾 PDFs salvos em: {pasta_destino}")
+    if total_pdfs_baixados == 0:
+        print(f"   ⚠ Nenhum PDF foi baixado")
+    else:
+        print(f"   💾 Total de {total_pdfs_baixados} PDF(s) salvos em: {pasta_destino}")
 
 
 with sync_playwright() as p:

@@ -1,0 +1,1154 @@
+[
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ000",
+    "nome": "Acessório para Telefone Móvel Celular do tipo Bateria Auxiliar",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ001",
+    "nome": "Adaptador para Telefone Analógico (com fio e sem fio)",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ002",
+    "nome": "Alarme para linha telefônica",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ003",
+    "nome": "Bateria de Lítio utilizada em Telefone Celular",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ004",
+    "nome": "Bloqueador de chamada telefônica",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ005",
+    "nome": "Cabo Auto-sustentado de Fibras Ópticas - Drop Óptico para vãos de 80 m",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ006",
+    "nome": "Cabo Auto-Sustentado de Fibras Opticas - Drop Optico Compacto para vãos de 80 m",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ007",
+    "nome": "Cabo coaxial flexível de 50 ohms ou 75 ohms",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ008",
+    "nome": "Cabo coaxial flexível de 50 ohms ou 75 ohms com trança de fios de alumínio cobreado",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ009",
+    "nome": "Cabo coaxial flexível de 75 Ohms com Trança de fios de alumínio",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ010",
+    "nome": "Cabos destinados a sistemas de Circuito Fechado de TV (CFTV)",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ011",
+    "nome": "Cabo de Fibras Ópticas Compacto para Instalação Interna",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ012",
+    "nome": "Cabos coaxiais híbridos",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ013",
+    "nome": "Cabo telefônico par metálico (Somente CI e CCI)",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ014",
+    "nome": "Cabo Telefônico, CTy-APL-XDSL-50-X",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ015",
+    "nome": "Cabo Telefônico, CTy-APL-XDSL-40-X-8 MHz",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ016",
+    "nome": "Cabo Telefônico, CTy-APL-XDSL-G-40-X-8 MHz",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ017",
+    "nome": "Cabo Telefônico, CTy-APL- xDSL-G-50-X",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ018",
+    "nome": "Cabo de Transmissão de Dados Horizontal com Condutor Sólido",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ019",
+    "nome": "Cabo de Transmissão de Dados de Acesso com Condutor Flexível ou Sólido",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ020",
+    "nome": "Cabo de Manobra com Condutor Flexível ou Sólido",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ021",
+    "nome": "Carregador para Telefone Celular / Carregador Indutivo para Telefone Celular",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ022",
+    "nome": "Cartão para telefone de uso público",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ023",
+    "nome": "Central privada de comutação telefônica",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ024",
+    "nome": "Equipamento de fac-símile",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ025",
+    "nome": "Equipamento para Telecomunicações com interface USB (com fio e sem fio)",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ026",
+    "nome": "Equipamento Terminal de Usuário de TV por Assinatura",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ027",
+    "nome": "Equipamentos BPL (Banda Larga por meio de Redes de Energia Elétrica)",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ028",
+    "nome": "Estação Base de Ramal Sem Fio - Radiação Restrita",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ029",
+    "nome": "Estação terminal de acesso - ETA",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ030",
+    "nome": "Femtocélula residencial",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ031",
+    "nome": "Filtros xDSL - Microfiltros e Splitters Residenciais",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ032",
+    "nome": "Filtros xDSL - Splitters para Telefonia Pública",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ033",
+    "nome": "Fios telefônicos dos tipos DG, externo binado FEB, FE, FE-AA, FE-AA-80-PEAD-X e FI",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ034",
+    "nome": "Fio telefônico externo (binado FEB)",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ035",
+    "nome": "Fio telefônico externo (FE)",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ036",
+    "nome": "Fio Telefônico Externo com Condutores de Aço Cobreado (FE-AA-80-PEAD - X)",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ037",
+    "nome": "Fio telefônico interno (FI)",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ038",
+    "nome": "Identificador de chamada telefônica",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ039",
+    "nome": "HPNA Coaxial para IPTV",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ040",
+    "nome": "Marcador Automático de Chamadas Telefônicas",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ041",
+    "nome": "Microcabo de fibras ópticas instalado em microdutos por sopramento",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ042",
+    "nome": "MOCA Coaxial",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ043",
+    "nome": "Modem analógico incluindo modems de sistema de alarme e de sistema de supervisão",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ044",
+    "nome": "Modem digital ADSL (para modems ATU-R e ATU-C)",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ045",
+    "nome": "Modem digital HDSL/MSDSL",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ046",
+    "nome": "Modem digital SHDSL",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ047",
+    "nome": "Modem VDSL",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ048",
+    "nome": "Modem VDSL2",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ049",
+    "nome": "Modem para TV a Cabo (Cable Modem)",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ050",
+    "nome": "ONT - Terminação de Rede Óptica",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ051",
+    "nome": "Reforçador de Sinais Interno",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ052",
+    "nome": "Secretária eletrônica",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ053",
+    "nome": "Sistema de ramal sem fio de CPCT",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ054",
+    "nome": "Smart TV Box",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ055",
+    "nome": "Tela interativa para uso educacional",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ056",
+    "nome": "Telefone de assinante, aparelho de telefonista e terminal do STFC",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ057",
+    "nome": "Telefone de assinante sem cordão",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ058",
+    "nome": "Telefone de uso público - TUP",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ059",
+    "nome": "Telefone de Uso Público Adaptado para Surdos - TPS",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ060",
+    "nome": "Telefone dedicado",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ061",
+    "nome": "Telefone IP/Telefone Ethernet (com fio e sem fio)",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ062",
+    "nome": "Telefone móvel celular",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ063",
+    "nome": "Telefone móvel por satélite",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ064",
+    "nome": "Terminal de Acesso público - TAP",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ065",
+    "nome": "Terminal de Telecomunicações para Surdos - TTS",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ066",
+    "nome": "Terminal de Telecomunicações para Surdos para aplicação no ambiente do assinante - TTS-A",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ067",
+    "nome": "Terminal de Uso Coletivo para o SMP",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ068",
+    "nome": "Transceptor analógico troncalizado - móvel e portátil",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ069",
+    "nome": "Transceptor digital troncalizado - móvel e portátil",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ070",
+    "nome": "Transceptor fixo assinante rural",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ071",
+    "nome": "Amplificador de potência RF",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ072",
+    "nome": "Amplificador de potência RF para Estação Terrena",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ073",
+    "nome": "Antena ponto a ponto",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ074",
+    "nome": "Bloqueador de Sistemas de Radiofrequência",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ075",
+    "nome": "Conversor canal de TV (repetição/retransmissão)",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ076",
+    "nome": "Conversor de subida para estação terrena",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ077",
+    "nome": "Equipamento de ondas portadoras (OPLAT)",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ078",
+    "nome": "Equipamento de Radiação Restrita",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ079",
+    "nome": "Excitador de RF (Radiodifusão)",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ080",
+    "nome": "Femtocélula",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ081",
+    "nome": "Gerador de canal secundário (emissora de FM)",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ082",
+    "nome": "Gerador de estereofonia (emissora de FM)",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ083",
+    "nome": "Micro Transmissor de Radiação Restrita na Faixa de 88-108 MHz",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ084",
+    "nome": "Modem para estação terrena",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ085",
+    "nome": "Modem para transceptor digital",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ086",
+    "nome": "Modulador de áudio e vídeo (TV)",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ087",
+    "nome": "Modulador Digital",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ088",
+    "nome": "Radar",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ089",
+    "nome": "Repetidor de TV",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ090",
+    "nome": "Repetidor de Radiofrequências",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ091",
+    "nome": "Retransmissor de TV",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ092",
+    "nome": "Transceptor analógico troncalizado - base",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ093",
+    "nome": "Transceptor de Radiação Restrita",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ094",
+    "nome": "Transceptor e Transmissor Digital",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ095",
+    "nome": "Transceptor digital troncalizado - base",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ096",
+    "nome": "Transceptor Móvel por Satélite",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ097",
+    "nome": "Transceptor do SMM por satélite",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ098",
+    "nome": "Transceptor para Estação Rádio Base",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ099",
+    "nome": "Transceptor e Transmissor para estação terrena (não SMM)",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ100",
+    "nome": "Transceptor para sistema automático de identificação de navios",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ101",
+    "nome": "Transceptor MMDS - retorno",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ102",
+    "nome": "Transceptor fixo base rural",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ103",
+    "nome": "Transceptor e Transmissor fixo, móvel e portátil",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ104",
+    "nome": "Transceptor PLC (Power Line Communications) - Faixa Estreita",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ105",
+    "nome": "Transmissor autocine",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ106",
+    "nome": "Transmissor de radiochamada",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ107",
+    "nome": "Transmissor de radiofarol",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ108",
+    "nome": "Transmissor de radiodifusão sonora em AM",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ109",
+    "nome": "Transmissor de radiodifusão sonora em FM",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ110",
+    "nome": "Transmissor de serviço de radiodifusão comunitária - Radcom",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ111",
+    "nome": "Transmissor serviço auxiliar de radiodifusão (TV)",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ112",
+    "nome": "Transmissor e Transceptor para o Serviço Auxiliar de Radiodifusão Sonora",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ113",
+    "nome": "Transmissor de supervisão e controle",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ114",
+    "nome": "Transmissor de telecomando",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ115",
+    "nome": "Transmissor de televisão canais 213 e canais de 14-59",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ116",
+    "nome": "Transmissor de televisão digital terrestre",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ117",
+    "nome": "Transmissor de televisão - AM acima de 1000 MHz",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ118",
+    "nome": "Transponder de radar (SART)",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ119",
+    "nome": "Acopladores / Divisores Ópticos Passivos (Splitter)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ120",
+    "nome": "Acumulador de energia alcalino de níquel- cádmio estacionário",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ121",
+    "nome": "Acumulador de energia chumbo-ácido estacionário (regulado por válvula)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ122",
+    "nome": "Acumulador de energia chumbo-ácido estacionário para aplicações específicas",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ123",
+    "nome": "Acumulador de energia chumbo-ácido estacionário (ventilado)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ124",
+    "nome": "Bloco terminal de Rede Externa - (BT-RE)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ125",
+    "nome": "Bloco terminal de Rede Interna - (BT-RI)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ126",
+    "nome": "Bloco terminal de Distribuidor Geral - (BT-DG)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ127",
+    "nome": "Cabo coaxial",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ128",
+    "nome": "Cabo coaxial semi-rígido de 50 Ohms",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ129",
+    "nome": "Cabo coaxial rígido de 75 Ohms",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ130",
+    "nome": "Cabo de fibras ópticas",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ131",
+    "nome": "Cabo de fibras ópticas núcleo dielétrico aéreo autossustentado - Figura 8",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ132",
+    "nome": "Cabo híbrido, Tipo CHZ-APL-xDSL 40x N / FOA-Y-XX",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ133",
+    "nome": "Cabo híbrido, Tipo CHZ-APL-xDSL 50x N/FOA-Y-XX",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ134",
+    "nome": "Cabo Óptico Terrestre Marinizado, Tipo CFOA-X-TM-G-Z",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ135",
+    "nome": "Cabo OPGW",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ136",
+    "nome": "Cabo telefônico par metálico (Exceto CI e CCI)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ137",
+    "nome": "Cabo Telefônico par metálico, CTP-APL-AC 50-X-Y",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ138",
+    "nome": "Caixa terminal óptica aérea",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ139",
+    "nome": "Caixa terminal óptica subterrânea",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ140",
+    "nome": "Caixa terminal óptica subterrânea para áreas residenciais e Pequenas Edificações Comerciais",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ141",
+    "nome": "Central de comutação digital",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ142",
+    "nome": "Central de comutação e controle - CCC",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ143",
+    "nome": "Conector de blindagem (CBCT/CBVT)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ144",
+    "nome": "Conector para cabo coaxial (Todos os tipos)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ145",
+    "nome": "Conector para cabo telefônico (seco, impregnado e selado)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ146",
+    "nome": "Conector para fibra óptica",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ147",
+    "nome": "Conector para fibra óptica montado em campo para cabos compactos",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ148",
+    "nome": "Conector de fibra óptica reforçado",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ149",
+    "nome": "Conjunto de emenda aéreo para cabos ópticos",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ150",
+    "nome": "Conjunto de emenda subterrâneo não pressurizado para cabos ópticos",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ151",
+    "nome": "Equipamento de Rede de Dados",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ152",
+    "nome": "Equipamento para Interconexão de Redes",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ153",
+    "nome": "Fibras Ópticas - Multimodo (MM), Monomodo de Dispersão Normal (SM), Monomodo com Dispersão Deslocada (DS), Monomodo de Dispersão Deslocada e Não Nula (NZD) e Monomodo com Baixa Sensibilidade à Curvatura (BLI)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ154",
+    "nome": "Filtro xDSL - Splitter de Central",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ155",
+    "nome": "Fio telefônico DG",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ156",
+    "nome": "HPNA Coaxial para IPTV - Distribuidor",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ157",
+    "nome": "Módulo protetor (para DG)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ158",
+    "nome": "Módulo protetor (para rede externa e ambiente do cliente)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ159",
+    "nome": "Módulo Protetor para Sistemas HDSL/SHDSL",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ160",
+    "nome": "Multiplex óptico (WDM/CWDM/DWDM)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ161",
+    "nome": "Multiplex PDH (2/8/34 Mbit/s)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ162",
+    "nome": "Multiplex PDH (139.264 kbit/s)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ163",
+    "nome": "Multiplex SDH",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ164",
+    "nome": "Multiplex de Acesso xDSL - DSLAM",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ165",
+    "nome": "Multiplexador de dados",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ166",
+    "nome": "OLT - Terminação de Linha Óptica / ONU - Unidade de Rede Óptica",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ167",
+    "nome": "Plataforma Multisserviço",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ168",
+    "nome": "Regenerador de Sinais SHDSL*",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ169",
+    "nome": "Sistema de retificadores (chaveados - ventilação forçada e natural)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ170",
+    "nome": "Terminal de linhas ópticas e Terminal de linhas ópticas com multiplex integrado",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ171",
+    "nome": "Unidade retificadora (chaveada - ventilação forçada e natural)",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ172",
+    "nome": "Unidade supervisão CA",
+    "categoria": 3
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ173",
+    "nome": "Unidade supervisão CC",
+    "categoria": 3
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Dispositivos de Operação Periódica",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Equipamentos de Telemedição Biomédica",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Equipamentos de Telemedição de Características de Material",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Emissor-Sensor de Variação de Campo Eletromagnético",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Equipamentos Utilizando Tecnologia de Espalhamento Espectral ou Outras Tecnologias de Modulação Digital",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Sistema de Acesso Sem Fio em Banda Larga para Redes Locais",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Equipamento de Localização de Cabos",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Sistemas de Identificação por Radiofrequências",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Sistemas de Telecomando",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Equipamento de Radiocomunicação de Uso Geral",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Sistemas de Rádio de Baixa Potência Operando em 19 GHz",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Sistemas Operando na Faixa 57-64 GHz",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Sistemas Operando nas Faixas de Radiofrequência Ultra Larga",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Sistemas de Transmissão de Áudio, Vídeo ou Outras Aplicações",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Femtocélulas",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Sistema de Comunicação Veicular",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Sistema Multigigabit Sem Fio",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Sistema de Compartilhamento de Acesso ao Meio nas Faixas 5.150-5.350 MHz, 5.470-5.725 MHz e 5.725-5.850 MHz",
+    "categoria": "Cat. 2"
+  }   
+]

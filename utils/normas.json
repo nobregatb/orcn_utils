@@ -2,112 +2,105 @@
   {
     "id": "resolucao715",
     "nome": "Resolução nº 715, de 23 de outubro de 2019",
-    "descricao": "Aprova o **Regulamento de Avaliação da Conformidade e de Homologação de Produtos para Telecomunicações**, estabelecendo as regras gerais e os procedimentos para certificação e homologação de produtos no Brasil.",
+    "descricao": "Aprova o Regulamento de Avaliação da Conformidade e de Homologação de Produtos para Telecomunicações, estabelecendo as regras gerais e os procedimentos para certificação e homologação de produtos no Brasil.",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2019/1350-resolucao-715"
   },
   {
     "id": "ato17087",
     "nome": "Ato nº 17087, de 19 de dezembro de 2022",
-    "descricao": "Aprova os **Requisitos Técnicos de Segurança Elétrica** para a Avaliação da Conformidade de Produtos para Telecomunicações (Substituiu o Ato nº 950/2018).",
+    "descricao": "Requisitos Técnicos de Segurança Elétrica.",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1823-ato-17087"
   },
   {
     "id": "ato1120",
     "nome": "Ato nº 1120, de 19 de fevereiro de 2018",
-    "descricao": "Aprova os **Requisitos Técnicos de Compatibilidade Eletromagnética (EMC)** para Avaliação da Conformidade de Produtos para Telecomunicações.",
+    "descricao": "Requisitos Técnicos de Compatibilidade Eletromagnética (EMC).",
     "url": "https://www.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1181-ato-1120"
   },
   {
     "id": "resolucao680",
     "nome": "Resolução nº 680, de 27 de junho de 2017",
-    "descricao": "Aprova o **Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita**, estabelecendo as condições de uso do espectro de radiofrequências.",
+    "descricao": "Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita.",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2017/1057-resolucao-680"
   },
   {
     "id": "ato3484",
     "nome": "Ato nº 3484, de 31 de maio de 2019",
-    "descricao": "Aprova os **Requisitos Técnicos de Ensaio para a Avaliação da Conformidade de Baterias de Lítio** Utilizadas em Telefones Celulares e produtos similares (Categoria I).",
+    "descricao": "Requisitos Técnicos de Ensaio para a Avaliação da Conformidade de Baterias de Lítio Utilizadas em Telefones Celulares e produtos similares (Categoria I).",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1301-ato-3484"
   },
   {
     "id": "ato6506",
     "nome": "Ato nº 6506, de 27 de agosto de 2018",
-    "descricao": "Aprova os **Requisitos Técnicos para Terminal de Linhas Ópticas (OLT) e Unidade de Rede Óptica (ONU)** (Categoria III).",
+    "descricao": "Requisitos Técnicos para Terminal de Linhas Ópticas (OLT) e Unidade de Rede Óptica (ONU) (Categoria III).",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1231-ato-6506"
   },
   {
     "id": "itu_g711",
     "nome": "Recomendação ITU-T G.711 (11/88)",
-    "descricao": "Define o padrão de **Pulse Code Modulation (PCM)** para frequências de voz (Codificação A-law e µ-law), fundamental para codificação de voz na telefonia digital.",
+    "descricao": "Define o padrão de Pulse Code Modulation (PCM) para frequências de voz (Codificação A-law e µ-law), fundamental para codificação de voz na telefonia digital.",
     "url": "https://www.itu.int/rec/T-REC-G.711/"
   },
   {
     "id": "etsi_ts_102027_2",
     "nome": "ETSI TS 102 027-2 V4.1.1 (2006-07)",
-    "descricao": "Especificação de Teste de Conformidade (TSS&TP) para o **Session Initiation Protocol (SIP - RFC 3261)**. Requisito crucial para dispositivos VoIP/IP (Categoria I).",
+    "descricao": "Especificação de Teste de Conformidade (TSS&TP) para o Session Initiation Protocol (SIP - RFC 3261). Requisito crucial para dispositivos VoIP/IP (Categoria I).",
     "url": "https://www.etsi.org/deliver/etsi_ts/102000_102099/10202702/04.01.01_60/ts_10202702v040101p.pdf"
   },
   {
     "id": "ietf_rfc3261",
     "nome": "IETF RFC 3261 (Junho 2002)",
-    "descricao": "Define o **Session Initiation Protocol (SIP)**, um protocolo de sinalização de camada de aplicação para estabelecer, modificar e encerrar sessões multimídia em tempo real (VoIP).",
+    "descricao": "Define o Session Initiation Protocol (SIP), um protocolo de sinalização de camada de aplicação para estabelecer, modificar e encerrar sessões multimídia em tempo real (VoIP).",
     "url": "https://datatracker.ietf.org/doc/html/rfc3261"
   },
   {
     "id": "cispr22",
     "nome": "CISPR 22 (ou ABNT NBR IEC/CISPR 22)",
-    "descricao": "Equipamento de Tecnologia da Informação (ETI) – **Características de radioperturbação (Emissões)** – Limites e métodos de medição. Essencial para requisitos de EMC.",
+    "descricao": "Equipamento de Tecnologia da Informação (ETI) – Características de radioperturbação (Emissões) – Limites e métodos de medição. Essencial para requisitos de EMC.",
     "url": null
   },
   {
     "id": "itu_r_m1371_1",
     "nome": "Recomendação ITU-R M.1371-1",
-    "descricao": "Define as características técnicas para um **Sistema Automático de Identificação (AIS)** marítimo universal utilizando acesso múltiplo por divisão de tempo (TDMA) na faixa móvel marítima VHF.",
+    "descricao": "Define as características técnicas para um Sistema Automático de Identificação (AIS) marítimo universal utilizando acesso múltiplo por divisão de tempo (TDMA) na faixa móvel marítima VHF.",
     "url": "https://www.itu.int/dms_pubrec/itu-r/rec/m/R-REC-M.1371-1-200108-S!!PDF-E.pdf"
   },
   {
     "id": "iec61300_series",
     "nome": "Família de Normas IEC 61300",
-    "descricao": "Série de normas que especifica os **procedimentos de ensaio básicos e procedimentos de medição para interconexões de fibra óptica, dispositivos e componentes passivos**, como atenuação, vibração e torção (Categoria III).",
+    "descricao": "Série de normas que especifica os procedimentos de ensaio básicos e procedimentos de medição para interconexões de fibra óptica, dispositivos e componentes passivos, como atenuação, vibração e torção (Categoria III).",
     "url": null
   },
   {
     "id": "abnt_nbr_7866",
     "nome": "ABNT NBR 7866",
-    "descricao": "Norma Brasileira que especifica requisitos de ensaio para **conectores de cabos telefônicos**, incluindo resistência de isolamento e resistência elétrica de contato (Categoria III).",
+    "descricao": "Norma Brasileira que especifica requisitos de ensaio para conectores de cabos telefônicos, incluindo resistência de isolamento e resistência elétrica de contato (Categoria III).",
     "url": null
   },
   {
     "id": "abnt_nbr_14433",
     "nome": "ABNT NBR 14433",
-    "descricao": "Norma Brasileira para **Conector para fibra óptica montado em campo** – Requisitos e métodos de ensaio (Categoria III).",
+    "descricao": "Norma Brasileira para Conector para fibra óptica montado em campo – Requisitos e métodos de ensaio (Categoria III).",
     "url": null
-  },
-{
-    "id": "ato17087",
-    "nome": "Ato nº 17087, de 19 de dezembro de 2022",
-    "descricao": "Aprova os Requisitos Técnicos de Segurança Elétrica para a Avaliação da Conformidade de Produtos para Telecomunicações. (Requisito de Segurança - Categoria I e II)",
-    "tipo": "Requisito Técnico (Segurança)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1823-ato-17087"
   },
   {
     "id": "ato14448",
     "nome": "Ato nº 14448, de 04 de dezembro de 2017",
-    "descricao": "Aprova os Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita. (Requisito de Radiofrequência - Categoria II)",
+    "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita.",
     "tipo": "Requisito Técnico (Radiação Restrita)",
     "url": "https://www.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2017/1139-ato-14448"
   },
   {
     "id": "ato10988",
     "nome": "Ato nº 10988, de 26 de julho de 2024",
-    "descricao": "Aprova os Requisitos Técnicos e Operacionais para uso de Bloqueador de Sinais de Radiocomunicações (BSR), definindo as faixas de frequência para bloqueio.",
+    "descricao": "Requisitos Técnicos e Operacionais para uso de Bloqueador de Sinais de Radiocomunicações (BSR), definindo as faixas de frequência para bloqueio.",
     "tipo": "Requisito Técnico (BSR)",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2024/1969-ato-10988"
   },
   {
     "id": "ato954",
     "nome": "Ato nº 954, de 08 de fevereiro de 2018",
-    "descricao": "Aprova os requisitos técnicos para avaliação da conformidade e homologação de Bloqueador de Sinais de Radiocomunicações (BSR). (Originalmente tratava do BSR, posteriormente alterado pelo Ato 10988)",
+    "descricao": "Requisitos técnicos para Bloqueador de Sinais de Radiocomunicações (BSR)",
     "tipo": "Requisito Técnico (BSR)",
     "url": "https://www.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1167-ato-954"
   },
@@ -131,13 +124,20 @@
     "descricao": "Requisitos de Segurança Cibernética para Equipamentos para Telecomunicações.",
     "tipo": "Norma Nacional (Cabos)",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1505-ato-77"
-  },   
+  },  
   {
-    "id": "ato14448",
-    "nome": "Ato nº 14448, de 04 de dezembro de 2017",
+    "id": "ato3151",
+    "nome": "Ato nº 3151, de 12 de junho de 2020",
+    "descricao": "Requisitos técnicos para avaliação da conformidade de Estação Terminal de Acesso.",
+    "tipo": "Norma Nacional (Cabos)",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1429-ato-3151"
+  },
+  {
+    "id": "ato4776",
+    "nome": "Ato nº 4776, de 01 de setembro de 2020",
     "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita.",
     "tipo": "Norma Nacional (Cabos)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2017/1139-ato-14448"
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1429-ato-3151"
   }
   
 ]

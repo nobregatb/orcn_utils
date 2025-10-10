@@ -1094,6 +1094,12 @@
   {
     "escopo": "mosaico",
     "id": "EQ093",
+    "nome": "Sistema de Identificação por Radiofrequências",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
     "nome": "Sistemas de Telecomando",
     "categoria": "Cat. 2"
   },

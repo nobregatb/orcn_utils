@@ -1,6 +1,10 @@
 [
   {
     "equipamento": "EQ093",
-    "norma": {"ato1120","resolucao680","ato17087","ato14448","ato4776","ato77"}
+    "norma": ["ato1120", "resolucao680", "ato17087", "ato14448", "ato77"]
+  },
+  {
+    "equipamento": "EQ029",
+    "norma": ["ato3151"]
   }
 ]

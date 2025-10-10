@@ -2,15 +2,32 @@
 Analisador de Certificados de Conformidade Técnica (CCT)
 Sistema de extração e validação de dados de arquivos PDF
 """
+from datetime import datetime
 import unicodedata
-import os
-import sys
+import re
+#import sys
 import json
 import subprocess
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 import pymupdf4llm
-from json_logic import jsonLogic
+#from json_logic import jsonLogic
+
+def buscar_valor(json_data, key_busca, valor_busca, key_retorno):
+    """
+    Busca em uma lista de dicionários (ou JSON similar)
+    onde key_busca == valor_busca e retorna o valor de key_retorno.
+    """
+    if isinstance(json_data, list):
+        for item in json_data:
+            if isinstance(item, dict):
+                if item.get(key_busca) == valor_busca:
+                    return item.get(key_retorno)
+    elif isinstance(json_data, dict):
+        if json_data.get(key_busca) == valor_busca:
+            return json_data.get(key_retorno)
+    return None
+
 
 def normalizar(s):
     if isinstance(s, str):
@@ -44,92 +61,160 @@ def get_version() -> str:
 
 VERSION = get_version()
 
+def log(message: str):
+    """
+    Função centralizada de logging que exibe no console e salva em arquivo
+    
+    Args:
+        message: Mensagem para log
+    """
+    
+    
+    # Define o caminho do arquivo de log
+    log_file_path = r"C:\Users\tbnobrega\Desktop\log.txt"
+    
+    # Salva em arquivo
+    try:
+       
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        log_entry = f"[{timestamp}] {message}\n"
+                
+        with open(log_file_path, 'a', encoding='utf-8') as f:
+            f.write(log_entry)
+    except Exception as e:
+        print(f"[ERRO] Falha ao escrever no arquivo de log: {e}")
+
+    # Sempre exibe no console
+    timestamp = datetime.now().strftime("%H:%M:%S")
+    log_entry = f"[{timestamp}] {message}"
+    print(log_entry)
+
+
 class CCTAnalyzer:
     """Classe principal para análise de certificados CCT"""
     
     def __init__(self, home_dir: Optional[str] = None):
         # self.base_dir = Path(sys.executable).parent if getattr(sys, 'frozen', False) else Path(__file__).parent
         # Alternativa: permite especificar diretório customizado
-        #home_dir = Path(base_dir)
+        # home_dir = Path(base_dir)
+        path_executavel = Path(__file__).parent
+
         if home_dir:
             self.base_dir = Path(home_dir)  / "Requerimentos"
-            self.utils_dir = Path(home_dir) / "utils"
+            # self.utils_dir = Path(home_dir) / "utils"
         else:
-            self.base_dir = Path(sys.executable).parent if getattr(sys, 'frozen', False) else Path(__file__).parent
-            self.utils_dir = self.base_dir / "utils"        
+            self.base_dir = path_executavel
         
-        self.ocd_data: Dict = {}
+        self.utils_dir = path_executavel / "utils"        
+        
         self.rules: Dict = {}
         self._setup_directories()
         self._load_configurations()
     
+    def log(self, message: str):
+        """Método de log da classe que usa a função global de log"""
+        log(message)
+    
+    def _get_norma_info(self, norma: str) -> Optional[Dict]:
+        """
+        Busca informações de uma norma no arquivo normas.json
+        
+        Args:
+            norma: Nome/código da norma
+            
+        Returns:
+            Dicionário com dados da norma ou None se não encontrada
+        """
+        normas_file = self.utils_dir / "normas.json"
+        
+        try:
+            if not normas_file.exists():
+                return None
+                
+            with open(normas_file, 'r', encoding='utf-8') as f:
+                normas_data = json.load(f)
+            
+            # Buscar norma pelo nome/código normalizado
+            norma_normalizada = normalizar(norma)
+            
+            if isinstance(normas_data, list):
+                for item in normas_data:
+                    if isinstance(item, dict):
+                        # Verificar se algum campo da norma corresponde
+                        for key in ['nome', 'codigo', 'id']:
+                            if key in item:
+                                if normalizar(str(item[key])) == norma_normalizada:
+                                    return item
+            elif isinstance(normas_data, dict):
+                # Se for dicionário, buscar diretamente pela chave
+                return normas_data.get(norma)
+            
+            return None
+            
+        except Exception as e:
+            self.log(f"[ERRO] Falha ao consultar normas.json: {e}")
+            return None
+    
     def _setup_directories(self):
         """Cria diretório utils se não existir"""
         self.utils_dir.mkdir(exist_ok=True)
-        print(f"[INFO] Diretório utils: {self.utils_dir}")
+        self.log(f"[INFO] Diretório utils: {self.utils_dir}")
     
     def _load_configurations(self):
-        """Carrega configurações de OCDs e regras"""
-        # Carregar dados de OCDs
-        ocd_file = self.utils_dir / "ocd_cnpj.json"
-        if ocd_file.exists():
-            with open(ocd_file, 'r', encoding='utf-8') as f:
-                self.ocd_data = json.load(f)
-            print(f"[INFO] {len(self.ocd_data)} OCDs carregados")
+        """Carrega configurações de regras"""
+        # Verificar se arquivo ocds.json existe
+        ocds_file = self.utils_dir / "ocds.json"
+        if not ocds_file.exists():
+            self.log(f"[AVISO] Arquivo {ocds_file} não encontrado.")
         else:
-            print(f"[AVISO] Arquivo {ocd_file} não encontrado. Criando exemplo...")
-            self._create_example_ocd_file(ocd_file)
+            # Contar OCDs disponíveis
+            try:
+                with open(ocds_file, 'r', encoding='utf-8') as f:
+                    ocds_data = json.load(f)
+                self.log(f"[INFO] {len(ocds_data)} OCDs disponíveis em ocds.json")
+            except:
+                self.log(f"[AVISO] Erro ao ler {ocds_file}")
         
-        # Carregar regras de validação
-        rules_file = self.utils_dir / "regras.json"
-        if rules_file.exists():
-            with open(rules_file, 'r', encoding='utf-8') as f:
-                self.rules = json.load(f)
-            print(f"[INFO] {len(self.rules)} regras carregadas")
+        # Verificar se arquivo equipamentos.json existe
+        equipamentos_file = self.utils_dir / "equipamentos.json"
+        if not equipamentos_file.exists():
+            self.log(f"[AVISO] Arquivo {equipamentos_file} não encontrado.")
         else:
-            print(f"[AVISO] Arquivo {rules_file} não encontrado. Criando exemplo...")
-            self._create_example_rules_file(rules_file)
-    
-    def _create_example_ocd_file(self, file_path: Path):
-        """Cria arquivo de exemplo com CNPJs e OCDs"""
-        example_data = {
-            "44458010000140": {
-                "nome": "Moderna Tecnologia LTDA",
-                "extractor": "default"
-            },
-            "00000000000000": {
-                "nome": "DESCONHEÇIDO",
-                "extractor": "xyz_custom"
-            }
-        }
-        with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(example_data, f, indent=2, ensure_ascii=False)
-        self.ocd_data = example_data
-        print(f"[INFO] Arquivo de exemplo criado: {file_path}")
-    
-    def _create_example_rules_file(self, file_path: Path):
-        """Cria arquivo de exemplo com regras jsonLogic"""
-        example_rules = {
-            "validade_cct": {
-                "description": "Verifica se CCT possui data de validade válida",
-                "rule": {
-                    "and": [
-                        {"!!": {"var": "data_emissao"}},
-                        {"!!": {"var": "data_validade"}}
-                    ]
-                }
-            },
-            "tipo_equipamento_valido": {
-                "description": "Verifica se tipo de equipamento está presente",
-                "rule": {
-                    "!!": {"var": "tipo_equipamento"}
-                }
-            }
-        }
-        with open(file_path, 'w', encoding='utf-8') as f:
-            json.dump(example_rules, f, indent=2, ensure_ascii=False)
-        self.rules = example_rules
-        print(f"[INFO] Arquivo de regras criado: {file_path}")
+            # Contar equipamentos disponíveis
+            try:
+                with open(equipamentos_file, 'r', encoding='utf-8') as f:
+                    equipamentos_data = json.load(f)
+                self.log(f"[INFO] {len(equipamentos_data)} equipamentos disponíveis em equipamentos.json")
+            except:
+                self.log(f"[AVISO] Erro ao ler {equipamentos_file}")
+        
+        # Verificar se arquivo requisitos.json existe
+        requisitos_file = self.utils_dir / "requisitos.json"
+        if not requisitos_file.exists():
+            self.log(f"[AVISO] Arquivo {requisitos_file} não encontrado.")
+        else:
+            # Contar requisitos disponíveis
+            try:
+                with open(requisitos_file, 'r', encoding='utf-8') as f:
+                    requisitos_data = json.load(f)
+                self.log(f"[INFO] {len(requisitos_data)} requisitos disponíveis em requisitos.json")
+            except:
+                self.log(f"[AVISO] Erro ao ler {requisitos_file}")
+        
+        # Verificar se arquivo normas.json existe
+        normas_file = self.utils_dir / "normas.json"
+        if not normas_file.exists():
+            self.log(f"[AVISO] Arquivo {normas_file} não encontrado.")
+        else:
+            # Contar normas disponíveis
+            try:
+                with open(normas_file, 'r', encoding='utf-8') as f:
+                    normas_data = json.load(f)
+                    normas_count = len(normas_data) if isinstance(normas_data, (list, dict)) else 0
+                self.log(f"[INFO] {normas_count} normas disponíveis em normas.json")
+            except:
+                self.log(f"[AVISO] Erro ao ler {normas_file}")
+        
     
     def find_cct_files(self, search_dir: str) -> List[Path]:
         """
@@ -145,17 +230,17 @@ class CCTAnalyzer:
         files = []
         
         if search_dir == "*":
-            print(f"[INFO] Buscando CCTs em todos os subdiretórios de {self.base_dir}...")
+            self.log(f"[INFO] Buscando CCTs em todos os subdiretórios de {self.base_dir}...")
             for pdf_file in self.base_dir.rglob("*.pdf"):
                 if pattern in pdf_file.name:
                     files.append(pdf_file)
         else:
             target_dir = self.base_dir / search_dir
             if not target_dir.exists():
-                print(f"[ERRO] Diretório não encontrado: {target_dir}")
+                self.log(f"[ERRO] Diretório não encontrado: {target_dir}")
                 return []
             
-            print(f"[INFO] Buscando CCTs em {target_dir}...")
+            self.log(f"[INFO] Buscando CCTs em {target_dir}...")
             for pdf_file in target_dir.glob("*Certificado de Conformidade Técnica - CCT*.pdf"):
                 files.append(pdf_file)
         
@@ -172,64 +257,135 @@ class CCTAnalyzer:
             Conteúdo extraído como string ou None em caso de erro
         """
         try:
-            print(f"[INFO] Extraindo conteúdo de: {pdf_path.name}")
+            self.log(f"[INFO] Extraindo conteúdo de: {pdf_path.name}")
             content = pymupdf4llm.to_markdown(str(pdf_path))
+            #llama_reader = pymupdf4llm.LlamaMarkdownReader()
+            #llama_docs = llama_reader.load_data(str(pdf_path))
+
             return content
         except Exception as e:
-            print(f"[ERRO] Falha ao extrair {pdf_path.name}: {e}")
+            self.log(f"[ERRO] Falha ao extrair {pdf_path.name}: {e}")
             return None
     
-    def extract_cnpj_from_content(self, content: str) -> Optional[str]:
-        """Extrai CNPJ do conteúdo do PDF"""
-        import re
-        # Padrão CNPJ: XX.XXX.XXX/XXXX-XX
-        pattern = r'\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}'
-        match = re.search(pattern, content)
-        if match:
-            cnpj = match.group(0).replace('.', '').replace('/', '').replace('-', '')
-            return cnpj
-        return None
+    def extract_ocd_from_content(self, content: str) -> Optional[str]:
+        if re.search("Associação NCC Certificações do Brasil", content, re.IGNORECASE):
+            return "NCC"
+        elif re.search("BRICS Certificações de Sistemas de Gestões e Produtos", content, re.IGNORECASE):
+            return "BRICS"
+        elif re.search("ABCP Certificadora de Produtos LTDA", content, re.IGNORECASE):
+            return "ABCP"
+        elif re.search("ACERT ORGANISMO DE CERTIFICACAO DE PRODUTOS EM SISTEMAS", content, re.IGNORECASE):
+            return "ACERT"
+        elif re.search("SGS do Brasil Ltda.", content, re.IGNORECASE):
+            return "SGS"
+        elif re.search("BraCert – BRASIL CERTIFICAÇÕES LTDA", content, re.IGNORECASE):
+            return "BraCert"
+        elif re.search("CCPE – CENTRO DE CERTIFICAÇÃO", content, re.IGNORECASE):
+            return "CCPE"        
+        elif re.search("OCD-Eldorado", content, re.IGNORECASE):
+            return "Eldorado"
+        elif re.search("organismo ICC no uso das atribuições que lhe confere o Ato de Designação N° 696", content, re.IGNORECASE):
+            return "ICC"
+        elif re.search("Moderna Tecnologia LTDA", content, re.IGNORECASE):
+            return "Moderna"
+        elif re.search("Master Associação de Avaliação de Conformidade", content, re.IGNORECASE):
+            return "Master"  
+        elif re.search("OCP-TELI", content, re.IGNORECASE):            
+            return "OCP-TELI"
+        elif re.search("Certificado: TÜV", content, re.IGNORECASE):            
+            return "TUV"
+        elif re.search("UL do Brasil Ltda, Organismo de Certificação Designado", content, re.IGNORECASE):            
+            return "UL"
+        elif re.search("QC Certificações", content, re.IGNORECASE):            
+            return "QC"
+        elif re.search("Associação Versys de Tecnologia", content, re.IGNORECASE):            
+            return "Versys"
+        elif re.search("CPQD", content, re.IGNORECASE):
+            return "CPQD"         
+        else:
+            return "[ERRO] OCD não identificado"
+         
     
     def get_ocd_name(self, cnpj: Optional[str]) -> str:
-        """Obtém nome do OCD a partir do CNPJ"""
+        """Obtém nome do OCD a partir do CNPJ consultando ./utils/ocds.json"""
         if not cnpj:
-            return "OCD Desconhecido"
+            return "[ERRO] CNPJ não informado"
         
-        ocd_info = self.ocd_data.get(cnpj)
-        if ocd_info:
-            return ocd_info.get('nome', 'OCD Desconhecido')
-        return f"OCD não cadastrado (CNPJ: {cnpj})"
-    
-    def extract_tipo_equipamento(self, content: str, ocd_name: str) -> List[str]:
-        """
-        Extrai tipos de equipamento do conteúdo
-        Cada OCD pode ter método específico de extração
-        """
-        # Método padrão - busca por palavras-chave comuns
-        equipamentos = []
-        keywords = [
-            'Transceptor de Radiação Restrita', 'Sistema de Identificação por Radiofrequências'
-        ]
-
-        keywords_lower = [kw.lower() for kw in keywords]
-
-        content_lower = content.lower()
-        for idx, keyword in enumerate(keywords_lower):
-            if keyword in content_lower:
-                equipamentos.append(keyword)
+        # Consulta o arquivo ocds.json
+        ocds_file = self.utils_dir / "ocds.json"
         
-        # Aqui você pode adicionar métodos específicos por OCD
-        # if "moderna" in ocd_name:
-        #     equipamentos.extend(self._extract_moderna_specific(content))
+        try:
+            if ocds_file.exists():
+                with open(ocds_file, 'r', encoding='utf-8') as f:
+                    ocds_data = json.load(f)
+                
+                # Busca pelo CNPJ
+                ocd_info = buscar_valor(ocds_data, 'cnpj', cnpj, 'nome')
+                if ocd_info:
+                    return ocd_info
 
-        return list(set(equipamentos))  # Remove duplicatas
+            return f"[ERRO] OCD não cadastrado (CNPJ: {cnpj})"
+            
+        except Exception as e:
+            self.log(f"[ERRO] Falha ao consultar ocds.json: {e}")
+            return f"[ERRO]OCD não cadastrado (CNPJ: {cnpj})"
     
-    def extract_normas_aplicaveis(self, content: str, nome_ocd: str) -> List[str]:
+    def extract_tipo_equipamento(self, content: str) -> List[Dict]:
+        """
+        Extrai tipos de equipamento consultando equipamentos.json e buscando matches no conteúdo
+        
+        Args:
+            content: Conteúdo do certificado
+            ocd_name: Nome do OCD (não usado na nova implementação)
+            
+        Returns:
+            Lista de dicionários com equipamentos encontrados
+        """
+        equipamentos_encontrados = []
+        
+        # Consulta o arquivo equipamentos.json
+        equipamentos_file = self.utils_dir / "equipamentos.json"
+        
+        try:
+            if not equipamentos_file.exists():
+                self.log(f"[AVISO] Arquivo {equipamentos_file} não encontrado")
+                return []
+                
+            with open(equipamentos_file, 'r', encoding='utf-8') as f:
+                equipamentos_data = json.load(f)
+            
+            # Normaliza o conteúdo do certificado para comparação
+            content_normalizado = normalizar(content)
+            
+            # Percorre todos os equipamentos do JSON
+            for equipamento in equipamentos_data:
+                if isinstance(equipamento, dict) and 'nome' in equipamento:
+                    nome_equipamento = equipamento['nome']
+                    nome_normalizado = normalizar(nome_equipamento)
+                    
+                    # Verifica se o nome do equipamento está presente no conteúdo
+                    if nome_normalizado in content_normalizado:
+                        # Verifica se já foi adicionado (evita duplicatas)
+                        ja_existe = any(
+                            eq.get('nome') == nome_equipamento 
+                            for eq in equipamentos_encontrados
+                        )
+                        
+                        if not ja_existe:
+                            equipamentos_encontrados.append(equipamento)
+            
+            return equipamentos_encontrados
+            
+        except Exception as e:
+            self.log(f"[ERRO] Falha ao consultar equipamentos.json: {e}")
+            return []
+            
+    def extract_normas_verificadas(self, content: str, nome_ocd: str) -> List[str]:
         """
         Extrai normas técnicas aplicáveis do conteúdo do CCT
         Cada OCD pode ter método específico de extração
         """
-        import re
+        #import re
         normas = []
         
         # Método específico para Moderna
@@ -310,105 +466,196 @@ class CCTAnalyzer:
         Returns:
             Dicionário com dados extraídos
         """
-        cnpj = self.extract_cnpj_from_content(content)
-        nome_ocd = self.get_ocd_name(cnpj)
-        tipo_equipamento = self.extract_tipo_equipamento(content, nome_ocd)
-        normas_aplicaveis = self.extract_normas_aplicaveis(content, nome_ocd)
-        
+        #cnpj = self.extract_ocd_from_content(content)
+        #nome_ocd = self.get_ocd_name(cnpj)
+        nome_ocd = self.extract_ocd_from_content(content)
+        tipo_equipamento = self.extract_tipo_equipamento(content)
+        if nome_ocd:
+            normas_verificadas = self.extract_normas_verificadas(content, nome_ocd)
+        else:
+            normas_verificadas = []
+
+        ''' TEOGENES - desabilitado para testes
+        if not nome_ocd or len(tipo_equipamento)==0 or len(normas_verificadas)==0:
+            self.log(f"[ERRO] Falha na extração de dados essenciais do CCT.")
+            self.log(f"       Nome OCD: {nome_ocd}")
+            self.log(f"       Tipo Equipamento: {len(tipo_equipamento)} encontrado(s)")
+            self.log(f"       Normas: {len(normas_verificadas)} encontrada(s)")'''
+            
         # Extração de outras variáveis (exemplo)
         data = {
-            'cnpj': cnpj,
             'nome_ocd': nome_ocd,
             'tipo_equipamento': tipo_equipamento,
-            'normas_aplicaveis': normas_aplicaveis,
-            'data_emissao': None,  # Implementar extração
-            'data_validade': None,  # Implementar extração
-            'numero_certificado': None,  # Implementar extração
+            'normas_verificadas': normas_verificadas,
+            #'data_emissao': None,  # Implementar extração
+            #'data_validade': None,  # Implementar extração
+            #'numero_certificado': None,  # Implementar extração
         }
         
         return data
     
-    def validate_data(self, data: Dict) -> Dict[str, bool]:
+    def validate_data(self, data: Dict) -> Tuple[bool, List[str]]:
         """
-        Valida dados extraídos usando regras jsonLogic
+        Valida se todas as normas dos equipamentos estão presentes nas normas verificadas
         
         Args:
             data: Dados extraídos do CCT
-        
+            
         Returns:
-            Dicionário com resultados das validações
+            Tuple[bool, List[str]]: (sucesso, lista_normas_nao_verificadas)
+            - True, [] se todas as normas necessárias estão verificadas
+            - False, [normas] se alguma norma necessária não foi verificada
         """
-        results = {}
-        
-        data_norm = normalizar_dados(data)
-
-        for rule_name, rule_config in self.rules.items():
-            try:
-                rule = rule_config.get('rule', {})
-                result = jsonLogic(normalizar_dados(rule), data_norm)
-                results[rule_name] = bool(result)
-            except Exception as e:
-                print(f"[ERRO] Falha ao aplicar regra '{rule_name}': {e}")
-                results[rule_name] = False
-        
-        return results
+        try:
+            # Obter equipamentos únicos
+            equipamentos = data.get('tipo_equipamento', [])
+            normas_verificadas = data.get('normas_verificadas', [])
+            
+            if not equipamentos:
+                self.log("[AVISO] Nenhum equipamento encontrado para validação")
+                return True, []
+            
+            # Consultar arquivo requisitos.json
+            requisitos_file = self.utils_dir / "requisitos.json"
+            
+            if not requisitos_file.exists():
+                self.log(f"[ERRO] Arquivo {requisitos_file} não encontrado")
+                return False, ["Arquivo requisitos.json não encontrado"]
+            
+            with open(requisitos_file, 'r', encoding='utf-8') as f:
+                requisitos_data = json.load(f)
+            
+            # Obter IDs únicos dos equipamentos
+            equipamento_ids = set()
+            for eq in equipamentos:
+                if isinstance(eq, dict) and 'id' in eq:
+                    equipamento_ids.add(eq['id'])
+            
+            # Buscar todas as normas necessárias para os equipamentos
+            normas_necessarias = set()
+            
+            for requisito in requisitos_data:
+                if isinstance(requisito, dict):
+                    # Verificar se este requisito se aplica a algum dos equipamentos
+                    req_equipamento_id = requisito.get('equipamento')
+                    if req_equipamento_id in equipamento_ids:
+                        # Adicionar normas deste requisito
+                        normas_req = requisito.get('norma', [])
+                        if isinstance(normas_req, list):
+                            normas_necessarias.update(normas_req)
+                        elif isinstance(normas_req, str):
+                            normas_necessarias.add(normas_req)
+            
+            # Normalizar normas para comparação
+            normas_necessarias_norm = {normalizar(norma) for norma in normas_necessarias}
+            normas_verificadas_norm = {normalizar(norma) for norma in normas_verificadas}
+            
+            # Identificar normas não verificadas            
+            normas_nao_verificadas = normas_necessarias_norm - normas_verificadas_norm
+            
+            # Converter de volta para formato original (sem normalização) para o retorno
+            normas_nao_verificadas_originais = []
+            for norma_norm in normas_nao_verificadas:
+                # Encontrar a norma original correspondente
+                for norma_orig in normas_necessarias:
+                    if normalizar(norma_orig) == norma_norm:
+                        normas_nao_verificadas_originais.append(norma_orig)
+                        break
+            
+            # Resultado da validação
+            sucesso = len(normas_nao_verificadas) == 0
+            
+            '''if sucesso:
+                self.log(f"[INFO] Validação SUCESSO: {len(normas_necessarias)} normas necessárias, todas verificadas")
+            else:
+                self.log(f"[INFO] Validação FALHA: {len(normas_nao_verificadas)} normas não verificadas de {len(normas_necessarias)} necessárias")'''
+            
+            return sucesso, normas_nao_verificadas_originais
+            
+        except Exception as e:
+            self.log(f"[ERRO] Falha na validação: {e}")
+            return False, [f"Erro na validação: {str(e)}"]
     
-    def display_results(self, file_name: str, data: Dict, validation: Dict[str, bool]):
-        """Exibe resultados da análise no terminal"""
-        print("\n" + "="*70)
-        print(f"ARQUIVO: {file_name}")
-        print("="*70)
+    def display_results(self, file_name: str, data: Dict, validation: Tuple[bool, List[str]]):
+        """Exibe resultados da análise no terminal"""        
+        self.log("="*100)
+        self.log(f"ARQUIVO: {file_name}")
+        self.log("="*100)
         
-        print("\n[DADOS EXTRAÍDOS]")
-        print("-"*70)
+        self.log("\n[DADOS EXTRAÍDOS]")
+        #self.log("-"*100)
         for key, value in data.items():
             if isinstance(value, list):
-                value_str = ", ".join(value) if value else "Nenhum encontrado"
+                if key == 'tipo_equipamento' and value:
+                    # Formatação especial para equipamentos (lista de dicionários)
+                    equipamentos_str = []
+                    for eq in value:
+                        if isinstance(eq, dict):
+                            nome = eq.get('nome', 'N/A')
+                            id_eq = eq.get('id', 'N/A')
+                            equipamentos_str.append(f"{nome}")
+                        else:
+                            equipamentos_str.append(str(eq))
+                    value_str = ", ".join(equipamentos_str)
+                else:
+                    # Formatação padrão para outras listas
+                    value_str = ", ".join(str(v) for v in value) if value else "Nenhum encontrado"
             else:
                 value_str = value if value else "Não encontrado"
-            print(f"  {key:20s}: {value_str}")
+            self.log(f"  {key:20s}: {value_str}")
         
-        print("\n[VALIDAÇÕES]")
-        print("-"*70)
-        all_passed = True
-        for rule_name, passed in validation.items():
-            status = "✓ PASSOU" if passed else "✗ FALHOU"
-            print(f"  {rule_name:30s}: {status}")
-            if not passed:
-                all_passed = False
-                if rule_name in self.rules:
-                    desc = self.rules[rule_name].get('description', '')
-                    print(f"    → {desc}")
+        self.log("\n[VALIDAÇÃO DE NORMAS]")
+        #self.log("-"*70)
+        sucesso, normas_nao_verificadas = validation
         
-        print("\n" + "="*70)
-        if all_passed:
-            print("RESULTADO FINAL: ✓ TODAS AS VALIDAÇÕES PASSARAM")
+        if sucesso:
+            self.log("   ✅ Todas as normas necessárias foram verificadas")
         else:
-            print("RESULTADO FINAL: ✗ ALGUMAS VALIDAÇÕES FALHARAM")
-        print("="*70 + "\n")
+            self.log("   ❌ Algumas normas necessárias não foram verificadas")
+            if normas_nao_verificadas:
+                self.log(f"   🐛 Normas não verificadas:")
+                for norma in normas_nao_verificadas:
+                    # Buscar dados da norma em normas.json
+                    norma_info = self._get_norma_info(norma)
+                    if norma_info:
+                        nome = norma_info.get('nome', 'N/A')
+                        descricao = norma_info.get('descricao', 'N/A')
+                        self.log(f"\t\t• {nome} - {descricao}")
+                    else:
+                        self.log(f"\t • {norma}")
+        
+        self.log("="*70)
+        if sucesso:
+            self.log("Avaliação automática: ✅ Passou")
+        else:
+            self.log("Avaliação automática: ❌ Falhou")
+        self.log("="*70 + "\n")
     
     def run(self):
         """Executa o aplicativo"""
-        print("="*70)
-        print(f"  ANALISADOR DE CCT - Versão {VERSION}")
-        print("="*70)
-        print()
-        
+        print("\n")
+        print("🤡"*50)
+        print(f"θεoγενης - Versão {VERSION}")
+        print("-"*100)
+        print("Pelo fim do trabalho de presidiários, todo dia é dia de aprender algo novo!")
+        print("🤡"*50)
+        print("\n")
+
         # Solicitar diretório
         search_dir = input("Digite o nome do diretório (ou '*' para buscar em todos): ").strip()
         
         if not search_dir:
-            print("[ERRO] Diretório não pode ser vazio!")
+            self.log("[ERRO] Diretório não pode ser vazio!")
             return
         
         # Buscar arquivos
         cct_files = self.find_cct_files(search_dir)
         
         if not cct_files:
-            print(f"\n[AVISO] Nenhum arquivo CCT encontrado!")
+            self.log(f"\n[AVISO] Nenhum arquivo CCT encontrado!")
             return
         
-        print(f"\n[INFO] {len(cct_files)} arquivo(s) CCT encontrado(s)\n")
+        self.log(f"\n[INFO] {len(cct_files)} arquivo(s) CCT encontrado(s)\n")
         
         # Processar cada arquivo
         for cct_file in cct_files:
@@ -418,15 +665,18 @@ class CCTAnalyzer:
                 continue
             
             # Extrair dados
-            data = self.extract_data_from_cct(content)
+            cct = self.extract_data_from_cct(content)
             
+            #TEOGENES - para testes, processar apenas Moderna
+            if cct['nome_ocd'] == "Moderna":
             # Validar dados
-            validation_results = self.validate_data(data)
-            
-            # Exibir resultados
-            self.display_results(cct_file.name, data, validation_results)
-        
-        print("\n[INFO] Análise concluída!")
+                validation_results = self.validate_data(cct)
+
+                # Exibir resultados
+                self.display_results(cct_file.name, cct, validation_results)
+            else:
+                self.log(f"\t🎯 [AVISO] Calma, cocada! Análise automática desabilitada este OCD.")
+        self.log("\n[INFO] Análise concluída!")
 
 
 def main():
@@ -435,9 +685,9 @@ def main():
         analyzer = CCTAnalyzer(home_dir=r"C:\Users\tbnobrega\OneDrive - ANATEL\Anatel\_ORCN")
         analyzer.run()
     except KeyboardInterrupt:
-        print("\n\n[INFO] Aplicativo interrompido pelo usuário")
+        log("\n\n[INFO] Aplicativo interrompido pelo usuário")
     except Exception as e:
-        print(f"\n[ERRO FATAL] {e}")
+        log(f"\n[ERRO FATAL] {e}")
         import traceback
         traceback.print_exc()
     finally:

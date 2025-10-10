@@ -11,7 +11,8 @@ def is_bundled():
     return getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
 
 # Detecta se foi chamado com parâmetro debug
-debug_mode = len(sys.argv) > 1 and sys.argv[1].lower() == 'debug'
+#debug_mode = len(sys.argv) > 1 and sys.argv[1].lower() == 'debug'
+debug_mode = 'debug'
 
 # Configuração de caminhos
 CHROME_PATH = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
@@ -35,12 +36,14 @@ else:
 PROFILE_DIR = os.path.join(FILES_FOLDER, "meu_perfil_chrome")
 LOG_REQUERIMENTOS = os.path.join(FILES_FOLDER, 'ORCN.xlsx')
 
-
-def criar_pasta_se_nao_existir(req):
-    """Cria pasta do requerimento se não existir"""
+def req_para_fullpath(req):
     num, ano = req.split("/")
     requerimento = rf"Requerimentos\_{ano}.{num}"
     full_path = os.path.join(FILES_FOLDER, requerimento)
+    return full_path
+    
+def criar_pasta_se_nao_existir(req):
+    full_path = req_para_fullpath(req)
     if not os.path.exists(full_path):
         os.makedirs(full_path, exist_ok=True)
         print(f"   📁 Pasta criada: {full_path}")
@@ -94,7 +97,7 @@ def atualizar_excel(rows) -> list:
         
         linhas_existentes = [tuple(row) for row in ws.iter_rows(values_only=True)]
         
-        if 1==1: #dados[9] == 'Em Análise':
+        if (dados[9] == 'Em Análise') or (dados[9] == 'Em Análise - RE'):
             novalinha = dados[:10]
             if tuple(novalinha) not in linhas_existentes:
                 ws.append(novalinha)
@@ -584,7 +587,7 @@ with sync_playwright() as p:
     print("\n📋 Mapeando linhas da tabela...")
     linhas_dados = []
     
-    for i, row in enumerate(rows, start=1):
+    for i, row in enumerate(reversed(rows), start=1):
         try:
             cols = row.query_selector_all("td")
             if len(cols) < 2:
@@ -624,7 +627,8 @@ with sync_playwright() as p:
         requerimento = linha_info['requerimento']
         
         # Só processa se for um requerimento novo
-        if requerimento not in novos_requerimentos:
+        full_path = req_para_fullpath(requerimento)
+        if (requerimento not in novos_requerimentos) or (os.path.exists(full_path)):
             continue
         
         print(f"\n{'='*60}")

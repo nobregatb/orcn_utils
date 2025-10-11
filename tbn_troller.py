@@ -2,10 +2,14 @@
 Analisador de Certificados de Conformidade Técnica (CCT)
 Sistema de extração e validação de dados de arquivos PDF
 """
+from pdf2image import convert_from_path
+import pytesseract
+pytesseract.pytesseract.tesseract_cmd = r"C:\Users\tbnobrega\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
+
 from datetime import datetime
 import unicodedata
 import re
-#import sys
+import fitz
 import json
 import subprocess
 from pathlib import Path
@@ -258,52 +262,71 @@ class CCTAnalyzer:
         """
         try:
             self.log(f"[INFO] Extraindo conteúdo de: {pdf_path.name}")
-            content = pymupdf4llm.to_markdown(str(pdf_path))
-            #llama_reader = pymupdf4llm.LlamaMarkdownReader()
-            #llama_docs = llama_reader.load_data(str(pdf_path))
+            #content = pymupdf4llm.to_markdown(pdf_path)
+            pdf = fitz.open(pdf_path)
+            content = ""
+            for pagina in pdf:
+                content += pagina.get_text() + "\n"
+            pdf.close()
 
+            if content.strip() == "":
+                self.log(f"[AVISO] PDF aparentemente vazio, tentando OCR: {pdf_path.name}")
+                content = self.extract_pdf_content_from_ocr(pdf_path)
             return content
         except Exception as e:
             self.log(f"[ERRO] Falha ao extrair {pdf_path.name}: {e}")
             return None
     
+    def extract_pdf_content_from_ocr(self, pdf_path: Path) -> Optional[str]:
+        try:
+            # Converte cada página do PDF em imagem
+            paginas = convert_from_path(pdf_path)
+
+            # Inicializa variável para armazenar o texto completo
+            texto_completo = ""
+
+            # Extrai texto de cada página via OCR
+            for i, pagina in enumerate(paginas, start=1):
+                texto_pagina = pytesseract.image_to_string(pagina, lang='por')  # use 'eng' para inglês
+                texto_completo += f"\n--- Página {i} ---\n"
+                texto_completo += texto_pagina
+            return texto_completo
+        
+        except Exception as e:
+            self.log(f"[ERRO] Falha ao extrair {pdf_path.name}: {e}")
+            return None
+    
     def extract_ocd_from_content(self, content: str) -> Optional[str]:
-        if re.search("Associação NCC Certificações do Brasil", content, re.IGNORECASE):
-            return "NCC"
-        elif re.search("BRICS Certificações de Sistemas de Gestões e Produtos", content, re.IGNORECASE):
-            return "BRICS"
-        elif re.search("ABCP Certificadora de Produtos LTDA", content, re.IGNORECASE):
-            return "ABCP"
-        elif re.search("ACERT ORGANISMO DE CERTIFICACAO DE PRODUTOS EM SISTEMAS", content, re.IGNORECASE):
-            return "ACERT"
-        elif re.search("SGS do Brasil Ltda.", content, re.IGNORECASE):
-            return "SGS"
-        elif re.search("BraCert – BRASIL CERTIFICAÇÕES LTDA", content, re.IGNORECASE):
-            return "BraCert"
-        elif re.search("CCPE – CENTRO DE CERTIFICAÇÃO", content, re.IGNORECASE):
-            return "CCPE"        
-        elif re.search("OCD-Eldorado", content, re.IGNORECASE):
-            return "Eldorado"
-        elif re.search("organismo ICC no uso das atribuições que lhe confere o Ato de Designação N° 696", content, re.IGNORECASE):
-            return "ICC"
-        elif re.search("Moderna Tecnologia LTDA", content, re.IGNORECASE):
-            return "Moderna"
-        elif re.search("Master Associação de Avaliação de Conformidade", content, re.IGNORECASE):
-            return "Master"  
-        elif re.search("OCP-TELI", content, re.IGNORECASE):            
-            return "OCP-TELI"
-        elif re.search("Certificado: TÜV", content, re.IGNORECASE):            
-            return "TUV"
-        elif re.search("UL do Brasil Ltda, Organismo de Certificação Designado", content, re.IGNORECASE):            
-            return "UL"
-        elif re.search("QC Certificações", content, re.IGNORECASE):            
-            return "QC"
-        elif re.search("Associação Versys de Tecnologia", content, re.IGNORECASE):            
-            return "Versys"
-        elif re.search("CPQD", content, re.IGNORECASE):
-            return "CPQD"         
-        else:
-            return "[ERRO] OCD não identificado"
+        """
+        Identifica o OCD baseado no conteúdo do certificado
+        Retorna nomes padronizados em lowercase para corresponder às chaves dos padrões
+        """
+        ocd_signatures = {
+            "ncc": "Associação NCC Certificações do Brasil",
+            "brics": "BRICS Certificações de Sistemas de Gestões e Produtos",
+            "abcp": "ABCP Certificadora de Produtos LTDA",
+            "acert": "ACERT ORGANISMO DE CERTIFICACAO DE PRODUTOS EM SISTEMAS",
+            "sgs": "SGS do Brasil Ltda.",
+            "bracert": "BraCert – BRASIL CERTIFICAÇÕES LTDA",
+            "ccpe": "CCPE – CENTRO DE CERTIFICAÇÃO",
+            "eldorado": "OCD-Eldorado",
+            "icc": "organismo ICC no uso das atribuições que lhe confere o Ato de Designação N° 696",
+            "moderna": "Moderna Tecnologia LTDA",
+            "master": "Master Associação de Avaliação de Conformidade",
+            "ocp-teli": "OCP-TELI",
+            "tuv": "Certificado: TÜV",
+            "ul": "UL do Brasil Ltda, Organismo de Certificação Designado",
+            "qc": "QC Certificações",
+            "versys": "Associação Versys de Tecnologia",
+            "cpqd": "CPQD",
+            "associação lmp certificações": "Associação LMP Certificações"
+        }
+        
+        for ocd_key, signature in ocd_signatures.items():
+            if re.search(re.escape(signature), content, re.IGNORECASE):
+                return ocd_key
+        
+        return None
          
     
     def get_ocd_name(self, cnpj: Optional[str]) -> str:
@@ -360,7 +383,7 @@ class CCTAnalyzer:
             # Percorre todos os equipamentos do JSON
             for equipamento in equipamentos_data:
                 if isinstance(equipamento, dict) and 'nome' in equipamento:
-                    nome_equipamento = equipamento['nome']
+                    nome_equipamento = normalizar(equipamento['nome']) #TEOGENES INCLUI NORMALIZACAO
                     nome_normalizado = normalizar(nome_equipamento)
                     
                     # Verifica se o nome do equipamento está presente no conteúdo
@@ -380,50 +403,165 @@ class CCTAnalyzer:
             self.log(f"[ERRO] Falha ao consultar equipamentos.json: {e}")
             return []
             
-    def extract_normas_verificadas(self, content: str, nome_ocd: str) -> List[str]:
+    def _get_ocd_patterns(self) -> Dict[str, Dict]:
         """
-        Extrai normas técnicas aplicáveis do conteúdo do CCT
-        Cada OCD pode ter método específico de extração
+        Define os padrões de extração para cada OCD
+        
+        Para adicionar um novo OCD:
+        1. Adicione a assinatura em extract_ocd_from_content()
+        2. Adicione a configuração aqui com:
+           - start_pattern: regex para início da seção de normas
+           - end_pattern: regex para fim da seção de normas  
+           - processing_type: "custom" para lógica especial ou "regex_patterns" para padrão
+           - custom_patterns: (opcional) lista de padrões especiais para processing_type="custom"
+        
+        Returns:
+            Dicionário com configurações por OCD
         """
-        #import re
+        return {
+            "moderna": {
+                "start_pattern": r'acima\s+discriminado\(s\)\s+está\(ão\)\s+em\s+conformidade\s+com\s+os\s+documentos\s+normativos\s+indicados\.',
+                "end_pattern": r'Diretor\s+de\s+Tecnologia',
+                "processing_type": "custom",  # ou "regex_patterns"
+                "custom_patterns": ['ATO', 'RESOLUÇÃO']
+            },
+            "ncc": {
+                "start_pattern": r'Regulation\s+Applicable',
+                "end_pattern": r'Conforme\s+os\s+termos\s+do\s+Ato\s+de\s+Designação\s+nº\s+16\.955',
+                "processing_type": "custom",  # ou "regex_patterns"
+                "custom_patterns": ['ATO', 'RESOLUÇÃO']
+            },
+            "brics": {
+                "start_pattern": r'Standards?\s+Applied',
+                "end_pattern": r'BRICS\s+Certificações',
+                "processing_type": "regex_patterns"
+            },
+            "abcp": {
+                "start_pattern": r'Normas?\s+Verificadas?',
+                "end_pattern": r'ABCP\s+Certificadora',
+                "processing_type": "regex_patterns"
+            },
+            "acert": {
+                "start_pattern": r'Standards?\s+(?:Applied|Verified)',
+                "end_pattern": r'ACERT\s+ORGANISMO',
+                "processing_type": "regex_patterns"
+            },
+            "sgs": {
+                "start_pattern": r'Technical\s+Standards?',
+                "end_pattern": r'SGS\s+do\s+Brasil',
+                "processing_type": "regex_patterns"
+            },
+            "bracert": {
+                "start_pattern": r'Normas?\s+Aplicadas?',
+                "end_pattern": r'BraCert.*BRASIL\s+CERTIFICAÇÕES',
+                "processing_type": "regex_patterns"
+            },
+            "ccpe": {
+                "start_pattern": r'Technical\s+Standards?',
+                "end_pattern": r'CCPE.*CENTRO\s+DE\s+CERTIFICAÇÃO',
+                "processing_type": "regex_patterns"
+            },
+            "eldorado": {
+                "start_pattern": r'NORMAS\s+APLICÁVEIS/\s+APPLICABLE\s+STANDARDS',
+                "end_pattern": r'O\s+OCD-Eldorado\s+atribui\s+a\s+certificação\s-aos\s+produtos\s+mencionados\s+acima',
+                "processing_type": "custom",  # ou "regex_patterns"
+                "custom_patterns": ['ATO', 'RESOLUÇÃO']
+            },
+            "icc": {
+                "start_pattern": r'Regulation\s+Applicable',
+                "end_pattern": r'O\s+organismo\s+ICC\s+no\s+uso\s+das\s+atribuições\s+que\s+lhe\s+confere\s+o\s+Ato\s+de\s+Designação',
+                "processing_type": "custom",  # ou "regex_patterns"
+                "custom_patterns": ['ATO', 'RESOLUÇÃO']
+            },
+            "master": {
+                "start_pattern": r'Reference\s+Standards',
+                "end_pattern": r'LABORATÓRIOS\s+DE\s+ENSAIOS',
+                "processing_type": "custom",  # ou "regex_patterns"
+                "custom_patterns": ['ATO', 'RESOLUÇÃO']
+            },
+            "ocp-teli": {
+                "start_pattern": r'Regulamentos\s+Aplicáveis:',
+                "end_pattern": r'OCD\s+designado\s+pelo\s+Ato\s+nº\s+19\.434',
+                "processing_type": "custom",  # ou "regex_patterns"
+                "custom_patterns": ['ATO', 'RESOLUÇÃO']
+            },
+            "tuv": {
+                "start_pattern": r'Standards?\s+Applied',
+                "end_pattern": r'TÜV',
+                "processing_type": "regex_patterns"
+            },
+            "ul": {
+                "start_pattern": r'normative\s+documents',
+                "end_pattern": r'e\s+atesta\s+que\s+o\s+produto\s+para\s+telecomunicações\s+está\s+em\s+conformidade',
+                "processing_type": "custom",  # ou "regex_patterns"
+                "custom_patterns": ['ATO', 'RESOLUÇÃO']
+            },
+            "qc": {
+                "start_pattern": r'Certification\s+programor\s+regulation',
+                "end_pattern": r'Emissão',
+                "processing_type": "custom",  # ou "regex_patterns"
+                "custom_patterns": ['ATO', 'RESOLUÇÃO']
+            },
+            "versys": {
+                "start_pattern": r'Applicable\s+Standards:',
+                "end_pattern": r'Data\s+Certificação',
+                "processing_type": "custom",  # ou "regex_patterns"
+                "custom_patterns": ['ATO', 'RESOLUÇÃO']
+            },
+            "cpqd": {
+                "start_pattern": r'Documentos\s+normativos/\s+Technical\s+Standards:',
+                "end_pattern": r'Relatório\s+de\s+Conformidade\s+/\s+Report\s+Number:',
+                "processing_type": "custom",  # ou "regex_patterns"
+                "custom_patterns": ['ATO', 'RESOLUÇÃO']
+            },
+            "associação lmp certificações": {
+                "start_pattern": r'Certificamos\s+que\s+o\s+produto\s+está\s+em\s+conformidade\s+com\s+as\s+seguintes\s+referências:',
+                "end_pattern": r'Organismo\s+de\s+Certificação\s+Designado\s+pela\s+ANATEL\s+—\s+Agência\s+Nacional\s+de\s+Telecomunicações',
+                "processing_type": "custom",  # ou "regex_patterns"
+                "custom_patterns": ['ATO', 'RESOLUÇÃO'] 
+            }
+        }
+    
+    def _extract_normas_by_pattern(self, content: str, start_pattern: str, end_pattern: str, processing_type: str, custom_patterns: List[str] = None) -> List[str]:
+        """
+        Extrai normas usando padrões específicos de início e fim
+        
+        Args:
+            content: Conteúdo do certificado
+            start_pattern: Padrão regex para início da seção
+            end_pattern: Padrão regex para fim da seção
+            processing_type: Tipo de processamento ("custom" ou "regex_patterns")
+            custom_patterns: Padrões customizados para processamento especial
+            
+        Returns:
+            Lista de normas encontradas
+        """
         normas = []
         
-        # Método específico para Moderna
-        if "moderna" in nome_ocd.lower():
-            # Busca entre "Techinical Standard(s) Applicable" e o texto da Moderna/ANATEL
-            start_pattern = r'Techinical\s+Standard\(s\)\s+Applicable'
-            end_pattern = r'A\s+Moderna\s+Tecnologia,\s+organismo\s+designado\s+pela\s+Agência\s+Nacional\s+de\s+Telecomunicações\s+-\s+ANATEL,\s+por\s+intermédio\s+do\s+Ato\s+n°6247'
+        # Encontra as posições de início e fim
+        start_match = re.search(start_pattern, content, re.IGNORECASE)
+        end_match = re.search(end_pattern, content, re.IGNORECASE)
+        
+        if start_match and end_match:
+            # Extrai o texto entre as duas strings
+            start_pos = start_match.end()
+            end_pos = end_match.start()
+            normas_section = content[start_pos:end_pos]
             
-            # Encontra as posições de início e fim
-            start_match = re.search(start_pattern, content, re.IGNORECASE)
-            end_match = re.search(end_pattern, content, re.IGNORECASE)
-            
-            if start_match and end_match:
-                # Extrai o texto entre as duas strings
-                start_pos = start_match.end()
-                end_pos = end_match.start()
-                normas_section = content[start_pos:end_pos]
-                
-                # Divide em linhas e processa cada uma
+            if processing_type == "custom" and custom_patterns:
+                # Processamento customizado (usado pela Moderna)
                 lines = normas_section.split('\n')
                 for line in lines:
                     line = line.strip()
                     if line:  # Se a linha não está vazia
                         # Remove pontos entre números (ex: 802.11 -> 80211, mas mantém : em anos)
-                        # Primeiro preserva anos com dois pontos
                         temp_line = re.sub(r'(\d{4})', r'YEAR\1YEAR', line)
-                        # Remove pontos entre dígitos
                         temp_line = re.sub(r'(\d)\.(\d)', r'\1\2', temp_line)
-                        # Restaura os anos
                         cleaned_line = re.sub(r'YEAR(\d{4})YEAR', r'\1', temp_line)
                         
                         # Adiciona a norma limpa se contém padrões reconhecíveis
-                        if any(pattern in cleaned_line.upper() for pattern in ['ATO', 'RESOLUÇÃO']):
-                            # Processa atos e resoluções: remove texto entre tipo e numeral
-                            # Ex: "Ato Nº 17087 de" -> "ato17087"
-                            # Ex: "Resolução Nº 680" -> "resolucao680"
-                            
-                            # Padrão para capturar tipo + texto intermediário + numeral
+                        if any(pattern in cleaned_line.upper() for pattern in custom_patterns):
+                            # Processa atos e resoluções
                             match_ato = re.search(r'(ato)\s+[^\d]*(\d+)', cleaned_line, re.IGNORECASE)
                             match_resolucao = re.search(r'(resolução)\s+[^\d]*(\d+)', cleaned_line, re.IGNORECASE)
                             
@@ -433,18 +571,63 @@ class CCTAnalyzer:
                                 norma_formatada = f"{tipo}{numero}"
                                 normas.append(norma_formatada)
                             elif match_resolucao:
-                                tipo = match_resolucao.group(1).lower().replace('ção', 'cao')  # resolução -> resolucao
+                                tipo = match_resolucao.group(1).lower().replace('ção', 'cao')
                                 numero = match_resolucao.group(2)
                                 norma_formatada = f"{tipo}{numero}"
                                 normas.append(norma_formatada)
                             else:
-                                # Se não conseguiu processar, adiciona a linha original limpa
                                 normas.append(cleaned_line)
+                                
+            elif processing_type == "regex_patterns":
+                # Processamento usando padrões regex padrão
+                default_patterns = [
+                    r'ABNT\s+NBR\s+\d+(?::\d{4})?',
+                    r'ANSI/IEEE\s+Std\s+[\d\.\-]+',
+                    r'IEEE\s+Std\s+[\d\.\-]+',
+                    r'IEC\s+\d+(?:-\d+)?(?::\d{4})?',
+                    r'CISPR\s+\d+(?::\d{4})?',
+                    r'FCC\s+CFR\s+Title\s+\d+\s+Part\s+\d+',
+                    r'Ato\s+[^\d]*(\d+)',
+                    r'Resolução\s+[^\d]*(\d+)'
+                ]
+                
+                for pattern in default_patterns:
+                    matches = re.findall(pattern, normas_section, re.IGNORECASE)
+                    normas.extend(matches)
         
-        # Método padrão para outros OCDs
+        return normas
+    
+    def extract_normas_verificadas(self, content: str, nome_ocd: str) -> List[str]:
+        """
+        Extrai normas verificadas baseado no OCD específico
+        
+        Args:
+            content: Conteúdo do certificado
+            nome_ocd: Nome do OCD identificado
+            
+        Returns:
+            Lista de normas verificadas
+        """
+        normas = []
+        ocd_patterns = self._get_ocd_patterns()
+        
+        # Busca configuração para o OCD específico
+        ocd_key = nome_ocd.lower()
+        ocd_config = ocd_patterns.get(ocd_key)
+        
+        if ocd_config:
+            # Usa padrões específicos do OCD
+            normas = self._extract_normas_by_pattern(
+                content,
+                ocd_config['start_pattern'],
+                ocd_config['end_pattern'],
+                ocd_config['processing_type'],
+                ocd_config.get('custom_patterns', [])
+            )
         else:
-            # Busca por padrões comuns de normas em qualquer lugar do texto
-            norma_patterns = [
+            # Método padrão para OCDs não configurados
+            self.log(f"[AVISO] OCD '{nome_ocd}' não tem padrões específicos configurados, usando método padrão")
+            default_patterns = [
                 r'ABNT\s+NBR\s+\d+(?::\d{4})?',
                 r'ANSI/IEEE\s+Std\s+[\d\.\-]+',
                 r'IEEE\s+Std\s+[\d\.\-]+',
@@ -453,7 +636,7 @@ class CCTAnalyzer:
                 r'FCC\s+CFR\s+Title\s+\d+\s+Part\s+\d+'
             ]
             
-            for pattern in norma_patterns:
+            for pattern in default_patterns:
                 matches = re.findall(pattern, content, re.IGNORECASE)
                 normas.extend(matches)
         
@@ -473,6 +656,7 @@ class CCTAnalyzer:
         if nome_ocd:
             normas_verificadas = self.extract_normas_verificadas(content, nome_ocd)
         else:
+            nome_ocd = "[ERRO] OCD não identificado"
             normas_verificadas = []
 
         ''' TEOGENES - desabilitado para testes
@@ -666,16 +850,10 @@ class CCTAnalyzer:
             
             # Extrair dados
             cct = self.extract_data_from_cct(content)
-            
-            #TEOGENES - para testes, processar apenas Moderna
-            if cct['nome_ocd'] == "Moderna":
-            # Validar dados
-                validation_results = self.validate_data(cct)
-
-                # Exibir resultados
-                self.display_results(cct_file.name, cct, validation_results)
-            else:
-                self.log(f"\t🎯 [AVISO] Calma, cocada! Análise automática desabilitada este OCD.")
+            validation_results = self.validate_data(cct)
+            self.display_results(cct_file.name, cct, validation_results)           
+            input("Pressione ENTER para continuar...")
+            # self.log(f"\t🎯 [AVISO] Calma, cocada! Análise automática desabilitada este OCD.")
         self.log("\n[INFO] Análise concluída!")
 
 

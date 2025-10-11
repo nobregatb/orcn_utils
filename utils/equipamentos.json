@@ -176,7 +176,7 @@
   {
     "escopo": "tab_requisitos",
     "id": "EQ029",
-    "nome": "Estação terminal de acesso - ETA",
+    "nome": "Estação terminal de Acesso",
     "categoria": 1
   },
   {
@@ -471,6 +471,12 @@
     "escopo": "tab_requisitos",
     "id": "EQ078",
     "nome": "Equipamento de Radiação Restrita",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ078",
+    "nome": "Equipamento de Radiocomunicação de Radiação Restrita",
     "categoria": 2
   },
   {
@@ -1052,6 +1058,12 @@
   {
     "escopo": "mosaico",
     "id": "EQ093",
+    "nome": "Dispositivo de Operação Periódica",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
     "nome": "Equipamentos de Telemedição Biomédica",
     "categoria": "Cat. 2"
   },
@@ -1065,6 +1077,12 @@
     "escopo": "mosaico",
     "id": "EQ093",
     "nome": "Emissor-Sensor de Variação de Campo Eletromagnético",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Emissor-sensor de Detecção de Nível",
     "categoria": "Cat. 2"
   },
   {

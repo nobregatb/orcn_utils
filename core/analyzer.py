@@ -624,7 +624,7 @@ class AnalisadorRequerimentos:
         
         requerimentos = []
         for item in self.pasta_base.iterdir():
-            if item.is_dir():
+            if item.is_dir() and item.name.startswith("_"):
                 requerimentos.append(item.name)
         
         return sorted(requerimentos)
@@ -1194,7 +1194,7 @@ class AnalisadorRequerimentos:
         
         # Preparar textos com acentos para LaTeX
         sumario_executivo = "Sumário"
-        estatisticas_gerais = "Estatásticas Gerais"
+        estatisticas_gerais = "Estatísticas Gerais"
         analise_detalhada = "Análise Detalhada por Requerimento"
         conclusoes_recomendacoes = "Conclusões e Recomendações"
         recomendacoes = "Recomendações"
@@ -1203,7 +1203,7 @@ class AnalisadorRequerimentos:
         relatorio_texto = "Este relatório apresenta os resultados da análise automatizada"
         
         # Conteúdo do relatório LaTeX
-        agora = "Processamento: " + datetime.now().strftime("%H:%M:%S %d/%m/%Y")
+        agora = "Processamento em: " + datetime.now().strftime("%H:%M:%S %d/%m/%Y")
 
         latex_content = f"""\\documentclass[12pt,a4paper]{{article}}
 \\usepackage[utf8]{{inputenc}} % interpreta o arquivo .tex como UTF-8 
@@ -1227,23 +1227,21 @@ class AnalisadorRequerimentos:
 \\geometry{{margin=1.5cm}}
 \\pagestyle{{fancy}}
 \\fancyhf{{}}
-\\fancyhead[L]{{ANATEL - ORCN}}
+\\fancyhead[L]{{ORCN/SOR/Anatel}}
 \\fancyhead[R]{{{agora}}}
 \\fancyfoot[C]{{\\thepage}}
 \\setcounter{{tocdepth}}{2}
 
-\\title{{\\Huge\\textbf{{Relatório de Análise ORCN}}\\\\
-\\Large Análise Automatizada de Requerimentos SCH}}
-\\author{{Sistema ORCN - Automação ANATEL}}
-\\date{{{agora}}}
+\\title{{\\Large\\textbf{{Análise Automatizada de Requerimentos no SCH}}}}
+\\author{{Teógenes Brito da Nóbrega\\\\ \href{{mailto:tbnobrega@anatel.gov.br}}{{tbnobrega@anatel.gov.br}} }}
+%\\date{{{agora}}}
+\\date{{}}
 
 \\begin{{document}}
 
 \\maketitle
-\\newpage
 
-\\tableofcontents
-\\newpage
+%\\tableofcontents
 
 \\section{{{sumario_executivo}}}
 
@@ -1265,9 +1263,10 @@ realizada em {data_analise}.
 
 \\begin{{itemize}}
     \\item \\textbf{{Tempo Total de Análise:}} {tempo_analise_formatado}
+    \\item {agora}
 \\end{{itemize}}
 
-\\newpage
+%\\newpage
 
 \\section{{{analise_detalhada}}}
 A seguir estão os detalhes da análise para cada requerimento processado.
@@ -1278,13 +1277,13 @@ A seguir estão os detalhes da análise para cada requerimento processado.
 \\hline
 \\textbf{{Sigla}} & \\textbf{{Status}} \\\\
 \\hline
-\\textcolor{{green}}{{C}} & CONFORME \\\\
+\\textcolor{{green}}{{C}} & \\textcolor{{green}}{{CONFORME}}  \\\\
 \\hline
-\\textcolor{{red}}{{NC}} & NÃO CONFORME \\\\
+\\textcolor{{red}}{{NC}} & \\textcolor{{red}}{{NÃO CONFORME}} \\\\
 \\hline
-\\textcolor{{orange}}{{I}} & INCONCLUSIVO \\\\
+\\textcolor{{blue}}{{I}} & \\textcolor{{blue}}{{INCONCLUSIVO}} \\\\
 \\hline
-\\textcolor{{red}}{{E}} & ERRO \\\\
+\\textcolor{{orange}}{{E}} & \\textcolor{{orange}}{{ERRO}} \\\\
 \\hline
 \\end{{tabular}}
 \\caption{{Legenda dos status utilizados nas tabelas de análise}}

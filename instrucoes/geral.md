@@ -1,6 +1,8 @@
 # ORCN - Automação de Download/Análise de codumentos do SCH
 Este projeto automatiza o download de anexos de requerimentos do sistema SCH da ANATEL. Uma automação básica da análise também é esperada.
 
+## Orientações gerais
+- TODOS os import devem estar no cabeçalho dos arquivos .py. Nenhum import pode estar aninhado no meio do código.
 ## 🔧 Funcionalidades
 
 As funcionalidades da aplicação são:

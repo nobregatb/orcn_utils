@@ -1,23 +1,19 @@
+from pdf2image import convert_from_path
+import pytesseract
 import json
-import os
 import re
 import unicodedata
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Any, Tuple
+from typing import Dict, List, Optional, Tuple#, Any 
 import subprocess
 
 from core.log_print import log_info, log_erro, log_erro_critico
 
-try:
-    import fitz  # PyMuPDF
-    PYMUPDF_DISPONIVEL = True
-except ImportError:
-    PYMUPDF_DISPONIVEL = False
+import pymupdf as fitz
+PYMUPDF_DISPONIVEL = True
 
-try:
-    from pdf2image import convert_from_path
-    import pytesseract
+try:    
     OCR_DISPONIVEL = True
     # Configurar caminho do Tesseract se necessário
     try:
@@ -27,7 +23,11 @@ try:
 except ImportError:
     OCR_DISPONIVEL = False
 
-
+def latex_escape_path(caminho: str) -> str:
+    """Escapa caracteres especiais do LaTeX dentro de um caminho de arquivo."""
+    caminho = caminho.replace("\\", "/")  # usa / para evitar confusão
+    # escapa caracteres especiais
+    return re.sub(r'([_&#%{}$^~\\])', r'\\\1', caminho)
 
 def buscar_valor(json_data, key_busca, valor_busca, key_retorno):
     """
@@ -88,12 +88,13 @@ class CCTAnalyzerIntegrado:
             
             with fitz.open(pdf_path) as pdf:
                 content = ""
+                              
                 for pagina in pdf:
-                    content += pagina.get_text() + "\n"
+                    content += str(pagina.get_text("text")) + "\n"
 
-            if content.strip() == "":
-                log_info(f"PDF aparentemente vazio, tentando OCR: {pdf_path.name}")
-                content = self.extract_pdf_content_from_ocr(pdf_path)
+                if content.strip() == "":
+                    log_info(f"PDF aparentemente vazio, tentando OCR: {pdf_path.name}")
+                    content = self.extract_pdf_content_from_ocr(pdf_path)
                 
             return content
             
@@ -324,7 +325,7 @@ class CCTAnalyzerIntegrado:
         }
 
     def _extract_normas_by_pattern(self, content: str, start_pattern: str, end_pattern: str, 
-                                 processing_type: str, custom_patterns: List[str] = None) -> List[str]:
+                                 processing_type: str, custom_patterns: Optional[List[str]] = None) -> List[str]:
         """
         Extrai normas usando padrões específicos de início e fim.
         """
@@ -343,11 +344,33 @@ class CCTAnalyzerIntegrado:
                 for line in lines:
                     line = line.strip()
                     for pattern in custom_patterns:
-                        if pattern in line.upper():
-                            # Extrair texto que contenha números (como ATO nº 123)
-                            norma_match = re.search(r'(ATO|RESOLUÇÃO)\s*(?:Nº|N°|NO|nº|n°|no)?\s*\d+[\d\w\.\-/]*', line, re.IGNORECASE)
-                            if norma_match:
-                                normas.append(norma_match.group().strip())
+                        if pattern in normas_section.upper():
+                            # Regex corrigidanormas_section- o problema era \s+ que exige pelo menos 1 espaço
+                            # Mudei para \s* para permitir zero ou mais espaços
+                            norma_matches = re.findall(
+                                r'(ATO|RESOLUÇÃO|RESOLUÇÕES?)\s*(?:da\s+\w+\s+)?(?:Nº|N°|NO|nº|n°|no)?[\s:]*(\d+)',
+                                normas_section,
+                                re.IGNORECASE
+                            )
+                            
+                            #print(f"Matches encontrados com regex:")
+                            #for i, match in enumerate(norma_matches):
+                            #    print(f"  {i+1}. Tipo: '{match[0]}', Número: '{match[1]}'")
+                            #print("\n" + "="*80 + "\n")
+                            
+                            # Processar cada match
+                            for tipo, numero in norma_matches:
+                                tipo_normalizado = tipo.lower()
+                                if 'resolu' in tipo_normalizado:
+                                    tipo_normalizado = 'resolucao'
+                                else:
+                                    tipo_normalizado = 'ato'
+                                
+                                norma_formatada = f"{tipo_normalizado}{numero}"
+                                if norma_formatada not in normas:
+                                    normas.append(norma_formatada)
+                            
+                            break
                                 
             elif processing_type == "regex_patterns":
                 # Buscar padrões gerais de normas
@@ -374,6 +397,9 @@ class CCTAnalyzerIntegrado:
         
         ocd_key = nome_ocd.lower()
         ocd_config = ocd_patterns.get(ocd_key)
+
+        if ocd_key == 'ocp-teli':
+            x = 1
         
         if ocd_config:
             normas = self._extract_normas_by_pattern(
@@ -480,8 +506,10 @@ class AnalisadorRequerimentos:
     
     def __init__(self):
         #self.pasta_base = Path("downloads")  # Pasta onde estão os requerimentos
-        self.pasta_base = Path(r'C:\Users\tbnobrega\OneDrive - ANATEL\Anatel\_ORCN\Requerimentos')
-        self.pasta_resultados = Path("resultados_analise")
+        home_dir = r'C:\Users\tbnobrega\OneDrive - ANATEL\Anatel\_ORCN'
+        self.pasta_base = Path(home_dir + r'\Requerimentos')
+        self.pasta_resultados = Path(home_dir + r'\resultados_analise')
+        #self.pasta_resultados = Path("resultados_analise")
         self.pasta_resultados.mkdir(exist_ok=True)
         
         # Carregar configurações
@@ -496,6 +524,10 @@ class AnalisadorRequerimentos:
         
         # Cache para CCTAnalyzer (instanciado sob demanda)
         self._cct_analyzer = None
+        
+        # Variáveis de timing
+        self.tempo_inicio_analise = None
+        self.tempo_fim_analise = None
         
     def _carregar_json(self, caminho: str) -> Dict:
         """Carrega arquivo JSON de configuração."""
@@ -520,24 +552,27 @@ class AnalisadorRequerimentos:
         print("1. Analisar um requerimento específico")
         print("2. Analisar todos os requerimentos (*)")
         print("3. Voltar ao menu principal")
+
+        resposta = "CANCELAR"
         
         try:
             opcao = input("\nDigite sua opção (1/2/3): ").strip()
             if opcao == "1":
-                return self._selecionar_requerimento_especifico()
+                resposta = self._selecionar_requerimento_especifico()
             elif opcao == "2":
-                return "*"
+                resposta = "*"
             elif opcao == "3":
-                return "CANCELAR"
+                resposta = "CANCELAR"
             else:
                 print("❌ Opção inválida. Digite 1, 2 ou 3.")
         except KeyboardInterrupt:
             print("\n❌ Operação cancelada pelo usuário.")
-            return "CANCELAR"
+            resposta = "CANCELAR"
         except Exception as e:
             log_erro(f"Erro inesperado na seleção de escopo: {str(e)}")
             print("❌ Erro inesperado. Retornando ao menu principal.")
-            return "CANCELAR"
+            resposta = "CANCELAR"
+        return resposta
     
     def _selecionar_requerimento_especifico(self) -> str:
         """Permite ao usuário selecionar um requerimento específico."""
@@ -545,40 +580,43 @@ class AnalisadorRequerimentos:
         
         if not requerimentos:
             print("❌ Nenhum requerimento encontrado na pasta de downloads.")
-            return "CANCELAR"
+            resposta = "CANCELAR"
         
         print(f"\n📁 Requerimentos disponíveis ({len(requerimentos)}):")
         for i, req in enumerate(requerimentos, 1):
             print(f"{i:2d}. {req}")
         print(f"{len(requerimentos)+1:2d}. Cancelar e voltar")
         
+        opcao = ""
+        resposta = "CANCELAR"
         try:
             opcao = input(f"\nSelecione o requerimento (1-{len(requerimentos)+1}): ").strip()
             
             # Verificar se é cancelamento
             if opcao.lower() in ['c', 'cancelar', 'voltar', '0']:
-                return "CANCELAR"
+                return resposta
             
             indice = int(opcao) - 1
             
             # Verificar se é a opção de cancelar (último número)
             if indice == len(requerimentos):
-                return "CANCELAR"
+                return resposta
             
             # Verificar se é um requerimento válido
             if 0 <= indice < len(requerimentos):
-                return requerimentos[indice]
+                resposta = requerimentos[indice]
             else:
                 print(f"❌ Número inválido. Digite um número entre 1 e {len(requerimentos)+1}, ou 'c' para cancelar.")
                 
         except ValueError:
             if opcao.lower() in ['c', 'cancelar', 'voltar']:
-                return "CANCELAR"
+                return resposta
             print("❌ Digite um número válido ou 'c' para cancelar.")
         except KeyboardInterrupt:
             print("\n❌ Operação cancelada pelo usuário.")
-            return "CANCELAR"
-    
+            return resposta
+        return resposta
+
     def _listar_requerimentos(self) -> List[str]:
         """Lista todos os requerimentos disponíveis."""
         if not self.pasta_base.exists():
@@ -817,7 +855,6 @@ class AnalisadorRequerimentos:
             
             # Tentar extrair conteúdo básico do PDF para validações adicionais
             try:
-                import fitz  # PyMuPDF
                 
                 with fitz.open(caminho) as doc:
                     total_paginas = len(doc)
@@ -827,7 +864,7 @@ class AnalisadorRequerimentos:
                         conformidades.append(f"Documento contém {total_paginas} página(s)")
                         
                         # Extrair texto da primeira página para análise básica
-                        primeira_pagina = doc[0].get_text()
+                        primeira_pagina = str(doc[0].get_text())
                         primeira_pagina_lower = primeira_pagina.lower()
                         
                         # Verificar palavras-chave esperadas em RACT
@@ -934,9 +971,7 @@ class AnalisadorRequerimentos:
                 nao_conformidades.append("Arquivo muito pequeno para ser um manual completo")
             
             # Análise de conteúdo do PDF
-            try:
-                import fitz  # PyMuPDF
-                
+            try:                
                 with fitz.open(caminho) as doc:
                     total_paginas = len(doc)
                     resultado["observacoes"].append(f"Total de páginas: {total_paginas}")
@@ -952,7 +987,7 @@ class AnalisadorRequerimentos:
                     # Extrair texto para análise de conteúdo
                     texto_completo = ""
                     for pagina_num in range(min(3, total_paginas)):  # Analisar até 3 primeiras páginas
-                        texto_completo += doc[pagina_num].get_text().lower()
+                        texto_completo += str(doc[pagina_num].get_text()).lower() + "\n"
                     
                     # Verificar elementos essenciais de um manual
                     elementos_essenciais = {
@@ -1052,6 +1087,7 @@ class AnalisadorRequerimentos:
     
     def _analisar_requerimento_individual(self, nome_requerimento: str) -> Dict:
         """Analisa todos os documentos de um requerimento específico."""
+        tempo_inicio_req = datetime.now()
         log_info(f"Iniciando análise do requerimento: {nome_requerimento}")
         
         pasta_requerimento = self.pasta_base / nome_requerimento
@@ -1062,6 +1098,7 @@ class AnalisadorRequerimentos:
         resultado_requerimento = {
             "numero_requerimento": nome_requerimento,
             "timestamp_analise": datetime.now().isoformat(),
+            "tempo_inicio_analise": tempo_inicio_req.isoformat(),
             "documentos_analisados": [],
             "resumo_status": {
                 "CONFORME": 0,
@@ -1094,7 +1131,14 @@ class AnalisadorRequerimentos:
             if status in resultado_requerimento["resumo_status"]:
                 resultado_requerimento["resumo_status"][status] += 1
         
-        log_info(f"Análise do requerimento {nome_requerimento} concluída")
+        # Calcular tempo de análise do requerimento
+        tempo_fim_req = datetime.now()
+        tempo_analise_req = tempo_fim_req - tempo_inicio_req
+        resultado_requerimento["tempo_fim_analise"] = tempo_fim_req.isoformat()
+        resultado_requerimento["tempo_total_analise_segundos"] = tempo_analise_req.total_seconds()
+        resultado_requerimento["tempo_total_analise_formatado"] = str(tempo_analise_req)#.split('.')[0]  # Remove microsegundos
+        
+        log_info(f"Análise do requerimento {nome_requerimento} concluída em {resultado_requerimento['tempo_total_analise_formatado']}")
         return resultado_requerimento
     
     def _escapar_latex(self, texto: str) -> str:
@@ -1138,42 +1182,60 @@ class AnalisadorRequerimentos:
                 if status in status_geral:
                     status_geral[status] += count
         
+        # Calcular tempos de análise e compilação
+        tempo_analise_formatado = "N/A"
+        
+        if self.tempo_inicio_analise and self.tempo_fim_analise:
+            tempo_total_analise = self.tempo_fim_analise - self.tempo_inicio_analise
+            tempo_analise_formatado = str(tempo_total_analise)#.split('.')[0]  # Remove microsegundos
+        
         # Preparar textos que precisam ser escapados
         data_analise = self._escapar_latex(datetime.now().strftime("%d/%m/%Y às %H:%M:%S"))
         
         # Preparar textos com acentos para LaTeX
-        sumario_executivo = "Sum\\'ario Executivo"
-        estatisticas_gerais = "Estat\\'isticas Gerais"
-        analise_detalhada = "An\\'alise Detalhada por Requerimento"
-        conclusoes_recomendacoes = "Conclus\\~oes e Recomenda\\c{c}\\~oes"
-        recomendacoes = "Recomenda\\c{c}\\~oes"
-        nao_conformes = "N\\~ao Conformes"
-        nao_conforme_rec = "N\\~ao Conforme"
-        relatorio_texto = "Este relat\\'orio apresenta os resultados da an\\'alise automatizada"
+        sumario_executivo = "Sumário"
+        estatisticas_gerais = "Estatásticas Gerais"
+        analise_detalhada = "Análise Detalhada por Requerimento"
+        conclusoes_recomendacoes = "Conclusões e Recomendações"
+        recomendacoes = "Recomendações"
+        nao_conformes = "Não Conformes"
+        nao_conforme_rec = "Não Conforme"
+        relatorio_texto = "Este relatório apresenta os resultados da análise automatizada"
         
         # Conteúdo do relatório LaTeX
+        agora = "Processamento: " + datetime.now().strftime("%H:%M:%S %d/%m/%Y")
+
         latex_content = f"""\\documentclass[12pt,a4paper]{{article}}
-\\usepackage[utf8]{{inputenc}}
+\\usepackage[utf8]{{inputenc}} % interpreta o arquivo .tex como UTF-8 
+\\usepackage[T1]{{fontenc}}      % usa codificação de fonte T1 (suporta acentos latinos)
+\\usepackage{{lmodern}}          % usa uma fonte moderna com suporte a T1
 \\usepackage[portuguese]{{babel}}
-\\usepackage[landscape]{{geometry}}
+\\usepackage{{geometry}}
 \\usepackage{{fancyhdr}}
 \\usepackage{{graphicx}}
 \\usepackage{{xcolor}}
+\\usepackage{{xurl}}
+\\usepackage{{datetime2}}
 \\usepackage{{booktabs}}
 \\usepackage{{longtable}}
-\\usepackage{{hyperref}}
+\\usepackage[colorlinks=true,
+            linkcolor=blue,
+            citecolor=green,
+            urlcolor=red,
+            filecolor=magenta]{{hyperref}}
 
 \\geometry{{margin=1.5cm}}
 \\pagestyle{{fancy}}
 \\fancyhf{{}}
 \\fancyhead[L]{{ANATEL - ORCN}}
-\\fancyhead[R]{{\\today}}
+\\fancyhead[R]{{{agora}}}
 \\fancyfoot[C]{{\\thepage}}
+\\setcounter{{tocdepth}}{2}
 
 \\title{{\\Huge\\textbf{{Relatório de Análise ORCN}}\\\\
 \\Large Análise Automatizada de Requerimentos SCH}}
 \\author{{Sistema ORCN - Automação ANATEL}}
-\\date{{\\today}}
+\\date{{{agora}}}
 
 \\begin{{document}}
 
@@ -1199,9 +1261,34 @@ realizada em {data_analise}.
     \\item \\textbf{{Documentos com Erro:}} {status_geral['ERRO']} ({status_geral['ERRO']/max(total_documentos,1)*100:.1f}\\%)
 \\end{{itemize}}
 
+\\subsection{{Informações de Tempo}}
+
+\\begin{{itemize}}
+    \\item \\textbf{{Tempo Total de Análise:}} {tempo_analise_formatado}
+\\end{{itemize}}
+
 \\newpage
 
 \\section{{{analise_detalhada}}}
+A seguir estão os detalhes da análise para cada requerimento processado.
+\\subsection{{Legenda dos Status}}
+\\begin{{table}}[h]
+\\centering
+\\begin{{tabular}}{{|c|l|}}
+\\hline
+\\textbf{{Sigla}} & \\textbf{{Status}} \\\\
+\\hline
+\\textcolor{{green}}{{C}} & CONFORME \\\\
+\\hline
+\\textcolor{{red}}{{NC}} & NÃO CONFORME \\\\
+\\hline
+\\textcolor{{orange}}{{I}} & INCONCLUSIVO \\\\
+\\hline
+\\textcolor{{red}}{{E}} & ERRO \\\\
+\\hline
+\\end{{tabular}}
+\\caption{{Legenda dos status utilizados nas tabelas de análise}}
+\\end{{table}}
 
 """
         
@@ -1209,27 +1296,21 @@ realizada em {data_analise}.
         for i, req in enumerate(self.resultados_analise, 1):
             numero_req = self._escapar_latex(req.get("numero_requerimento", f"Requerimento_{i}"))
             documentos = req.get("documentos_analisados", [])
-            resumo = req.get("resumo_status", {})
-            timestamp_analise = self._escapar_latex(req.get('timestamp_analise', 'N/A'))
+            tempo_analise_req = req.get("tempo_total_analise_formatado", "N/A")
+            #resumo = req.get("resumo_status", {})
+            #timestamp_analise = self._escapar_latex(req.get('timestamp_analise', 'N/A'))
             
             latex_content += f"""
 \\subsection{{Requerimento: {numero_req}}}
+A seguir, os detalhes da análise dos documentos associados a este requerimento.
 
-\\textbf{{Data da Análise:}} {timestamp_analise}
-
-\\textbf{{Resumo do Status:}}
-\\begin{{itemize}}
-    \\item Conformes: {resumo.get('CONFORME', 0)}
-    \\item Não Conformes: {resumo.get('NAO_CONFORME', 0)}
-    \\item Inconclusivos: {resumo.get('INCONCLUSIVO', 0)}
-    \\item Erros: {resumo.get('ERRO', 0)}
-\\end{{itemize}}
+\\textbf{{Tempo de Análise:}} {tempo_analise_req}
 
 \\subsubsection{{Documentos Analisados}}
 
-\\begin{{longtable}}{{|p{{4cm}}|p{{2cm}}|p{{2cm}}|p{{6cm}}|}}
+\\begin{{longtable}}{{|p{{6cm}}|p{{10cm}}|}}
 \\hline
-\\textbf{{Documento}} & \\textbf{{Tipo}} & \\textbf{{Status}} & \\textbf{{Observações}} \\\\
+\\textbf{{Documento}} & \\textbf{{Observações}} \\\\
 \\hline
 \\endhead
 """
@@ -1238,25 +1319,50 @@ realizada em {data_analise}.
                 nome = self._escapar_latex(doc.get("nome_arquivo", "N/A"))
                 tipo = self._escapar_latex(doc.get("tipo", "N/A"))
                 status = doc.get("status", "N/A")
-                
-                # Colorir status (não precisa escapar pois são valores controlados)
+                caminho = doc.get("caminho", "N/A")
+                caminho_normalizado = latex_escape_path(caminho)
+
+                # Usar siglas e colorir status
                 if status == "CONFORME":
-                    status_colorido = "\\textcolor{green}{" + self._escapar_latex(status) + "}"
+                    status_colorido = "\\textcolor{green}{C}"
                 elif status == "NAO_CONFORME":
-                    status_colorido = "\\textcolor{red}{" + self._escapar_latex(status) + "}"
+                    status_colorido = "\\textcolor{red}{NC}"
                 elif status == "INCONCLUSIVO":
-                    status_colorido = "\\textcolor{orange}{" + self._escapar_latex(status) + "}"
+                    status_colorido = "\\textcolor{orange}{I}"
+                elif status == "ERRO":
+                    status_colorido = "\\textcolor{red}{E}"
                 else:
-                    status_colorido = "\\textcolor{red}{" + self._escapar_latex(status) + "}"
+                    status_colorido = "\\textcolor{red}{E}"
                 
                 # Escapar observações e limitar tamanho
                 observacoes_raw = "; ".join(doc.get("observacoes", []))
-                if len(observacoes_raw) > 100:
-                    observacoes_raw = observacoes_raw[:100] + "..."
-                observacoes = self._escapar_latex(observacoes_raw)
+                nao_conformidades_raw = "; ".join(doc.get("nao_conformidades", []))
+                #if len(observacoes_raw) > 100:  
+                #    observacoes_raw = observacoes_raw[:100] + "..."
+                #observacoes = self._escapar_latex(observacoes_raw)
+                nao_conformidades = self._escapar_latex(nao_conformidades_raw)
                 
-                latex_content += f"{nome} & {tipo} & {status_colorido} & {observacoes} \\\\\n\\hline\n"
-            
+                # Extrair informações de dados_extraidos se disponível
+                dados_extraidos = doc.get("dados_extraidos", {})
+                info_adicional = ""
+                
+                if dados_extraidos:
+                    equipamentos = dados_extraidos.get("equipamentos", [])
+                    normas_verificadas = dados_extraidos.get("normas_verificadas", [])
+                    
+                    if equipamentos:
+                        equipamentos_escapados = [self._escapar_latex(eq) for eq in equipamentos]
+                        info_adicional += r"\newline" + f"\\textbf{{Equipamentos:}} {', '.join(equipamentos_escapados)}."
+                    
+                    if normas_verificadas:
+                        normas_escapadas = [self._escapar_latex(norma) for norma in normas_verificadas]
+                        info_adicional += r"\newline" + f"\\textbf{{Normas verificadas:}} {', '.join(normas_escapadas)}."
+
+                # Combinar informações
+                info_completa = info_adicional +  r"\newline" + f"\\textbf{{{nao_conformidades}}}"  if info_adicional else nao_conformidades
+                
+                latex_content += f"\\href{{run:{caminho_normalizado}}}{{{nome}}} & [{status_colorido}] {info_completa} \\\\ \\hline"
+
             latex_content += """\\end{longtable}
 
 """
@@ -1267,8 +1373,8 @@ realizada em {data_analise}.
 
 \\subsection{{Principais Achados}}
 \\begin{{itemize}}
-    \\item A an\\'alise automatizada identificou padr\\~oes de conformidade nos documentos processados
-    \\item Documentos com status ``Inconclusivo'' requerem revis\\~ao manual adicional
+    \\item A análise automatizada identificou padrões de conformidade nos documentos processados
+    \\item Documentos com status ``Inconclusivo'' requerem revisão manual adicional
     \\item Documentos com ``Erro'' precisam ser reprocessados ou verificados manualmente
 \\end{{itemize}}
 
@@ -1276,7 +1382,7 @@ realizada em {data_analise}.
 \\begin{{itemize}}
     \\item Revisar manualmente todos os documentos marcados como ``{nao_conforme_rec}''
     \\item Investigar a causa dos erros de processamento para melhorar o sistema
-    \\item Considerar atualiza\\c{{c}}\\~ao das regras de an\\'alise baseada nos resultados
+    \\item Considerar atualização das regras de análise baseada nos resultados
 \\end{{itemize}}
 
 \\end{{document}}
@@ -1294,6 +1400,8 @@ realizada em {data_analise}.
     
     def _compilar_latex_para_pdf(self, caminho_latex: str) -> str:
         """Compila o arquivo LaTeX para PDF usando pdflatex."""
+        caminho_pdf = ""
+        caminho_latex_absoluto = ""
         try:
             # Converter para Path absoluto se necessário
             caminho_latex_path = Path(caminho_latex)
@@ -1309,34 +1417,53 @@ realizada em {data_analise}.
                 caminho_latex_absoluto
             ], capture_output=True, text=True, cwd=str(self.pasta_resultados.resolve()))
             
-            resultado = subprocess.run([
-                "pdflatex", 
-                "-output-directory", str(self.pasta_resultados.resolve()),
-                caminho_latex_absoluto
-            ], capture_output=True, text=True, cwd=str(self.pasta_resultados.resolve()))
-            
             if resultado.returncode == 0:
-                caminho_pdf = caminho_latex_absoluto.replace('.tex', '.pdf')
-                log_info(f"PDF gerado com sucesso: {caminho_pdf}")
-                return caminho_pdf
-            else:
-                log_erro(f"Erro na compilação LaTeX: {resultado.stderr}")
-                return caminho_latex_absoluto  # Retorna o .tex se falhar
-                
+                resultado = subprocess.run([
+                    "pdflatex", 
+                    "-output-directory", str(self.pasta_resultados.resolve()),
+                    caminho_latex_absoluto
+                ], capture_output=True, text=True, cwd=str(self.pasta_resultados.resolve()))
+
+                if resultado.returncode == 0:
+                    resultado = subprocess.run([
+                        "pdflatex", 
+                        "-output-directory", str(self.pasta_resultados.resolve()),
+                        caminho_latex_absoluto
+                    ], capture_output=True, text=True, cwd=str(self.pasta_resultados.resolve()))
+        
+                    if resultado.returncode == 0:
+                        caminho_pdf = caminho_latex_absoluto.replace('.tex', '.pdf')
+                        log_info(f"PDF gerado com sucesso: {caminho_pdf}")
+                        # Mantém apenas .tex, .pdf e .json
+                        exts_permitidas = {".tex", ".pdf", ".json"}                    
+                        for arquivo in self.pasta_resultados.iterdir():
+                            if arquivo.is_file() and arquivo.suffix.lower() not in exts_permitidas:
+                                print("Apagando:", arquivo)
+                                arquivo.unlink()  # apaga o arquivo
+
+                    # return caminho_pdf
+                else:
+                    log_erro(f"Erro na compilação LaTeX: {resultado.stderr}")
+                    #return caminho_latex_absoluto  # Retorna o .tex se falhar
+       
         except FileNotFoundError:
             log_erro("pdflatex não encontrado. Instale uma distribuição LaTeX (TeX Live, MiKTeX)")
             # Retornar caminho absoluto se disponível, senão o original
-            try:
+            '''try:
                 return caminho_latex_absoluto
             except NameError:
-                return caminho_latex
+                return caminho_latex'''
         except Exception as e:
             log_erro(f"Erro ao compilar LaTeX: {str(e)}")
             # Retornar caminho absoluto se disponível, senão o original
-            try:
+            '''try:
                 return caminho_latex_absoluto
             except NameError:
-                return caminho_latex
+                return caminho_latex'''
+        if caminho_pdf != "":
+            return caminho_pdf
+        else:
+            return caminho_latex_absoluto
     
     def _salvar_resultados_json(self) -> str:
         """Salva os resultados da análise em formato JSON."""
@@ -1363,6 +1490,8 @@ realizada em {data_analise}.
                 print("❌ Análise cancelada pelo usuário.")
                 return
             
+            # Iniciar cronômetro da análise
+            self.tempo_inicio_analise = datetime.now()
             print(f"\n🔄 Iniciando análise...")
             
             if escopo == "*":
@@ -1390,7 +1519,12 @@ realizada em {data_analise}.
                 print("❌ Nenhum resultado de análise foi gerado.")
                 return
             
-            print(f"\n✅ Análise concluída! Processados {len(self.resultados_analise)} requerimento(s)")
+            # Finalizar cronômetro da análise
+            self.tempo_fim_analise = datetime.now()
+            tempo_total_analise = self.tempo_fim_analise - self.tempo_inicio_analise
+            tempo_analise_formatado = str(tempo_total_analise)#.split('.')[0]  # Remove microsegundos
+            
+            print(f"\n✅ Análise concluída! Processados {len(self.resultados_analise)} requerimento(s) em {tempo_analise_formatado}")
             
             # Salvar resultados em JSON
             print("💾 Salvando resultados JSON...")
@@ -1402,8 +1536,8 @@ realizada em {data_analise}.
             
             if caminho_latex:
                 # Tentar compilar para PDF
-                print("🔄 Compilando relatório para PDF...")
-                caminho_pdf = self._compilar_latex_para_pdf(caminho_latex)
+                print("🔄 Compilando relatório para PDF...")                
+                caminho_pdf = self._compilar_latex_para_pdf(caminho_latex)                
                 
                 print(f"\n🎉 Análise finalizada com sucesso!")
                 print(f"📁 Resultados salvos em: {self.pasta_resultados}")

@@ -12,6 +12,7 @@ import re
 import fitz
 import json
 import subprocess
+import traceback
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 import pymupdf4llm
@@ -866,7 +867,6 @@ def main():
         log("\n\n[INFO] Aplicativo interrompido pelo usuário")
     except Exception as e:
         log(f"\n[ERRO FATAL] {e}")
-        import traceback
         traceback.print_exc()
     finally:
         input("\nPressione ENTER para sair...")

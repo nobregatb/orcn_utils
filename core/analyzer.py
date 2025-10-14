@@ -66,6 +66,52 @@ def normalizar_dados(dados):
     return dados
 
 
+def obter_versao_git() -> str:
+    """Obtém a versão do script baseada em git tag ou commit hash."""
+    try:
+        # Tentar obter a tag mais recente (ordenada por versão)
+        resultado = subprocess.run(
+            ["git", "tag", "--sort=-version:refname"],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        
+        if resultado.returncode == 0 and resultado.stdout.strip():
+            # Pegar a primeira linha (tag mais recente)
+            tags = resultado.stdout.strip().split('\n')
+            if tags and tags[0]:
+                return tags[0]
+        
+        # Fallback: tentar describe --tags
+        resultado = subprocess.run(
+            ["git", "describe", "--tags", "--abbrev=0"],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        
+        if resultado.returncode == 0 and resultado.stdout.strip():
+            return resultado.stdout.strip()
+        
+        # Se não há tags, tentar obter o hash do commit
+        resultado = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            capture_output=True,
+            text=True,
+            timeout=5
+        )
+        
+        if resultado.returncode == 0 and resultado.stdout.strip():
+            return f"commit-{resultado.stdout.strip()}"
+            
+    except (subprocess.TimeoutExpired, FileNotFoundError, Exception):
+        pass
+    
+    # Fallback para versão baseada em data
+    return f"v{datetime.now().strftime('%Y.%m.%d')}"
+
+
 class CCTAnalyzerIntegrado:
     """
     Versão integrada do CCTAnalyzer com todas as funcionalidades necessárias.
@@ -948,27 +994,9 @@ class AnalisadorRequerimentos:
             conformidades = []
             nao_conformidades = []
             
-            # Verificar nomenclatura
-            nome_arquivo = caminho.name.lower()
-            if "manual" in nome_arquivo:
-                conformidades.append("Nomenclatura 'Manual' identificada no nome do arquivo")
-            else:
-                nao_conformidades.append("Palavra 'Manual' não encontrada no nome do arquivo")
-            
-            # Verificar formato
-            if caminho.suffix.lower() == '.pdf':
-                conformidades.append("Formato PDF adequado")
-            else:
-                nao_conformidades.append("Manual não está em formato PDF")
-            
-            # Verificar tamanho (manuais muito pequenos podem ser inadequados)
+            # Verificar tamanho do arquivo
             tamanho_mb = caminho.stat().st_size / (1024 * 1024)
             resultado["observacoes"].append(f"Tamanho do arquivo: {tamanho_mb:.2f} MB")
-            
-            if tamanho_mb > 0.1:  # Pelo menos 100KB
-                conformidades.append("Tamanho do arquivo adequado")
-            else:
-                nao_conformidades.append("Arquivo muito pequeno para ser um manual completo")
             
             # Análise de conteúdo do PDF
             try:                
@@ -976,55 +1004,37 @@ class AnalisadorRequerimentos:
                     total_paginas = len(doc)
                     resultado["observacoes"].append(f"Total de páginas: {total_paginas}")
                     
-                    if total_paginas >= 2:
-                        conformidades.append(f"Manual com {total_paginas} páginas")
-                    elif total_paginas == 1:
-                        resultado["observacoes"].append("Manual de apenas 1 página - verificar se está completo")
-                    else:
+                    if total_paginas == 0:
                         nao_conformidades.append("Manual vazio ou corrompido")
                         return resultado
                     
-                    # Extrair texto para análise de conteúdo
+                    # Extrair texto completo do manual para análise
                     texto_completo = ""
-                    for pagina_num in range(min(3, total_paginas)):  # Analisar até 3 primeiras páginas
+                    for pagina_num in range(total_paginas):  # Analisar todas as páginas
                         texto_completo += str(doc[pagina_num].get_text()).lower() + "\n"
                     
-                    # Verificar elementos essenciais de um manual
-                    elementos_essenciais = {
-                        "especificações": ["especificação", "características", "dados técnicos"],
-                        "instalação": ["instalação", "instalação", "montagem", "setup"],
-                        "operação": ["operação", "uso", "funcionamento", "utilização"],
-                        "segurança": ["segurança", "cuidado", "atenção", "aviso", "perigo"],
-                        "conformidade": ["anatel", "conformidade", "certificação", "homologação"]
+                    # Definir palavras-chave essenciais para manuais
+                    palavras_chave_manual = [
+                        "ipv6", "bluetooth", "interface e1",
+                        "nfc", "wi-fi", "voz", "simcard", "bateria", "carregador"
+                    ]
+                    
+                    # Contar ocorrências de cada palavra-chave
+                    palavras_encontradas = {}
+                    palavras_nao_encontradas = []
+                    
+                    for palavra in palavras_chave_manual:
+                        contador = texto_completo.count(palavra)
+                        if contador > 0:
+                            palavras_encontradas[palavra] = contador
+                        else:
+                            palavras_nao_encontradas.append(palavra)
+                    
+                    # Armazenar resultados da análise de palavras-chave nos dados extraídos
+                    resultado["dados_extraidos"] = {
+                        "palavras_encontradas": palavras_encontradas,
+                        "palavras_nao_encontradas": palavras_nao_encontradas
                     }
-                    
-                    elementos_encontrados = []
-                    for categoria, termos in elementos_essenciais.items():
-                        if any(termo in texto_completo for termo in termos):
-                            elementos_encontrados.append(categoria)
-                    
-                    if len(elementos_encontrados) >= 3:
-                        conformidades.append(f"Elementos essenciais encontrados: {', '.join(elementos_encontrados)}")
-                    elif len(elementos_encontrados) >= 1:
-                        resultado["observacoes"].append(f"Alguns elementos encontrados: {', '.join(elementos_encontrados)}")
-                        resultado["observacoes"].append("Manual pode estar incompleto - verificar conteúdo")
-                    else:
-                        nao_conformidades.append("Poucos elementos técnicos identificados no manual")
-                    
-                    # Verificar se contém informações do produto
-                    if any(termo in texto_completo for termo in ["modelo", "produto", "equipamento", "dispositivo"]):
-                        conformidades.append("Informações do produto identificadas")
-                    else:
-                        nao_conformidades.append("Informações específicas do produto não identificadas")
-                    
-                    # Verificar idioma (português)
-                    palavras_portugues = ["o", "a", "de", "da", "do", "para", "com", "em", "é", "são"]
-                    palavras_encontradas_pt = sum(1 for palavra in palavras_portugues if palavra in texto_completo)
-                    
-                    if palavras_encontradas_pt >= 5:
-                        conformidades.append("Manual em português identificado")
-                    else:
-                        resultado["observacoes"].append("Verificar se manual está em português")
                         
             except ImportError:
                 resultado["observacoes"].append("PyMuPDF não disponível - análise de conteúdo limitada")
@@ -1040,16 +1050,11 @@ class AnalisadorRequerimentos:
             resultado["conformidades"].extend(conformidades)
             resultado["nao_conformidades"].extend(nao_conformidades)
             
-            # Determinar status final
-            if nao_conformidades:
-                if any("erro" in nc.lower() or "corrompido" in nc.lower() for nc in nao_conformidades):
-                    resultado["status"] = "ERRO"
-                elif any("não identificad" in nc.lower() or "incompleto" in nc.lower() for nc in nao_conformidades):
-                    resultado["status"] = "INCONCLUSIVO"
-                else:
-                    resultado["status"] = "NAO_CONFORME"
+            # Determinar status final - apenas para erros técnicos
+            if any("erro" in nc.lower() or "corrompido" in nc.lower() for nc in nao_conformidades):
+                resultado["status"] = "ERRO"
             else:
-                resultado["status"] = "CONFORME"
+                resultado["status"] = "PROCESSADO"  # Status neutro para manuais
             
             resultado["observacoes"].append(f"Análise de Manual concluída - Status: {resultado['status']}")
             log_info(f"Análise de Manual concluída - Status: {resultado['status']}")
@@ -1104,7 +1109,8 @@ class AnalisadorRequerimentos:
                 "CONFORME": 0,
                 "NAO_CONFORME": 0,
                 "INCONCLUSIVO": 0,
-                "ERRO": 0
+                "ERRO": 0,
+                "PROCESSADO": 0
             },
             "observacoes_gerais": []
         }
@@ -1121,7 +1127,7 @@ class AnalisadorRequerimentos:
         # Analisar cada documento
         for arquivo in arquivos_pdf:
             tipo_doc = self._determinar_tipo_documento(arquivo.name)
-            if tipo_doc != "CCT":
+            if tipo_doc != "CCT" and tipo_doc != "Manual":
                 continue
             resultado_doc = self._analisar_documento(arquivo, tipo_doc)
             resultado_requerimento["documentos_analisados"].append(resultado_doc)
@@ -1166,6 +1172,172 @@ class AnalisadorRequerimentos:
         
         return texto
 
+    def _obter_nome_completo_ocd(self, nome_ocd_extraido: str) -> str:
+        """Obtém o nome completo do OCD consultando ocds.json."""
+        if not nome_ocd_extraido or nome_ocd_extraido == 'N/A' or nome_ocd_extraido.startswith('[ERRO]'):
+            return "OCD não identificado"
+        
+        try:
+            ocds_file = Path(__file__).parent.parent / "utils" / "ocds.json"
+            
+            if not ocds_file.exists():
+                return nome_ocd_extraido
+            
+            with open(ocds_file, 'r', encoding='utf-8') as f:
+                ocds_data = json.load(f)
+            
+            # Normalizar o nome extraído para comparação
+            nome_normalizado = nome_ocd_extraido.lower().strip()
+            
+            # Buscar por correspondência parcial no nome
+            for ocd in ocds_data:
+                nome_completo = ocd.get('nome', '')
+                if nome_completo:
+                    nome_completo_normalizado = nome_completo.lower().strip()
+                    
+                    # Verificar correspondências específicas primeiro
+                    if nome_normalizado == nome_completo_normalizado:
+                        return nome_completo
+                    
+                    # Verificar se o nome extraído está contido no nome completo
+                    if nome_normalizado in nome_completo_normalizado:
+                        return nome_completo
+                    
+                    # Verificar palavras-chave importantes (>= 4 caracteres)
+                    palavras_extraidas = [p for p in nome_normalizado.split() if len(p) >= 4]
+                    if palavras_extraidas:
+                        if any(palavra in nome_completo_normalizado for palavra in palavras_extraidas):
+                            return nome_completo
+            
+            # Se não encontrou correspondência, retorna o nome extraído
+            return nome_ocd_extraido
+            
+        except Exception as e:
+            log_erro(f"Erro ao consultar ocds.json: {str(e)}")
+            return nome_ocd_extraido
+
+    def _coletar_equipamentos_unicos(self) -> Dict[str, Dict]:
+        """Coleta todos os equipamentos únicos encontrados na análise."""
+        equipamentos_unicos = {}
+        
+        for req in self.resultados_analise:
+            documentos = req.get("documentos_analisados", [])
+            for doc in documentos:
+                dados_extraidos = doc.get("dados_extraidos", {})
+                equipamentos = dados_extraidos.get("equipamentos", [])
+                
+                # equipamentos é uma lista de nomes (strings)
+                for nome_equipamento in equipamentos:
+                    if isinstance(nome_equipamento, str) and nome_equipamento.strip():
+                        # Buscar o ID correspondente no arquivo equipamentos.json
+                        eq_id = self._buscar_id_equipamento_por_nome(nome_equipamento)
+                        if eq_id:
+                            equipamentos_unicos[eq_id] = {
+                                'nome': nome_equipamento,
+                                'id': eq_id
+                            }
+        
+        return equipamentos_unicos
+
+    def _buscar_id_equipamento_por_nome(self, nome_equipamento: str) -> Optional[str]:
+        """Busca o ID de um equipamento pelo seu nome no arquivo equipamentos.json."""
+        try:
+            nome_normalizado = nome_equipamento.lower().strip()
+            
+            for equipamento in self.equipamentos:
+                nome_json = equipamento.get('nome', '').lower().strip()
+                if nome_normalizado == nome_json:
+                    return equipamento.get('id')
+                    
+            # Se não encontrou correspondência exata, buscar por similaridade
+            for equipamento in self.equipamentos:
+                nome_json = equipamento.get('nome', '').lower().strip()
+                # Verificar se o nome extraído está contido no nome do JSON ou vice-versa
+                if (nome_normalizado in nome_json) or (nome_json in nome_normalizado):
+                    return equipamento.get('id')
+                    
+            # Se ainda não encontrou, tentar buscar por palavras-chave significativas
+            palavras_extraidas = [p for p in nome_normalizado.split() if len(p) >= 4]
+            if palavras_extraidas:
+                for equipamento in self.equipamentos:
+                    nome_json = equipamento.get('nome', '').lower().strip()
+                    if any(palavra in nome_json for palavra in palavras_extraidas):
+                        return equipamento.get('id')
+            
+            log_erro(f"ID não encontrado para equipamento: {nome_equipamento}")
+            return None
+            
+        except Exception as e:
+            log_erro(f"Erro ao buscar ID do equipamento '{nome_equipamento}': {str(e)}")
+            return None
+
+    def _obter_requisitos_para_equipamento(self, equipamento_id: str) -> List[Dict]:
+        """Obtém os requisitos legais aplicáveis para um equipamento específico."""
+        requisitos = []
+        
+        try:
+            # Buscar normas requeridas para o equipamento
+            normas_requeridas = []
+            for req in self.requisitos:
+                if req.get('equipamento') == equipamento_id:
+                    normas_requeridas = req.get('norma', [])
+                    break
+            
+            # Para cada norma requerida, buscar os detalhes no arquivo normas.json
+            for norma_id in normas_requeridas:
+                for norma in self.normas:
+                    if norma.get('id') == norma_id:
+                        requisitos.append({
+                            'id': norma.get('id', ''),
+                            'nome': norma.get('nome', ''),
+                            'descricao': norma.get('descricao', ''),
+                            'url': norma.get('url', '')
+                        })
+                        break
+        
+        except Exception as e:
+            log_erro(f"Erro ao obter requisitos para equipamento {equipamento_id}: {str(e)}")
+        
+        return requisitos
+
+    def _gerar_secao_requisitos_legais(self, equipamentos_unicos: Dict[str, Dict]) -> str:
+        """Gera a seção de requisitos legais com subseções por tipo de equipamento."""
+        if not equipamentos_unicos:
+            return "Nenhum equipamento identificado na análise."
+        
+        secao_latex = ""
+        
+        # Ordenar equipamentos por nome para apresentação consistente
+        equipamentos_ordenados = sorted(equipamentos_unicos.items(), 
+                                      key=lambda x: x[1]['nome'])
+        
+        for eq_id, eq_info in equipamentos_ordenados:
+            nome_equipamento = self._escapar_latex(eq_info['nome'])
+            requisitos = self._obter_requisitos_para_equipamento(eq_id)
+            
+            secao_latex += f"\\subsubsection{{{nome_equipamento}}}\n\n"
+            
+            if requisitos:
+                secao_latex += "\\begin{itemize}\n"
+                
+                for req in requisitos:
+                    nome_norma = self._escapar_latex(req['nome'])
+                    descricao = self._escapar_latex(req['descricao'])
+                    url = req['url']
+                    
+                    if url:
+                        # Criar hyperlink para a norma
+                        secao_latex += f"    \\item \\href{{{url}}}{{{nome_norma}}} - {descricao}\n"
+                    else:
+                        # Sem hyperlink se não há URL
+                        secao_latex += f"    \\item {nome_norma} - {descricao}\n"
+                
+                secao_latex += "\\end{itemize}\n\n"
+            else:
+                secao_latex += "\\textit{Nenhum requisito específico identificado para este equipamento.}\n\n"
+        
+        return secao_latex
+
     def _gerar_relatorio_latex(self) -> str:
         """Gera relatório em LaTeX com todos os resultados da análise."""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -1176,7 +1348,7 @@ class AnalisadorRequerimentos:
         total_requerimentos = len(self.resultados_analise)
         total_documentos = sum(len(req.get("documentos_analisados", [])) for req in self.resultados_analise)
         
-        status_geral = {"CONFORME": 0, "NAO_CONFORME": 0, "INCONCLUSIVO": 0, "ERRO": 0}
+        status_geral = {"CONFORME": 0, "NAO_CONFORME": 0, "INCONCLUSIVO": 0, "ERRO": 0, "PROCESSADO": 0}
         for req in self.resultados_analise:
             for status, count in req.get("resumo_status", {}).items():
                 if status in status_geral:
@@ -1196,14 +1368,16 @@ class AnalisadorRequerimentos:
         sumario_executivo = "Sumário"
         estatisticas_gerais = "Estatísticas Gerais"
         analise_detalhada = "Análise Detalhada por Requerimento"
-        conclusoes_recomendacoes = "Conclusões e Recomendações"
-        recomendacoes = "Recomendações"
+        referencias = "Referências"
+        normas = "Dispositivos normativos"
+        requisitos_legais = "Lista de Requisitos"
         nao_conformes = "Não Conformes"
         nao_conforme_rec = "Não Conforme"
-        relatorio_texto = "Este relatório apresenta os resultados da análise automatizada"
+
         
         # Conteúdo do relatório LaTeX
-        agora = "Processamento em: " + datetime.now().strftime("%H:%M:%S %d/%m/%Y")
+        agora = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
+        versao_git = obter_versao_git()
 
         latex_content = f"""\\documentclass[12pt,a4paper]{{article}}
 \\usepackage[utf8]{{inputenc}} % interpreta o arquivo .tex como UTF-8 
@@ -1224,15 +1398,15 @@ class AnalisadorRequerimentos:
             urlcolor=red,
             filecolor=magenta]{{hyperref}}
 
-\\geometry{{margin=1.5cm}}
+\\geometry{{margin=2cm}}
 \\pagestyle{{fancy}}
 \\fancyhf{{}}
-\\fancyhead[L]{{ORCN/SOR/Anatel}}
-\\fancyhead[R]{{{agora}}}
+\\fancyhead[L]{{Análise Simplificada Automatizada}}
+\\fancyhead[R]{{{versao_git}}}
 \\fancyfoot[C]{{\\thepage}}
 \\setcounter{{tocdepth}}{2}
 
-\\title{{\\Large\\textbf{{Análise Automatizada de Requerimentos no SCH}}}}
+\\title{{\\Large\\textbf{{Análise Simplificada Automatizada}}}}
 \\author{{Teógenes Brito da Nóbrega\\\\ \href{{mailto:tbnobrega@anatel.gov.br}}{{tbnobrega@anatel.gov.br}} }}
 %\\date{{{agora}}}
 \\date{{}}
@@ -1244,9 +1418,8 @@ class AnalisadorRequerimentos:
 %\\tableofcontents
 
 \\section{{{sumario_executivo}}}
-
-{relatorio_texto} de requerimentos do sistema SCH da ANATEL, 
-realizada em {data_analise}.
+Este relatório apresenta os resultados da análise automatizada de requerimentos do sistema 
+SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (SEI nº 8121635).
 
 \\subsection{{{estatisticas_gerais}}}
 
@@ -1256,17 +1429,11 @@ realizada em {data_analise}.
     \\item \\textbf{{Documentos Conformes:}} {status_geral['CONFORME']} ({status_geral['CONFORME']/max(total_documentos,1)*100:.1f}\\%)
     \\item \\textbf{{Documentos {nao_conformes}:}} {status_geral['NAO_CONFORME']} ({status_geral['NAO_CONFORME']/max(total_documentos,1)*100:.1f}\\%)
     \\item \\textbf{{Documentos Inconclusivos:}} {status_geral['INCONCLUSIVO']} ({status_geral['INCONCLUSIVO']/max(total_documentos,1)*100:.1f}\\%)
+    \\item \\textbf{{Documentos Processados:}} {status_geral['PROCESSADO']} ({status_geral['PROCESSADO']/max(total_documentos,1)*100:.1f}\\%)
     \\item \\textbf{{Documentos com Erro:}} {status_geral['ERRO']} ({status_geral['ERRO']/max(total_documentos,1)*100:.1f}\\%)
-\\end{{itemize}}
-
-\\subsection{{Informações de Tempo}}
-
-\\begin{{itemize}}
     \\item \\textbf{{Tempo Total de Análise:}} {tempo_analise_formatado}
-    \\item {agora}
+    \\item \\textbf{{Data da Análise:}} {agora}
 \\end{{itemize}}
-
-%\\newpage
 
 \\section{{{analise_detalhada}}}
 A seguir estão os detalhes da análise para cada requerimento processado.
@@ -1282,6 +1449,8 @@ A seguir estão os detalhes da análise para cada requerimento processado.
 \\textcolor{{red}}{{NC}} & \\textcolor{{red}}{{NÃO CONFORME}} \\\\
 \\hline
 \\textcolor{{blue}}{{I}} & \\textcolor{{blue}}{{INCONCLUSIVO}} \\\\
+\\hline
+\\textcolor{{purple}}{{P}} & \\textcolor{{purple}}{{PROCESSADO}} \\\\
 \\hline
 \\textcolor{{orange}}{{E}} & \\textcolor{{orange}}{{ERRO}} \\\\
 \\hline
@@ -1299,6 +1468,20 @@ A seguir estão os detalhes da análise para cada requerimento processado.
             #resumo = req.get("resumo_status", {})
             #timestamp_analise = self._escapar_latex(req.get('timestamp_analise', 'N/A'))
             
+            # Obter o nome do OCD do primeiro documento CCT encontrado
+            nome_ocd_completo = "OCD não identificado"
+            
+            # Buscar o primeiro CCT com OCD válido
+            for doc in documentos:
+                if doc.get("tipo") == "CCT":
+                    dados_extraidos = doc.get("dados_extraidos", {})
+                    nome_ocd_extraido = dados_extraidos.get("nome_ocd", "N/A")
+                    if nome_ocd_extraido and nome_ocd_extraido != "N/A" and not nome_ocd_extraido.startswith('[ERRO]'):
+                        nome_ocd_completo = self._obter_nome_completo_ocd(nome_ocd_extraido)
+                        break  # Sair do loop após encontrar o primeiro OCD válido
+            
+            nome_ocd_escapado = self._escapar_latex(nome_ocd_completo)
+            
             latex_content += f"""
 \\subsection{{Requerimento: {numero_req}}}
 A seguir, os detalhes da análise dos documentos associados a este requerimento.
@@ -1306,6 +1489,8 @@ A seguir, os detalhes da análise dos documentos associados a este requerimento.
 \\textbf{{Tempo de Análise:}} {tempo_analise_req}
 
 \\subsubsection{{Documentos Analisados}}
+
+\\textbf{{OCD:}} {nome_ocd_escapado}
 
 \\begin{{longtable}}{{|p{{6cm}}|p{{10cm}}|}}
 \\hline
@@ -1328,6 +1513,8 @@ A seguir, os detalhes da análise dos documentos associados a este requerimento.
                     status_colorido = "\\textcolor{red}{NC}"
                 elif status == "INCONCLUSIVO":
                     status_colorido = "\\textcolor{orange}{I}"
+                elif status == "PROCESSADO":
+                    status_colorido = "\\textcolor{purple}{P}"
                 elif status == "ERRO":
                     status_colorido = "\\textcolor{red}{E}"
                 else:
@@ -1348,6 +1535,8 @@ A seguir, os detalhes da análise dos documentos associados a este requerimento.
                 if dados_extraidos:
                     equipamentos = dados_extraidos.get("equipamentos", [])
                     normas_verificadas = dados_extraidos.get("normas_verificadas", [])
+                    palavras_encontradas = dados_extraidos.get("palavras_encontradas", {})
+                    palavras_nao_encontradas = dados_extraidos.get("palavras_nao_encontradas", [])
                     
                     if equipamentos:
                         equipamentos_escapados = [self._escapar_latex(eq) for eq in equipamentos]
@@ -1356,6 +1545,28 @@ A seguir, os detalhes da análise dos documentos associados a este requerimento.
                     if normas_verificadas:
                         normas_escapadas = [self._escapar_latex(norma) for norma in normas_verificadas]
                         info_adicional += r"\newline" + f"\\textbf{{Normas verificadas:}} {', '.join(normas_escapadas)}."
+                    
+                    # Tratamento especial para manuais - exibir palavras-chave com cores
+                    if tipo == "Manual" and (palavras_encontradas or palavras_nao_encontradas):
+                        info_adicional += r"\newline" + "\\textbf{Palavras-chave:} "
+                        
+                        # Palavras encontradas em verde com contador
+                        if palavras_encontradas:
+                            palavras_verdes = []
+                            for palavra, contador in palavras_encontradas.items():
+                                palavra_escapada = self._escapar_latex(palavra)
+                                palavras_verdes.append(f"\\textcolor{{blue}}{{{palavra_escapada} (x{contador})}}")
+                            info_adicional += " ".join(palavras_verdes)
+                        
+                        # Palavras não encontradas em vermelho
+                        if palavras_nao_encontradas:
+                            if palavras_encontradas:  # Se já há palavras verdes, adicionar separador
+                                info_adicional += " "
+                            palavras_vermelhas = []
+                            for palavra in palavras_nao_encontradas:
+                                palavra_escapada = self._escapar_latex(palavra)
+                                palavras_vermelhas.append(f"\\textcolor{{red}}{{{palavra_escapada}}}")
+                            info_adicional += " ".join(palavras_vermelhas)
 
                 # Combinar informações
                 info_completa = info_adicional +  r"\newline" + f"\\textbf{{{nao_conformidades}}}"  if info_adicional else nao_conformidades
@@ -1366,23 +1577,17 @@ A seguir, os detalhes da análise dos documentos associados a este requerimento.
 
 """
         
+        # Gerar seção de requisitos legais
+        equipamentos_unicos = self._coletar_equipamentos_unicos()
+        secao_requisitos = self._gerar_secao_requisitos_legais(equipamentos_unicos)
+        
         # Finalizar o documento
         latex_content += f"""
-\\section{{{conclusoes_recomendacoes}}}
+\\section{{{referencias}}}
+A seguir são apresentados os requisitos legais e normas utilizados como referência na análise dos equipamentos identificados.
 
-\\subsection{{Principais Achados}}
-\\begin{{itemize}}
-    \\item A análise automatizada identificou padrões de conformidade nos documentos processados
-    \\item Documentos com status ``Inconclusivo'' requerem revisão manual adicional
-    \\item Documentos com ``Erro'' precisam ser reprocessados ou verificados manualmente
-\\end{{itemize}}
-
-\\subsection{{{recomendacoes}}}
-\\begin{{itemize}}
-    \\item Revisar manualmente todos os documentos marcados como ``{nao_conforme_rec}''
-    \\item Investigar a causa dos erros de processamento para melhorar o sistema
-    \\item Considerar atualização das regras de análise baseada nos resultados
-\\end{{itemize}}
+\\subsection{{{requisitos_legais}}}
+{secao_requisitos}
 
 \\end{{document}}
 """

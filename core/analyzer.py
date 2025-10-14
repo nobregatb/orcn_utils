@@ -1015,9 +1015,13 @@ class AnalisadorRequerimentos:
                     
                     # Definir palavras-chave essenciais para manuais
                     palavras_chave_manual = [
-                        "ipv6", "bluetooth", "interface e1",
-                        "nfc", "wi-fi", "voz", "simcard", "bateria", "carregador"
+                        "ipv6", "bluetooth", "e1", "e3", "smart", "tv", "STM-1", "STM-4", "STM-16", "STM-64",
+                        "nfc", "wi-fi", "voz", "esim", "simcard", "bateria", "carregador", "handheld", "hand-held", "hand held",
+                        "smartphone", "celular", "aeronáutico", "marítimo", "dsl", "adsl", "vdsl", "xdsl", "gpon", "epon", "xpon", "satélite", "satellite"
                     ]
+
+                    palavras_chave_manual = [palavra.lower() for palavra in palavras_chave_manual]
+                    palavras_chave_manual = sorted(palavras_chave_manual)                    
                     
                     # Contar ocorrências de cada palavra-chave
                     palavras_encontradas = {}
@@ -1377,13 +1381,14 @@ class AnalisadorRequerimentos:
         
         # Conteúdo do relatório LaTeX
         agora = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
-        versao_git = obter_versao_git()
+        versao_git = obter_versao_git()        
 
         latex_content = f"""\\documentclass[12pt,a4paper]{{article}}
 \\usepackage[utf8]{{inputenc}} % interpreta o arquivo .tex como UTF-8 
 \\usepackage[T1]{{fontenc}}      % usa codificação de fonte T1 (suporta acentos latinos)
 \\usepackage{{lmodern}}          % usa uma fonte moderna com suporte a T1
-\\usepackage[portuguese]{{babel}}
+\\usepackage[portuguese,greek,english]{{babel}}
+\\usepackage{{textgreek}}
 \\usepackage{{geometry}}
 \\usepackage{{fancyhdr}}
 \\usepackage{{graphicx}}
@@ -1402,7 +1407,7 @@ class AnalisadorRequerimentos:
 \\pagestyle{{fancy}}
 \\fancyhf{{}}
 \\fancyhead[L]{{Análise Simplificada Automatizada}}
-\\fancyhead[R]{{{versao_git}}}
+\\fancyhead[R]{{\\textgreek{{θεoγενης}} - {versao_git}}}
 \\fancyfoot[C]{{\\thepage}}
 \\setcounter{{tocdepth}}{2}
 
@@ -1424,15 +1429,17 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
 \\subsection{{{estatisticas_gerais}}}
 
 \\begin{{itemize}}
-    \\item \\textbf{{Total de Requerimentos Analisados:}} {total_requerimentos}
-    \\item \\textbf{{Total de Documentos Processados:}} {total_documentos}
-    \\item \\textbf{{Documentos Conformes:}} {status_geral['CONFORME']} ({status_geral['CONFORME']/max(total_documentos,1)*100:.1f}\\%)
-    \\item \\textbf{{Documentos {nao_conformes}:}} {status_geral['NAO_CONFORME']} ({status_geral['NAO_CONFORME']/max(total_documentos,1)*100:.1f}\\%)
-    \\item \\textbf{{Documentos Inconclusivos:}} {status_geral['INCONCLUSIVO']} ({status_geral['INCONCLUSIVO']/max(total_documentos,1)*100:.1f}\\%)
-    \\item \\textbf{{Documentos Processados:}} {status_geral['PROCESSADO']} ({status_geral['PROCESSADO']/max(total_documentos,1)*100:.1f}\\%)
-    \\item \\textbf{{Documentos com Erro:}} {status_geral['ERRO']} ({status_geral['ERRO']/max(total_documentos,1)*100:.1f}\\%)
-    \\item \\textbf{{Tempo Total de Análise:}} {tempo_analise_formatado}
-    \\item \\textbf{{Data da Análise:}} {agora}
+    \\item \\textbf{{Requerimentos analisados:}} {total_requerimentos}
+    \\item \\textbf{{Documentos processados:}} {total_documentos}
+    %\\item \\textbf{{Documentos Conformes:}} {status_geral['CONFORME']} ({status_geral['CONFORME']/max(total_documentos,1)*100:.1f}\\%)
+    %\\item \\textbf{{Documentos {nao_conformes}:}} {status_geral['NAO_CONFORME']} ({status_geral['NAO_CONFORME']/max(total_documentos,1)*100:.1f}\\%)
+    %\\item \\textbf{{Documentos Inconclusivos:}} {status_geral['INCONCLUSIVO']} ({status_geral['INCONCLUSIVO']/max(total_documentos,1)*100:.1f}\\%)
+    %\\item \\textbf{{Documentos Processados:}} {status_geral['PROCESSADO']} ({status_geral['PROCESSADO']/max(total_documentos,1)*100:.1f}\\%)
+    %\\item \\textbf{{Documentos com Erro:}} {status_geral['ERRO']} ({status_geral['ERRO']/max(total_documentos,1)*100:.1f}\\%)
+    \\item \\textbf{{Tempo de processamento:}} {tempo_analise_formatado}
+    \\item \\textbf{{Data do processamento:}} {agora}
+    \\item \\textbf{{Versão do script:}} {{\\textgreek{{θεoγενης}} - {versao_git}}}
+
 \\end{{itemize}}
 
 \\section{{{analise_detalhada}}}
@@ -1484,9 +1491,7 @@ A seguir estão os detalhes da análise para cada requerimento processado.
             
             latex_content += f"""
 \\subsection{{Requerimento: {numero_req}}}
-A seguir, os detalhes da análise dos documentos associados a este requerimento.
-
-\\textbf{{Tempo de Análise:}} {tempo_analise_req}
+A seguir, os detalhes da análise dos documentos associados a este requerimento, cujo tempo de processamento foi: {tempo_analise_req}.
 
 \\subsubsection{{Documentos Analisados}}
 
@@ -1500,8 +1505,12 @@ A seguir, os detalhes da análise dos documentos associados a este requerimento.
 """
             
             for doc in documentos:
-                nome = self._escapar_latex(doc.get("nome_arquivo", "N/A"))
+                nome_completo = self._escapar_latex(doc.get("nome_arquivo", "N/A"))
                 tipo = self._escapar_latex(doc.get("tipo", "N/A"))
+                ocorrencias = re.findall(r'\[([^\]]+)\]', nome_completo)
+                nome_tabela = nome_completo
+                if len(ocorrencias) >= 2:
+                    nome_tabela = f"[{tipo}] {ocorrencias[1]}"
                 status = doc.get("status", "N/A")
                 caminho = doc.get("caminho", "N/A")
                 caminho_normalizado = latex_escape_path(caminho)
@@ -1558,20 +1567,20 @@ A seguir, os detalhes da análise dos documentos associados a este requerimento.
                                 palavras_verdes.append(f"\\textcolor{{blue}}{{{palavra_escapada} (x{contador})}}")
                             info_adicional += " ".join(palavras_verdes)
                         
-                        # Palavras não encontradas em vermelho
+                        # Palavras não encontradas em cinza
                         if palavras_nao_encontradas:
                             if palavras_encontradas:  # Se já há palavras verdes, adicionar separador
                                 info_adicional += " "
-                            palavras_vermelhas = []
+                            palavras_ausentes = []
                             for palavra in palavras_nao_encontradas:
                                 palavra_escapada = self._escapar_latex(palavra)
-                                palavras_vermelhas.append(f"\\textcolor{{red}}{{{palavra_escapada}}}")
-                            info_adicional += " ".join(palavras_vermelhas)
+                                palavras_ausentes.append(f"\\textcolor{{gray}}{{{palavra_escapada}}}")
+                            info_adicional += " ".join(palavras_ausentes)
 
                 # Combinar informações
                 info_completa = info_adicional +  r"\newline" + f"\\textbf{{{nao_conformidades}}}"  if info_adicional else nao_conformidades
                 
-                latex_content += f"\\href{{run:{caminho_normalizado}}}{{{nome}}} & [{status_colorido}] {info_completa} \\\\ \\hline"
+                latex_content += f"\\href{{run:{caminho_normalizado}}}{{{nome_tabela}}} & [{status_colorido}] {info_completa} \\\\ \\hline"
 
             latex_content += """\\end{longtable}
 

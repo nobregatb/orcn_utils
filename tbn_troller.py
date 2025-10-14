@@ -60,7 +60,7 @@ def get_version() -> str:
             stderr=subprocess.DEVNULL,
             cwd=Path(__file__).parent
         ).decode('utf-8').strip()
-        return version
+        return "θεογενης" + version
     except:
         return "v0.0.0-dev"
 

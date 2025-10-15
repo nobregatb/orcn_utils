@@ -9,6 +9,7 @@ from typing import Dict, List, Optional, Tuple#, Any
 import subprocess
 
 from core.log_print import log_info, log_erro, log_erro_critico
+from core.const import TESSERACT_PATH, JSON_FILES, GIT_COMMANDS, GIT_TIMEOUT, VERSAO_PADRAO
 
 import pymupdf as fitz
 PYMUPDF_DISPONIVEL = True
@@ -17,7 +18,7 @@ try:
     OCR_DISPONIVEL = True
     # Configurar caminho do Tesseract se necessário
     try:
-        pytesseract.pytesseract.tesseract_cmd = r"C:\Users\tbnobrega\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
+        pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH
     except:
         pass
 except ImportError:
@@ -71,10 +72,10 @@ def obter_versao_git() -> str:
     try:
         # Tentar obter a tag mais recente (ordenada por versão)
         resultado = subprocess.run(
-            ["git", "tag", "--sort=-version:refname"],
+            GIT_COMMANDS['tags'],
             capture_output=True,
             text=True,
-            timeout=5
+            timeout=GIT_TIMEOUT
         )
         
         if resultado.returncode == 0 and resultado.stdout.strip():
@@ -85,10 +86,10 @@ def obter_versao_git() -> str:
         
         # Fallback: tentar describe --tags
         resultado = subprocess.run(
-            ["git", "describe", "--tags", "--abbrev=0"],
+            GIT_COMMANDS['describe'],
             capture_output=True,
             text=True,
-            timeout=5
+            timeout=GIT_TIMEOUT
         )
         
         if resultado.returncode == 0 and resultado.stdout.strip():
@@ -96,10 +97,10 @@ def obter_versao_git() -> str:
         
         # Se não há tags, tentar obter o hash do commit
         resultado = subprocess.run(
-            ["git", "rev-parse", "--short", "HEAD"],
+            GIT_COMMANDS['commit_hash'],
             capture_output=True,
             text=True,
-            timeout=5
+            timeout=GIT_TIMEOUT
         )
         
         if resultado.returncode == 0 and resultado.stdout.strip():
@@ -109,7 +110,7 @@ def obter_versao_git() -> str:
         pass
     
     # Fallback para versão baseada em data
-    return f"v{datetime.now().strftime('%Y.%m.%d')}"
+    return VERSAO_PADRAO.format(datetime.now().strftime('%Y.%m.%d'))
 
 
 class CCTAnalyzerIntegrado:
@@ -559,11 +560,11 @@ class AnalisadorRequerimentos:
         self.pasta_resultados.mkdir(exist_ok=True)
         
         # Carregar configurações
-        self.regras = self._carregar_json("utils/regras.json")
-        self.equipamentos = self._carregar_json("utils/equipamentos.json")
-        self.requisitos = self._carregar_json("utils/requisitos.json")
-        self.normas = self._carregar_json("utils/normas.json")
-        self.ocds = self._carregar_json("utils/ocds.json")
+        self.regras = self._carregar_json(JSON_FILES['regras'])
+        self.equipamentos = self._carregar_json(JSON_FILES['equipamentos'])
+        self.requisitos = self._carregar_json(JSON_FILES['requisitos'])
+        self.normas = self._carregar_json(JSON_FILES['normas'])
+        self.ocds = self._carregar_json(JSON_FILES['ocds'])
         
         # Resultados da análise
         self.resultados_analise = []

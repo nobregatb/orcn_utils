@@ -1,0 +1,265 @@
+# -*- coding: utf-8 -*-
+"""
+Constantes globais do projeto ORCN Utils.
+Centraliza todos os valores estáticos e configurações do sistema.
+"""
+
+# ================================
+# CONFIGURAÇÕES DE SISTEMA
+# ================================
+
+# Modo de execução
+DEBUG_MODE = 'debug'
+
+# Configurações de linha de comando
+VALID_DEBUG_ARGS = ['debug']
+
+# ================================
+# CAMINHOS E DIRETÓRIOS
+# ================================
+
+# Caminhos de execução
+CHROME_PATH = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
+TESSERACT_PATH = r"C:\Users\tbnobrega\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
+
+# Diretório debug específico do desenvolvedor
+DEBUG_FILES_FOLDER = r"C:\Users\tbnobrega\OneDrive - ANATEL\Anatel\_ORCN"
+
+# Nomes de diretórios e arquivos
+CHROME_PROFILE_DIR = "meu_perfil_chrome"
+EXCEL_FILENAME = 'ORCN.xlsx'
+REQUERIMENTOS_DIR_PREFIX = "Requerimentos"
+
+# Arquivos JSON de configuração
+JSON_FILES = {
+    'regras': "utils/regras.json",
+    'equipamentos': "utils/equipamentos.json", 
+    'requisitos': "utils/requisitos.json",
+    'normas': "utils/normas.json",
+    'ocds': "utils/ocds.json"
+}
+
+# ================================
+# CONFIGURAÇÕES WEB E SCRAPING
+# ================================
+
+# URLs do sistema
+MOSAICO_BASE_URL = "https://sistemasnet.anatel.gov.br/mosaico/sch/worklist/"
+
+# Seletores CSS
+CSS_SELECTORS = {
+    'menu_todos': "#menuForm\\:todos",
+    'tabela_dados': "css=#form\\:tarefasTable_data tr",
+    'iframe_detalhe': "#__frameDetalhe",
+    'tabela_analise': "table.analiseTable",
+    'link_pdf': "a[href*='.pdf'], a[href*='download']",
+    'paginator_options': "select.ui-paginator-rpp-options",
+    'blockui': ".ui-blockui"
+}
+
+# Botões de anexos para download
+BOTOES_PDF = [
+    "Outros",
+    "ART", 
+    "Selo ANATEL",
+    "Relatório de Avaliação da Conformidade - RACT",
+    "Manual do Produto",
+    "Certificado de Conformidade Técnica - CCT",
+    "Contrato Social",
+    "Fotos internas",
+    "Relatório de Ensaio",
+    "Fotos do produto"
+]
+
+# Argumentos do Chrome
+CHROME_ARGS = [
+    "--start-maximized",
+    "--disable-blink-features=AutomationControlled"
+]
+
+# ================================
+# TIMEOUTS E LIMITES
+# ================================
+
+# Timeouts em milissegundos
+TIMEOUT_PRIMEFACES_AJAX = 5000
+TIMEOUT_FORCE_CLICK = 2000
+TIMEOUT_LOAD_STATE = 10000
+TIMEOUT_BLOCKUI = 15000
+TIMEOUT_MENU_CLICK = 3600000
+
+# Timeouts em segundos
+TIMEOUT_LIMITE_SESSAO = 28 * 60  # 28 minutos para evitar timeout do Mosaico
+
+# Delays
+SLEEP_AFTER_CLICK = 1
+SLEEP_AJAX_WAIT = 0.3
+SLEEP_SCROLL_WAIT = 0.3
+SLEEP_TABELA_RELOAD = 1
+SLEEP_ANEXOS_WAIT = 2
+
+# Limites de paginação
+ITEMS_PER_PAGE = "100"
+
+# ================================
+# PLANILHA EXCEL
+# ================================
+
+# Nomes de planilhas e tabelas
+EXCEL_SHEET_NAME = 'Requerimentos-Análise'
+EXCEL_TABLE_NAME = 'tabRequerimentos'
+
+# Status de requerimentos
+STATUS_EM_ANALISE = ['Em Análise', 'Em Análise - RE']
+STATUS_AUTOMATICO = 'AUTOMATICO'
+
+# Índices de colunas na planilha
+COLUNA_STATUS = 9
+COLUNA_NUMERO_REQ = 1
+
+# ================================
+# TIPOS DE DOCUMENTOS
+# ================================
+
+# Tabela de requerimentos
+TAB_REQUERIMENTOS = {# a coluna 0 é desprezada, não tem dados
+                     'num_req': 1,
+                     'cod_homologacao': 2,
+                     'num_cct': 3,
+                     'tipo_equipamento': 4,
+                     'modelos': 5,
+                     'solicitante': 6,
+                     'fabricante': 7,
+                     'data': 8,
+                     'status': 9
+                     }
+# Tipos de documentos para análise
+TIPOS_DOCUMENTO = {
+    'cct': 'Certificado de Conformidade Técnica',
+    'ract': 'Relatório de Avaliação da Conformidade',
+    'manual': 'Manual do Produto',
+    'relatorio_ensaio': 'Relatório de Ensaio',
+    'art': 'ART',
+    'fotos': 'Fotos',
+    'contrato_social': 'Contrato Social',
+    'outros': 'Outros'
+}
+
+# Padrões de nomes de arquivo para identificação
+PADROES_ARQUIVO = {
+    'cct': ['certificado', 'conformidade', 'tecnica', 'cct'],
+    'ract': ['relatorio', 'avaliacao', 'conformidade', 'ract'],
+    'manual': ['manual', 'produto', 'usuario'],
+    'relatorio_ensaio': ['relatorio', 'ensaio', 'teste'],
+    'art': ['art', 'responsabilidade'],
+    'fotos': ['foto', 'imagem', 'jpg', 'png'],
+    'contrato_social': ['contrato', 'social', 'estatuto']
+}
+
+# ================================
+# MENSAGENS DO SISTEMA
+# ================================
+
+# Títulos e cabeçalhos
+TITULO_APLICACAO = "*** # ORCN - Download e análise de processos ***"
+TITULO_AUTOMACAO = "BOT AUTOMAÇÃO ORCN - DOWNLOAD DE ANEXOS"
+
+# Opções do menu
+OPCOES_MENU = {
+    'download': 'D',
+    'analise': 'A',
+    'sair': 'S'
+}
+
+DESCRICOES_MENU = {
+    'D': "Baixar documentos (SCH ANATEL)",
+    'A': "Analisar requerimento(s) (Análise automatizada)",
+    'S': "Sair"
+}
+
+# Mensagens de status
+MENSAGENS_STATUS = {
+    'modo_debug': "DEBUG - MODO DEBUG ATIVADO - Usando caminho de desenvolvimento",
+    'modo_executavel': "EXECUTAVEL - Usando diretório: {}",
+    'modo_script': "SCRIPT - Usando diretório: {}",
+    'producao_lista': "PRODUCAO - Modo produção: processando todos os requerimentos da lista",
+    'debug_excel': "DEBUG - Modo debug: verificando planilha Excel...",
+    'pasta_criada': "   PASTA Pasta criada: {}",
+    'req_encontrado': "   FOUND - Requerimento encontrado: {}",
+    'total_reqs': "TOTAL - Total de requerimentos a processar: {}",
+    'planilha_nao_encontrada': "AVISO - Planilha não encontrada: {}",
+    'onclick_executado': "   OK Onclick executado diretamente",
+    'aguardando_mosaico': "   OK Aguardando resposta do Mosaico...",
+    'force_click': "   REFRESH Tentando force click...",
+    'force_click_ok': "   OK Force click funcionou",
+    'buscando_anexos': "   REFRESH Buscando anexos...",
+    'anexos_carregados': "   OK Página de Anexos carregada",
+    'voltando_lista': "   VOLTAR Voltando para a lista...",
+    'processamento_concluido': "OK PROCESSAMENTO CONCLUÍDO!",
+    'iniciando_automacao': "BOT Iniciando automação ORCN - Download de anexos"
+}
+
+# Mensagens de erro
+MENSAGENS_ERRO = {
+    'planilha_nao_encontrada': "AVISO - Planilha não encontrada: {}",
+    'erro_linha': "   ERRO ao ler linha {}: {}",
+    'onclick_falhou': "   AVISO Onclick falhou: {}",
+    'submit_falhou': "   AVISO Submit falhou",
+    'force_click_falhou': "   ERRO Force click falhou: {}",
+    'nenhum_pdf': "   AVISO Nenhum PDF foi baixado",
+    'botao_nao_encontrado': "   AVISO Botão não encontrado: {}",
+    'erro_botao': "   ERRO Erro ao processar botão {}: {}",
+    'erro_pdf': "   ERRO Erro ao baixar PDF {} de {}: {}",
+    'iframe_nao_encontrado': "AVISO iframe_element não encontrado, pulando...",
+    'expect_navigation_falhou': "   AVISO expect_navigation falhou: {}",
+    'timeout_preventivo': "TEMPO TIMEOUT PREVENTIVO ATIVADO!",
+    'tempo_decorrido': "AVISO Tempo decorrido: {} minutos",
+    'encerrando_timeout': "AVISO Encerrando aplicação para evitar timeout do Mosaico (30 min)",
+    'executar_novamente': "AVISO Execute novamente o script para continuar processando"
+}
+
+# ================================
+# FORMATAÇÃO E SEPARADORES
+# ================================
+
+# Caracteres de separação
+SEPARADOR_LINHA = "="*60
+SEPARADOR_MENOR = "="*50
+
+# Formatação de arquivos
+FORMATO_DATA_ARQUIVO = "%Y.%m.%d"
+FORMATO_NOME_ARQUIVO = "[{tipo}][{data} - ID {id}] {nome} [req {num} de {ano}]{ext}"
+FORMATO_NOME_SIMPLES = "[{categoria}] {nome}{ext}"
+
+# Caracteres inválidos para nomes de arquivo
+CARACTERES_INVALIDOS = r'[<>:"/\\|?*]'
+SUBSTITUTO_CARACTERE = '_'
+
+# ================================
+# CONFIGURAÇÕES DE OCR/PDF
+# ================================
+
+# Extensões de arquivo suportadas
+EXTENSOES_PDF = ['.pdf']
+EXTENSOES_IMAGEM = ['.jpg', '.jpeg', '.png', '.tiff', '.bmp']
+
+# Configurações de processamento
+LIMITE_CARACTERES_ERRO = 50
+LIMITE_CARACTERES_LOG = 80
+
+# ================================
+# VERSIONING
+# ================================
+
+# Padrão de versionamento
+VERSAO_PADRAO = "v{}"  # será preenchido com data atual
+
+# Comandos Git para versionamento
+GIT_COMMANDS = {
+    'tags': ["git", "tag", "--sort=-version:refname"],
+    'describe': ["git", "describe", "--tags", "--abbrev=0"],
+    'commit_hash': ["git", "rev-parse", "--short", "HEAD"]
+}
+
+# Timeout para comandos Git
+GIT_TIMEOUT = 5

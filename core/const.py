@@ -5,16 +5,6 @@ Centraliza todos os valores estáticos e configurações do sistema.
 """
 
 # ================================
-# CONFIGURAÇÕES DE SISTEMA
-# ================================
-
-# Modo de execução
-DEBUG_MODE = 'debug'
-
-# Configurações de linha de comando
-VALID_DEBUG_ARGS = ['debug']
-
-# ================================
 # CAMINHOS E DIRETÓRIOS
 # ================================
 
@@ -23,11 +13,11 @@ CHROME_PATH = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 TESSERACT_PATH = r"C:\Users\tbnobrega\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
 
 # Diretório debug específico do desenvolvedor
-DEBUG_FILES_FOLDER = r"C:\Users\tbnobrega\OneDrive - ANATEL\Anatel\_ORCN"
+TBN_FILES_FOLDER = r"C:\Users\tbnobrega\OneDrive - ANATEL\Anatel\_ORCN"
 
 # Nomes de diretórios e arquivos
 CHROME_PROFILE_DIR = "meu_perfil_chrome"
-EXCEL_FILENAME = 'ORCN.xlsx'
+#EXCEL_FILENAME = 'ORCN.xlsx'
 REQUERIMENTOS_DIR_PREFIX = "Requerimentos"
 
 # Arquivos JSON de configuração

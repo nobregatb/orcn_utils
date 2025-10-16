@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import sys, json
 import time
 import re
@@ -7,7 +8,7 @@ from playwright.sync_api import sync_playwright
 from datetime import datetime
 from core.log_print import log_info, log_erro, log_erro_critico
 from core.const import (
-    DEBUG_MODE, CHROME_PATH, DEBUG_FILES_FOLDER, CHROME_PROFILE_DIR, EXCEL_FILENAME,
+    CHROME_PATH, TBN_FILES_FOLDER, CHROME_PROFILE_DIR, 
     REQUERIMENTOS_DIR_PREFIX, MOSAICO_BASE_URL, BOTOES_PDF, CHROME_ARGS,
     TIMEOUT_LIMITE_SESSAO, EXCEL_SHEET_NAME, EXCEL_TABLE_NAME, 
     STATUS_EM_ANALISE, STATUS_AUTOMATICO, SEPARADOR_LINHA,
@@ -19,24 +20,19 @@ from core.const import (
 def is_bundled():
     return getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
 
-# Detecta se foi chamado com parâmetro debug
-debug_mode = DEBUG_MODE
 
 # Define FILES_FOLDER baseado no modo de execução
-if debug_mode:
-    FILES_FOLDER = DEBUG_FILES_FOLDER
-    log_info(MENSAGENS_STATUS['modo_debug'])
-else:
-    if is_bundled():
-        FILES_FOLDER = os.path.dirname(sys.executable)
-        log_info(MENSAGENS_STATUS['modo_executavel'].format(FILES_FOLDER))
-    else:
-        FILES_FOLDER = os.path.dirname(os.path.abspath(__file__))
-        log_info(MENSAGENS_STATUS['modo_script'].format(FILES_FOLDER))
+FILES_FOLDER = TBN_FILES_FOLDER
+PROFILE_DIR = os.path.join(Path(__file__).parent.parent, CHROME_PROFILE_DIR)
 
-# Configura caminhos dependentes
-PROFILE_DIR = os.path.join(FILES_FOLDER, CHROME_PROFILE_DIR)
-LOG_REQUERIMENTOS = os.path.join(FILES_FOLDER, EXCEL_FILENAME)
+if is_bundled():
+    FILES_FOLDER = os.path.dirname(sys.executable)
+    PROFILE_DIR = os.path.join(FILES_FOLDER, CHROME_PROFILE_DIR)
+    log_info(MENSAGENS_STATUS['modo_executavel'].format(FILES_FOLDER))
+else:
+    log_info(MENSAGENS_STATUS['modo_script'].format(FILES_FOLDER))
+
+
 
 def req_para_fullpath(req):
     """Converte número do requerimento (num/ano) para caminho completo da pasta"""
@@ -74,14 +70,16 @@ def criar_json_dos_novos_requerimentos(rows):
                             requerimento_json[atributo] = ""
                     pasta = criar_pasta_se_nao_existir(requerimento_json['num_req'])
                     nome_pasta = os.path.basename(pasta)
+                    dados_json = {}
+                    dados_json["requerimento"] = requerimento_json
                     with open(os.path.join(pasta, f"{nome_pasta}.json"), "w", encoding="utf-8") as f:
-                        json.dump(requerimento_json, f, ensure_ascii=False, indent=4)
+                        json.dump(dados_json, f, ensure_ascii=False, indent=4)
         except Exception as e:
             log_erro(f"Erro ao ler linha {i}: {str(e)[:50]}")
 
     log_info(f"Total de requerimentos processados e arquivos JSON salvos!")
 
-def atualizar_excel(rows) -> list:
+'''def atualizar_excel(rows) -> list:
     """Atualiza planilha com novos requerimentos em análise (apenas no modo debug)"""
     if not debug_mode:
         # Modo não-debug: processa todos os requerimentos sem verificar Excel
@@ -149,7 +147,7 @@ def atualizar_excel(rows) -> list:
     wb.close()
     
     log_info(f"📊 Total de novos requerimentos: {len(novosAnalises)}")
-    return novosAnalises
+    return novosAnalises'''
 
 def wait_primefaces_ajax(page, timeout=5000):
     """Espera todas as requisições AJAX do PrimeFaces terminarem"""
@@ -555,12 +553,6 @@ def baixar_documentos():
             rows = page.query_selector_all(CSS_SELECTORS['tabela_dados'])
             log_info(f"🔎 {len(rows)} linhas encontradas na tabela")
             
-            # Atualiza Excel (modo debug) ou pega todos os requerimentos (modo produção)
-            if debug_mode:
-                log_info("📊 Atualizando planilha Excel...")
-            else:
-                log_info("📋 Coletando requerimentos da lista...")
-            
             criar_json_dos_novos_requerimentos(rows)
 
             # Cria um dicionário com os dados de cada linha ANTES de iterar
@@ -570,7 +562,8 @@ def baixar_documentos():
             for i, row in enumerate(reversed(rows), start=1):
                 try:
                     cols = row.query_selector_all("td")
-                    if len(cols) < 2:
+                    dados = [col.inner_text().strip() for col in cols]
+                    if (len(cols) < 2) or (dados[TAB_REQUERIMENTOS['status']] not in STATUS_EM_ANALISE):
                         continue
                     
                     requerimento = cols[1].inner_text().strip()
@@ -732,29 +725,42 @@ def baixar_documentos():
                         tabelas_ids = page.eval_on_selector_all("table[id]", """
                             (tabelas) => tabelas.map(t => t.id)
                             """)
-                        prefixo_ocd = "formAnalise:output-produto-cct:"
-                        regex = re.compile(rf"^{re.escape(prefixo_ocd)}[^:]+$")
-                        alvo_id = next((tid for tid in tabelas_ids if regex.match(tid)), None)
-                        if alvo_id != None:                           
-                            seletor = "#" + alvo_id.replace(":", "\\:")
-                            dados_ocd = page.eval_on_selector(seletor, """
-                                    (t) => {
-                                        const linhas = Array.from(t.querySelectorAll("tr"));
-                                        const resultado = {};
-                                        for (const tr of linhas) {
-                                            const celulas = tr.querySelectorAll("td");
-                                            if (celulas.length === 2) {
-                                                const chave = celulas[0].innerText.trim().replace(/:$/, '');
-                                                const valor = celulas[1].innerText.trim();
-                                                resultado[chave] = valor;
-                                            }
-                                        }
-                                        return resultado;
-                                    }
-                                    """)
-    
-                        prefixo_produtos = "formAnalise:output-tipoproduto-requerimento:"
-                        #prefixo_produtos = "formAnalise:output-produto-cct:"
+                        ocd_id = 'formAnalise:j_idt202'
+                        selector = "#" + ocd_id.replace(":", "\\:")
+                        dados_ocd = page.eval_on_selector(selector, """
+                                                    (t) => {
+                                                        const linhas = Array.from(t.querySelectorAll("tr"));
+                                                        const resultado = {};
+                                                        for (const tr of linhas) {
+                                                            const celulas = tr.querySelectorAll("td");
+                                                            if (celulas.length === 2) {
+                                                                const chave = celulas[0].innerText.trim().replace(/:$/, '');
+                                                                const valor = celulas[1].innerText.trim();
+                                                                resultado[chave] = valor;
+                                                            }
+                                                        }
+                                                        return resultado;
+                                                    }
+                                                    """)
+                        json_path = req_para_fullpath(requerimento)                
+                        nome_json = Path(json_path).name # o json tem o mesmo nome da pasta do requerimento
+                        with open(os.path.join(json_path, f"{nome_json}.json"), "r", encoding="utf-8") as f:
+                            #dados_ocd = {}
+                            dados_json = json.load(f)
+                            #dados_json = dados_req
+                            #dados_json["requerimento"] = dados_req
+                            if dados_ocd != {}:
+                                dados_json["ocd"] = dados_ocd  # Use indexação, não append
+                            if dados_lab != '':
+                                dados_json["lab"] = dados_lab
+                            if dados_fabricante != '':
+                                dados_json["fabricante"] = dados_fabricante
+                            if dados_solicitante != '':
+                                dados_json["solicitante"] = dados_solicitante
+
+                        with open(os.path.join(json_path, f"{nome_json}.json"), "w", encoding="utf-8") as f:
+                            json.dump(dados_json, f, ensure_ascii=False, indent=4)
+
                         anexos_btn = page.get_by_role("button", name="Anexos")
                         try:
                             if anexos_btn:                        

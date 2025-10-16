@@ -138,6 +138,12 @@
     "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita.",
     "tipo": "Norma Nacional (Cabos)",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1429-ato-3151"
-  }
-  
+  },
+  {
+	  "id": "ato7971",
+    "nome": "Ato nº 7971, de 22 de junho de 2023",
+    "descricao": "Requisitos Técnicos para avaliação da conformidade do protocolo IPv6 em produtos para telecomunicações.",
+    "tipo": "Norma Nacional (Cabos)",
+    "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/160-atos-de-certificacao-de-produtos/2023/1878-ato-7971"	  
+  }  
 ]

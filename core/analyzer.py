@@ -14,7 +14,8 @@ from core.const import (
     TBN_FILES_FOLDER, SEPARADOR_LINHA, SEPARADOR_MENOR, REQUERIMENTOS_DIR_PREFIX,
     UTILS_DIR, EXT_PDF, EXT_JSON, EXT_TEX, EXT_XLSX, GLOB_PDF,
     STATUS_CONFORME, STATUS_NAO_CONFORME, STATUS_INCONCLUSIVO, STATUS_ERRO, STATUS_PROCESSADO,
-    VALOR_NAO_DISPONIVEL, ENCODING_UTF8, PALAVRAS_CHAVE_MANUAL
+    VALOR_NAO_DISPONIVEL, ENCODING_UTF8, PALAVRAS_CHAVE_MANUAL,
+    TIPOS_DOCUMENTO, PADROES_ARQUIVO
 )
 from core.utils import (
     formatar_cnpj, desformatar_cnpj, latex_escape_path, buscar_valor,
@@ -626,21 +627,23 @@ class AnalisadorRequerimentos:
         }
         
         try:
-            # Análise baseada no tipo de documento
-            if tipo_documento == "CCT":
+            # Análise baseada no tipo de documento usando constantes de const.py
+            if tipo_documento == "cct":
                 resultado = self._analisar_cct(caminho_documento, resultado)
-            elif tipo_documento == "RACT":
+            elif tipo_documento == "ract":
                 resultado = self._analisar_ract(caminho_documento, resultado)
-            elif tipo_documento == "Manual":
+            elif tipo_documento == "manual":
                 resultado = self._analisar_keywords(caminho_documento, resultado)
-            elif tipo_documento == "Relatorio_Ensaio":
+            elif tipo_documento == "relatorio_ensaio":
                 resultado = self._analisar_relatorio_ensaio(caminho_documento, resultado)
-            elif tipo_documento == "ART":
+            elif tipo_documento == "art":
                 resultado = self._analisar_art(caminho_documento, resultado)
-            elif tipo_documento == "Fotos":
+            elif tipo_documento == "fotos":
                 resultado = self._analisar_fotos(caminho_documento, resultado)
-            elif tipo_documento == "Contrato_Social":
+            elif tipo_documento == "contrato_social":
                 resultado = self._analisar_contrato_social(caminho_documento, resultado)
+            elif tipo_documento == "outros":
+                resultado = self._analisar_keywords(caminho_documento, resultado)    
             else:
                 resultado["observacoes"].append(f"Tipo de documento não reconhecido: {tipo_documento}")
                 
@@ -652,27 +655,18 @@ class AnalisadorRequerimentos:
         return resultado
     
     def _determinar_tipo_documento(self, nome_arquivo: str) -> str:
-        """Determina o tipo de documento baseado no nome do arquivo."""
+        """Determina o tipo de documento baseado no nome do arquivo usando padrões de const.py."""
         nome_lower = nome_arquivo.lower()
         
-        if "cct" in nome_lower:
-            return "CCT"
-        elif "ract" in nome_lower:
-            return "RACT"
-        elif "manual" in nome_lower:
-            return "Manual"
-        elif "ensaio" in nome_lower:
-            return "Relatorio_Ensaio"
-        elif "art" in nome_lower:
-            return "ART"
-        elif "foto" in nome_lower:
-            return "Fotos"
-        elif "contrato" in nome_lower or "social" in nome_lower:
-            return "Contrato_Social"
-        elif "selo" in nome_lower:
-            return "Contrato_Social"
-        else:
-            return "Outros"
+        # Usar padrões definidos em const.py
+        for tipo_chave, padroes in PADROES_ARQUIVO.items():
+            for padrao in padroes:
+                if padrao in nome_lower:
+                    # Retornar a chave do tipo para uso consistente
+                    return tipo_chave
+        
+        # Fallback para "outros" se não encontrar correspondência
+        return "outros"
     
     def _analisar_cct(self, caminho: Path, resultado: Dict) -> Dict:
         """Análise específica para Certificado de Conformidade Técnica."""

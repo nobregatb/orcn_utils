@@ -285,11 +285,42 @@ STATUS_PROCESSADO = "PROCESSADO"
 # ================================
 
 # Palavras-chave essenciais para análise de manuais
-PALAVRAS_CHAVE_MANUAL = [
-    "ipv6", "bluetooth", "e1", "e3", "smart", "tv", "STM-1", "STM-4", "STM-16", "STM-64",
-    "nfc", "wi-fi", "voz", "esim", "simcard", "bateria", "carregador", "handheld", "hand-held", "hand held",
-    "smartphone", "celular", "aeronáutico", "marítimo", "dsl", "adsl", "vdsl", "xdsl", "gpon", "epon", "xpon", "satélite", "satellite"
-]
+# Estrutura: {"palavra_chave": {"normas": ["norma1", "norma2"]}}
+PALAVRAS_CHAVE_MANUAL = {
+    "ipv6": {"normas": ["ato77", "ato7971"]},
+    "bluetooth": {"normas": []},
+    "e1": {"normas": []},
+    "e3": {"normas": []},
+    "smart": {"normas": []},
+    "tv": {"normas": []},
+    "STM-1": {"normas": []},
+    "STM-4": {"normas": []},
+    "STM-16": {"normas": []},
+    "STM-64": {"normas": []},
+    "nfc": {"normas": []},
+    "wi-fi": {"normas": []},
+    "voz": {"normas": []},
+    "esim": {"normas": []},
+    "simcard": {"normas": []},
+    "bateria": {"normas": []},
+    "carregador": {"normas": []},
+    "handheld": {"normas": []},
+    "hand-held": {"normas": []},
+    "hand held": {"normas": []},
+    "smartphone": {"normas": []},
+    "celular": {"normas": []},
+    "aeronáutico": {"normas": []},
+    "marítimo": {"normas": []},
+    "dsl": {"normas": []},
+    "adsl": {"normas": []},
+    "vdsl": {"normas": []},
+    "xdsl": {"normas": []},
+    "gpon": {"normas": []},
+    "epon": {"normas": []},
+    "xpon": {"normas": []},
+    "satélite": {"normas": []},
+    "satellite": {"normas": []}
+}
 
 # ================================
 # VALORES PADRÃO E PLACEHOLDERS

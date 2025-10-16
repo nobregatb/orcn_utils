@@ -941,24 +941,33 @@ class AnalisadorRequerimentos:
                         texto_completo += str(doc[pagina_num].get_text()).lower() + "\n"
                     
                     # Usar palavras-chave definidas em const.py
-                    palavras_chave_manual = [palavra.lower() for palavra in PALAVRAS_CHAVE_MANUAL]
+                    palavras_chave_manual = [palavra.lower() for palavra in PALAVRAS_CHAVE_MANUAL.keys()]
                     palavras_chave_manual = sorted(palavras_chave_manual)                    
                     
                     # Contar ocorrências de cada palavra-chave
                     palavras_encontradas = {}
                     palavras_nao_encontradas = []
+                    palavras_encontradas_com_normas = {}  # Nova estrutura para palavras com normas
                     
                     for palavra in palavras_chave_manual:
                         contador = texto_completo.count(palavra)
                         if contador > 0:
                             palavras_encontradas[palavra] = contador
+                            # Buscar normas associadas à palavra
+                            normas_associadas = PALAVRAS_CHAVE_MANUAL.get(palavra, {}).get("normas", [])
+                            if normas_associadas:
+                                palavras_encontradas_com_normas[palavra] = {
+                                    "contador": contador,
+                                    "normas": normas_associadas
+                                }
                         else:
                             palavras_nao_encontradas.append(palavra)
                     
                     # Armazenar resultados da análise de palavras-chave nos dados extraídos
                     resultado["dados_extraidos"] = {
                         "palavras_encontradas": palavras_encontradas,
-                        "palavras_nao_encontradas": palavras_nao_encontradas
+                        "palavras_nao_encontradas": palavras_nao_encontradas,
+                        "palavras_encontradas_com_normas": palavras_encontradas_com_normas
                     }
                         
             except ImportError:
@@ -1183,8 +1192,7 @@ class AnalisadorRequerimentos:
         # Analisar cada documento
         for arquivo in arquivos_pdf:
             tipo_doc = self._determinar_tipo_documento(arquivo.name)
-            if tipo_doc != "CCT" and tipo_doc != "Manual":
-                continue
+            # Processar todos os tipos de documentos para não perder informações
             resultado_doc = self._analisar_documento(arquivo, tipo_doc)
             resultado_requerimento["documentos_analisados"].append(resultado_doc)
             
@@ -1355,6 +1363,82 @@ class AnalisadorRequerimentos:
             log_erro(f"Erro ao obter requisitos para equipamento {equipamento_id}: {str(e)}")
         
         return requisitos
+
+    def _coletar_normas_aplicaveis_requerimento(self, req_dados: Dict) -> Dict[str, List[str]]:
+        """
+        Coleta todas as normas aplicáveis a um requerimento, mapeando suas origens (palavras-chave e equipamentos).
+        
+        Returns:
+            Dict[norma_id, List[motivadores]]
+        """
+        normas_aplicaveis = {}
+        
+        try:
+            documentos = req_dados.get("documentos_analisados", [])
+            log_info(f"Processando {len(documentos)} documentos para coleta de normas")
+            
+            # 1. Coletar normas de palavras-chave encontradas
+            for doc in documentos:
+                dados_extraidos = doc.get("dados_extraidos", {})
+                palavras_com_normas = dados_extraidos.get("palavras_encontradas_com_normas", {})
+                
+                log_info(f"Documento {doc.get('nome_arquivo', 'N/A')} - palavras com normas: {len(palavras_com_normas)}")
+                
+                for palavra, info in palavras_com_normas.items():
+                    normas = info.get("normas", [])
+                    contador = info.get("contador", 0)
+                    
+                    log_info(f"Palavra '{palavra}' encontrada {contador}x com normas: {normas}")
+                    
+                    for norma_id in normas:
+                        if norma_id not in normas_aplicaveis:
+                            normas_aplicaveis[norma_id] = []
+                        normas_aplicaveis[norma_id].append(f"palavra-chave: {palavra} (x{contador})")
+            
+            # 2. Coletar normas de tipos de equipamentos
+            equipamentos_encontrados = set()
+            for doc in documentos:
+                dados_extraidos = doc.get("dados_extraidos", {})
+                equipamentos = dados_extraidos.get("equipamentos", [])
+                for eq_nome in equipamentos:
+                    eq_id = self._buscar_id_equipamento_por_nome(eq_nome)
+                    if eq_id:
+                        equipamentos_encontrados.add((eq_id, eq_nome))
+            
+            # Para cada equipamento, buscar suas normas
+            for eq_id, eq_nome in equipamentos_encontrados:
+                requisitos_eq = self._obter_requisitos_para_equipamento(eq_id)
+                for req in requisitos_eq:
+                    norma_id = req.get('id', '')
+                    if norma_id:
+                        if norma_id not in normas_aplicaveis:
+                            normas_aplicaveis[norma_id] = []
+                        normas_aplicaveis[norma_id].append(f"{eq_nome}")
+            
+        except Exception as e:
+            log_erro(f"Erro ao coletar normas aplicáveis: {str(e)}")
+        
+        return normas_aplicaveis
+
+    def _obter_detalhes_norma(self, norma_id: str) -> Dict[str, str]:
+        """Obtém detalhes de uma norma pelo seu ID do arquivo normas.json."""
+        try:
+            for norma in self.normas:
+                if norma.get('id') == norma_id:
+                    return {
+                        'nome': norma.get('nome', norma_id),
+                        'descricao': norma.get('descricao', ''),
+                        'url': norma.get('url', '')
+                    }
+        except Exception as e:
+            log_erro(f"Erro ao buscar detalhes da norma {norma_id}: {str(e)}")
+        
+        # Retornar informações mínimas se não encontrar
+        return {
+            'nome': norma_id,
+            'descricao': 'Norma não encontrada na base de dados',
+            'url': ''
+        }
 
     def _gerar_secao_requisitos_legais(self, equipamentos_unicos: Dict[str, Dict]) -> str:
         """Gera a seção de requisitos legais com subseções por tipo de equipamento."""
@@ -1542,6 +1626,7 @@ A seguir estão os detalhes da análise para cada requerimento processado.
             nome_ocd_escapado = self._escapar_latex(nome_ocd_completo)
             
             latex_content += f"""
+\\newpage            
 \\subsection{{Requerimento: {numero_req}}}
 A seguir, os detalhes da análise dos documentos associados a este requerimento, cujo tempo de processamento foi: {tempo_analise_req}.
 
@@ -1636,7 +1721,46 @@ A seguir, os detalhes da análise dos documentos associados a este requerimento,
 
             latex_content += """\\end{longtable}
 
+\\subsubsection{Normas aplicáveis}
+
 """
+            
+            # Coletar normas aplicáveis para este requerimento
+            normas_aplicaveis = self._coletar_normas_aplicaveis_requerimento(req)
+            
+            # Debug: Adicionar log para verificar se normas foram encontradas
+            log_info(f"Normas aplicáveis encontradas para {numero_req}: {len(normas_aplicaveis)} normas")
+            if normas_aplicaveis:
+                log_info(f"Normas: {list(normas_aplicaveis.keys())}")
+            
+            if normas_aplicaveis:
+                latex_content += """\\begin{longtable}{p{5cm}p{11cm}}
+\\hline
+\\textbf{Norma} & \\textbf{Motivador(es)} \\\\
+\\hline
+\\endhead
+"""
+                
+                # Ordenar normas alfabeticamente
+                for norma_id in sorted(normas_aplicaveis.keys()):
+                    detalhes_norma = self._obter_detalhes_norma(norma_id)
+                    nome_norma = self._escapar_latex(detalhes_norma['nome'])
+                    url_norma = detalhes_norma['url']
+                    
+                    motivadores = normas_aplicaveis[norma_id]
+                    motivadores_texto = self._escapar_latex("; ".join(motivadores))
+                    
+                    if url_norma:
+                        # Criar hyperlink para a norma
+                        latex_content += f"\\href{{{url_norma}}}{{{nome_norma}}} & {motivadores_texto} \\\\ \\hline"
+                    else:
+                        # Sem hyperlink se não há URL
+                        latex_content += f"{nome_norma} & {motivadores_texto} \\\\ \\hline"
+                
+                latex_content += """\\end{longtable}
+"""
+            else:
+                latex_content += "\\textit{Nenhuma norma específica identificada para este requerimento.}\\n\\n"
         
         # Gerar seção de requisitos legais
         equipamentos_unicos = self._coletar_equipamentos_unicos()

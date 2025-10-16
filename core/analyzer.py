@@ -15,8 +15,18 @@ from core.const import (
     UTILS_DIR, EXT_PDF, EXT_JSON, EXT_TEX, EXT_XLSX, GLOB_PDF,
     STATUS_CONFORME, STATUS_NAO_CONFORME, STATUS_INCONCLUSIVO, STATUS_ERRO, STATUS_PROCESSADO,
     VALOR_NAO_DISPONIVEL, ENCODING_UTF8, PALAVRAS_CHAVE_MANUAL,
-    TIPOS_DOCUMENTO, PADROES_ARQUIVO
+    TIPOS_DOCUMENTOS
 )
+
+# Constantes para tipos de documento (chaves da estrutura TIPOS_DOCUMENTOS)
+TIPO_CCT = 'cct'
+TIPO_RACT = 'ract'
+TIPO_MANUAL = 'manual'
+TIPO_RELATORIO_ENSAIO = 'relatorio_ensaio'
+TIPO_ART = 'art'
+TIPO_FOTOS = 'fotos'
+TIPO_CONTRATO_SOCIAL = 'contrato_social'
+TIPO_OUTROS = 'outros'
 from core.utils import (
     formatar_cnpj, desformatar_cnpj, latex_escape_path, escapar_latex, buscar_valor,
     normalizar, normalizar_dados, obter_versao_git, carregar_json, salvar_json, validar_cnpj, fullpath_para_req
@@ -627,22 +637,22 @@ class AnalisadorRequerimentos:
         }
         
         try:
-            # Análise baseada no tipo de documento usando constantes de const.py
-            if tipo_documento == "cct":
+            # Análise baseada no tipo de documento usando constantes unificadas
+            if tipo_documento == TIPO_CCT:
                 resultado = self._analisar_cct(caminho_documento, resultado)
-            elif tipo_documento == "ract":
+            elif tipo_documento == TIPO_RACT:
                 resultado = self._analisar_ract(caminho_documento, resultado)
-            elif tipo_documento == "manual":
+            elif tipo_documento == TIPO_MANUAL:
                 resultado = self._analisar_keywords(caminho_documento, resultado)
-            elif tipo_documento == "relatorio_ensaio":
+            elif tipo_documento == TIPO_RELATORIO_ENSAIO:
                 resultado = self._analisar_relatorio_ensaio(caminho_documento, resultado)
-            elif tipo_documento == "art":
+            elif tipo_documento == TIPO_ART:
                 resultado = self._analisar_art(caminho_documento, resultado)
-            elif tipo_documento == "fotos":
+            elif tipo_documento == TIPO_FOTOS:
                 resultado = self._analisar_fotos(caminho_documento, resultado)
-            elif tipo_documento == "contrato_social":
+            elif tipo_documento == TIPO_CONTRATO_SOCIAL:
                 resultado = self._analisar_contrato_social(caminho_documento, resultado)
-            elif tipo_documento == "outros":
+            elif tipo_documento == TIPO_OUTROS:
                 resultado = self._analisar_keywords(caminho_documento, resultado)    
             else:
                 resultado["observacoes"].append(f"Tipo de documento não reconhecido: {tipo_documento}")
@@ -658,8 +668,9 @@ class AnalisadorRequerimentos:
         """Determina o tipo de documento baseado no nome do arquivo usando padrões de const.py."""
         nome_lower = nome_arquivo.lower()
         
-        # Usar padrões definidos em const.py
-        for tipo_chave, padroes in PADROES_ARQUIVO.items():
+        # Usar padrões definidos em TIPOS_DOCUMENTOS
+        for tipo_chave, tipo_info in TIPOS_DOCUMENTOS.items():
+            padroes = tipo_info['padroes']
             for padrao in padroes:
                 if padrao in nome_lower:
                     # Retornar a chave do tipo para uso consistente
@@ -1591,7 +1602,7 @@ A seguir estão os detalhes da análise para cada requerimento processado.
             
             # Buscar o primeiro CCT com OCD válido
             for doc in documentos:
-                if doc.get("tipo") == "cct":
+                if doc.get("tipo") == TIPO_CCT:
                     dados_extraidos = doc.get("dados_extraidos", {})
                     nome_ocd_extraido = dados_extraidos.get("nome_ocd", "N/A")
                     if nome_ocd_extraido and nome_ocd_extraido != "N/A" and not nome_ocd_extraido.startswith('[ERRO]'):
@@ -1605,9 +1616,51 @@ A seguir estão os detalhes da análise para cada requerimento processado.
 \\subsection{{Requerimento {numero_req}}}
 A seguir, os detalhes da análise dos documentos associados a este requerimento, cujo tempo de processamento foi: {tempo_analise_req}.
 
-\\subsubsection{{Documentos Analisados}}
-
 \\textbf{{OCD:}} {nome_ocd_escapado}
+
+\\subsubsection{{Normas aplicáveis}}
+
+"""
+            
+            # Coletar normas aplicáveis para este requerimento
+            normas_aplicaveis = self._coletar_normas_aplicaveis_requerimento(req)
+            
+            # Debug: Adicionar log para verificar se normas foram encontradas
+            log_info(f"Normas aplicáveis encontradas para {numero_req}: {len(normas_aplicaveis)} normas")
+            if normas_aplicaveis:
+                log_info(f"Normas: {list(normas_aplicaveis.keys())}")
+            
+            if normas_aplicaveis:
+                latex_content += """\\begin{longtable}{p{5cm}p{11cm}}
+\\hline
+\\textbf{Norma} & \\textbf{Motivador(es)} \\\\
+\\hline
+\\endhead
+"""
+                
+                # Ordenar normas alfabeticamente
+                for norma_id in sorted(normas_aplicaveis.keys()):
+                    detalhes_norma = self._obter_detalhes_norma(norma_id)
+                    nome_norma = escapar_latex(detalhes_norma['nome'])
+                    url_norma = detalhes_norma['url']
+                    
+                    motivadores = normas_aplicaveis[norma_id]
+                    motivadores_texto = escapar_latex("; ".join(motivadores))
+                    
+                    if url_norma:
+                        # Criar hyperlink para a norma
+                        latex_content += f"\\href{{{url_norma}}}{{{nome_norma}}} & {motivadores_texto} \\\\ \\hline"
+                    else:
+                        # Sem hyperlink se não há URL
+                        latex_content += f"{nome_norma} & {motivadores_texto} \\\\ \\hline"
+                
+                latex_content += """\\end{longtable}
+"""
+            else:
+                latex_content += "\\textit{Nenhuma norma específica identificada para este requerimento.}\\n\\n"
+
+            latex_content += f"""
+\\subsubsection{{Documentos Analisados}}
 
 \\begin{{longtable}}{{|p{{6cm}}|p{{10cm}}|}}
 \\hline
@@ -1696,46 +1749,7 @@ A seguir, os detalhes da análise dos documentos associados a este requerimento,
 
             latex_content += """\\end{longtable}
 
-\\subsubsection{Normas aplicáveis}
-
 """
-            
-            # Coletar normas aplicáveis para este requerimento
-            normas_aplicaveis = self._coletar_normas_aplicaveis_requerimento(req)
-            
-            # Debug: Adicionar log para verificar se normas foram encontradas
-            log_info(f"Normas aplicáveis encontradas para {numero_req}: {len(normas_aplicaveis)} normas")
-            if normas_aplicaveis:
-                log_info(f"Normas: {list(normas_aplicaveis.keys())}")
-            
-            if normas_aplicaveis:
-                latex_content += """\\begin{longtable}{p{5cm}p{11cm}}
-\\hline
-\\textbf{Norma} & \\textbf{Motivador(es)} \\\\
-\\hline
-\\endhead
-"""
-                
-                # Ordenar normas alfabeticamente
-                for norma_id in sorted(normas_aplicaveis.keys()):
-                    detalhes_norma = self._obter_detalhes_norma(norma_id)
-                    nome_norma = escapar_latex(detalhes_norma['nome'])
-                    url_norma = detalhes_norma['url']
-                    
-                    motivadores = normas_aplicaveis[norma_id]
-                    motivadores_texto = escapar_latex("; ".join(motivadores))
-                    
-                    if url_norma:
-                        # Criar hyperlink para a norma
-                        latex_content += f"\\href{{{url_norma}}}{{{nome_norma}}} & {motivadores_texto} \\\\ \\hline"
-                    else:
-                        # Sem hyperlink se não há URL
-                        latex_content += f"{nome_norma} & {motivadores_texto} \\\\ \\hline"
-                
-                latex_content += """\\end{longtable}
-"""
-            else:
-                latex_content += "\\textit{Nenhuma norma específica identificada para este requerimento.}\\n\\n"
         
         # Gerar seção de requisitos legais
         equipamentos_unicos = self._coletar_equipamentos_unicos()

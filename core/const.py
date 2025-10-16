@@ -48,19 +48,7 @@ CSS_SELECTORS = {
     'blockui': ".ui-blockui"
 }
 
-# Botões de anexos para download
-BOTOES_PDF = [
-    "Outros",
-    "ART", 
-    "Selo ANATEL",
-    "Relatório de Avaliação da Conformidade - RACT",
-    "Manual do Produto",
-    "Certificado de Conformidade Técnica - CCT",
-    "Contrato Social",
-    "Fotos internas",
-    "Relatório de Ensaio",
-    "Fotos do produto"
-]
+# Botões de anexos para download (será definido após TIPOS_DOCUMENTOS)
 
 # Argumentos do Chrome
 CHROME_ARGS = [
@@ -124,28 +112,93 @@ TAB_REQUERIMENTOS = {# a coluna 0 é desprezada, não tem dados
                      'data': 8,
                      'status': 9
                      }
-# Tipos de documentos para análise
-TIPOS_DOCUMENTO = {
-    'cct': 'Certificado de Conformidade Técnica',
-    'ract': 'Relatório de Avaliação da Conformidade',
-    'manual': 'Manual do Produto',
-    'relatorio_ensaio': 'Relatório de Ensaio',
-    'art': 'ART',
-    'fotos': 'Fotos',
-    'contrato_social': 'Contrato Social',
-    'outros': 'Outros'
+# ================================
+# TIPOS DE DOCUMENTOS UNIFICADOS
+# ================================
+
+# Estrutura unificada que consolida tipos, padrões e botões de documentos
+TIPOS_DOCUMENTOS = {
+    'cct': {
+        'nome': 'Certificado de Conformidade Técnica',
+        'nome_curto': 'CCT',
+        'padroes': ['certificado', 'conformidade', 'tecnica', 'cct'],
+        'botao_pdf': 'Certificado de Conformidade Técnica - CCT'
+    },
+    'ract': {
+        'nome': 'Relatório de Avaliação da Conformidade',
+        'nome_curto': 'RACT', 
+        'padroes': ['relatorio', 'avaliacao', 'conformidade', 'ract'],
+        'botao_pdf': 'Relatório de Avaliação da Conformidade - RACT'
+    },
+    'manual': {
+        'nome': 'Manual do Produto',
+        'nome_curto': 'Manual',
+        'padroes': ['manual', 'produto', 'usuario'],
+        'botao_pdf': 'Manual do Produto'
+    },
+    'relatorio_ensaio': {
+        'nome': 'Relatório de Ensaio',
+        'nome_curto': 'Relatório',
+        'padroes': ['relatorio', 'ensaio', 'teste'],
+        'botao_pdf': 'Relatório de Ensaio'
+    },
+    'art': {
+        'nome': 'ART',
+        'nome_curto': 'ART',
+        'padroes': ['art', 'responsabilidade'],
+        'botao_pdf': 'ART'
+    },
+    'fotos': {
+        'nome': 'Fotos',
+        'nome_curto': 'Fotos',
+        'padroes': ['foto', 'imagem', 'jpg', 'png'],
+        'botao_pdf': 'Fotos do produto'
+    },
+    'contrato_social': {
+        'nome': 'Contrato Social',
+        'nome_curto': 'Contrato',
+        'padroes': ['contrato', 'social', 'estatuto'],
+        'botao_pdf': 'Contrato Social'
+    },
+    'outros': {
+        'nome': 'Outros',
+        'nome_curto': 'Outros',
+        'padroes': [],
+        'botao_pdf': 'Outros'
+    }
 }
 
-# Padrões de nomes de arquivo para identificação
-PADROES_ARQUIVO = {
-    'cct': ['certificado', 'conformidade', 'tecnica', 'cct'],
-    'ract': ['relatorio', 'avaliacao', 'conformidade', 'ract'],
-    'manual': ['manual', 'produto', 'usuario'],
-    'relatorio_ensaio': ['relatorio', 'ensaio', 'teste'],
-    'art': ['art', 'responsabilidade'],
-    'fotos': ['foto', 'imagem', 'jpg', 'png'],
-    'contrato_social': ['contrato', 'social', 'estatuto']
-}
+# Constantes derivadas para compatibilidade (DEPRECATED - usar TIPOS_DOCUMENTOS)
+TIPOS_DOCUMENTO = {k: v['nome'] for k, v in TIPOS_DOCUMENTOS.items()}
+PADROES_ARQUIVO = {k: v['padroes'] for k, v in TIPOS_DOCUMENTOS.items()}
+
+# Gerar lista de botões PDF dinamicamente
+def _gerar_botoes_pdf():
+    """Gera lista de botões PDF baseada em TIPOS_DOCUMENTOS"""
+    botoes = []
+    for tipo_info in TIPOS_DOCUMENTOS.values():
+        if tipo_info['botao_pdf'] not in botoes:
+            botoes.append(tipo_info['botao_pdf'])
+    
+    # Adicionar botões específicos que não estão em tipos de documento
+    botoes_especiais = ["Selo ANATEL", "Fotos internas"]
+    for botao in botoes_especiais:
+        if botao not in botoes:
+            botoes.append(botao)
+    
+    return botoes
+
+BOTOES_PDF = _gerar_botoes_pdf()
+
+# Constantes para tipos de documento (chaves da estrutura TIPOS_DOCUMENTOS)
+TIPO_CCT = 'cct'
+TIPO_RACT = 'ract'
+TIPO_MANUAL = 'manual'
+TIPO_RELATORIO_ENSAIO = 'relatorio_ensaio'
+TIPO_ART = 'art'
+TIPO_FOTOS = 'fotos'
+TIPO_CONTRATO_SOCIAL = 'contrato_social'
+TIPO_OUTROS = 'outros'
 
 # ================================
 # MENSAGENS DO SISTEMA

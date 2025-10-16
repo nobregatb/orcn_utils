@@ -86,6 +86,36 @@ def escapar_latex(texto: str) -> str:
 
 
 # ================================
+# FUNÇÕES DE TIPOS DE DOCUMENTO
+# ================================
+
+def obter_nome_tipo_documento(tipo_chave: str) -> str:
+    """Obtém o nome completo de um tipo de documento pela chave."""
+    from core.const import TIPOS_DOCUMENTOS
+    return TIPOS_DOCUMENTOS.get(tipo_chave, {}).get('nome', 'Tipo desconhecido')
+
+def obter_nome_curto_tipo_documento(tipo_chave: str) -> str:
+    """Obtém o nome curto de um tipo de documento pela chave."""
+    from core.const import TIPOS_DOCUMENTOS
+    return TIPOS_DOCUMENTOS.get(tipo_chave, {}).get('nome_curto', 'N/A')
+
+def obter_botao_pdf_tipo_documento(tipo_chave: str) -> str:
+    """Obtém o nome do botão PDF para um tipo de documento."""
+    from core.const import TIPOS_DOCUMENTOS
+    return TIPOS_DOCUMENTOS.get(tipo_chave, {}).get('botao_pdf', 'Outros')
+
+def obter_padroes_tipo_documento(tipo_chave: str) -> List[str]:
+    """Obtém os padrões de identificação para um tipo de documento."""
+    from core.const import TIPOS_DOCUMENTOS
+    return TIPOS_DOCUMENTOS.get(tipo_chave, {}).get('padroes', [])
+
+def listar_tipos_documento() -> List[str]:
+    """Lista todas as chaves de tipos de documento disponíveis."""
+    from core.const import TIPOS_DOCUMENTOS
+    return list(TIPOS_DOCUMENTOS.keys())
+
+
+# ================================
 # FUNÇÕES DE NORMALIZAÇÃO
 # ================================
 

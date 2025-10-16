@@ -15,39 +15,19 @@ from core.const import (
     MENSAGENS_STATUS, MENSAGENS_ERRO, CARACTERES_INVALIDOS, FORMATO_NOME_ARQUIVO,
     CSS_SELECTORS, TAB_REQUERIMENTOS
 )
+from core.utils import (
+    is_bundled, get_files_folder, get_profile_dir, req_para_fullpath, 
+    criar_pasta_se_nao_existir, carregar_json, salvar_json
+)
 
-# Detecta se está sendo executado como executável PyInstaller
-def is_bundled():
-    return getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
 
-
-# Define FILES_FOLDER baseado no modo de execução
-FILES_FOLDER = TBN_FILES_FOLDER
-PROFILE_DIR = os.path.join(Path(__file__).parent.parent, CHROME_PROFILE_DIR)
-
-if is_bundled():
-    FILES_FOLDER = os.path.dirname(sys.executable)
-    PROFILE_DIR = os.path.join(FILES_FOLDER, CHROME_PROFILE_DIR)
-    log_info(MENSAGENS_STATUS['modo_executavel'].format(FILES_FOLDER))
-else:
-    log_info(MENSAGENS_STATUS['modo_script'].format(FILES_FOLDER))
+# Define FILES_FOLDER e PROFILE_DIR baseado no modo de execução
+FILES_FOLDER = get_files_folder()
+PROFILE_DIR = get_profile_dir()
 
 
 
-def req_para_fullpath(req):
-    """Converte número do requerimento (num/ano) para caminho completo da pasta"""
-    num, ano = req.split("/")
-    requerimento = rf"{REQUERIMENTOS_DIR_PREFIX}\{ano}.{num}"
-    full_path = os.path.join(FILES_FOLDER, requerimento)
-    return full_path
-    
-def criar_pasta_se_nao_existir(req):
-    """Cria pasta do requerimento se não existir e retorna o caminho"""
-    full_path = req_para_fullpath(req)
-    if not os.path.exists(full_path):
-        os.makedirs(full_path, exist_ok=True)
-        log_info(f"📁 Pasta criada: {full_path}")
-    return full_path
+# Funções req_para_fullpath e criar_pasta_se_nao_existir movidas para core/utils.py
 
 def criar_json_dos_novos_requerimentos(rows):
     for i, row in enumerate(rows, start=1):

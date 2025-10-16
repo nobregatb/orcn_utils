@@ -1,25 +1,12 @@
 [
-  { "cnpj": "35983502000164", "nome": "ABCP Certificadora de Produtos Ltda"},
-  { "cnpj": "32215918000144", "nome": "ACERT Organismo de Certificação de Produtos em Sistemas"},
-  { "cnpj": null, "nome": "ACTA - Supervisão Técnica INDEPENDENTE"},
-  { "cnpj": null, "nome": "ACTA - Certificações Ltda"},
-  { "cnpj": null, "nome": "Associação LMP Certificações"},
-  { "cnpj": "16587151000128", "nome": "Associação NCC Certificações do Brasil"},
-  { "cnpj": null, "nome": "Associação VERSYS de Tecnologia"},
-  { "cnpj": null, "nome": "BR APPROVAL - Associação Técnica de Certificação"},
-  { "cnpj": null, "nome": "BraCert - Brasil Certificações Ltda"},  
-  { "cnpj": null, "nome": "DEKRA Certification"},
-  { "cnpj": "33182809000130", "nome": "SGS do Brasil Ltda"},
-  { "cnpj": null, "nome": "Eldorado - Instituto de Pesquisas"},
-  { "cnpj": null, "nome": "Fundação CPqD - Centro de Pesquisa e Desenvolvimento em Telecomunicações"},
-  { "cnpj": null, "nome": "Fundação Carlos Alberto Vanzolini"},
-  { "cnpj": null, "nome": "ICC - Instituto de Certificação e Conformidades Ltda"},
-  { "cnpj": null, "nome": "Intertek do Brasil Inspecoes Ltda"},
-  { "cnpj": null, "nome": "IAT - Instituto Alphageos de Tecnologia"},
-  { "cnpj": null, "nome": "IBrTec - Instituto Brasil de Tecnologia e Inovação"},
-  { "cnpj": null, "nome": "Tecpar - Instituto de Tecnologia do Paraná"},
-  { "cnpj": null, "nome": "Master - Associação de Avaliação de Conformidade Telecom"},
-  { "cnpj": "44458010000140", "nome": "Moderna Tecnologia Ltda"},
-  { "cnpj": null, "nome": "NCC Certificacoes do Brasil Ltda"},
-  { "cnpj": null, "nome": "OCP-TELI - Organização Certificadora de Produtos de Telecomunicacõess e Informática Ltda"}
+  {
+    "cnpj": "04.192.889/0001-07",
+    "nome": "Associação NCC Certificações do Brasil",
+    "data_atualizacao": "25/09/2025"
+  },
+  {
+    "cnpj": "44.458.010/0001-40",
+    "nome": "Moderna Tecnologia LTDA",
+    "data_atualizacao": "04/09/2025"
+  }
 ]

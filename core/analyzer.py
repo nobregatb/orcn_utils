@@ -9,7 +9,17 @@ from typing import Dict, List, Optional, Tuple#, Any
 import subprocess
 
 from core.log_print import log_info, log_erro, log_erro_critico
-from core.const import TESSERACT_PATH, JSON_FILES, GIT_COMMANDS, GIT_TIMEOUT, VERSAO_PADRAO
+from core.const import (
+    TESSERACT_PATH, JSON_FILES, GIT_COMMANDS, GIT_TIMEOUT, VERSAO_PADRAO,
+    TBN_FILES_FOLDER, SEPARADOR_LINHA, SEPARADOR_MENOR, REQUERIMENTOS_DIR_PREFIX,
+    UTILS_DIR, EXT_PDF, EXT_JSON, EXT_TEX, EXT_XLSX, GLOB_PDF,
+    STATUS_CONFORME, STATUS_NAO_CONFORME, STATUS_INCONCLUSIVO, STATUS_ERRO, STATUS_PROCESSADO,
+    VALOR_NAO_DISPONIVEL, ENCODING_UTF8, PALAVRAS_CHAVE_MANUAL
+)
+from core.utils import (
+    formatar_cnpj, desformatar_cnpj, latex_escape_path, buscar_valor,
+    normalizar, normalizar_dados, obter_versao_git, carregar_json, salvar_json, validar_cnpj
+)
 
 import pymupdf as fitz
 PYMUPDF_DISPONIVEL = True
@@ -24,93 +34,9 @@ try:
 except ImportError:
     OCR_DISPONIVEL = False
 
-def latex_escape_path(caminho: str) -> str:
-    """Escapa caracteres especiais do LaTeX dentro de um caminho de arquivo."""
-    caminho = caminho.replace("\\", "/")  # usa / para evitar confusão
-    # escapa caracteres especiais
-    return re.sub(r'([_&#%{}$^~\\])', r'\\\1', caminho)
-
-def buscar_valor(json_data, key_busca, valor_busca, key_retorno):
-    """
-    Busca em uma lista de dicionários (ou JSON similar)
-    onde key_busca == valor_busca e retorna o valor de key_retorno.
-    """
-    if isinstance(json_data, list):
-        for item in json_data:
-            if isinstance(item, dict):
-                if item.get(key_busca) == valor_busca:
-                    return item.get(key_retorno)
-    elif isinstance(json_data, dict):
-        if json_data.get(key_busca) == valor_busca:
-            return json_data.get(key_retorno)
-    return None
-
-
-def normalizar(s):
-    """Normaliza string removendo acentos e convertendo para lowercase."""
-    if isinstance(s, str):
-        s = s.strip().lower()
-        s = ''.join(
-            c for c in unicodedata.normalize('NFD', s)
-            if unicodedata.category(c) != 'Mn'
-        )
-    return s
-
-
-def normalizar_dados(dados):
-    """Normaliza todos os dados string em um dicionário."""
-    for k, v in dados.items():
-        if isinstance(v, list):
-            dados[k] = [normalizar(item) if isinstance(item, str) else item for item in v]
-        elif isinstance(v, str):
-            dados[k] = normalizar(v)
-    return dados
-
-
-def obter_versao_git() -> str:
-    """Obtém a versão do script baseada em git tag ou commit hash."""
-    try:
-        # Tentar obter a tag mais recente (ordenada por versão)
-        resultado = subprocess.run(
-            GIT_COMMANDS['tags'],
-            capture_output=True,
-            text=True,
-            timeout=GIT_TIMEOUT
-        )
-        
-        if resultado.returncode == 0 and resultado.stdout.strip():
-            # Pegar a primeira linha (tag mais recente)
-            tags = resultado.stdout.strip().split('\n')
-            if tags and tags[0]:
-                return tags[0]
-        
-        # Fallback: tentar describe --tags
-        resultado = subprocess.run(
-            GIT_COMMANDS['describe'],
-            capture_output=True,
-            text=True,
-            timeout=GIT_TIMEOUT
-        )
-        
-        if resultado.returncode == 0 and resultado.stdout.strip():
-            return resultado.stdout.strip()
-        
-        # Se não há tags, tentar obter o hash do commit
-        resultado = subprocess.run(
-            GIT_COMMANDS['commit_hash'],
-            capture_output=True,
-            text=True,
-            timeout=GIT_TIMEOUT
-        )
-        
-        if resultado.returncode == 0 and resultado.stdout.strip():
-            return f"commit-{resultado.stdout.strip()}"
-            
-    except (subprocess.TimeoutExpired, FileNotFoundError, Exception):
-        pass
-    
-    # Fallback para versão baseada em data
-    return VERSAO_PADRAO.format(datetime.now().strftime('%Y.%m.%d'))
+# ================================
+# NOTA: Funções utilitárias movidas para core/utils.py
+# ================================
 
 
 class CCTAnalyzerIntegrado:
@@ -216,9 +142,17 @@ class CCTAnalyzerIntegrado:
                 with open(ocds_file, 'r', encoding='utf-8') as f:
                     ocds_data = json.load(f)
                 
-                ocd_info = buscar_valor(ocds_data, 'cnpj', cnpj, 'nome')
-                if ocd_info:
-                    return ocd_info
+                # Normalizar CNPJ de entrada (remover formatação se houver)
+                cnpj_numeros = desformatar_cnpj(cnpj)
+                cnpj_formatado = formatar_cnpj(cnpj_numeros)
+                
+                # Buscar por CNPJ formatado ou por números
+                for ocd in ocds_data:
+                    cnpj_ocd = ocd.get('cnpj')
+                    if cnpj_ocd:
+                        # Comparar tanto com formato quanto com números
+                        if cnpj_ocd == cnpj_formatado or desformatar_cnpj(cnpj_ocd) == cnpj_numeros:
+                            return ocd.get('nome', f"[ERRO] Nome não encontrado para CNPJ: {cnpj}")
 
             return f"[ERRO] OCD não cadastrado (CNPJ: {cnpj})"
             
@@ -552,11 +486,9 @@ class AnalisadorRequerimentos:
     """
     
     def __init__(self):
-        #self.pasta_base = Path("downloads")  # Pasta onde estão os requerimentos
-        home_dir = r'C:\Users\tbnobrega\OneDrive - ANATEL\Anatel\_ORCN'
-        self.pasta_base = Path(home_dir + r'\Requerimentos')
-        self.pasta_resultados = Path(home_dir + r'\resultados_analise')
-        #self.pasta_resultados = Path("resultados_analise")
+        # Usar constante centralizada para diretório base
+        self.pasta_base = Path(TBN_FILES_FOLDER) / REQUERIMENTOS_DIR_PREFIX
+        self.pasta_resultados = Path(TBN_FILES_FOLDER) / 'resultados_analise'
         self.pasta_resultados.mkdir(exist_ok=True)
         
         # Carregar configurações
@@ -592,9 +524,9 @@ class AnalisadorRequerimentos:
         """
         Pergunta ao usuário se a análise será de um requerimento específico ou todos.
         """
-        print("\n" + "="*60)
+        print("\n" + SEPARADOR_LINHA)
         print("🔍 ANÁLISE DE REQUERIMENTOS ORCN")
-        print("="*60)
+        print(SEPARADOR_LINHA)
         print("\nEscolha o escopo da análise:")
         print("1. Analisar um requerimento específico")
         print("2. Analisar todos os requerimentos (*)")
@@ -626,7 +558,7 @@ class AnalisadorRequerimentos:
         requerimentos = self._listar_requerimentos()
         
         if not requerimentos:
-            print("❌ Nenhum requerimento encontrado na pasta de downloads.")
+            print("❌ Nenhum requerimento encontrado na pasta de requerimentos.")
             resposta = "CANCELAR"
         
         print(f"\n📁 Requerimentos disponíveis ({len(requerimentos)}):")
@@ -700,7 +632,7 @@ class AnalisadorRequerimentos:
             elif tipo_documento == "RACT":
                 resultado = self._analisar_ract(caminho_documento, resultado)
             elif tipo_documento == "Manual":
-                resultado = self._analisar_manual(caminho_documento, resultado)
+                resultado = self._analisar_keywords(caminho_documento, resultado)
             elif tipo_documento == "Relatorio_Ensaio":
                 resultado = self._analisar_relatorio_ensaio(caminho_documento, resultado)
             elif tipo_documento == "ART":
@@ -714,7 +646,7 @@ class AnalisadorRequerimentos:
                 
         except Exception as e:
             log_erro(f"Erro ao analisar {caminho_documento.name}: {str(e)}")
-            resultado["status"] = "ERRO"
+            resultado["status"] = STATUS_ERRO
             resultado["nao_conformidades"].append(f"Erro no processamento: {str(e)}")
         
         return resultado
@@ -748,14 +680,14 @@ class AnalisadorRequerimentos:
             log_info(f"Iniciando análise detalhada de CCT: {caminho.name}")
             
             # Instanciar CCTAnalyzer integrado
-            utils_dir = Path(__file__).parent.parent / "utils"
+            utils_dir = Path(__file__).parent.parent / UTILS_DIR
             cct_analyzer = CCTAnalyzerIntegrado(utils_dir)
             
             # Extrair conteúdo do PDF
             conteudo = cct_analyzer.extract_pdf_content(caminho)
             
             if not conteudo:
-                resultado["status"] = "ERRO"
+                resultado["status"] = STATUS_ERRO
                 resultado["nao_conformidades"].append("Falha na extração do conteúdo do PDF")
                 resultado["observacoes"].append("PDF pode estar corrompido ou protegido")
                 return resultado
@@ -764,7 +696,7 @@ class AnalisadorRequerimentos:
             dados_cct = cct_analyzer.extract_data_from_cct(conteudo)
             
             if not dados_cct:
-                resultado["status"] = "ERRO"
+                resultado["status"] = STATUS_ERRO
                 resultado["nao_conformidades"].append("Falha na extração de dados do CCT")
                 return resultado
             
@@ -895,7 +827,7 @@ class AnalisadorRequerimentos:
                 nao_conformidades.append("Nomenclatura do arquivo pode não estar adequada")
             
             # Verificar se é PDF
-            if caminho.suffix.lower() == '.pdf':
+            if caminho.suffix.lower() == EXT_PDF:
                 conformidades.append("Formato PDF correto")
             else:
                 nao_conformidades.append("Arquivo não está em formato PDF")
@@ -981,7 +913,7 @@ class AnalisadorRequerimentos:
         
         return resultado
     
-    def _analisar_manual(self, caminho: Path, resultado: Dict) -> Dict:
+    def _analisar_keywords(self, caminho: Path, resultado: Dict) -> Dict:
         """Análise específica para Manual do Produto."""
         try:
             log_info(f"Iniciando análise de Manual: {caminho.name}")
@@ -1014,14 +946,8 @@ class AnalisadorRequerimentos:
                     for pagina_num in range(total_paginas):  # Analisar todas as páginas
                         texto_completo += str(doc[pagina_num].get_text()).lower() + "\n"
                     
-                    # Definir palavras-chave essenciais para manuais
-                    palavras_chave_manual = [
-                        "ipv6", "bluetooth", "e1", "e3", "smart", "tv", "STM-1", "STM-4", "STM-16", "STM-64",
-                        "nfc", "wi-fi", "voz", "esim", "simcard", "bateria", "carregador", "handheld", "hand-held", "hand held",
-                        "smartphone", "celular", "aeronáutico", "marítimo", "dsl", "adsl", "vdsl", "xdsl", "gpon", "epon", "xpon", "satélite", "satellite"
-                    ]
-
-                    palavras_chave_manual = [palavra.lower() for palavra in palavras_chave_manual]
+                    # Usar palavras-chave definidas em const.py
+                    palavras_chave_manual = [palavra.lower() for palavra in PALAVRAS_CHAVE_MANUAL]
                     palavras_chave_manual = sorted(palavras_chave_manual)                    
                     
                     # Contar ocorrências de cada palavra-chave
@@ -1094,7 +1020,131 @@ class AnalisadorRequerimentos:
         resultado["observacoes"].append("Análise de Contrato Social: Validando dados da empresa")
         resultado["status"] = "CONFORME"  # Temporário
         return resultado
-    
+
+    def _processar_dados_requerimento_json(self, nome_requerimento: str, pasta_requerimento: Path) -> Optional[Dict]:
+        """
+        Busca e processa o arquivo JSON do requerimento para extrair informações
+        e atualizar o arquivo ocds.json se necessário.
+        
+        Args:
+            nome_requerimento: Nome do requerimento (ex: "2025.12345")
+            pasta_requerimento: Path para a pasta do requerimento
+            
+        Returns:
+            Dict com dados do requerimento ou None se não encontrado
+        """
+        if nome_requerimento.startswith("_"):
+            arquivo_json_req = pasta_requerimento / f"{nome_requerimento[1:]}.json"
+        else:
+            arquivo_json_req = pasta_requerimento / f"_{nome_requerimento}.json"
+        
+        if not arquivo_json_req.exists():
+            log_info(f"Arquivo JSON do requerimento não encontrado: {arquivo_json_req.name}")
+            return None
+            
+        try:
+            # Carregar dados do arquivo JSON do requerimento
+            dados_req = carregar_json(arquivo_json_req)
+            if not dados_req or not isinstance(dados_req, dict):
+                log_erro(f"Arquivo JSON inválido ou vazio: {arquivo_json_req.name}")
+                return None
+                
+            log_info(f"Dados do requerimento carregados de: {arquivo_json_req.name}")
+            
+            # Extrair informações do OCD se disponível
+            dados_ocd = dados_req.get("ocd")
+            if dados_ocd and isinstance(dados_ocd, dict) and dados_ocd.get("CNPJ"):
+                self._atualizar_ocds_json(dados_ocd)
+            
+            return dados_req
+            
+        except Exception as e:
+            log_erro(f"Erro ao processar arquivo JSON do requerimento {arquivo_json_req.name}: {str(e)}")
+            return None
+
+    def _atualizar_ocds_json(self, dados_ocd: Dict) -> None:
+        """
+        Atualiza o arquivo utils/ocds.json com informações do OCD se a data for mais recente.
+        
+        Args:
+            dados_ocd: Dicionário com dados do OCD do requerimento
+        """
+        try:
+            cnpj_ocd = dados_ocd.get("CNPJ")
+            nome_ocd = dados_ocd.get("Nome")
+            data_certificado = dados_ocd.get("Data do Certificado")
+            
+            if not cnpj_ocd or not nome_ocd:
+                log_info("CNPJ ou Nome do OCD não informados, ignorando atualização")
+                return
+                
+            # Carregar arquivo ocds.json atual
+            ocds_file = Path(__file__).parent.parent / UTILS_DIR / "ocds.json"
+            dados_ocds = carregar_json(ocds_file)
+            
+            if not dados_ocds or not isinstance(dados_ocds, list):
+                log_erro("Falha ao carregar arquivo ocds.json ou formato inválido")
+                return
+                
+            # Procurar registro existente por CNPJ
+            registro_encontrado = False
+            data_req_datetime = None
+            dados_modificados = False  # Controle para indicar se houve modificação
+            
+            # Converter data do certificado para comparação
+            if data_certificado:
+                try:
+                    data_req_datetime = datetime.strptime(data_certificado, "%d/%m/%Y")
+                except ValueError:
+                    log_erro(f"Formato de data inválido no OCD: {data_certificado}")
+                    return
+            
+            for i, ocd in enumerate(dados_ocds):
+                if ocd.get("cnpj") == cnpj_ocd:
+                    registro_encontrado = True
+                    
+                    # Verificar se a data do requerimento é mais recente
+                    data_atual_str = ocd.get("data_atualizacao")
+                    if data_atual_str and data_req_datetime:
+                        try:
+                            data_atual_datetime = datetime.strptime(data_atual_str, "%d/%m/%Y")
+                            
+                            if data_req_datetime > data_atual_datetime:
+                                # Atualizar registro existente
+                                dados_ocds[i]["nome"] = nome_ocd
+                                dados_ocds[i]["data_atualizacao"] = data_certificado
+                                dados_modificados = True
+                                log_info(f"OCD atualizado: {nome_ocd} (CNPJ: {cnpj_ocd}) - Nova data: {data_certificado}")
+                            else:
+                                log_info(f"OCD não atualizado: data atual ({data_atual_str}) é mais recente que a do requerimento ({data_certificado})")
+                                
+                        except ValueError:
+                            log_erro(f"Erro ao converter data de atualização: {data_atual_str}")
+                    break
+            
+            # Se não encontrou o registro, adicionar novo
+            if not registro_encontrado and data_certificado:
+                novo_registro = {
+                    "cnpj": cnpj_ocd,
+                    "nome": nome_ocd,
+                    "data_atualizacao": data_certificado
+                }
+                dados_ocds.append(novo_registro)
+                dados_modificados = True
+                log_info(f"Novo OCD adicionado: {nome_ocd} (CNPJ: {cnpj_ocd})")
+            
+            # Salvar arquivo somente se houve modificação
+            if dados_modificados:
+                if salvar_json(dados_ocds, ocds_file):
+                    log_info("Arquivo ocds.json atualizado com sucesso")
+                else:
+                    log_erro("Falha ao salvar arquivo ocds.json atualizado")
+            else:
+                log_info("Nenhuma modificação necessária no arquivo ocds.json")
+                
+        except Exception as e:
+            log_erro(f"Erro ao atualizar ocds.json: {str(e)}")
+
     def _analisar_requerimento_individual(self, nome_requerimento: str) -> Dict:
         """Analisa todos os documentos de um requerimento específico."""
         tempo_inicio_req = datetime.now()
@@ -1105,6 +1155,12 @@ class AnalisadorRequerimentos:
             log_erro(f"Pasta do requerimento não encontrada: {pasta_requerimento}")
             return {}
         
+        # Processar arquivo JSON do requerimento e atualizar OCDS se necessário
+        dados_req_json = self._processar_dados_requerimento_json(nome_requerimento, pasta_requerimento)
+
+        if dados_req_json is not None:
+            log_info(f"OCD: {dados_req_json['ocd']}")
+
         resultado_requerimento = {
             "numero_requerimento": nome_requerimento,
             "timestamp_analise": datetime.now().isoformat(),
@@ -1117,11 +1173,12 @@ class AnalisadorRequerimentos:
                 "ERRO": 0,
                 "PROCESSADO": 0
             },
-            "observacoes_gerais": []
+            "observacoes_gerais": [],
+            "dados_requerimento": dados_req_json  # Adicionar dados do JSON se disponível
         }
         
         # Buscar todos os arquivos PDF na pasta
-        arquivos_pdf = list(pasta_requerimento.glob("*.pdf"))
+        arquivos_pdf = list(pasta_requerimento.glob(GLOB_PDF))
         
         if not arquivos_pdf:
             resultado_requerimento["observacoes_gerais"].append("Nenhum arquivo PDF encontrado")
@@ -1183,7 +1240,7 @@ class AnalisadorRequerimentos:
             return "OCD não identificado"
         
         try:
-            ocds_file = Path(__file__).parent.parent / "utils" / "ocds.json"
+            ocds_file = Path(__file__).parent.parent / UTILS_DIR / "ocds.json"
             
             if not ocds_file.exists():
                 return nome_ocd_extraido
@@ -1360,7 +1417,7 @@ class AnalisadorRequerimentos:
                     status_geral[status] += count
         
         # Calcular tempos de análise e compilação
-        tempo_analise_formatado = "N/A"
+        tempo_analise_formatado = VALOR_NAO_DISPONIVEL
         
         if self.tempo_inicio_analise and self.tempo_fim_analise:
             tempo_total_analise = self.tempo_fim_analise - self.tempo_inicio_analise
@@ -1413,7 +1470,7 @@ class AnalisadorRequerimentos:
 \\setcounter{{tocdepth}}{2}
 
 \\title{{\\Large\\textbf{{Análise Simplificada Automatizada}}}}
-\\author{{Teógenes Brito da Nóbrega\\\\ \href{{mailto:tbnobrega@anatel.gov.br}}{{tbnobrega@anatel.gov.br}} }}
+\\author{{Teógenes Brito da Nóbrega\\\\\\\\ \\href{{mailto:tbnobrega@anatel.gov.br}}{{tbnobrega@anatel.gov.br}} }}
 %\\date{{{agora}}}
 \\date{{}}
 
@@ -1472,7 +1529,7 @@ A seguir estão os detalhes da análise para cada requerimento processado.
         for i, req in enumerate(self.resultados_analise, 1):
             numero_req = self._escapar_latex(req.get("numero_requerimento", f"Requerimento_{i}"))
             documentos = req.get("documentos_analisados", [])
-            tempo_analise_req = req.get("tempo_total_analise_formatado", "N/A")
+            tempo_analise_req = req.get("tempo_total_analise_formatado", VALOR_NAO_DISPONIVEL)
             #resumo = req.get("resumo_status", {})
             #timestamp_analise = self._escapar_latex(req.get('timestamp_analise', 'N/A'))
             
@@ -1646,10 +1703,10 @@ A seguir são apresentados os requisitos legais e normas utilizados como referê
                     ], capture_output=True, text=True, cwd=str(self.pasta_resultados.resolve()))
         
                     if resultado.returncode == 0:
-                        caminho_pdf = caminho_latex_absoluto.replace('.tex', '.pdf')
+                        caminho_pdf = caminho_latex_absoluto.replace(EXT_TEX, EXT_PDF)
                         log_info(f"PDF gerado com sucesso: {caminho_pdf}")
                         # Mantém apenas .tex, .pdf e .json
-                        exts_permitidas = {".tex", ".pdf", ".json"}                    
+                        exts_permitidas = {EXT_TEX, EXT_PDF, EXT_JSON}                    
                         for arquivo in self.pasta_resultados.iterdir():
                             if arquivo.is_file() and arquivo.suffix.lower() not in exts_permitidas:
                                 print("Apagando:", arquivo)

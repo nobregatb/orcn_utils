@@ -19,6 +19,7 @@ TBN_FILES_FOLDER = r"C:\Users\tbnobrega\OneDrive - ANATEL\Anatel\_ORCN"
 CHROME_PROFILE_DIR = "meu_perfil_chrome"
 #EXCEL_FILENAME = 'ORCN.xlsx'
 REQUERIMENTOS_DIR_PREFIX = "Requerimentos"
+UTILS_DIR = "utils"
 
 # Arquivos JSON de configuração
 JSON_FILES = {
@@ -253,3 +254,52 @@ GIT_COMMANDS = {
 
 # Timeout para comandos Git
 GIT_TIMEOUT = 5
+
+# ================================
+# EXTENSÕES DE ARQUIVO
+# ================================
+
+# Extensões comuns
+EXT_PDF = '.pdf'
+EXT_JSON = '.json'
+EXT_TEX = '.tex'
+EXT_XLSX = '.xlsx'
+
+# Padrões de glob
+GLOB_PDF = '*.pdf'
+GLOB_JSON = '*.json'
+
+# ================================
+# STATUS DE ANÁLISE
+# ================================
+
+# Status de conformidade
+STATUS_CONFORME = "CONFORME"
+STATUS_NAO_CONFORME = "NAO_CONFORME"
+STATUS_INCONCLUSIVO = "INCONCLUSIVO"
+STATUS_ERRO = "ERRO"
+STATUS_PROCESSADO = "PROCESSADO"
+
+# ================================
+# ANÁLISE DE DOCUMENTOS
+# ================================
+
+# Palavras-chave essenciais para análise de manuais
+PALAVRAS_CHAVE_MANUAL = [
+    "ipv6", "bluetooth", "e1", "e3", "smart", "tv", "STM-1", "STM-4", "STM-16", "STM-64",
+    "nfc", "wi-fi", "voz", "esim", "simcard", "bateria", "carregador", "handheld", "hand-held", "hand held",
+    "smartphone", "celular", "aeronáutico", "marítimo", "dsl", "adsl", "vdsl", "xdsl", "gpon", "epon", "xpon", "satélite", "satellite"
+]
+
+# ================================
+# VALORES PADRÃO E PLACEHOLDERS
+# ================================
+
+# Valores padrão
+VALOR_NAO_DISPONIVEL = "N/A"
+ENCODING_UTF8 = "utf-8"
+ENCODING_LATIN1 = "latin-1"
+
+# ================================
+# NOTA: Funções utilitárias movidas para core/utils.py
+# ================================

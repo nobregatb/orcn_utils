@@ -18,6 +18,32 @@ from typing import Dict, List, Optional, Tuple
 import pymupdf4llm
 #from json_logic import jsonLogic
 
+def formatar_cnpj(cnpj_numeros):
+    """
+    Converte CNPJ de números para formato XX.XXX.XXX/XXXX-XX
+    Args:
+        cnpj_numeros (str): CNPJ apenas com números (ex: "12345678000123")
+    Returns:
+        str: CNPJ formatado (ex: "12.345.678/0001-23")
+    """
+    if not cnpj_numeros or len(cnpj_numeros) != 14:
+        return cnpj_numeros
+    
+    return f"{cnpj_numeros[:2]}.{cnpj_numeros[2:5]}.{cnpj_numeros[5:8]}/{cnpj_numeros[8:12]}-{cnpj_numeros[12:]}"
+
+def desformatar_cnpj(cnpj_formatado):
+    """
+    Remove formatação do CNPJ, deixando apenas números
+    Args:
+        cnpj_formatado (str): CNPJ formatado (ex: "12.345.678/0001-23")
+    Returns:
+        str: CNPJ apenas com números (ex: "12345678000123")
+    """
+    if not cnpj_formatado:
+        return cnpj_formatado
+    
+    return ''.join(filter(str.isdigit, cnpj_formatado))
+
 def buscar_valor(json_data, key_busca, valor_busca, key_retorno):
     """
     Busca em uma lista de dicionários (ou JSON similar)
@@ -343,10 +369,17 @@ class CCTAnalyzer:
                 with open(ocds_file, 'r', encoding='utf-8') as f:
                     ocds_data = json.load(f)
                 
-                # Busca pelo CNPJ
-                ocd_info = buscar_valor(ocds_data, 'cnpj', cnpj, 'nome')
-                if ocd_info:
-                    return ocd_info
+                # Normalizar CNPJ de entrada (remover formatação se houver)
+                cnpj_numeros = desformatar_cnpj(cnpj)
+                cnpj_formatado = formatar_cnpj(cnpj_numeros)
+                
+                # Buscar por CNPJ formatado ou por números
+                for ocd in ocds_data:
+                    cnpj_ocd = ocd.get('cnpj')
+                    if cnpj_ocd:
+                        # Comparar tanto com formato quanto com números
+                        if cnpj_ocd == cnpj_formatado or desformatar_cnpj(cnpj_ocd) == cnpj_numeros:
+                            return ocd.get('nome', f"[ERRO] Nome não encontrado para CNPJ: {cnpj}")
 
             return f"[ERRO] OCD não cadastrado (CNPJ: {cnpj})"
             

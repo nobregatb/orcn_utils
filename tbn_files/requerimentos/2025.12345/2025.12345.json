@@ -1,0 +1,25 @@
+{
+  "numero_requerimento": "2025.12345",
+  "data_solicitacao": "15/01/2025",
+  "solicitante": {
+    "nome": "Empresa Teste LTDA",
+    "cnpj": "12.345.678/0001-90"
+  },
+  "ocd": {
+    "CNPJ": "35.983.502/0001-64",
+    "Nome": "INSTITUTO DE PESQUISAS TECNOLÓGICAS DO ESTADO DE SÃO PAULO S.A. - IPT",
+    "Data do Certificado": "20/01/2025",
+    "Endereço": "AV. PROF. ALMEIDA PRADO, 532 - CIDADE UNIVERSITÁRIA",
+    "Cidade": "SÃO PAULO",
+    "UF": "SP",
+    "Telefone": "(11) 3767-4000"
+  },
+  "equipamentos": [
+    {
+      "tipo": "Equipamento de Radiocomunicação",
+      "modelo": "TX-5000",
+      "fabricante": "TesteCorp"
+    }
+  ],
+  "observacoes": "Teste de integração automática com atualização de OCDS"
+}

@@ -59,6 +59,32 @@ def latex_escape_path(caminho: str) -> str:
     return re.sub(r'([_&#%{}$^~\\])', r'\\\1', caminho)
 
 
+def escapar_latex(texto: str) -> str:
+    """Escapa caracteres especiais do LaTeX."""
+    if not isinstance(texto, str):
+        return str(texto)
+    
+    # Dicionário de substituições para caracteres especiais do LaTeX
+    substituicoes = {
+        '\\': '\\textbackslash{}',
+        '{': '\\{',
+        '}': '\\}',
+        '$': '\\$',
+        '&': '\\&',
+        '%': '\\%',
+        '#': '\\#',
+        '^': '\\textasciicircum{}',
+        '_': '\\_',
+        '~': '\\textasciitilde{}',
+    }
+    
+    # Aplicar substituições
+    for char, replacement in substituicoes.items():
+        texto = texto.replace(char, replacement)
+    
+    return texto
+
+
 # ================================
 # FUNÇÕES DE NORMALIZAÇÃO
 # ================================
@@ -189,6 +215,42 @@ def req_para_fullpath(req: str) -> str:
     requerimento = rf"{REQUERIMENTOS_DIR_PREFIX}\{ano}.{num}"
     full_path = os.path.join(get_files_folder(), requerimento)
     return full_path
+
+
+def fullpath_para_req(nome_diretorio: str) -> str:
+    """
+    Converte nome do diretório (formato YY.num ou _YY.num) para número do requerimento (num/ano)
+    
+    Args:
+        nome_diretorio (str): Nome do diretório no formato "YY.12345" ou "_YY.12345"
+    
+    Returns:
+        str: Requerimento no formato "12345/YYYY"
+    
+    Examples:
+        >>> fullpath_para_req("25.12345")
+        "12345/2025"
+        >>> fullpath_para_req("_25.12345")
+        "12345/2025"
+        >>> fullpath_para_req("24.98765")
+        "98765/2024"
+    """
+    # Remove underscore inicial se existir
+    nome_limpo = nome_diretorio.lstrip('_')
+    
+    # Divide por ponto para separar ano e número
+    partes = nome_limpo.split('.')
+    
+    if len(partes) != 2:
+        raise ValueError(f"Formato inválido: {nome_diretorio}. Esperado: 'YY.numero' ou '_YY.numero'")
+    
+    ano_curto, numero = partes
+    
+    # Converte ano de 2 dígitos para 4 dígitos
+    # Assume que anos 00-99 são 2000-2099
+    ano_completo = f"20{ano_curto.zfill(2)}"
+    
+    return f"{numero}/{ano_completo}"
 
 
 def criar_pasta_se_nao_existir(req: str) -> str:

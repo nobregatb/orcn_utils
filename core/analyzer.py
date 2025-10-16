@@ -18,8 +18,8 @@ from core.const import (
     TIPOS_DOCUMENTO, PADROES_ARQUIVO
 )
 from core.utils import (
-    formatar_cnpj, desformatar_cnpj, latex_escape_path, buscar_valor,
-    normalizar, normalizar_dados, obter_versao_git, carregar_json, salvar_json, validar_cnpj
+    formatar_cnpj, desformatar_cnpj, latex_escape_path, escapar_latex, buscar_valor,
+    normalizar, normalizar_dados, obter_versao_git, carregar_json, salvar_json, validar_cnpj, fullpath_para_req
 )
 
 import pymupdf as fitz
@@ -1211,31 +1211,6 @@ class AnalisadorRequerimentos:
         log_info(f"Análise do requerimento {nome_requerimento} concluída em {resultado_requerimento['tempo_total_analise_formatado']}")
         return resultado_requerimento
     
-    def _escapar_latex(self, texto: str) -> str:
-        """Escapa caracteres especiais do LaTeX."""
-        if not isinstance(texto, str):
-            return str(texto)
-        
-        # Dicionário de substituições para caracteres especiais do LaTeX
-        substituicoes = {
-            '\\': '\\textbackslash{}',
-            '{': '\\{',
-            '}': '\\}',
-            '$': '\\$',
-            '&': '\\&',
-            '%': '\\%',
-            '#': '\\#',
-            '^': '\\textasciicircum{}',
-            '_': '\\_',
-            '~': '\\textasciitilde{}',
-        }
-        
-        # Aplicar substituições
-        for char, replacement in substituicoes.items():
-            texto = texto.replace(char, replacement)
-        
-        return texto
-
     def _obter_nome_completo_ocd(self, nome_ocd_extraido: str) -> str:
         """Obtém o nome completo do OCD consultando ocds.json."""
         if not nome_ocd_extraido or nome_ocd_extraido == 'N/A' or nome_ocd_extraido.startswith('[ERRO]'):
@@ -1452,7 +1427,7 @@ class AnalisadorRequerimentos:
                                       key=lambda x: x[1]['nome'])
         
         for eq_id, eq_info in equipamentos_ordenados:
-            nome_equipamento = self._escapar_latex(eq_info['nome'])
+            nome_equipamento = escapar_latex(eq_info['nome'])
             requisitos = self._obter_requisitos_para_equipamento(eq_id)
             
             secao_latex += f"\\subsubsection{{{nome_equipamento}}}\n\n"
@@ -1461,8 +1436,8 @@ class AnalisadorRequerimentos:
                 secao_latex += "\\begin{itemize}\n"
                 
                 for req in requisitos:
-                    nome_norma = self._escapar_latex(req['nome'])
-                    descricao = self._escapar_latex(req['descricao'])
+                    nome_norma = escapar_latex(req['nome'])
+                    descricao = escapar_latex(req['descricao'])
                     url = req['url']
                     
                     if url:
@@ -1502,7 +1477,7 @@ class AnalisadorRequerimentos:
             tempo_analise_formatado = str(tempo_total_analise)#.split('.')[0]  # Remove microsegundos
         
         # Preparar textos que precisam ser escapados
-        data_analise = self._escapar_latex(datetime.now().strftime("%d/%m/%Y às %H:%M:%S"))
+        data_analise = escapar_latex(datetime.now().strftime("%d/%m/%Y às %H:%M:%S"))
         
         # Preparar textos com acentos para LaTeX
         sumario_executivo = "Sumário"
@@ -1605,29 +1580,29 @@ A seguir estão os detalhes da análise para cada requerimento processado.
         
         # Adicionar seção para cada requerimento
         for i, req in enumerate(self.resultados_analise, 1):
-            numero_req = self._escapar_latex(req.get("numero_requerimento", f"Requerimento_{i}"))
+            numero_req = fullpath_para_req(req.get("numero_requerimento"))
             documentos = req.get("documentos_analisados", [])
             tempo_analise_req = req.get("tempo_total_analise_formatado", VALOR_NAO_DISPONIVEL)
             #resumo = req.get("resumo_status", {})
-            #timestamp_analise = self._escapar_latex(req.get('timestamp_analise', 'N/A'))
+            #timestamp_analise = escapar_latex(req.get('timestamp_analise', 'N/A'))
             
             # Obter o nome do OCD do primeiro documento CCT encontrado
             nome_ocd_completo = "OCD não identificado"
             
             # Buscar o primeiro CCT com OCD válido
             for doc in documentos:
-                if doc.get("tipo") == "CCT":
+                if doc.get("tipo") == "cct":
                     dados_extraidos = doc.get("dados_extraidos", {})
                     nome_ocd_extraido = dados_extraidos.get("nome_ocd", "N/A")
                     if nome_ocd_extraido and nome_ocd_extraido != "N/A" and not nome_ocd_extraido.startswith('[ERRO]'):
                         nome_ocd_completo = self._obter_nome_completo_ocd(nome_ocd_extraido)
                         break  # Sair do loop após encontrar o primeiro OCD válido
             
-            nome_ocd_escapado = self._escapar_latex(nome_ocd_completo)
+            nome_ocd_escapado = escapar_latex(nome_ocd_completo)
             
             latex_content += f"""
 \\newpage            
-\\subsection{{Requerimento: {numero_req}}}
+\\subsection{{Requerimento {numero_req}}}
 A seguir, os detalhes da análise dos documentos associados a este requerimento, cujo tempo de processamento foi: {tempo_analise_req}.
 
 \\subsubsection{{Documentos Analisados}}
@@ -1642,8 +1617,8 @@ A seguir, os detalhes da análise dos documentos associados a este requerimento,
 """
             
             for doc in documentos:
-                nome_completo = self._escapar_latex(doc.get("nome_arquivo", "N/A"))
-                tipo = self._escapar_latex(doc.get("tipo", "N/A"))
+                nome_completo = escapar_latex(doc.get("nome_arquivo", "N/A"))
+                tipo = escapar_latex(doc.get("tipo", "N/A"))
                 ocorrencias = re.findall(r'\[([^\]]+)\]', nome_completo)
                 nome_tabela = nome_completo
                 if len(ocorrencias) >= 2:
@@ -1671,8 +1646,8 @@ A seguir, os detalhes da análise dos documentos associados a este requerimento,
                 nao_conformidades_raw = "; ".join(doc.get("nao_conformidades", []))
                 #if len(observacoes_raw) > 100:  
                 #    observacoes_raw = observacoes_raw[:100] + "..."
-                #observacoes = self._escapar_latex(observacoes_raw)
-                nao_conformidades = self._escapar_latex(nao_conformidades_raw)
+                #observacoes = escapar_latex(observacoes_raw)
+                nao_conformidades = escapar_latex(nao_conformidades_raw)
                 
                 # Extrair informações de dados_extraidos se disponível
                 dados_extraidos = doc.get("dados_extraidos", {})
@@ -1685,22 +1660,22 @@ A seguir, os detalhes da análise dos documentos associados a este requerimento,
                     palavras_nao_encontradas = dados_extraidos.get("palavras_nao_encontradas", [])
                     
                     if equipamentos:
-                        equipamentos_escapados = [self._escapar_latex(eq) for eq in equipamentos]
+                        equipamentos_escapados = [escapar_latex(eq) for eq in equipamentos]
                         info_adicional += r"\newline" + f"\\textbf{{Equipamentos:}} {', '.join(equipamentos_escapados)}."
                     
                     if normas_verificadas:
-                        normas_escapadas = [self._escapar_latex(norma) for norma in normas_verificadas]
+                        normas_escapadas = [escapar_latex(norma) for norma in normas_verificadas]
                         info_adicional += r"\newline" + f"\\textbf{{Normas verificadas:}} {', '.join(normas_escapadas)}."
                     
                     # Tratamento especial para manuais - exibir palavras-chave com cores
-                    if tipo == "Manual" and (palavras_encontradas or palavras_nao_encontradas):
+                    if tipo == "manual" and (palavras_encontradas or palavras_nao_encontradas):
                         info_adicional += r"\newline" + "\\textbf{Palavras-chave:} "
                         
                         # Palavras encontradas em verde com contador
                         if palavras_encontradas:
                             palavras_verdes = []
                             for palavra, contador in palavras_encontradas.items():
-                                palavra_escapada = self._escapar_latex(palavra)
+                                palavra_escapada = escapar_latex(palavra)
                                 palavras_verdes.append(f"\\textcolor{{blue}}{{{palavra_escapada} (x{contador})}}")
                             info_adicional += " ".join(palavras_verdes)
                         
@@ -1710,7 +1685,7 @@ A seguir, os detalhes da análise dos documentos associados a este requerimento,
                                 info_adicional += " "
                             palavras_ausentes = []
                             for palavra in palavras_nao_encontradas:
-                                palavra_escapada = self._escapar_latex(palavra)
+                                palavra_escapada = escapar_latex(palavra)
                                 palavras_ausentes.append(f"\\textcolor{{gray}}{{{palavra_escapada}}}")
                             info_adicional += " ".join(palavras_ausentes)
 
@@ -1744,11 +1719,11 @@ A seguir, os detalhes da análise dos documentos associados a este requerimento,
                 # Ordenar normas alfabeticamente
                 for norma_id in sorted(normas_aplicaveis.keys()):
                     detalhes_norma = self._obter_detalhes_norma(norma_id)
-                    nome_norma = self._escapar_latex(detalhes_norma['nome'])
+                    nome_norma = escapar_latex(detalhes_norma['nome'])
                     url_norma = detalhes_norma['url']
                     
                     motivadores = normas_aplicaveis[norma_id]
-                    motivadores_texto = self._escapar_latex("; ".join(motivadores))
+                    motivadores_texto = escapar_latex("; ".join(motivadores))
                     
                     if url_norma:
                         # Criar hyperlink para a norma

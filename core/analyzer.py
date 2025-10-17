@@ -5,7 +5,7 @@ import re
 import unicodedata
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple#, Any 
+from typing import Dict, List, Optional, Tuple, Set#, Any 
 import subprocess
 
 from core.log_print import log_info, log_erro, log_erro_critico
@@ -1445,6 +1445,65 @@ class AnalisadorRequerimentos:
         
         return normas_aplicaveis
 
+    def _coletar_normas_verificadas_requerimento(self, req_dados: Dict) -> Set[str]:
+        """
+        Coleta todas as normas que foram verificadas nos documentos do requerimento.
+        
+        Returns:
+            Set[norma_id] das normas que foram efetivamente verificadas
+        """
+        normas_verificadas = set()
+        
+        try:
+            documentos = req_dados.get("documentos_analisados", [])
+            
+            for doc in documentos:
+                dados_extraidos = doc.get("dados_extraidos", {})
+                normas_doc = dados_extraidos.get("normas_verificadas", [])
+                
+                # Adicionar todas as normas verificadas deste documento
+                for norma in normas_doc:
+                    normas_verificadas.add(norma)
+                    
+        except Exception as e:
+            log_erro(f"Erro ao coletar normas verificadas: {str(e)}")
+        
+        return normas_verificadas
+
+    def _coletar_palavras_chave_consolidadas(self, req_dados: Dict) -> Tuple[Dict[str, int], List[str]]:
+        """
+        Coleta e consolida todas as palavras-chave encontradas e não encontradas nos documentos do requerimento.
+        
+        Returns:
+            Tuple[Dict[palavra, total_ocorrencias], List[palavras_nao_encontradas]]
+        """
+        palavras_consolidadas = {}
+        palavras_nao_encontradas_set = set()
+        
+        try:
+            documentos = req_dados.get("documentos_analisados", [])
+            
+            for doc in documentos:
+                dados_extraidos = doc.get("dados_extraidos", {})
+                palavras_encontradas = dados_extraidos.get("palavras_encontradas", {})
+                palavras_nao_encontradas = dados_extraidos.get("palavras_nao_encontradas", [])
+                
+                # Somar ocorrências de cada palavra encontrada
+                for palavra, contador in palavras_encontradas.items():
+                    if palavra in palavras_consolidadas:
+                        palavras_consolidadas[palavra] += contador
+                    else:
+                        palavras_consolidadas[palavra] = contador
+                
+                # Coletar palavras não encontradas (usar set para evitar duplicatas)
+                for palavra in palavras_nao_encontradas:
+                    palavras_nao_encontradas_set.add(palavra)
+                        
+        except Exception as e:
+            log_erro(f"Erro ao consolidar palavras-chave: {str(e)}")
+        
+        return palavras_consolidadas, sorted(list(palavras_nao_encontradas_set))
+
     def _obter_detalhes_norma(self, norma_id: str) -> Dict[str, str]:
         """Obtém detalhes de uma norma pelo seu ID do arquivo normas.json."""
         try:
@@ -1558,6 +1617,8 @@ class AnalisadorRequerimentos:
 \\usepackage{{datetime2}}
 \\usepackage{{booktabs}}
 \\usepackage{{longtable}}
+\\usepackage{{amssymb}}          % para símbolos matemáticos como checkmark e times
+\\usepackage[normalem]{{ulem}}   
 \\usepackage[colorlinks=true,
             linkcolor=blue,
             citecolor=green,
@@ -1667,6 +1728,7 @@ OCD: {nome_ocd_escapado}
             
             # Coletar normas aplicáveis para este requerimento
             normas_aplicaveis = self._coletar_normas_aplicaveis_requerimento(req)
+            normas_verificadas = self._coletar_normas_verificadas_requerimento(req)
             
             # Debug: Adicionar log para verificar se normas foram encontradas
             #log_info(f"Normas aplicáveis encontradas para {numero_req}: {len(normas_aplicaveis)} normas")
@@ -1674,9 +1736,9 @@ OCD: {nome_ocd_escapado}
                 #log_info(f"Normas: {list(normas_aplicaveis.keys())}")
             
             if normas_aplicaveis:
-                latex_content += """\\begin{longtable}{p{5cm}p{11cm}}
+                latex_content += """\\begin{longtable}{p{2cm}p{4cm}p{9cm}}
 \\hline
-\\textbf{Norma} & \\textbf{Motivador(es)} \\\\
+\\textbf{Status} & \\textbf{Norma} & \\textbf{Motivador(es)} \\\\
 \\hline
 \\endhead
 """
@@ -1687,15 +1749,21 @@ OCD: {nome_ocd_escapado}
                     nome_norma = escapar_latex(detalhes_norma['nome'])
                     url_norma = detalhes_norma['url']
                     
+                    # Verificar se a norma foi verificada
+                    if norma_id in normas_verificadas:
+                        status_norma = "\\textcolor{green}{$\\checkmark$}"
+                    else:
+                        status_norma = "\\textcolor{red}{$\\times$}"
+                    
                     motivadores = normas_aplicaveis[norma_id]
                     motivadores_texto = escapar_latex("; ".join(motivadores))
                     
                     if url_norma:
                         # Criar hyperlink para a norma
-                        latex_content += f"\\href{{{url_norma}}}{{{nome_norma}}} & {motivadores_texto} \\\\ \\hline"
+                        latex_content += f"{status_norma} & \\href{{{url_norma}}}{{{nome_norma}}} & {motivadores_texto} \\\\ \\hline"
                     else:
                         # Sem hyperlink se não há URL
-                        latex_content += f"{nome_norma} & {motivadores_texto} \\\\ \\hline"
+                        latex_content += f"{status_norma} & {nome_norma} & {motivadores_texto} \\\\ \\hline"
                 
                 latex_content += """\\end{longtable}
 """
@@ -1705,20 +1773,16 @@ OCD: {nome_ocd_escapado}
             latex_content += f"""
 \\subsubsection{{Documentos Analisados}}
 
-\\begin{{longtable}}{{|p{{6cm}}|p{{10cm}}|}}
-\\hline
-\\textbf{{Documento}} & \\textbf{{Observações}} \\\\
-\\hline
-\\endhead
+\\begin{{itemize}}
 """
             
             for doc in documentos:
                 nome_completo = escapar_latex(doc.get("nome_arquivo", "N/A"))
                 tipo = escapar_latex(doc.get("tipo", "N/A"))
                 ocorrencias = re.findall(r'\[([^\]]+)\]', nome_completo)
-                nome_tabela = nome_completo
+                nome_item = nome_completo
                 if len(ocorrencias) >= 2:
-                    nome_tabela = f"[{tipo}] {ocorrencias[1]}"
+                    nome_item = f"[{tipo}] {ocorrencias[1]}"
                 status = doc.get("status", "N/A")
                 caminho = doc.get("caminho", "N/A")
                 caminho_normalizado = latex_escape_path(caminho)
@@ -1737,61 +1801,54 @@ OCD: {nome_ocd_escapado}
                 else:
                     status_colorido = "\\textcolor{red}{E}"
                 
-                # Escapar observações e limitar tamanho
-                observacoes_raw = "; ".join(doc.get("observacoes", []))
-                nao_conformidades_raw = "; ".join(doc.get("nao_conformidades", []))
-                #if len(observacoes_raw) > 100:  
-                #    observacoes_raw = observacoes_raw[:100] + "..."
-                #observacoes = escapar_latex(observacoes_raw)
-                nao_conformidades = escapar_latex(nao_conformidades_raw)
-                
-                # Extrair informações de dados_extraidos se disponível
+                # Extrair informações básicas de dados_extraidos se disponível
                 dados_extraidos = doc.get("dados_extraidos", {})
-                info_adicional = ""
+                #info_basica = ""
                 
-                if dados_extraidos:
-                    equipamentos = dados_extraidos.get("equipamentos", [])
-                    normas_verificadas = dados_extraidos.get("normas_verificadas", [])
-                    palavras_encontradas = dados_extraidos.get("palavras_encontradas", {})
-                    palavras_nao_encontradas = dados_extraidos.get("palavras_nao_encontradas", [])
+                #if dados_extraidos:
+                    #equipamentos = dados_extraidos.get("equipamentos", [])
+                    #normas_verificadas_doc = dados_extraidos.get("normas_verificadas", [])
                     
-                    if equipamentos:
-                        equipamentos_escapados = [escapar_latex(eq) for eq in equipamentos]
-                        info_adicional += r"\newline" + f"\\textbf{{Equipamentos:}} {', '.join(equipamentos_escapados)}."
+                    #if equipamentos:
+                        #equipamentos_escapados = [escapar_latex(eq) for eq in equipamentos]
+                        #info_basica += f" - Equipamentos: {', '.join(equipamentos_escapados)}"
                     
-                    if normas_verificadas:
-                        normas_escapadas = [escapar_latex(norma) for norma in normas_verificadas]
-                        info_adicional += r"\newline" + f"\\textbf{{Normas verificadas:}} {', '.join(normas_escapadas)}."
-                    
-                    # Tratamento especial para manuais - exibir palavras-chave com cores
-                    if tipo == "manual" and (palavras_encontradas or palavras_nao_encontradas):
-                        info_adicional += r"\newline" + "\\textbf{Palavras-chave:} "
-                        
-                        # Palavras encontradas em verde com contador
-                        if palavras_encontradas:
-                            palavras_verdes = []
-                            for palavra, contador in palavras_encontradas.items():
-                                palavra_escapada = escapar_latex(palavra)
-                                palavras_verdes.append(f"\\textcolor{{blue}}{{{palavra_escapada} (x{contador})}}")
-                            info_adicional += " ".join(palavras_verdes)
-                        
-                        # Palavras não encontradas em cinza
-                        if palavras_nao_encontradas:
-                            if palavras_encontradas:  # Se já há palavras verdes, adicionar separador
-                                info_adicional += " "
-                            palavras_ausentes = []
-                            for palavra in palavras_nao_encontradas:
-                                palavra_escapada = escapar_latex(palavra)
-                                palavras_ausentes.append(f"\\textcolor{{gray}}{{{palavra_escapada}}}")
-                            info_adicional += " ".join(palavras_ausentes)
+                    #if normas_verificadas_doc:
+                        #info_basica += f" - {len(normas_verificadas_doc)} norma(s) verificada(s)"
 
-                # Combinar informações
-                info_completa = info_adicional +  r"\newline" + f"\\textbf{{{nao_conformidades}}}"  if info_adicional else nao_conformidades
+                latex_content += f"    \\item \\href{{run:{caminho_normalizado}}}{{{nome_item}}} [{status_colorido}]\n"
+
+            latex_content += """\\end{itemize}
+
+\\subsubsection{Palavras-chave}
+
+"""
+            
+            # Coletar palavras-chave consolidadas
+            palavras_consolidadas, palavras_nao_encontradas = self._coletar_palavras_chave_consolidadas(req)
+            
+            if palavras_consolidadas or palavras_nao_encontradas:
+                palavras_formatadas = []
                 
-                latex_content += f"\\href{{run:{caminho_normalizado}}}{{{nome_tabela}}} & [{status_colorido}] {info_completa} \\\\ \\hline"
+                # Palavras encontradas em azul com contador
+                if palavras_consolidadas:
+                    palavras_ordenadas = sorted(palavras_consolidadas.items(), key=lambda x: x[1], reverse=True)
+                    for palavra, contador in palavras_ordenadas:
+                        palavra_escapada = escapar_latex(palavra)
+                        palavras_formatadas.append(f"\\textcolor{{blue}}{{{palavra_escapada} (x{contador})}}")
+                
+                # Palavras não encontradas tachadas em cinza
+                if palavras_nao_encontradas:
+                    for palavra in palavras_nao_encontradas:
+                        palavra_escapada = escapar_latex(palavra)
+                        palavras_formatadas.append(f"\\textcolor{{gray}}{{\\sout{{{palavra_escapada}}}}}")
+                
+                latex_content += " ".join(palavras_formatadas)
+                latex_content += "\n\n"
+            else:
+                latex_content += "\\textit{Nenhuma palavra-chave específica foi analisada neste requerimento.}\n\n"
 
-            latex_content += """\\end{longtable}
-
+            latex_content += """
 """
         
         # Gerar seção de requisitos legais

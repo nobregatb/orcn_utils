@@ -12,30 +12,30 @@ def main():
             if opcao == OPCOES_MENU['download']:
                 log_info("Iniciando download de documentos...")
                 baixar_documentos()
-                print("\n" + SEPARADOR_MENOR)
-                print("Pressione ENTER para voltar ao menu...")
+                log_info("\n" + SEPARADOR_MENOR)
+                log_info("Pressione ENTER para voltar ao menu...")
                 input()
                 
             elif opcao == OPCOES_MENU['analise']:
                 log_info("Iniciando análise de requerimentos...")
                 analisar_requerimento()
-                print("\n" + SEPARADOR_MENOR)
-                print("Pressione ENTER para voltar ao menu...")
+                log_info("\n" + SEPARADOR_MENOR)
+                log_info("Pressione ENTER para voltar ao menu...")
                 input()
                 
             elif opcao == OPCOES_MENU['sair']:
                 log_info("Encerrando aplicação...")
-                print("Ate logo!")
+                log_info("Ate logo!")
                 break
                 
         except KeyboardInterrupt:
             log_erro("\nOperação cancelada pelo usuário.")
-            print("Encerrando aplicação...")
+            log_info("Encerrando aplicação...")
             break
         except Exception as e:
             log_erro_critico(f"Erro crítico no main: {str(e)}")
-            print("ERRO - Erro inesperado. Retornando ao menu...")
-            print("Pressione ENTER para continuar...")
+            log_info("ERRO - Erro inesperado. Retornando ao menu...")
+            log_info("Pressione ENTER para continuar...")
             input()
 
 if __name__ == "__main__":

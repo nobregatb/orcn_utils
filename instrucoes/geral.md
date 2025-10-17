@@ -7,6 +7,7 @@ Este projeto automatiza o download de anexos de requerimentos do sistema SCH da 
 - Funções de uso geral, utilitárias, devem estar no aquivo core/utils.py
 - Ignore todos os arquivos .py começados com tbn_* .
 - Todo o código modificado deve ter sua funcionalidade comentada.
+- NÃO use print, apenas log_info.
 
 ## 🔧 Funcionalidades
 

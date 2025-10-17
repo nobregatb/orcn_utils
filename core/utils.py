@@ -16,13 +16,41 @@ from typing import Dict, List, Optional, Any, Union
 
 from core.const import (
     TBN_FILES_FOLDER, CHROME_PROFILE_DIR, REQUERIMENTOS_DIR_PREFIX,
-    GIT_COMMANDS, GIT_TIMEOUT, VERSAO_PADRAO, MENSAGENS_STATUS
+    GIT_COMMANDS, GIT_TIMEOUT, VERSAO_PADRAO, MENSAGENS_STATUS, TIPOS_DOCUMENTOS
 )
 from core.log_print import log_info
 
 # ================================
 # FUNÇÕES DE FORMATAÇÃO
 # ================================
+
+def limpar_texto(texto, palavras=None, simbolos=None, remover_parenteses=True):
+    """
+    Remove palavras, símbolos e trechos entre parênteses de uma string.
+    Ignora diferenças entre maiúsculas e minúsculas.
+    """
+    resultado = texto
+
+    # 1️⃣ Remove conteúdo entre parênteses (opcional)
+    if remover_parenteses:
+        resultado = re.sub(r'\s*\([^)]*\)', '', resultado, flags=re.I)
+
+    # 2️⃣ Remove palavras específicas (case-insensitive)
+    if palavras:
+        padrao_palavras = r'\b(?:' + '|'.join(map(re.escape, palavras)) + r')\b'
+        resultado = re.sub(r'\s*' + padrao_palavras, '', resultado, flags=re.I)
+
+    # 3️⃣ Remove símbolos específicos (case-insensitive, mas não afeta símbolos)
+    if simbolos:
+        padrao_simbolos = '[' + re.escape(''.join(simbolos)) + ']'
+        resultado = re.sub(padrao_simbolos, '', resultado, flags=re.I)
+
+    # 4️⃣ Limpa espaços duplicados e tira espaços extras
+    resultado = re.sub(r'\s{2,}', ' ', resultado).strip()
+
+    return resultado
+
+
 
 def formatar_cnpj(cnpj_numeros: str) -> str:
     """
@@ -91,27 +119,22 @@ def escapar_latex(texto: str) -> str:
 
 def obter_nome_tipo_documento(tipo_chave: str) -> str:
     """Obtém o nome completo de um tipo de documento pela chave."""
-    from core.const import TIPOS_DOCUMENTOS
     return TIPOS_DOCUMENTOS.get(tipo_chave, {}).get('nome', 'Tipo desconhecido')
 
 def obter_nome_curto_tipo_documento(tipo_chave: str) -> str:
     """Obtém o nome curto de um tipo de documento pela chave."""
-    from core.const import TIPOS_DOCUMENTOS
     return TIPOS_DOCUMENTOS.get(tipo_chave, {}).get('nome_curto', 'N/A')
 
 def obter_botao_pdf_tipo_documento(tipo_chave: str) -> str:
     """Obtém o nome do botão PDF para um tipo de documento."""
-    from core.const import TIPOS_DOCUMENTOS
     return TIPOS_DOCUMENTOS.get(tipo_chave, {}).get('botao_pdf', 'Outros')
 
 def obter_padroes_tipo_documento(tipo_chave: str) -> List[str]:
     """Obtém os padrões de identificação para um tipo de documento."""
-    from core.const import TIPOS_DOCUMENTOS
     return TIPOS_DOCUMENTOS.get(tipo_chave, {}).get('padroes', [])
 
 def listar_tipos_documento() -> List[str]:
     """Lista todas as chaves de tipos de documento disponíveis."""
-    from core.const import TIPOS_DOCUMENTOS
     return list(TIPOS_DOCUMENTOS.keys())
 
 

@@ -50,7 +50,6 @@ def get_tag_coordinates(pdf_path: str, tag: str, start_page: int = 1) -> Optiona
                     }
         return None
     except Exception as e:
-        # print(f"ERRO ao buscar coordenadas da TAG '{tag}': {e}")
         return None
 
 

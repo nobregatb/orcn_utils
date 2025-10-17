@@ -340,7 +340,11 @@ STATUS_PROCESSADO = "PROCESSADO"
 # Palavras-chave essenciais para análise de manuais
 # Estrutura: {"palavra_chave": {"normas": ["norma1", "norma2"]}}
 PALAVRAS_CHAVE_MANUAL = {
+    "declaração em conformidade com os Requisitos de Segurança Cibernética": {"normas": []},
+    "produto não acabado": {"normas": []},
+    "uso profissional": {"normas": []},
     "ipv6": {"normas": ["ato77", "ato7971"]},
+    "wan": {"normas": ["ato77", "ato7971"]},
     "bluetooth": {"normas": []},
     "e1": {"normas": []},
     "e3": {"normas": []},

@@ -143,7 +143,6 @@ def primefaces_click(page, element, description="elemento"):
     Clica em botões submit do PrimeFaces (type="submit").
     Esses botões precisam submeter o formulário via AJAX.
     """
-    #print(f"   🎯 Baixando: {description}")
     
     # Scroll até o elemento
     try:
@@ -264,8 +263,6 @@ def baixar_pdfs(page, requerimento):
     # Cria a pasta do requerimento se não existir
     pasta_destino = criar_pasta_se_nao_existir(requerimento)
     
-    #print(f"   📥 Buscando PDFs para baixar...")
-    
     # Lista de botões que revelam PDFs
     botoes_pdf = [
         "Outros",
@@ -284,7 +281,6 @@ def baixar_pdfs(page, requerimento):
     
     # Percorre cada botão para revelar PDFs
     for nome_botao in botoes_pdf:
-        #print(f"   🔍 Procurando botão: {nome_botao}")
         
         try:
             # Busca o botão pelo nome/texto
@@ -316,7 +312,6 @@ def baixar_pdfs(page, requerimento):
                     if len(linhas) > 0:
                         cabecalho = linhas[0].query_selector_all("th, td")
                         headers = [col.inner_text().strip() for col in cabecalho]
-                        #print(f"   📋 Cabeçalho da tabela: {headers}")
                         
                         # Processa as linhas de dados (exceto cabeçalho)
                         for linha in linhas[1:]:
@@ -329,8 +324,6 @@ def baixar_pdfs(page, requerimento):
                                     if i < len(dados):
                                         linha_info[header] = dados[i]
                                 linhas_dados.append(linha_info)
-                    
-                    #print(f"   📊 {len(linhas_dados)} linha(s) de dados extraída(s)")
                 
                 if pdf_links:
                     print(f"   📄 {len(pdf_links)} PDF(s) encontrado(s) para {nome_botao}")
@@ -536,7 +529,6 @@ with sync_playwright() as p:
     page = browser.new_page()
     
     # Inicia timer para controle de timeout do Mosaico
-    import time
     inicio_execucao = time.time()
     limite_tempo = 28 * 60  # 28 minutos em segundos
     

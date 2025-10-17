@@ -3,11 +3,12 @@ import pytesseract
 import json
 import re
 import unicodedata
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Set#, Any 
 import subprocess
 
+from core.utils import limpar_texto
 from core.log_print import log_info, log_erro, log_erro_critico
 from core.const import (
     TESSERACT_PATH, JSON_FILES, GIT_COMMANDS, GIT_TIMEOUT, VERSAO_PADRAO,
@@ -211,9 +212,23 @@ class CCTAnalyzerIntegrado:
         Define os padrões de extração para cada OCD usando CNPJ como chave.
         """
         return {
+            #DEKRA CERTIFICATION B.V.
+            "26.600.714/0001-24": {
+                "start_pattern": r"Reference\s+Standards",
+                "end_pattern": r"Certificação\s+Inicial",
+                "processing_type": "custom",
+                "custom_patterns": ['ATO', 'RESOLUÇÃO']
+            },
+            #PCN DO BRASIL TELECOMUNICAÇÕES
+            "32.193.729/0001-18": {
+                "start_pattern": r"Regulation\s+applied\s+to\s+the\s+product",
+                "end_pattern": r"5\s*-\s*RELAÇÃO\s+DE\s+LABORATÓRIO",
+                "processing_type": "custom",
+                "custom_patterns": ['ATO', 'RESOLUÇÃO']
+            },
             # Moderna Tecnologia LTDA
             "44.458.010/0001-40": {
-                "start_pattern": r'acima\s+discriminados?\s+estão?\s+em\s+conformidade\s+com\s+os\s+documentos\s+normativos\s+indicados\.',
+                "start_pattern": r'Fabricante',
                 "end_pattern": r'Diretor\s+de\s+Tecnologia',
                 "processing_type": "custom",
                 "custom_patterns": ['ATO', 'RESOLUÇÃO']
@@ -326,8 +341,8 @@ class CCTAnalyzerIntegrado:
             },
             # FUNDACAO CENTRO DE PESQUISA E DESENVOLVIMENTO DE TELECOMUNICACOES- CPQD.
             "02.641.663/0001-10": {
-                "start_pattern": r'Documentos\s+normativos/\s+Technical\s+Standards:',
-                "end_pattern": r'Relatório\s+de\s+Conformidade\s+/\s+Report\s+Number:',
+                "start_pattern": r'Technical\s+Standards:',
+                "end_pattern": r'Relatório\s+de\s+Conformidade\s',
                 "processing_type": "custom",
                 "custom_patterns": ['ATO', 'RESOLUÇÃO']
             },
@@ -354,10 +369,18 @@ class CCTAnalyzerIntegrado:
             start_pos = start_match.end()
             end_pos = end_match.start()
             normas_section = content[start_pos:end_pos]
-            
+
+            normas_section = limpar_texto(normas_section, palavras=["Nº","N°","NO","nº","n°","no","de","do", "da", "anatel"], simbolos=["."])
+
             if processing_type == "custom" and custom_patterns:
                 #lines = normas_section.split('\n') # será um experimento
-                lines = [campo for linha in normas_section.split('\n') for campo in linha.split(';')]
+                #lines = [campo for linha in normas_section.split('\n') for campo in linha.split(';')]  # será um experimento
+                lines = [
+                    subcampo.strip()
+                    for linha in normas_section.split('\n')
+                    for campo in linha.split(';')
+                    for subcampo in campo.split(',')
+                ]
                 for line in lines:
                     line = line.strip()
                     for pattern in custom_patterns:
@@ -365,16 +388,11 @@ class CCTAnalyzerIntegrado:
                             # Regex corrigidanormas_section- o problema era \s+ que exige pelo menos 1 espaço
                             # Mudei para \s* para permitir zero ou mais espaços
                             norma_matches = re.findall(
-                                #r'(ATO|RESOLUÇÃO|RESOLUÇÕES?)\s*(?:da\s+\w+\s+)?(?:Nº|N°|NO|nº|n°|no)?[\s:]*(\d+)',
-                                r'(ATO|RESOLUÇÃO|RESOLUÇÕES?)\s*(?:\([^)]+\))?\s*(?:da\s+\w+\s+)?(?:Nº|N°|NO|nº|n°|no)?[\s:]*(\d+)',
+                                #r'(ATO|RESOLUÇÃO|RESOLUÇÕES?)\s*(?:da\s+\w+\s+)?(?:|Nº|N°|NO|nº|n°|no)?[\s:]*(\d+)', # será um experimento
+                                r'(ATO|RESOLUÇÃO|RESOLUÇÕES?)\s*(?:\([^)]+\))?\s*(?:da\s+\w+\s+)?(?:|Nº|N°|NO|nº|n°|no)?[\s:]*(\d+)', # será um experimento                                                
                                 normas_section,
                                 re.IGNORECASE
-                            )
-                            
-                            #print(f"Matches encontrados com regex:")
-                            #for i, match in enumerate(norma_matches):
-                            #    print(f"  {i+1}. Tipo: '{match[0]}', Número: '{match[1]}'")
-                            #print("\n" + "="*80 + "\n")
+                            )                       
                             
                             # Processar cada match
                             for tipo, numero in norma_matches:
@@ -403,7 +421,7 @@ class CCTAnalyzerIntegrado:
                 for pattern in norma_patterns:
                     matches = re.findall(pattern, normas_section, re.IGNORECASE)
                     normas.extend(matches)
-        
+
         return normas
 
     def extract_normas_verificadas(self, content: str, cnpj_ocd: str) -> List[str]:
@@ -414,7 +432,6 @@ class CCTAnalyzerIntegrado:
         ocd_patterns = self._get_ocd_patterns()
         
         # Normalizar CNPJ (remover formatação se houver)
-        from core.utils import desformatar_cnpj, formatar_cnpj
         cnpj_normalizado = desformatar_cnpj(cnpj_ocd) if cnpj_ocd else ""
         cnpj_formatado = formatar_cnpj(cnpj_normalizado) if cnpj_normalizado else ""
         
@@ -563,13 +580,13 @@ class AnalisadorRequerimentos:
         """
         Pergunta ao usuário se a análise será de um requerimento específico ou todos.
         """
-        print("\n" + SEPARADOR_LINHA)
-        print("🔍 ANÁLISE DE REQUERIMENTOS ORCN")
-        print(SEPARADOR_LINHA)
-        print("\nEscolha o escopo da análise:")
-        print("1. Analisar um requerimento específico")
-        print("2. Analisar todos os requerimentos (*)")
-        print("3. Voltar ao menu principal")
+        log_info("\n" + SEPARADOR_LINHA)
+        log_info("🔍 ANÁLISE DE REQUERIMENTOS ORCN")
+        log_info(SEPARADOR_LINHA)
+        log_info("\nEscolha o escopo da análise:")
+        log_info("1. Analisar um requerimento específico")
+        log_info("2. Analisar todos os requerimentos (*)")
+        log_info("3. Voltar ao menu principal")
 
         resposta = "CANCELAR"
         
@@ -582,13 +599,13 @@ class AnalisadorRequerimentos:
             elif opcao == "3":
                 resposta = "CANCELAR"
             else:
-                print("❌ Opção inválida. Digite 1, 2 ou 3.")
+                log_info("❌ Opção inválida. Digite 1, 2 ou 3.")
         except KeyboardInterrupt:
-            print("\n❌ Operação cancelada pelo usuário.")
+            log_info("\n❌ Operação cancelada pelo usuário.")
             resposta = "CANCELAR"
         except Exception as e:
             log_erro(f"Erro inesperado na seleção de escopo: {str(e)}")
-            print("❌ Erro inesperado. Retornando ao menu principal.")
+            log_info("❌ Erro inesperado. Retornando ao menu principal.")
             resposta = "CANCELAR"
         return resposta
     
@@ -597,13 +614,13 @@ class AnalisadorRequerimentos:
         requerimentos = self._listar_requerimentos()
         
         if not requerimentos:
-            print("❌ Nenhum requerimento encontrado na pasta de requerimentos.")
+            log_info("❌ Nenhum requerimento encontrado na pasta de requerimentos.")
             resposta = "CANCELAR"
         
-        print(f"\n📁 Requerimentos disponíveis ({len(requerimentos)}):")
+        log_info(f"\n📁 Requerimentos disponíveis ({len(requerimentos)}):")
         for i, req in enumerate(requerimentos, 1):
-            print(f"{i:2d}. {req}")
-        print(f"{len(requerimentos)+1:2d}. Cancelar e voltar")
+            log_info(f"{i:2d}. {req}")
+        log_info(f"{len(requerimentos)+1:2d}. Cancelar e voltar")
         
         opcao = ""
         resposta = "CANCELAR"
@@ -624,14 +641,14 @@ class AnalisadorRequerimentos:
             if 0 <= indice < len(requerimentos):
                 resposta = requerimentos[indice]
             else:
-                print(f"❌ Número inválido. Digite um número entre 1 e {len(requerimentos)+1}, ou 'c' para cancelar.")
+                log_info(f"❌ Número inválido. Digite um número entre 1 e {len(requerimentos)+1}, ou 'c' para cancelar.")
                 
         except ValueError:
             if opcao.lower() in ['c', 'cancelar', 'voltar']:
                 return resposta
-            print("❌ Digite um número válido ou 'c' para cancelar.")
+            log_info("❌ Digite um número válido ou 'c' para cancelar.")
         except KeyboardInterrupt:
-            print("\n❌ Operação cancelada pelo usuário.")
+            log_info("\n❌ Operação cancelada pelo usuário.")
             return resposta
         return resposta
 
@@ -652,7 +669,7 @@ class AnalisadorRequerimentos:
         Analisa um documento específico baseado no seu tipo.
         """
         info = re.findall(r'\[(.*?)\]', caminho_documento.name)
-        log_info(f"Analisando documento: {info[:2]}")
+        #log_info(f"Analisando documento: {info[:2]}")
         
         resultado = {
             "nome_arquivo": caminho_documento.name,
@@ -960,7 +977,6 @@ class AnalisadorRequerimentos:
                 nao_conformidades.append(f"Erro na análise do conteúdo PDF: {str(e)}")
             
             # Verificar data de modificação do arquivo (freshness)
-            from datetime import datetime, timedelta
             data_modificacao = datetime.fromtimestamp(caminho.stat().st_mtime)
             dias_desde_modificacao = (datetime.now() - data_modificacao).days
             
@@ -1061,7 +1077,6 @@ class AnalisadorRequerimentos:
                 nao_conformidades.append(f"Erro na análise do conteúdo: {str(e)}")
             
             # Verificar data do arquivo
-            from datetime import datetime
             data_modificacao = datetime.fromtimestamp(caminho.stat().st_mtime)
             resultado["observacoes"].append(f"Data de modificação: {data_modificacao.strftime('%d/%m/%Y %H:%M')}")
             
@@ -1238,9 +1253,6 @@ class AnalisadorRequerimentos:
         """Analisa todos os documentos de um requerimento específico."""
         tempo_inicio_req = datetime.now()
         #log_info(f"Iniciando análise do requerimento: {nome_requerimento}")
-
-        if nome_requerimento in ["25.06974","25.7016","25.06991","25.06969"]:
-            x = 1
         
         pasta_requerimento = self.pasta_base / nome_requerimento
         if not pasta_requerimento.exists():
@@ -1666,7 +1678,7 @@ class AnalisadorRequerimentos:
         
         # Conteúdo do relatório LaTeX
         agora = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
-        versao_git = 'v. 0.1.1'  # obter_versao_git()
+        versao_git = 'v. 0.2.1'  # obter_versao_git()
         #utils_dir = Path(__file__).parent.parent / UTILS_DIR
         #classe_path = rf"{Path(__file__).parent.parent / UTILS_DIR / 'IEEEtran'}"
         #latex_content = f"""\\documentclass{{{classe_path}}}
@@ -1703,7 +1715,7 @@ class AnalisadorRequerimentos:
 \\setcounter{{tocdepth}}{2}
 
 \\title{{\\Large\\textbf{{Análise Simplificada Automatizada}}}}
-\\author{{Teógenes Brito da Nóbrega\\\\\\\\ \\href{{mailto:tbnobrega@anatel.gov.br}}{{tbnobrega@anatel.gov.br}} }}
+\\author{{Teógenes Brito da Nóbrega (\\href{{mailto:tbnobrega@anatel.gov.br}}{{tbnobrega@anatel.gov.br}})}}
 %\\date{{{agora}}}
 \\date{{}}
 
@@ -1830,7 +1842,7 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
                 latex_content += """\\end{longtable}
 """
             else:
-                latex_content += "\\textit{Nenhuma norma específica identificada para este requerimento.}"
+                latex_content += f"\\textit{{Nenhuma norma específica identificada como requisito identificado para: {equipamentos_texto}}}"
 
             latex_content += f"""
 \\subsection{{Documentos Processados}}
@@ -1869,7 +1881,6 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
 
 
                 latex_content += f"    \\item \\href{{file:{caminho_normalizado}}}{{{nome_item}}}\n"# [{status_colorido}]\n"
-                #print(caminho_normalizado)
             latex_content += """\\end{itemize}
 
 \\subsection{Palavras-chave}
@@ -1941,7 +1952,7 @@ A seguir são apresentados os requisitos legais e normas utilizados como referê
             caminho_latex_absoluto = str(caminho_latex_path.resolve())
             
             # Executar pdflatex
-            print(f"Compilando LaTeX: {caminho_latex_absoluto}")
+            log_info(f"Compilando LaTeX: {caminho_latex_absoluto}")
             resultado = subprocess.run([
                 "pdflatex", 
                 "-output-directory", str(self.pasta_resultados.resolve()),
@@ -1969,7 +1980,7 @@ A seguir são apresentados os requisitos legais e normas utilizados como referê
                         exts_permitidas = {EXT_TEX, EXT_PDF, EXT_JSON}                    
                         for arquivo in self.pasta_resultados.iterdir():
                             if arquivo.is_file() and arquivo.suffix.lower() not in exts_permitidas:
-                                print("Apagando:", arquivo)
+                                log_info(f"Apagando: {arquivo}")
                                 arquivo.unlink()  # apaga o arquivo
 
                     # return caminho_pdf
@@ -2018,72 +2029,71 @@ A seguir são apresentados os requisitos legais e normas utilizados como referê
             escopo = self._obter_escopo_analise()
             
             if escopo == "CANCELAR":
-                print("❌ Análise cancelada pelo usuário.")
+                log_info("❌ Análise cancelada pelo usuário.")
                 return
             
             # Iniciar cronômetro da análise
             self.tempo_inicio_analise = datetime.now()
-            print(f"\n🔄 Iniciando análise...")
+            log_info(f"\n🔄 Iniciando análise...")
             
             if escopo == "*":
                 # Analisar todos os requerimentos
                 requerimentos = self._listar_requerimentos()
                 if not requerimentos:
-                    print("❌ Nenhum requerimento encontrado para análise.")
+                    log_info("❌ Nenhum requerimento encontrado para análise.")
                     return
-                
-                print(f"📊 Analisando {len(requerimentos)} requerimentos...")
-                
+
+                log_info(f"📊 Analisando {len(requerimentos)} requerimentos...")
+
                 for req in requerimentos:
-                    print(f"  🔍 Analisando: {req}")
+                    log_info(f"  🔍 Analisando: {req}")
                     resultado = self._analisar_requerimento_individual(req)
                     if resultado:
                         self.resultados_analise.append(resultado)
             else:
                 # Analisar requerimento específico
-                print(f"📊 Analisando requerimento: {escopo}")
+                log_info(f"📊 Analisando requerimento: {escopo}")
                 resultado = self._analisar_requerimento_individual(escopo)
                 if resultado:
                     self.resultados_analise.append(resultado)
             
             if not self.resultados_analise:
-                print("❌ Nenhum resultado de análise foi gerado.")
+                log_info("❌ Nenhum resultado de análise foi gerado.")
                 return
             
             # Finalizar cronômetro da análise
             self.tempo_fim_analise = datetime.now()
             tempo_total_analise = self.tempo_fim_analise - self.tempo_inicio_analise
             tempo_analise_formatado = str(tempo_total_analise)#.split('.')[0]  # Remove microsegundos
-            
-            print(f"\n✅ Análise concluída! Processados {len(self.resultados_analise)} requerimento(s) em {tempo_analise_formatado}")
+            log_info(f"\n✅ Análise concluída! Processados {len(self.resultados_analise)} requerimento(s) em {tempo_analise_formatado}")
             
             # Salvar resultados em JSON
-            print("💾 Salvando resultados JSON...")
+            log_info("💾 Salvando resultados JSON...")
             caminho_json = self._salvar_resultados_json()
             
             # Gerar relatório LaTeX
-            print("📄 Gerando relatório LaTeX...")
+            log_info("📄 Gerando relatório LaTeX...")
             caminho_latex = self._gerar_relatorio_latex()
             
             if caminho_latex:
                 # Tentar compilar para PDF
-                print("🔄 Compilando relatório para PDF...")                
+                log_info("🔄 Compilando relatório para PDF...")                
                 caminho_pdf = self._compilar_latex_para_pdf(caminho_latex)                
                 
-                print(f"\n🎉 Análise finalizada com sucesso!")
-                print(f"📁 Resultados salvos em: {self.pasta_resultados}")
+                log_info(f"\n🎉 Análise finalizada com sucesso!")
+                log_info(f"📁 Resultados salvos em: {self.pasta_resultados}")
                 if caminho_json:
-                    print(f"📊 JSON: {Path(caminho_json).name}")
+                    log_info(f"📊 JSON: {Path(caminho_json).name}")
                 if caminho_latex:
-                    print(f"📄 LaTeX: {Path(caminho_latex).name}")
+                    log_info(f"📄 LaTeX: {Path(caminho_latex).name}")
                     if caminho_pdf != caminho_latex:
-                        print(f"📋 PDF: {Path(caminho_pdf).name}")
+                        log_info(f"📋 PDF: {Path(caminho_pdf).name}")
             
         except KeyboardInterrupt:
-            print("\n❌ Análise interrompida pelo usuário.")
+            log_info("\n❌ Análise interrompida pelo usuário.")
         except Exception as e:
             log_erro_critico(f"Erro crítico na análise: {str(e)}")
-            print(f"❌ Erro crítico na análise. Verifique os logs.")
+            log_info(f"❌ Erro crítico na análise. Verifique os logs.")
 
 
 def analisar_requerimento():

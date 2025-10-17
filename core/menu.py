@@ -4,14 +4,15 @@
 #console = Console()
 
 from core.const import TITULO_APLICACAO, DESCRICOES_MENU, OPCOES_MENU
+from core.log_print import log_info
 
 def exibir_menu():
     #console.clear() # Limpa a tela de forma elegante e cross-platform
-    print(f"{TITULO_APLICACAO}\n")
-    print("Opções: \n")
-    print(f"  {OPCOES_MENU['download']}. {DESCRICOES_MENU['D']}\n")
-    print(f"  {OPCOES_MENU['analise']}. {DESCRICOES_MENU['A']}\n")
-    print(f"  {OPCOES_MENU['sair']}. {DESCRICOES_MENU['S']}\n")
+    log_info(f"{TITULO_APLICACAO}\n")
+    log_info("Opções: \n")
+    log_info(f"  {OPCOES_MENU['download']}. {DESCRICOES_MENU['D']}\n")
+    log_info(f"  {OPCOES_MENU['analise']}. {DESCRICOES_MENU['A']}\n")
+    log_info(f"  {OPCOES_MENU['sair']}. {DESCRICOES_MENU['S']}\n")
     
     while True:
         try:
@@ -22,13 +23,13 @@ def exibir_menu():
             if resposta in [OPCOES_MENU['download'], OPCOES_MENU['analise'], OPCOES_MENU['sair']]:
                 return resposta
             else:
-                print("ERRO - Opcao invalida! Digite D, A ou S.")
+                log_info("ERRO - Opcao invalida! Digite D, A ou S.")
                 
         except KeyboardInterrupt:
-            print("\nERRO - Operacao cancelada pelo usuario.")
+            log_info("\nERRO - Operacao cancelada pelo usuario.")
             return OPCOES_MENU['sair']  # Sair quando cancelado
         except Exception as e:
-            print(f"ERRO - Erro inesperado: {str(e)}")
-            print("Tente novamente ou pressione Ctrl+C para sair.")
+            log_info(f"ERRO - Erro inesperado: {str(e)}")
+            log_info("Tente novamente ou pressione Ctrl+C para sair.")
             #resposta = getch.getch()
             #return resposta.decode('UTF-8').upper()

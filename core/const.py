@@ -372,7 +372,8 @@ PALAVRAS_CHAVE_MANUAL = {
     "epon": {"normas": []},
     "xpon": {"normas": []},
     "satélite": {"normas": []},
-    "satellite": {"normas": []}
+    "satellite": {"normas": []},
+    "produto não acabado": {"normas": []},
 }
 
 # ================================

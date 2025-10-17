@@ -691,19 +691,24 @@ class AnalisadorRequerimentos:
         return resultado
     
     def _determinar_tipo_documento(self, nome_arquivo: str) -> str:
-        """Determina o tipo de documento baseado no nome do arquivo usando padrões de const.py."""
-        nome_lower = nome_arquivo.lower()
+        """Determina o tipo de documento baseado no primeiro termo entre colchetes no nome do arquivo."""
         
-        # Usar padrões definidos em TIPOS_DOCUMENTOS
-        for tipo_chave, tipo_info in TIPOS_DOCUMENTOS.items():
-            padroes = tipo_info['padroes']
-            for padrao in padroes:
-                if padrao in nome_lower:
-                    # Retornar a chave do tipo para uso consistente
+        # Extrair o primeiro termo entre colchetes
+        match = re.search(r'\[([^\]]+)\]', nome_arquivo)
+        if match:
+            tipo_extraido = match.group(1).lower().strip()
+            
+            # Primeira passada: verificar correspondências exatas com 'nome' ou 'nome_curto'
+            for tipo_chave, tipo_info in TIPOS_DOCUMENTOS.items():
+                #nome = tipo_info.get('nome', '').lower()
+                nome_completo = tipo_info.get('botao_pdf', '').lower()
+                
+                # Verificar correspondência exata
+                if tipo_extraido == nome_completo:
                     return tipo_chave
         
-        # Fallback para "outros" se não encontrar correspondência
-        return "outros"
+        # Fallback final para "outros" se não encontrar correspondência
+        return TIPO_OUTROS
     
     def _analisar_cct(self, caminho: Path, resultado: Dict, dados_ocd: Dict) -> Dict:
         """Análise específica para Certificado de Conformidade Técnica."""
@@ -833,10 +838,60 @@ class AnalisadorRequerimentos:
         
         return resultado
     
+    def _extract_normas_from_ract(self, content: str) -> List[str]:
+        """
+        Extrai normas verificadas do conteúdo de um RACT usando padrões genéricos.
+        
+        Args:
+            content: Conteúdo do RACT extraído do PDF
+            
+        Returns:
+            Lista de normas encontradas
+        """
+        normas = []
+        
+        # Padrões comuns para normas em RACTs
+        norma_patterns = [
+            r'ATO\s*(?:Nº|N°|NO|nº|n°|no)?\s*(\d+)',
+            r'RESOLUÇÃO\s*(?:Nº|N°|NO|nº|n°|no)?\s*(\d+)',
+            r'RESOLUÇÕES?\s*(?:Nº|N°|NO|nº|n°|no)?\s*(\d+)',
+            r'ISO\s*(\d+[\d\w\.\-/]*)', 
+            r'IEC\s*(\d+[\d\w\.\-/]*)',
+            r'ABNT\s*NBR\s*(\d+[\d\w\.\-/]*)',
+            r'IEEE\s*(\d+[\d\w\.\-/]*)'
+        ]
+        
+        for pattern in norma_patterns:
+            matches = re.findall(pattern, content, re.IGNORECASE)
+            for match in matches:
+                if 'ATO' in pattern.upper():
+                    norma_formatada = f"ato{match}"
+                elif 'RESOLUÇÃO' in pattern.upper() or 'RESOLUÇÕES' in pattern.upper():
+                    norma_formatada = f"resolucao{match}"
+                elif 'ISO' in pattern.upper():
+                    norma_formatada = f"iso{match}"
+                elif 'IEC' in pattern.upper():
+                    norma_formatada = f"iec{match}"
+                elif 'ABNT' in pattern.upper():
+                    norma_formatada = f"abntnbr{match}"
+                elif 'IEEE' in pattern.upper():
+                    norma_formatada = f"ieee{match}"
+                else:
+                    norma_formatada = match
+                    
+                if norma_formatada not in normas:
+                    normas.append(norma_formatada)
+        
+        return normas
+
     def _analisar_ract(self, caminho: Path, resultado: Dict) -> Dict:
         """Análise específica para Relatório de Avaliação da Conformidade Técnica."""
         try:
             log_info(f"Iniciando análise de RACT: {caminho.name}")
+            
+            # Inicializar campo normas_verificadas se não existir
+            if "normas_verificadas" not in resultado:
+                resultado["normas_verificadas"] = []
             
             # Verificações básicas do arquivo
             if not caminho.exists():
@@ -875,9 +930,25 @@ class AnalisadorRequerimentos:
                     if total_paginas > 0:
                         conformidades.append(f"Documento contém {total_paginas} página(s)")
                         
-                        # Extrair texto da primeira página para análise básica
-                        primeira_pagina = str(doc[0].get_text())
-                        primeira_pagina_lower = primeira_pagina.lower()
+                        # Extrair texto completo do documento para análise de normas
+                        content_completo = ""
+                        first_page_content = ""
+                        
+                        for i, pagina in enumerate(doc):
+                            page_text = str(pagina.get_text())
+                            content_completo += page_text + "\n"
+                            if i == 0:
+                                first_page_content = page_text
+                        
+                        primeira_pagina_lower = first_page_content.lower()
+                        
+                        # Extrair normas verificadas do conteúdo completo
+                        normas_verificadas = self._extract_normas_from_ract(content_completo)
+                        resultado["normas_verificadas"] = normas_verificadas
+                        
+                        if normas_verificadas:
+                            conformidades.append(f"{len(normas_verificadas)} norma(s) verificada(s) encontrada(s)")
+                            #log_info(f"Normas encontradas no RACT: {normas_verificadas}")
                         
                         # Verificar palavras-chave esperadas em RACT
                         palavras_chave = [
@@ -1233,7 +1304,7 @@ class AnalisadorRequerimentos:
         for arquivo in arquivos_pdf:
             tipo_doc = self._determinar_tipo_documento(arquivo.name)
             # Processar todos os tipos de documentos para não perder informações
-            if tipo_doc not in [TIPO_CCT, TIPO_MANUAL]:
+            if tipo_doc not in [TIPO_CCT, TIPO_MANUAL, TIPO_RACT]:
                 continue
             # Extrair dados do OCD do JSON do requerimento
             dados_ocd = dados_req_json.get('ocd', {}) if dados_req_json else {}
@@ -1400,27 +1471,41 @@ class AnalisadorRequerimentos:
         
         try:
             documentos = req_dados.get("documentos_analisados", [])
-            #log_info(f"Processando {len(documentos)} documentos para coleta de normas")
             
-            # 1. Coletar normas de palavras-chave encontradas
+            # 1. Consolidar palavras-chave de todos os documentos (sem duplicatas)
+            palavras_consolidadas = {}
             for doc in documentos:
                 dados_extraidos = doc.get("dados_extraidos", {})
                 palavras_com_normas = dados_extraidos.get("palavras_encontradas_com_normas", {})
                 
-                #log_info(f"Documento {doc.get('nome_arquivo', 'N/A')} - palavras com normas: {len(palavras_com_normas)}")
-                
                 for palavra, info in palavras_com_normas.items():
-                    normas = info.get("normas", [])
                     contador = info.get("contador", 0)
+                    normas = info.get("normas", [])
                     
-                    #log_info(f"Palavra '{palavra}' encontrada {contador}x com normas: {normas}")
+                    if palavra not in palavras_consolidadas:
+                        palavras_consolidadas[palavra] = {"contador": 0, "normas": set()}
                     
-                    for norma_id in normas:
-                        if norma_id not in normas_aplicaveis:
-                            normas_aplicaveis[norma_id] = []
-                        normas_aplicaveis[norma_id].append(f"palavra-chave: {palavra} (x{contador})")
+                    # Somar contadores de todos os documentos
+                    palavras_consolidadas[palavra]["contador"] += contador
+                    # Adicionar normas (set evita duplicatas)
+                    palavras_consolidadas[palavra]["normas"].update(normas)
             
-            # 2. Coletar normas de tipos de equipamentos
+            # Gerar motivadores para palavras-chave consolidadas
+            for palavra, info in palavras_consolidadas.items():
+                contador_total = info["contador"]
+                normas = info["normas"]
+                
+                for norma_id in normas:
+                    if norma_id not in normas_aplicaveis:
+                        normas_aplicaveis[norma_id] = []
+                    
+                    # Formato simplificado: apenas a palavra (removendo prefixo e contador desnecessário)
+                    if contador_total > 1:
+                        normas_aplicaveis[norma_id].append(f"{palavra} (x{contador_total})")
+                    else:
+                        normas_aplicaveis[norma_id].append(palavra)
+            
+            # 2. Coletar normas de tipos de equipamentos (sem duplicatas)
             equipamentos_encontrados = set()
             for doc in documentos:
                 dados_extraidos = doc.get("dados_extraidos", {})
@@ -1438,7 +1523,9 @@ class AnalisadorRequerimentos:
                     if norma_id:
                         if norma_id not in normas_aplicaveis:
                             normas_aplicaveis[norma_id] = []
-                        normas_aplicaveis[norma_id].append(f"{eq_nome}")
+                        # Evitar duplicatas de equipamentos
+                        if eq_nome not in normas_aplicaveis[norma_id]:
+                            normas_aplicaveis[norma_id].append(eq_nome)
             
         except Exception as e:
             log_erro(f"Erro ao coletar normas aplicáveis: {str(e)}")

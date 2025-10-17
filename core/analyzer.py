@@ -75,7 +75,7 @@ class CCTAnalyzerIntegrado:
                 for pagina in pdf:
                     content += str(pagina.get_text("text")) + "\n"
                 if content.strip() == "":
-                    log_info(f"PDF aparentemente vazio, tentando OCR: {pdf_path.name}")
+                    #log_info(f"PDF aparentemente vazio, tentando OCR: {pdf_path.name}")
                     content = self.extract_pdf_content_from_ocr(pdf_path)
                 
             return content
@@ -439,7 +439,7 @@ class CCTAnalyzerIntegrado:
         
         return list(set(normas))  # Remove duplicatas
 
-    def extract_data_from_cct(self, content: str, cnpj_ocd: str, nome_ocd: str = None) -> Dict:
+    def extract_data_from_cct(self, content: str, cnpj_ocd: str, nome_ocd: str | None) -> Dict:
         """
         Extrai todas as variáveis necessárias do CCT.
         """
@@ -900,8 +900,8 @@ class AnalisadorRequerimentos:
                 return resultado
             
             # Verificar tamanho do arquivo
-            tamanho_mb = caminho.stat().st_size / (1024 * 1024)
-            resultado["observacoes"].append(f"Tamanho do arquivo: {tamanho_mb:.2f} MB")
+            #tamanho_mb = caminho.stat().st_size / (1024 * 1024)
+            #resultado["observacoes"].append(f"Tamanho do arquivo: {tamanho_mb:.2f} MB")
             
             # Análise específica para RACT
             conformidades = []
@@ -930,47 +930,23 @@ class AnalisadorRequerimentos:
                     if total_paginas > 0:
                         conformidades.append(f"Documento contém {total_paginas} página(s)")
                         
-                        # Extrair texto completo do documento para análise de normas
-                        content_completo = ""
-                        first_page_content = ""
+                        # Extrair texto completo do manual para análise
+                        texto_completo = ""
+                        for pagina_num in range(total_paginas):  # Analisar todas as páginas
+                            texto_completo += str(doc[pagina_num].get_text()).lower() + "\n"
                         
-                        for i, pagina in enumerate(doc):
-                            page_text = str(pagina.get_text())
-                            content_completo += page_text + "\n"
-                            if i == 0:
-                                first_page_content = page_text
+                        # Usar palavras-chave definidas em const.py
+                        palavras_chave_manual = [palavra.lower() for palavra in PALAVRAS_CHAVE_MANUAL.keys()]
+                        palavras_chave_manual = sorted(palavras_chave_manual)                           
                         
-                        primeira_pagina_lower = first_page_content.lower()
                         
                         # Extrair normas verificadas do conteúdo completo
-                        normas_verificadas = self._extract_normas_from_ract(content_completo)
+                        normas_verificadas = self._extract_normas_from_ract(texto_completo)
                         resultado["normas_verificadas"] = normas_verificadas
                         
                         if normas_verificadas:
                             conformidades.append(f"{len(normas_verificadas)} norma(s) verificada(s) encontrada(s)")
-                            #log_info(f"Normas encontradas no RACT: {normas_verificadas}")
-                        
-                        # Verificar palavras-chave esperadas em RACT
-                        palavras_chave = [
-                            "relatório", "avaliação", "conformidade", "técnica",
-                            "ensaio", "teste", "norma", "equipamento", "anatel"
-                        ]
-                        
-                        palavras_encontradas = []
-                        for palavra in palavras_chave:
-                            if palavra in primeira_pagina_lower:
-                                palavras_encontradas.append(palavra)
-                        
-                        if palavras_encontradas:
-                            conformidades.append(f"Palavras-chave encontradas: {', '.join(palavras_encontradas)}")
-                        else:
-                            nao_conformidades.append("Poucas palavras-chave técnicas encontradas no documento")
-                        
-                        # Verificar se contém informações de laboratório/OCD
-                        if any(termo in primeira_pagina_lower for termo in ["laboratório", "ocd", "organismo", "certificação"]):
-                            conformidades.append("Informações de laboratório/OCD identificadas")
-                        else:
-                            nao_conformidades.append("Informações de laboratório/OCD não identificadas claramente")
+                            #log_info(f"Normas encontradas no RACT: {normas_verificadas}")                        
                             
                     else:
                         nao_conformidades.append("Documento PDF vazio ou corrompido")
@@ -1030,11 +1006,7 @@ class AnalisadorRequerimentos:
             
             conformidades = []
             nao_conformidades = []
-            
-            # Verificar tamanho do arquivo
-            tamanho_mb = caminho.stat().st_size / (1024 * 1024)
-            resultado["observacoes"].append(f"Tamanho do arquivo: {tamanho_mb:.2f} MB")
-            
+          
             # Análise de conteúdo do PDF
             try:                
                 with fitz.open(caminho) as doc:
@@ -1689,8 +1661,10 @@ class AnalisadorRequerimentos:
         # Conteúdo do relatório LaTeX
         agora = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
         versao_git = obter_versao_git()        
-
-        latex_content = f"""\\documentclass[12pt,a4paper]{{article}}
+        #utils_dir = Path(__file__).parent.parent / UTILS_DIR
+        #classe_path = rf"{Path(__file__).parent.parent / UTILS_DIR / 'IEEEtran'}"
+        #latex_content = f"""\\documentclass{{{classe_path}}}
+        latex_content = f"""\\documentclass[10pt,a4paper]{{article}}        
 \\usepackage[utf8]{{inputenc}} % interpreta o arquivo .tex como UTF-8 
 \\usepackage[T1]{{fontenc}}      % usa codificação de fonte T1 (suporta acentos latinos)
 \\usepackage{{lmodern}}          % usa uma fonte moderna com suporte a T1
@@ -1711,7 +1685,9 @@ class AnalisadorRequerimentos:
             citecolor=green,
             urlcolor=red,
             filecolor=magenta]{{hyperref}}
-
+\\hypersetup{{
+    pdfnewwindow=true  % Tenta forçar nova janela
+}}
 \\geometry{{margin=2cm}}
 \\pagestyle{{fancy}}
 \\fancyhf{{}}
@@ -1823,7 +1799,7 @@ OCD: {nome_ocd_escapado}
                 #log_info(f"Normas: {list(normas_aplicaveis.keys())}")
             
             if normas_aplicaveis:
-                latex_content += """\\begin{longtable}{p{2cm}p{4cm}p{9cm}}
+                latex_content += """\\begin{longtable}{p{2cm}p{5cm}p{9cm}}
 \\hline
 \\textbf{Status} & \\textbf{Norma} & \\textbf{Motivador(es)} \\\\
 \\hline
@@ -1838,8 +1814,10 @@ OCD: {nome_ocd_escapado}
                     
                     # Verificar se a norma foi verificada
                     if norma_id in normas_verificadas:
-                        status_norma = "\\textcolor{green}{$\\checkmark$}"
+                        #status_norma = "\\textcolor{green}{OK}"
+                        status_norma = "\\textbf{\\textcolor{green}{$\\checkmark$}}"
                     else:
+                        #status_norma = "\\textcolor{red}{Erro}"
                         status_norma = "\\textcolor{red}{$\\times$}"
                     
                     motivadores = normas_aplicaveis[norma_id]
@@ -1869,13 +1847,14 @@ OCD: {nome_ocd_escapado}
                 ocorrencias = re.findall(r'\[([^\]]+)\]', nome_completo)
                 nome_item = nome_completo
                 if len(ocorrencias) >= 2:
-                    nome_item = f"[{tipo}] {ocorrencias[1]}"
-                status = doc.get("status", "N/A")
+                    #nome_item = f"[{tipo}] {ocorrencias[1]}"
+                    nome_item = f"{ocorrencias[0]} ({ocorrencias[1]})"
+                #status = doc.get("status", "N/A")
                 caminho = doc.get("caminho", "N/A")
                 caminho_normalizado = latex_escape_path(caminho)
 
                 # Usar siglas e colorir status
-                if status == "CONFORME":
+                '''if status == "CONFORME":
                     status_colorido = "\\textcolor{green}{C}"
                 elif status == "NAO_CONFORME":
                     status_colorido = "\\textcolor{red}{NC}"
@@ -1886,25 +1865,14 @@ OCD: {nome_ocd_escapado}
                 elif status == "ERRO":
                     status_colorido = "\\textcolor{red}{E}"
                 else:
-                    status_colorido = "\\textcolor{red}{E}"
+                    status_colorido = "\\textcolor{red}{E}"'''
                 
                 # Extrair informações básicas de dados_extraidos se disponível
                 dados_extraidos = doc.get("dados_extraidos", {})
-                #info_basica = ""
-                
-                #if dados_extraidos:
-                    #equipamentos = dados_extraidos.get("equipamentos", [])
-                    #normas_verificadas_doc = dados_extraidos.get("normas_verificadas", [])
-                    
-                    #if equipamentos:
-                        #equipamentos_escapados = [escapar_latex(eq) for eq in equipamentos]
-                        #info_basica += f" - Equipamentos: {', '.join(equipamentos_escapados)}"
-                    
-                    #if normas_verificadas_doc:
-                        #info_basica += f" - {len(normas_verificadas_doc)} norma(s) verificada(s)"
 
-                latex_content += f"    \\item \\href{{run:{caminho_normalizado}}}{{{nome_item}}} [{status_colorido}]\n"
 
+                latex_content += f"    \\item \\href{{file:{caminho_normalizado}}}{{{nome_item}}}\n"# [{status_colorido}]\n"
+                #print(caminho_normalizado)
             latex_content += """\\end{itemize}
 
 \\subsubsection{Palavras-chave}

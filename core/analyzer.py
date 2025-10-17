@@ -227,9 +227,10 @@ class CCTAnalyzerIntegrado:
             },
             # Brics Certificacoes de Sistemas de Gestao e Produtos Ltda
             "16.884.899/0001-92": {
-                "start_pattern": r'Standards?\s+Applied',
-                "end_pattern": r'BRICS\s+Certificações',
-                "processing_type": "regex_patterns"
+                "start_pattern": r'Documento\s+Normativo:',
+                "end_pattern": r'Tipo\s+de\s+Produto',
+                "processing_type": "custom",
+                "custom_patterns": ['ATO', 'RESOLUÇÃO']
             },
             # ABCP Certificadora de Produtos LTDA (estimativa baseada no nome)
             "00.000.000/0001-01": {
@@ -355,7 +356,8 @@ class CCTAnalyzerIntegrado:
             normas_section = content[start_pos:end_pos]
             
             if processing_type == "custom" and custom_patterns:
-                lines = normas_section.split('\n')
+                #lines = normas_section.split('\n') # será um experimento
+                lines = [campo for linha in normas_section.split('\n') for campo in linha.split(';')]
                 for line in lines:
                     line = line.strip()
                     for pattern in custom_patterns:
@@ -363,7 +365,8 @@ class CCTAnalyzerIntegrado:
                             # Regex corrigidanormas_section- o problema era \s+ que exige pelo menos 1 espaço
                             # Mudei para \s* para permitir zero ou mais espaços
                             norma_matches = re.findall(
-                                r'(ATO|RESOLUÇÃO|RESOLUÇÕES?)\s*(?:da\s+\w+\s+)?(?:Nº|N°|NO|nº|n°|no)?[\s:]*(\d+)',
+                                #r'(ATO|RESOLUÇÃO|RESOLUÇÕES?)\s*(?:da\s+\w+\s+)?(?:Nº|N°|NO|nº|n°|no)?[\s:]*(\d+)',
+                                r'(ATO|RESOLUÇÃO|RESOLUÇÕES?)\s*(?:\([^)]+\))?\s*(?:da\s+\w+\s+)?(?:Nº|N°|NO|nº|n°|no)?[\s:]*(\d+)',
                                 normas_section,
                                 re.IGNORECASE
                             )
@@ -1235,6 +1238,9 @@ class AnalisadorRequerimentos:
         """Analisa todos os documentos de um requerimento específico."""
         tempo_inicio_req = datetime.now()
         #log_info(f"Iniciando análise do requerimento: {nome_requerimento}")
+
+        if nome_requerimento in ["25.06974","25.7016","25.06991","25.06969"]:
+            x = 1
         
         pasta_requerimento = self.pasta_base / nome_requerimento
         if not pasta_requerimento.exists():
@@ -1660,7 +1666,7 @@ class AnalisadorRequerimentos:
         
         # Conteúdo do relatório LaTeX
         agora = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
-        versao_git = obter_versao_git()        
+        versao_git = 'v. 0.1.1'  # obter_versao_git()
         #utils_dir = Path(__file__).parent.parent / UTILS_DIR
         #classe_path = rf"{Path(__file__).parent.parent / UTILS_DIR / 'IEEEtran'}"
         #latex_content = f"""\\documentclass{{{classe_path}}}
@@ -1681,9 +1687,9 @@ class AnalisadorRequerimentos:
 \\usepackage{{amssymb}}          % para símbolos matemáticos como checkmark e times
 \\usepackage[normalem]{{ulem}}   
 \\usepackage[colorlinks=true,
-            linkcolor=blue,
-            citecolor=green,
-            urlcolor=red,
+            linkcolor=magenta,
+            citecolor=magenta,
+            urlcolor=magenta,
             filecolor=magenta]{{hyperref}}
 \\hypersetup{{
     pdfnewwindow=true  % Tenta forçar nova janela
@@ -1710,9 +1716,7 @@ class AnalisadorRequerimentos:
 \\section{{{sumario_executivo}}}
 Este relatório apresenta os resultados da análise automatizada de requerimentos do sistema 
 SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (SEI nº 8121635).
-
 \\subsection{{{estatisticas_gerais}}}
-
 \\begin{{itemize}}
     \\item \\textbf{{Requerimentos analisados:}} {total_requerimentos}
     \\item \\textbf{{Documentos processados:}} {total_documentos}
@@ -1723,33 +1727,8 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
     %\\item \\textbf{{Documentos com Erro:}} {status_geral['ERRO']} ({status_geral['ERRO']/max(total_documentos,1)*100:.1f}\\%)
     \\item \\textbf{{Tempo de processamento:}} {tempo_analise_formatado}
     \\item \\textbf{{Data do processamento:}} {agora}
-    \\item \\textbf{{Versão do script:}} {{\\textgreek{{θεoγενης}} - {versao_git}}}
-
+    \\item \\textbf{{Versão do script:}} {{\\textgreek{{θεoγενης - {versao_git}}}}}
 \\end{{itemize}}
-
-\\section{{{analise_detalhada}}}
-A seguir estão os detalhes da análise para cada requerimento processado.
-\\subsection{{Legenda dos Status}}
-\\begin{{table}}[h]
-\\centering
-\\begin{{tabular}}{{|c|l|}}
-\\hline
-\\textbf{{Sigla}} & \\textbf{{Status}} \\\\
-\\hline
-\\textcolor{{green}}{{C}} & \\textcolor{{green}}{{CONFORME}}  \\\\
-\\hline
-\\textcolor{{red}}{{NC}} & \\textcolor{{red}}{{NÃO CONFORME}} \\\\
-\\hline
-\\textcolor{{blue}}{{I}} & \\textcolor{{blue}}{{INCONCLUSIVO}} \\\\
-\\hline
-\\textcolor{{purple}}{{P}} & \\textcolor{{purple}}{{PROCESSADO}} \\\\
-\\hline
-\\textcolor{{orange}}{{E}} & \\textcolor{{orange}}{{ERRO}} \\\\
-\\hline
-\\end{{tabular}}
-\\caption{{Legenda dos status utilizados nas tabelas de análise}}
-\\end{{table}}
-
 """
         
         # Adicionar seção para cada requerimento
@@ -1760,14 +1739,21 @@ A seguir estão os detalhes da análise para cada requerimento processado.
             #resumo = req.get("resumo_status", {})
             #timestamp_analise = escapar_latex(req.get('timestamp_analise', 'N/A'))
             
-            # Obter o nome do OCD do primeiro documento CCT encontrado
+            # Obter o nome do OCD e equipamentos do primeiro documento CCT encontrado
             nome_ocd_completo = "OCD não identificado"
+            equipamentos_encontrados = []
             
             # Buscar o primeiro CCT com OCD válido
             for doc in documentos:
                 if doc.get("tipo") == TIPO_CCT:
                     dados_extraidos = doc.get("dados_extraidos", {})
                     nome_ocd_extraido = dados_extraidos.get("nome_ocd", "N/A")
+                    equipamentos_doc = dados_extraidos.get("equipamentos", [])
+                    
+                    # Coletar equipamentos se disponíveis
+                    if equipamentos_doc:
+                        equipamentos_encontrados.extend(equipamentos_doc)
+                    
                     if nome_ocd_extraido and nome_ocd_extraido != "N/A" and not nome_ocd_extraido.startswith('[ERRO]'):
                         # Se o nome já parece completo (>= 15 caracteres), usar diretamente
                         if len(nome_ocd_extraido) >= 15 and any(palavra in nome_ocd_extraido.lower() for palavra in ['ltda', 'sa', 'associação', 'fundação', 'organização', 'centro']):
@@ -1778,17 +1764,28 @@ A seguir estão os detalhes da análise para cada requerimento processado.
             
             nome_ocd_escapado = escapar_latex(nome_ocd_completo)
             
-            latex_content += f"""
-\\newpage            
-\\subsection{{Requerimento {numero_req}}}
-A seguir, os detalhes da análise dos documentos associados a este requerimento, cujo tempo de processamento foi: {tempo_analise_req}.
-
-OCD: {nome_ocd_escapado}
-
-\\subsubsection{{Normas aplicáveis}}
-
-"""
+            # Formatar lista de equipamentos
+            if equipamentos_encontrados:
+                # Remover duplicatas mantendo a ordem
+                equipamentos_unicos = []
+                for eq in equipamentos_encontrados:
+                    if eq not in equipamentos_unicos:
+                        equipamentos_unicos.append(eq)
+                equipamentos_texto = escapar_latex(", ".join(equipamentos_unicos))
+            else:
+                equipamentos_texto =  "\\textcolor{red}{\\textbf{Equipamento NÃO identificado}} na lista de requisitos ou nos nomes usados no Mosaico"
+                
             
+            latex_content += f"""
+            \\newpage            
+            \\section{{Requerimento {numero_req}}}
+            A seguir, os detalhes da análise dos documentos associados a este requerimento, cujo tempo de processamento foi: {tempo_analise_req}.
+            \\begin{{itemize}}
+            \\item OCD: {nome_ocd_escapado}
+            \\item Equipamento(s): {equipamentos_texto}
+            \\end{{itemize}}
+            \\subsection{{Normas aplicáveis}}
+            """           
             # Coletar normas aplicáveis para este requerimento
             normas_aplicaveis = self._coletar_normas_aplicaveis_requerimento(req)
             normas_verificadas = self._coletar_normas_verificadas_requerimento(req)
@@ -1836,7 +1833,7 @@ OCD: {nome_ocd_escapado}
                 latex_content += "\\textit{Nenhuma norma específica identificada para este requerimento.}"
 
             latex_content += f"""
-\\subsubsection{{Documentos Analisados}}
+\\subsection{{Documentos Processados}}
 
 \\begin{{itemize}}
 """
@@ -1875,7 +1872,8 @@ OCD: {nome_ocd_escapado}
                 #print(caminho_normalizado)
             latex_content += """\\end{itemize}
 
-\\subsubsection{Palavras-chave}
+\\subsection{Palavras-chave}
+Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} e \\textcolor{gray}{\\sout{não encontradas}} neste requerimento: 
 
 """
             

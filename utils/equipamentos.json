@@ -1058,6 +1058,12 @@
   {
     "escopo": "mosaico",
     "id": "EQ093",
+    "nome": "Microfone sem Fio",
+    "categoria": "Cat. 2"
+  },  
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
     "nome": "Dispositivo de Operação Periódica",
     "categoria": "Cat. 2"
   },

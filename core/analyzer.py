@@ -68,14 +68,12 @@ class CCTAnalyzerIntegrado:
                 log_erro("PyMuPDF não disponível. Tentando OCR...")
                 return self.extract_pdf_content_from_ocr(pdf_path)
             
-            log_info(f"Extraindo conteúdo de: {pdf_path.name}")
+            #log_info(f"Extraindo conteúdo de: {pdf_path.name}")
             
             with fitz.open(pdf_path) as pdf:
-                content = ""
-                              
+                content = ""                              
                 for pagina in pdf:
                     content += str(pagina.get_text("text")) + "\n"
-
                 if content.strip() == "":
                     log_info(f"PDF aparentemente vazio, tentando OCR: {pdf_path.name}")
                     content = self.extract_pdf_content_from_ocr(pdf_path)
@@ -109,7 +107,7 @@ class CCTAnalyzerIntegrado:
             log_erro(f"Falha ao extrair por OCR {pdf_path.name}: {e}")
             return None
 
-    def extract_ocd_from_content(self, content: str) -> Optional[str]:
+    '''def extract_ocd_from_content(self, content: str) -> Optional[str]:
         """
         Identifica o OCD baseado no conteúdo do certificado.
         Retorna nomes padronizados em lowercase.
@@ -140,7 +138,7 @@ class CCTAnalyzerIntegrado:
                 return ocd_key
         
         return None
-
+    '''
     def get_ocd_name(self, cnpj: Optional[str]) -> str:
         """Obtém nome do OCD a partir do CNPJ consultando ocds.json"""
         if not cnpj:
@@ -210,105 +208,130 @@ class CCTAnalyzerIntegrado:
 
     def _get_ocd_patterns(self) -> Dict[str, Dict]:
         """
-        Define os padrões de extração para cada OCD.
+        Define os padrões de extração para cada OCD usando CNPJ como chave.
         """
         return {
-            "moderna": {
-                "start_pattern": r'acima\s+discriminado\(s\)\s+está\(ão\)\s+em\s+conformidade\s+com\s+os\s+documentos\s+normativos\s+indicados\.',
+            # Moderna Tecnologia LTDA
+            "44.458.010/0001-40": {
+                "start_pattern": r'acima\s+discriminados?\s+estão?\s+em\s+conformidade\s+com\s+os\s+documentos\s+normativos\s+indicados\.',
                 "end_pattern": r'Diretor\s+de\s+Tecnologia',
                 "processing_type": "custom",
                 "custom_patterns": ['ATO', 'RESOLUÇÃO']
             },
-            "ncc": {
+            # Associação NCC Certificações do Brasil
+            "04.192.889/0001-07": {
                 "start_pattern": r'Regulation\s+Applicable',
                 "end_pattern": r'Conforme\s+os\s+termos\s+do\s+Ato\s+de\s+Designação\s+nº\s+16\.955',
                 "processing_type": "custom",
                 "custom_patterns": ['ATO', 'RESOLUÇÃO']
             },
-            "brics": {
+            # Brics Certificacoes de Sistemas de Gestao e Produtos Ltda
+            "16.884.899/0001-92": {
                 "start_pattern": r'Standards?\s+Applied',
                 "end_pattern": r'BRICS\s+Certificações',
                 "processing_type": "regex_patterns"
             },
-            "abcp": {
+            # ABCP Certificadora de Produtos LTDA (estimativa baseada no nome)
+            "00.000.000/0001-01": {
                 "start_pattern": r'Normas?\s+Verificadas?',
                 "end_pattern": r'ABCP\s+Certificadora',
                 "processing_type": "regex_patterns"
             },
-            "acert": {
+            # ACERT ORGANISMO DE CERTIFICACAO (estimativa baseada no nome)
+            "00.000.000/0001-02": {
                 "start_pattern": r'Standards?\s+(?:Applied|Verified)',
                 "end_pattern": r'ACERT\s+ORGANISMO',
                 "processing_type": "regex_patterns"
             },
-            "sgs": {
+            # SGS do Brasil Ltda (estimativa baseada no nome)
+            "00.000.000/0001-03": {
                 "start_pattern": r'Technical\s+Standards?',
                 "end_pattern": r'SGS\s+do\s+Brasil',
                 "processing_type": "regex_patterns"
             },
-            "bracert": {
+            # BraCert – BRASIL CERTIFICAÇÕES LTDA (estimativa baseada no nome)
+            "00.000.000/0001-04": {
                 "start_pattern": r'Normas?\s+Aplicadas?',
                 "end_pattern": r'BraCert.*BRASIL\s+CERTIFICAÇÕES',
                 "processing_type": "regex_patterns"
             },
-            "ccpe": {
+            # CCPE – CENTRO DE CERTIFICAÇÃO (estimativa baseada no nome)
+            "00.000.000/0001-05": {
                 "start_pattern": r'Technical\s+Standards?',
                 "end_pattern": r'CCPE.*CENTRO\s+DE\s+CERTIFICAÇÃO',
                 "processing_type": "regex_patterns"
             },
-            "eldorado": {
+            # OCD-Eldorado (estimativa baseada no nome)
+            "00.000.000/0001-06": {
                 "start_pattern": r'NORMAS\s+APLICÁVEIS/\s+APPLICABLE\s+STANDARDS',
                 "end_pattern": r'O\s+OCD-Eldorado\s+atribui\s+a\s+certificação\s-aos\s+produtos\s+mencionados\s+acima',
                 "processing_type": "custom",
                 "custom_patterns": ['ATO', 'RESOLUÇÃO']
             },
-            "icc": {
+            # Organismo ICC (estimativa baseada no nome)
+            "00.000.000/0001-07": {
                 "start_pattern": r'Regulation\s+Applicable',
                 "end_pattern": r'O\s+organismo\s+ICC\s+no\s+uso\s+das\s+atribuições\s+que\s+lhe\s+confere\s+o\s+Ato\s+de\s+Designação',
                 "processing_type": "custom",
                 "custom_patterns": ['ATO', 'RESOLUÇÃO']
             },
-            "master": {
+            # Master Associação de Avaliação de Conformidade
+            "07.832.680/0001-59": {
                 "start_pattern": r'Reference\s+Standards',
                 "end_pattern": r'LABORATÓRIOS\s+DE\s+ENSAIOS',
                 "processing_type": "custom",
                 "custom_patterns": ['ATO', 'RESOLUÇÃO']
             },
-            "ocp-teli": {
+            # OCP-TELI - ORGANIZAÇÃO CERTIFICADORA DE PRODUTOS DE TELECOMUNICAÇÕES E INFORMÁTICA
+            "04.538.402/0001-03": {
                 "start_pattern": r'Regulamentos\s+Aplicáveis:',
                 "end_pattern": r'OCD\s+designado\s+pelo\s+Ato\s+nº\s+19\.434',
                 "processing_type": "custom",
                 "custom_patterns": ['ATO', 'RESOLUÇÃO']
             },
-            "tuv": {
+            # TÜV (estimativa baseada no nome)
+            "00.000.000/0001-08": {
                 "start_pattern": r'Standards?\s+Applied',
                 "end_pattern": r'TÜV',
                 "processing_type": "regex_patterns"
             },
-            "ul": {
+            # UL do Brasil Ltda
+            "02.839.483/0001-48": {
                 "start_pattern": r'normative\s+documents',
                 "end_pattern": r'e\s+atesta\s+que\s+o\s+produto\s+para\s+telecomunicações\s+está\s+em\s+conformidade',
                 "processing_type": "custom",
                 "custom_patterns": ['ATO', 'RESOLUÇÃO']
             },
-            "qc": {
+            # UL do Brasil Certificações
+            "04.830.102/0001-95": {
+                "start_pattern": r'normative\s+documents',
+                "end_pattern": r'e\s+atesta\s+que\s+o\s+produto\s+para\s+telecomunicações\s+está\s+em\s+conformidade',
+                "processing_type": "custom",
+                "custom_patterns": ['ATO', 'RESOLUÇÃO']
+            },
+            # QC Certificações (estimativa baseada no nome)
+            "00.000.000/0001-09": {
                 "start_pattern": r'Certification\s+programor\s+regulation',
                 "end_pattern": r'Emissão',
                 "processing_type": "custom",
                 "custom_patterns": ['ATO', 'RESOLUÇÃO']
             },
-            "versys": {
+            # Associação Versys de Tecnologia
+            "26.352.661/0001-70": {
                 "start_pattern": r'Applicable\s+Standards:',
                 "end_pattern": r'Data\s+Certificação',
                 "processing_type": "custom",
                 "custom_patterns": ['ATO', 'RESOLUÇÃO']
             },
-            "cpqd": {
+            # FUNDACAO CENTRO DE PESQUISA E DESENVOLVIMENTO DE TELECOMUNICACOES- CPQD.
+            "02.641.663/0001-10": {
                 "start_pattern": r'Documentos\s+normativos/\s+Technical\s+Standards:',
                 "end_pattern": r'Relatório\s+de\s+Conformidade\s+/\s+Report\s+Number:',
                 "processing_type": "custom",
                 "custom_patterns": ['ATO', 'RESOLUÇÃO']
             },
-            "associação lmp certificações": {
+            # Associação LMP Certificações (estimativa baseada no nome)
+            "00.000.000/0001-10": {
                 "start_pattern": r'Certificamos\s+que\s+o\s+produto\s+está\s+em\s+conformidade\s+com\s+as\s+seguintes\s+referências:',
                 "end_pattern": r'Organismo\s+de\s+Certificação\s+Designado\s+pela\s+ANATEL\s+—\s+Agência\s+Nacional\s+de\s+Telecomunicações',
                 "processing_type": "custom",
@@ -380,18 +403,20 @@ class CCTAnalyzerIntegrado:
         
         return normas
 
-    def extract_normas_verificadas(self, content: str, nome_ocd: str) -> List[str]:
+    def extract_normas_verificadas(self, content: str, cnpj_ocd: str) -> List[str]:
         """
-        Extrai normas verificadas baseado no OCD específico.
+        Extrai normas verificadas baseado no CNPJ do OCD específico.
         """
         normas = []
         ocd_patterns = self._get_ocd_patterns()
         
-        ocd_key = nome_ocd.lower()
-        ocd_config = ocd_patterns.get(ocd_key)
-
-        if ocd_key == 'ocp-teli':
-            x = 1
+        # Normalizar CNPJ (remover formatação se houver)
+        from core.utils import desformatar_cnpj, formatar_cnpj
+        cnpj_normalizado = desformatar_cnpj(cnpj_ocd) if cnpj_ocd else ""
+        cnpj_formatado = formatar_cnpj(cnpj_normalizado) if cnpj_normalizado else ""
+        
+        # Buscar configuração por CNPJ formatado
+        ocd_config = ocd_patterns.get(cnpj_formatado)
         
         if ocd_config:
             normas = self._extract_normas_by_pattern(
@@ -414,20 +439,20 @@ class CCTAnalyzerIntegrado:
         
         return list(set(normas))  # Remove duplicatas
 
-    def extract_data_from_cct(self, content: str) -> Dict:
+    def extract_data_from_cct(self, content: str, cnpj_ocd: str, nome_ocd: str = None) -> Dict:
         """
         Extrai todas as variáveis necessárias do CCT.
         """
-        nome_ocd = self.extract_ocd_from_content(content)
         tipo_equipamento = self.extract_tipo_equipamento(content)
         
-        if nome_ocd:
-            normas_verificadas = self.extract_normas_verificadas(content, nome_ocd)
+        if cnpj_ocd:
+            normas_verificadas = self.extract_normas_verificadas(content, cnpj_ocd)
         else:
             normas_verificadas = []
             
         data = {
-            'nome_ocd': nome_ocd,
+            'cnpj_ocd': cnpj_ocd,
+            'nome_ocd': nome_ocd or 'N/A',
             'tipo_equipamento': tipo_equipamento,
             'normas_verificadas': normas_verificadas,
             'conteudo_extraido': len(content) > 0,
@@ -614,16 +639,17 @@ class AnalisadorRequerimentos:
         
         requerimentos = []
         for item in self.pasta_base.iterdir():
-            if item.is_dir() and item.name.startswith("_"):
+            #if item.is_dir() and item.name.startswith("_"):
                 requerimentos.append(item.name)
         
         return sorted(requerimentos)
-    
-    def _analisar_documento(self, caminho_documento: Path, tipo_documento: str) -> Dict:
+
+    def _analisar_documento(self, caminho_documento: Path, tipo_documento: str, dados_ocd: Dict) -> Dict:
         """
         Analisa um documento específico baseado no seu tipo.
         """
-        log_info(f"Analisando documento: {caminho_documento.name} (Tipo: {tipo_documento})")
+        info = re.findall(r'\[(.*?)\]', caminho_documento.name)
+        log_info(f"Analisando documento: {info[:2]}")
         
         resultado = {
             "nome_arquivo": caminho_documento.name,
@@ -639,7 +665,7 @@ class AnalisadorRequerimentos:
         try:
             # Análise baseada no tipo de documento usando constantes unificadas
             if tipo_documento == TIPO_CCT:
-                resultado = self._analisar_cct(caminho_documento, resultado)
+                resultado = self._analisar_cct(caminho_documento, resultado, dados_ocd)
             elif tipo_documento == TIPO_RACT:
                 resultado = self._analisar_ract(caminho_documento, resultado)
             elif tipo_documento == TIPO_MANUAL:
@@ -679,10 +705,10 @@ class AnalisadorRequerimentos:
         # Fallback para "outros" se não encontrar correspondência
         return "outros"
     
-    def _analisar_cct(self, caminho: Path, resultado: Dict) -> Dict:
+    def _analisar_cct(self, caminho: Path, resultado: Dict, dados_ocd: Dict) -> Dict:
         """Análise específica para Certificado de Conformidade Técnica."""
         try:
-            log_info(f"Iniciando análise detalhada de CCT: {caminho.name}")
+            #log_info(f"Iniciando análise detalhada de CCT: {caminho.name}")
             
             # Instanciar CCTAnalyzer integrado
             utils_dir = Path(__file__).parent.parent / UTILS_DIR
@@ -698,7 +724,9 @@ class AnalisadorRequerimentos:
                 return resultado
             
             # Extrair dados do CCT usando a lógica especializada
-            dados_cct = cct_analyzer.extract_data_from_cct(conteudo)
+            cnpj_ocd = dados_ocd.get('CNPJ', '') if dados_ocd else ''
+            nome_ocd = dados_ocd.get('Nome', 'N/A') if dados_ocd else 'N/A'
+            dados_cct = cct_analyzer.extract_data_from_cct(conteudo, cnpj_ocd, nome_ocd)
             
             if not dados_cct:
                 resultado["status"] = STATUS_ERRO
@@ -710,7 +738,7 @@ class AnalisadorRequerimentos:
             sucesso_validacao, normas_nao_verificadas = validacao
             
             # Processar resultados da análise
-            nome_ocd = dados_cct.get('nome_ocd', 'N/A')
+            #nome_ocd = dados_cct.get('nome_ocd', 'N/A')
             tipo_equipamento = dados_cct.get('tipo_equipamento', [])
             normas_verificadas = dados_cct.get('normas_verificadas', [])
             
@@ -795,7 +823,7 @@ class AnalisadorRequerimentos:
             # Adicionar timestamp de processamento
             resultado["observacoes"].append(f"Análise CCT concluída em {datetime.now().strftime('%H:%M:%S')}")
             
-            log_info(f"Análise CCT concluída - Status: {resultado['status']}")
+            #log_info(f"Análise CCT concluída - Status: {resultado['status']}")
             
         except Exception as e:
             log_erro(f"Erro durante análise de CCT: {str(e)}")
@@ -909,7 +937,7 @@ class AnalisadorRequerimentos:
                 resultado["status"] = "CONFORME"
             
             resultado["observacoes"].append(f"Análise RACT concluída - Status: {resultado['status']}")
-            log_info(f"Análise RACT concluída - Status: {resultado['status']}")
+            #log_info(f"Análise RACT concluída - Status: {resultado['status']}")
             
         except Exception as e:
             log_erro(f"Erro durante análise de RACT: {str(e)}")
@@ -921,7 +949,7 @@ class AnalisadorRequerimentos:
     def _analisar_keywords(self, caminho: Path, resultado: Dict) -> Dict:
         """Análise específica para Manual do Produto."""
         try:
-            log_info(f"Iniciando análise de Manual: {caminho.name}")
+            #log_info(f"Iniciando análise de Manual: {caminho.name}")
             
             # Verificações básicas do arquivo
             if not caminho.exists():
@@ -1002,7 +1030,7 @@ class AnalisadorRequerimentos:
                 resultado["status"] = "PROCESSADO"  # Status neutro para manuais
             
             resultado["observacoes"].append(f"Análise de Manual concluída - Status: {resultado['status']}")
-            log_info(f"Análise de Manual concluída - Status: {resultado['status']}")
+            #log_info(f"Análise de Manual concluída  {resultado['status']}")
             
         except Exception as e:
             log_erro(f"Erro durante análise de Manual: {str(e)}")
@@ -1050,7 +1078,7 @@ class AnalisadorRequerimentos:
         if nome_requerimento.startswith("_"):
             arquivo_json_req = pasta_requerimento / f"{nome_requerimento[1:]}.json"
         else:
-            arquivo_json_req = pasta_requerimento / f"_{nome_requerimento}.json"
+            arquivo_json_req = pasta_requerimento / f"{nome_requerimento}.json"
         
         if not arquivo_json_req.exists():
             log_info(f"Arquivo JSON do requerimento não encontrado: {arquivo_json_req.name}")
@@ -1063,7 +1091,7 @@ class AnalisadorRequerimentos:
                 log_erro(f"Arquivo JSON inválido ou vazio: {arquivo_json_req.name}")
                 return None
                 
-            log_info(f"Dados do requerimento carregados de: {arquivo_json_req.name}")
+            #log_info(f"Dados do requerimento carregados de: {arquivo_json_req.name}")
             
             # Extrair informações do OCD se disponível
             dados_ocd = dados_req.get("ocd")
@@ -1128,9 +1156,9 @@ class AnalisadorRequerimentos:
                                 dados_ocds[i]["nome"] = nome_ocd
                                 dados_ocds[i]["data_atualizacao"] = data_certificado
                                 dados_modificados = True
-                                log_info(f"OCD atualizado: {nome_ocd} (CNPJ: {cnpj_ocd}) - Nova data: {data_certificado}")
-                            else:
-                                log_info(f"OCD não atualizado: data atual ({data_atual_str}) é mais recente que a do requerimento ({data_certificado})")
+                                #log_info(f"OCD atualizado: {nome_ocd} (CNPJ: {cnpj_ocd}) - Nova data: {data_certificado}")
+                            #else:
+                            #    log_info(f"OCD não atualizado: data atual ({data_atual_str}) é mais recente que a do requerimento ({data_certificado})")
                                 
                         except ValueError:
                             log_erro(f"Erro ao converter data de atualização: {data_atual_str}")
@@ -1149,12 +1177,13 @@ class AnalisadorRequerimentos:
             
             # Salvar arquivo somente se houve modificação
             if dados_modificados:
-                if salvar_json(dados_ocds, ocds_file):
-                    log_info("Arquivo ocds.json atualizado com sucesso")
-                else:
-                    log_erro("Falha ao salvar arquivo ocds.json atualizado")
-            else:
-                log_info("Nenhuma modificação necessária no arquivo ocds.json")
+                inutil = salvar_json(dados_ocds, ocds_file)
+                #if salvar_json(dados_ocds, ocds_file):
+                    #log_info("Arquivo ocds.json atualizado com sucesso")
+                #else:
+                    #log_erro("Falha ao salvar arquivo ocds.json atualizado")
+            #else:
+            #    log_info("Nenhuma modificação necessária no arquivo ocds.json")
                 
         except Exception as e:
             log_erro(f"Erro ao atualizar ocds.json: {str(e)}")
@@ -1162,7 +1191,7 @@ class AnalisadorRequerimentos:
     def _analisar_requerimento_individual(self, nome_requerimento: str) -> Dict:
         """Analisa todos os documentos de um requerimento específico."""
         tempo_inicio_req = datetime.now()
-        log_info(f"Iniciando análise do requerimento: {nome_requerimento}")
+        #log_info(f"Iniciando análise do requerimento: {nome_requerimento}")
         
         pasta_requerimento = self.pasta_base / nome_requerimento
         if not pasta_requerimento.exists():
@@ -1172,8 +1201,8 @@ class AnalisadorRequerimentos:
         # Processar arquivo JSON do requerimento e atualizar OCDS se necessário
         dados_req_json = self._processar_dados_requerimento_json(nome_requerimento, pasta_requerimento)
 
-        if dados_req_json is not None:
-            log_info(f"OCD: {dados_req_json['ocd']}")
+        #if dados_req_json is not None:
+        #    log_info(f"OCD: {dados_req_json['ocd']}")
 
         resultado_requerimento = {
             "numero_requerimento": nome_requerimento,
@@ -1198,13 +1227,17 @@ class AnalisadorRequerimentos:
             resultado_requerimento["observacoes_gerais"].append("Nenhum arquivo PDF encontrado")
             return resultado_requerimento
         
-        log_info(f"Encontrados {len(arquivos_pdf)} arquivos PDF para análise")
+        log_info(f"Encontrados {len(arquivos_pdf)} arquivos PDF passíveis de análise")
         
         # Analisar cada documento
         for arquivo in arquivos_pdf:
             tipo_doc = self._determinar_tipo_documento(arquivo.name)
             # Processar todos os tipos de documentos para não perder informações
-            resultado_doc = self._analisar_documento(arquivo, tipo_doc)
+            if tipo_doc not in [TIPO_CCT, TIPO_MANUAL]:
+                continue
+            # Extrair dados do OCD do JSON do requerimento
+            dados_ocd = dados_req_json.get('ocd', {}) if dados_req_json else {}
+            resultado_doc = self._analisar_documento(arquivo, tipo_doc, dados_ocd)
             resultado_requerimento["documentos_analisados"].append(resultado_doc)
             
             # Atualizar contadores de status
@@ -1252,11 +1285,17 @@ class AnalisadorRequerimentos:
                     # Verificar se o nome extraído está contido no nome completo
                     if nome_normalizado in nome_completo_normalizado:
                         return nome_completo
-                    
-                    # Verificar palavras-chave importantes (>= 4 caracteres)
-                    palavras_extraidas = [p for p in nome_normalizado.split() if len(p) >= 4]
-                    if palavras_extraidas:
-                        if any(palavra in nome_completo_normalizado for palavra in palavras_extraidas):
+            
+            # Segunda passada: buscar palavras-chave importantes (>= 4 caracteres)
+            # apenas se não encontrou correspondência direta
+            palavras_extraidas = [p for p in nome_normalizado.split() if len(p) >= 4]
+            if palavras_extraidas:
+                for ocd in ocds_data:
+                    nome_completo = ocd.get('nome', '')
+                    if nome_completo:
+                        nome_completo_normalizado = nome_completo.lower().strip()
+                        # Verificar se TODAS as palavras importantes estão presentes
+                        if all(palavra in nome_completo_normalizado for palavra in palavras_extraidas):
                             return nome_completo
             
             # Se não encontrou correspondência, retorna o nome extraído
@@ -1361,20 +1400,20 @@ class AnalisadorRequerimentos:
         
         try:
             documentos = req_dados.get("documentos_analisados", [])
-            log_info(f"Processando {len(documentos)} documentos para coleta de normas")
+            #log_info(f"Processando {len(documentos)} documentos para coleta de normas")
             
             # 1. Coletar normas de palavras-chave encontradas
             for doc in documentos:
                 dados_extraidos = doc.get("dados_extraidos", {})
                 palavras_com_normas = dados_extraidos.get("palavras_encontradas_com_normas", {})
                 
-                log_info(f"Documento {doc.get('nome_arquivo', 'N/A')} - palavras com normas: {len(palavras_com_normas)}")
+                #log_info(f"Documento {doc.get('nome_arquivo', 'N/A')} - palavras com normas: {len(palavras_com_normas)}")
                 
                 for palavra, info in palavras_com_normas.items():
                     normas = info.get("normas", [])
                     contador = info.get("contador", 0)
                     
-                    log_info(f"Palavra '{palavra}' encontrada {contador}x com normas: {normas}")
+                    #log_info(f"Palavra '{palavra}' encontrada {contador}x com normas: {normas}")
                     
                     for norma_id in normas:
                         if norma_id not in normas_aplicaveis:
@@ -1606,7 +1645,11 @@ A seguir estão os detalhes da análise para cada requerimento processado.
                     dados_extraidos = doc.get("dados_extraidos", {})
                     nome_ocd_extraido = dados_extraidos.get("nome_ocd", "N/A")
                     if nome_ocd_extraido and nome_ocd_extraido != "N/A" and not nome_ocd_extraido.startswith('[ERRO]'):
-                        nome_ocd_completo = self._obter_nome_completo_ocd(nome_ocd_extraido)
+                        # Se o nome já parece completo (>= 15 caracteres), usar diretamente
+                        if len(nome_ocd_extraido) >= 15 and any(palavra in nome_ocd_extraido.lower() for palavra in ['ltda', 'sa', 'associação', 'fundação', 'organização', 'centro']):
+                            nome_ocd_completo = nome_ocd_extraido
+                        else:
+                            nome_ocd_completo = self._obter_nome_completo_ocd(nome_ocd_extraido)
                         break  # Sair do loop após encontrar o primeiro OCD válido
             
             nome_ocd_escapado = escapar_latex(nome_ocd_completo)
@@ -1616,7 +1659,7 @@ A seguir estão os detalhes da análise para cada requerimento processado.
 \\subsection{{Requerimento {numero_req}}}
 A seguir, os detalhes da análise dos documentos associados a este requerimento, cujo tempo de processamento foi: {tempo_analise_req}.
 
-\\textbf{{OCD:}} {nome_ocd_escapado}
+OCD: {nome_ocd_escapado}
 
 \\subsubsection{{Normas aplicáveis}}
 
@@ -1626,9 +1669,9 @@ A seguir, os detalhes da análise dos documentos associados a este requerimento,
             normas_aplicaveis = self._coletar_normas_aplicaveis_requerimento(req)
             
             # Debug: Adicionar log para verificar se normas foram encontradas
-            log_info(f"Normas aplicáveis encontradas para {numero_req}: {len(normas_aplicaveis)} normas")
-            if normas_aplicaveis:
-                log_info(f"Normas: {list(normas_aplicaveis.keys())}")
+            #log_info(f"Normas aplicáveis encontradas para {numero_req}: {len(normas_aplicaveis)} normas")
+            #if normas_aplicaveis:
+                #log_info(f"Normas: {list(normas_aplicaveis.keys())}")
             
             if normas_aplicaveis:
                 latex_content += """\\begin{longtable}{p{5cm}p{11cm}}
@@ -1657,7 +1700,7 @@ A seguir, os detalhes da análise dos documentos associados a este requerimento,
                 latex_content += """\\end{longtable}
 """
             else:
-                latex_content += "\\textit{Nenhuma norma específica identificada para este requerimento.}\\n\\n"
+                latex_content += "\\textit{Nenhuma norma específica identificada para este requerimento.}"
 
             latex_content += f"""
 \\subsubsection{{Documentos Analisados}}

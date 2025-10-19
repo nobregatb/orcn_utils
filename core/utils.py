@@ -399,6 +399,51 @@ def validar_caminho_arquivo(caminho: Union[str, Path]) -> bool:
         return False
 
 
+def extrair_normas_por_padrao(content: str) -> List[str]:
+    """
+    Extrai normas usando padrões específicos (função utilitária centralizada).
+    Baseado no método _extract_normas_by_pattern como modelo integral.
+    """
+    normas = []
+    custom_patterns = ['ATO', 'RESOLUÇÃO']
+    
+    normas_section = limpar_texto(content, palavras=["Nº","N°","NO","nº","n°","no","de","do", "da", "anatel"], simbolos=["."])
+
+    lines = [
+        subcampo.strip()
+        for linha in normas_section.split('\n')
+        for campo in linha.split(';')
+        for subcampo in campo.split(',')
+    ]
+    for line in lines:
+        line = line.strip()
+        for pattern in custom_patterns:
+            if pattern in normas_section.upper():
+                # Regex corrigida - o problema era \s+ que exige pelo menos 1 espaço
+                # Mudei para \s* para permitir zero ou mais espaços
+                norma_matches = re.findall(
+                    r'(ATO|RESOLUÇÃO|RESOLUÇÕES?)\s*(?:\([^)]+\))?\s*(?:da\s+\w+\s+)?(?:|Nº|N°|NO|nº|n°|no)?[\s:]*(\d+)',
+                    normas_section,
+                    re.IGNORECASE
+                )                       
+                
+                # Processar cada match
+                for tipo, numero in norma_matches:
+                    tipo_normalizado = tipo.lower()
+                    if 'resolu' in tipo_normalizado:
+                        tipo_normalizado = 'resolucao'
+                    else:
+                        tipo_normalizado = 'ato'
+                    
+                    norma_formatada = f"{tipo_normalizado}{numero}"
+                    if norma_formatada not in normas:
+                        normas.append(norma_formatada)
+                
+                break
+
+    return normas
+
+
 def validar_caminho_diretorio(caminho: Union[str, Path]) -> bool:
     """
     Valida se um caminho de diretório existe e é um diretório válido.

@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Set#, Any 
 import subprocess
 
-from core.utils import limpar_texto
+from core.utils import limpar_texto, extrair_normas_por_padrao
 from core.log_print import log_info, log_erro, log_erro_critico
 from core.const import (
     TESSERACT_PATH, JSON_FILES, GIT_COMMANDS, GIT_TIMEOUT, VERSAO_PADRAO,
@@ -355,60 +355,11 @@ class CCTAnalyzerIntegrado:
             }
         }
 
-    def _extract_normas_by_pattern(self, content: str)  -> List[str]:#, start_pattern: str, end_pattern: str, 
-                                 #processing_type: str, custom_patterns: Optional[List[str]] = None) -> List[str]:
+    def _extract_normas_by_pattern(self, content: str) -> List[str]:
         """
-        Extrai normas usando padrões específicos de início e fim.
+        Extrai normas usando a função centralizada.
         """
-        normas = []
-        custom_patterns = ['ATO', 'RESOLUÇÃO']
-        #start_match = re.search(start_pattern, content, re.IGNORECASE)
-        #end_match = re.search(end_pattern, content, re.IGNORECASE)
-        
-        #if start_match and end_match:
-        #    start_pos = start_match.end()
-        #    end_pos = end_match.start()
-        #    normas_section = content#[start_pos:end_pos]
-
-        normas_section = limpar_texto(content, palavras=["Nº","N°","NO","nº","n°","no","de","do", "da", "anatel"], simbolos=["."])
-
-        #if processing_type == "custom" and custom_patterns:
-            #lines = normas_section.split('\n') # será um experimento
-            #lines = [campo for linha in normas_section.split('\n') for campo in linha.split(';')]  # será um experimento
-        lines = [
-            subcampo.strip()
-            for linha in normas_section.split('\n')
-            for campo in linha.split(';')
-            for subcampo in campo.split(',')
-        ]
-        for line in lines:
-            line = line.strip()
-            for pattern in custom_patterns:
-                if pattern in normas_section.upper():
-                    # Regex corrigidanormas_section- o problema era \s+ que exige pelo menos 1 espaço
-                    # Mudei para \s* para permitir zero ou mais espaços
-                    norma_matches = re.findall(
-                        #r'(ATO|RESOLUÇÃO|RESOLUÇÕES?)\s*(?:da\s+\w+\s+)?(?:|Nº|N°|NO|nº|n°|no)?[\s:]*(\d+)', # será um experimento
-                        r'(ATO|RESOLUÇÃO|RESOLUÇÕES?)\s*(?:\([^)]+\))?\s*(?:da\s+\w+\s+)?(?:|Nº|N°|NO|nº|n°|no)?[\s:]*(\d+)', # será um experimento                                                
-                        normas_section,
-                        re.IGNORECASE
-                    )                       
-                    
-                    # Processar cada match
-                    for tipo, numero in norma_matches:
-                        tipo_normalizado = tipo.lower()
-                        if 'resolu' in tipo_normalizado:
-                            tipo_normalizado = 'resolucao'
-                        else:
-                            tipo_normalizado = 'ato'
-                        
-                        norma_formatada = f"{tipo_normalizado}{numero}"
-                        if norma_formatada not in normas:
-                            normas.append(norma_formatada)
-                    
-                    break
-
-        return normas
+        return extrair_normas_por_padrao(content)
 
     def extract_normas_verificadas(self, content: str, cnpj_ocd: str) -> List[str]:
         """
@@ -425,13 +376,7 @@ class CCTAnalyzerIntegrado:
         ocd_config = ocd_patterns.get(cnpj_formatado)
         
         if ocd_config:
-            normas = self._extract_normas_by_pattern(
-                content,
-                ocd_config["start_pattern"],
-                ocd_config["end_pattern"],
-                ocd_config["processing_type"],
-                ocd_config.get("custom_patterns")
-            )
+            normas = self._extract_normas_by_pattern(content)
         else:
             # Fallback: buscar padrões gerais
             norma_patterns = [
@@ -846,7 +791,7 @@ class AnalisadorRequerimentos:
     
     def _extract_normas_from_ract(self, content: str) -> List[str]:
         """
-        Extrai normas verificadas do conteúdo de um RACT usando padrões genéricos.
+        Extrai normas verificadas do conteúdo de um RACT usando a função centralizada.
         
         Args:
             content: Conteúdo do RACT extraído do PDF
@@ -854,41 +799,7 @@ class AnalisadorRequerimentos:
         Returns:
             Lista de normas encontradas
         """
-        normas = []
-        
-        # Padrões comuns para normas em RACTs
-        norma_patterns = [
-            r'ATO\s*(?:Nº|N°|NO|nº|n°|no)?\s*(\d+)',
-            r'RESOLUÇÃO\s*(?:Nº|N°|NO|nº|n°|no)?\s*(\d+)',
-            r'RESOLUÇÕES?\s*(?:Nº|N°|NO|nº|n°|no)?\s*(\d+)',
-            r'ISO\s*(\d+[\d\w\.\-/]*)', 
-            r'IEC\s*(\d+[\d\w\.\-/]*)',
-            r'ABNT\s*NBR\s*(\d+[\d\w\.\-/]*)',
-            r'IEEE\s*(\d+[\d\w\.\-/]*)'
-        ]
-        
-        for pattern in norma_patterns:
-            matches = re.findall(pattern, content, re.IGNORECASE)
-            for match in matches:
-                if 'ATO' in pattern.upper():
-                    norma_formatada = f"ato{match}"
-                elif 'RESOLUÇÃO' in pattern.upper() or 'RESOLUÇÕES' in pattern.upper():
-                    norma_formatada = f"resolucao{match}"
-                elif 'ISO' in pattern.upper():
-                    norma_formatada = f"iso{match}"
-                elif 'IEC' in pattern.upper():
-                    norma_formatada = f"iec{match}"
-                elif 'ABNT' in pattern.upper():
-                    norma_formatada = f"abntnbr{match}"
-                elif 'IEEE' in pattern.upper():
-                    norma_formatada = f"ieee{match}"
-                else:
-                    norma_formatada = match
-                    
-                if norma_formatada not in normas:
-                    normas.append(norma_formatada)
-        
-        return normas
+        return extrair_normas_por_padrao(content)
 
     def _analisar_ract(self, caminho: Path, resultado: Dict) -> Dict:
         """Análise específica para Relatório de Avaliação da Conformidade Técnica."""

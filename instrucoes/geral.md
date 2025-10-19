@@ -8,6 +8,9 @@ Este projeto automatiza o download de anexos de requerimentos do sistema SCH da 
 - Ignore todos os arquivos .py começados com tbn_* .
 - Todo o código modificado deve ter sua funcionalidade comentada.
 - NÃO use print, apenas log_info.
+- DRY - códigos comuns TEM QUE ser reutilizados.
+- Códigos comuns, devem estar no arquivo utils.py - Se for o caso, organizado em classes.
+- NUNCA deixe código não utilizado (invocado ou chamado por/em outros trechos do código) após uma modificação.
 
 ## 🔧 Funcionalidades
 

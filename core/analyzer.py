@@ -355,72 +355,58 @@ class CCTAnalyzerIntegrado:
             }
         }
 
-    def _extract_normas_by_pattern(self, content: str, start_pattern: str, end_pattern: str, 
-                                 processing_type: str, custom_patterns: Optional[List[str]] = None) -> List[str]:
+    def _extract_normas_by_pattern(self, content: str)  -> List[str]:#, start_pattern: str, end_pattern: str, 
+                                 #processing_type: str, custom_patterns: Optional[List[str]] = None) -> List[str]:
         """
         Extrai normas usando padrões específicos de início e fim.
         """
         normas = []
+        custom_patterns = ['ATO', 'RESOLUÇÃO']
+        #start_match = re.search(start_pattern, content, re.IGNORECASE)
+        #end_match = re.search(end_pattern, content, re.IGNORECASE)
         
-        start_match = re.search(start_pattern, content, re.IGNORECASE)
-        end_match = re.search(end_pattern, content, re.IGNORECASE)
-        
-        if start_match and end_match:
-            start_pos = start_match.end()
-            end_pos = end_match.start()
-            normas_section = content[start_pos:end_pos]
+        #if start_match and end_match:
+        #    start_pos = start_match.end()
+        #    end_pos = end_match.start()
+        #    normas_section = content#[start_pos:end_pos]
 
-            normas_section = limpar_texto(normas_section, palavras=["Nº","N°","NO","nº","n°","no","de","do", "da", "anatel"], simbolos=["."])
+        normas_section = limpar_texto(content, palavras=["Nº","N°","NO","nº","n°","no","de","do", "da", "anatel"], simbolos=["."])
 
-            if processing_type == "custom" and custom_patterns:
-                #lines = normas_section.split('\n') # será um experimento
-                #lines = [campo for linha in normas_section.split('\n') for campo in linha.split(';')]  # será um experimento
-                lines = [
-                    subcampo.strip()
-                    for linha in normas_section.split('\n')
-                    for campo in linha.split(';')
-                    for subcampo in campo.split(',')
-                ]
-                for line in lines:
-                    line = line.strip()
-                    for pattern in custom_patterns:
-                        if pattern in normas_section.upper():
-                            # Regex corrigidanormas_section- o problema era \s+ que exige pelo menos 1 espaço
-                            # Mudei para \s* para permitir zero ou mais espaços
-                            norma_matches = re.findall(
-                                #r'(ATO|RESOLUÇÃO|RESOLUÇÕES?)\s*(?:da\s+\w+\s+)?(?:|Nº|N°|NO|nº|n°|no)?[\s:]*(\d+)', # será um experimento
-                                r'(ATO|RESOLUÇÃO|RESOLUÇÕES?)\s*(?:\([^)]+\))?\s*(?:da\s+\w+\s+)?(?:|Nº|N°|NO|nº|n°|no)?[\s:]*(\d+)', # será um experimento                                                
-                                normas_section,
-                                re.IGNORECASE
-                            )                       
-                            
-                            # Processar cada match
-                            for tipo, numero in norma_matches:
-                                tipo_normalizado = tipo.lower()
-                                if 'resolu' in tipo_normalizado:
-                                    tipo_normalizado = 'resolucao'
-                                else:
-                                    tipo_normalizado = 'ato'
-                                
-                                norma_formatada = f"{tipo_normalizado}{numero}"
-                                if norma_formatada not in normas:
-                                    normas.append(norma_formatada)
-                            
-                            break
-                                
-            elif processing_type == "regex_patterns":
-                # Buscar padrões gerais de normas
-                norma_patterns = [
-                    r'ATO\s*(?:Nº|N°|NO|nº|n°|no)?\s*\d+[\d\w\.\-/]*',
-                    r'RESOLUÇÃO\s*(?:Nº|N°|NO|nº|n°|no)?\s*\d+[\d\w\.\-/]*',
-                    r'ISO\s*\d+[\d\w\.\-/]*',
-                    r'IEC\s*\d+[\d\w\.\-/]*',
-                    r'ABNT\s*NBR\s*\d+[\d\w\.\-/]*'
-                ]
-                
-                for pattern in norma_patterns:
-                    matches = re.findall(pattern, normas_section, re.IGNORECASE)
-                    normas.extend(matches)
+        #if processing_type == "custom" and custom_patterns:
+            #lines = normas_section.split('\n') # será um experimento
+            #lines = [campo for linha in normas_section.split('\n') for campo in linha.split(';')]  # será um experimento
+        lines = [
+            subcampo.strip()
+            for linha in normas_section.split('\n')
+            for campo in linha.split(';')
+            for subcampo in campo.split(',')
+        ]
+        for line in lines:
+            line = line.strip()
+            for pattern in custom_patterns:
+                if pattern in normas_section.upper():
+                    # Regex corrigidanormas_section- o problema era \s+ que exige pelo menos 1 espaço
+                    # Mudei para \s* para permitir zero ou mais espaços
+                    norma_matches = re.findall(
+                        #r'(ATO|RESOLUÇÃO|RESOLUÇÕES?)\s*(?:da\s+\w+\s+)?(?:|Nº|N°|NO|nº|n°|no)?[\s:]*(\d+)', # será um experimento
+                        r'(ATO|RESOLUÇÃO|RESOLUÇÕES?)\s*(?:\([^)]+\))?\s*(?:da\s+\w+\s+)?(?:|Nº|N°|NO|nº|n°|no)?[\s:]*(\d+)', # será um experimento                                                
+                        normas_section,
+                        re.IGNORECASE
+                    )                       
+                    
+                    # Processar cada match
+                    for tipo, numero in norma_matches:
+                        tipo_normalizado = tipo.lower()
+                        if 'resolu' in tipo_normalizado:
+                            tipo_normalizado = 'resolucao'
+                        else:
+                            tipo_normalizado = 'ato'
+                        
+                        norma_formatada = f"{tipo_normalizado}{numero}"
+                        if norma_formatada not in normas:
+                            normas.append(norma_formatada)
+                    
+                    break
 
         return normas
 
@@ -466,7 +452,7 @@ class CCTAnalyzerIntegrado:
         tipo_equipamento = self.extract_tipo_equipamento(content)
         
         if cnpj_ocd:
-            normas_verificadas = self.extract_normas_verificadas(content, cnpj_ocd)
+            normas_verificadas = self._extract_normas_by_pattern(content)#, cnpj_ocd)
         else:
             normas_verificadas = []
             
@@ -907,7 +893,7 @@ class AnalisadorRequerimentos:
     def _analisar_ract(self, caminho: Path, resultado: Dict) -> Dict:
         """Análise específica para Relatório de Avaliação da Conformidade Técnica."""
         try:
-            log_info(f"Iniciando análise de RACT: {caminho.name}")
+            #log_info(f"Iniciando análise de RACT: {caminho.name}")
             
             # Inicializar campo normas_verificadas se não existir
             if "normas_verificadas" not in resultado:

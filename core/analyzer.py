@@ -861,6 +861,12 @@ class AnalisadorRequerimentos:
                         normas_verificadas = self._extract_normas_from_ract(texto_completo)
                         resultado["normas_verificadas"] = normas_verificadas
                         
+                        # CORREÇÃO: Adicionar também ao dados_extraidos para consistência
+                        resultado["dados_extraidos"] = {
+                            "normas_verificadas": normas_verificadas,
+                            "quantidade_normas": len(normas_verificadas)
+                        }
+                        
                         if normas_verificadas:
                             conformidades.append(f"{len(normas_verificadas)} norma(s) verificada(s) encontrada(s)")
                             #log_info(f"Normas encontradas no RACT: {normas_verificadas}")                        
@@ -1944,6 +1950,8 @@ A seguir são apresentados os requisitos legais e normas utilizados como referê
 
                 for req in requerimentos:
                     log_info(f"  🔍 Analisando: {req}")
+                    if req in ["25.06972"]:
+                        x = 1
                     resultado = self._analisar_requerimento_individual(req)
                     if resultado:
                         self.resultados_analise.append(resultado)

@@ -856,6 +856,24 @@ class AnalisadorRequerimentos:
                         palavras_chave_manual = [palavra.lower() for palavra in PALAVRAS_CHAVE_MANUAL.keys()]
                         palavras_chave_manual = sorted(palavras_chave_manual)                           
                         
+                        # Contar ocorrências de cada palavra-chave
+                        palavras_encontradas = {}
+                        palavras_nao_encontradas = []
+                        palavras_encontradas_com_normas = {}  # Nova estrutura para palavras com normas
+                        
+                        for palavra in palavras_chave_manual:
+                            contador = texto_completo.count(palavra)
+                            if contador > 0:
+                                palavras_encontradas[palavra] = contador
+                                # Buscar normas associadas à palavra
+                                normas_associadas = PALAVRAS_CHAVE_MANUAL.get(palavra, {}).get("normas", [])
+                                if normas_associadas:
+                                    palavras_encontradas_com_normas[palavra] = {
+                                        "contador": contador,
+                                        "normas": normas_associadas
+                                    }
+                            else:
+                                palavras_nao_encontradas.append(palavra)
                         
                         # Extrair normas verificadas do conteúdo completo
                         normas_verificadas = self._extract_normas_from_ract(texto_completo)
@@ -864,7 +882,10 @@ class AnalisadorRequerimentos:
                         # CORREÇÃO: Adicionar também ao dados_extraidos para consistência
                         resultado["dados_extraidos"] = {
                             "normas_verificadas": normas_verificadas,
-                            "quantidade_normas": len(normas_verificadas)
+                            "quantidade_normas": len(normas_verificadas),
+                            "palavras_encontradas": palavras_encontradas,
+                            "palavras_nao_encontradas": palavras_nao_encontradas,
+                            "palavras_encontradas_com_normas": palavras_encontradas_com_normas
                         }
                         
                         if normas_verificadas:
@@ -1950,7 +1971,7 @@ A seguir são apresentados os requisitos legais e normas utilizados como referê
 
                 for req in requerimentos:
                     log_info(f"  🔍 Analisando: {req}")
-                    if req in ["25.06972"]:
+                    if req in ["25.06969"]:
                         x = 1
                     resultado = self._analisar_requerimento_individual(req)
                     if resultado:

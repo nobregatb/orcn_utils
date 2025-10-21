@@ -17,9 +17,13 @@ TBN_FILES_FOLDER = r"C:\Users\tbnobrega\OneDrive - ANATEL\Anatel\_ORCN"
 
 # Nomes de diretórios e arquivos
 CHROME_PROFILE_DIR = "meu_perfil_chrome"
-#EXCEL_FILENAME = 'ORCN.xlsx'
+EXCEL_FILENAME = 'ORCN.xlsx'
 REQUERIMENTOS_DIR_PREFIX = "Requerimentos"
 UTILS_DIR = "utils"
+
+# Caminhos completos para planilha e requerimentos
+EXCEL_PATH = r"C:\Users\tbnobrega\OneDrive - ANATEL\Anatel\_ORCN\ORCN.xlsx"
+REQUERIMENTOS_PATH = r"C:\Users\tbnobrega\OneDrive - ANATEL\Anatel\_ORCN\Requerimentos"
 
 # Arquivos JSON de configuração
 JSON_FILES = {

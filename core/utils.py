@@ -14,6 +14,19 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Union
 
+# Imports opcionais para funcionalidades específicas
+try:
+    import pandas as pd
+    PANDAS_AVAILABLE = True
+except ImportError:
+    PANDAS_AVAILABLE = False
+
+try:
+    from openpyxl import load_workbook
+    OPENPYXL_AVAILABLE = True
+except ImportError:
+    OPENPYXL_AVAILABLE = False
+
 from core.const import (
     TBN_FILES_FOLDER, CHROME_PROFILE_DIR, REQUERIMENTOS_DIR_PREFIX,
     GIT_COMMANDS, GIT_TIMEOUT, VERSAO_PADRAO, MENSAGENS_STATUS, TIPOS_DOCUMENTOS
@@ -459,3 +472,258 @@ def validar_caminho_diretorio(caminho: Union[str, Path]) -> bool:
         return path_obj.exists() and path_obj.is_dir()
     except Exception:
         return False
+
+
+# ================================
+# FUNÇÕES DE REQUERIMENTOS E EXCEL
+# ================================
+
+def processar_requerimentos_excel(num_req: str) -> None:
+    """
+    Processa requerimentos para atualização da planilha Excel ORCN.
+    
+    Lê arquivos JSON de requerimentos e atualiza a planilha Excel se o número
+    do requerimento não existir na coluna B da aba "Requerimentos-Análise".
+    
+    Args:
+        num_req (str): Número do requerimento no formato "xx.xxxxx" ou "*" para todos
+    
+    Raises:
+        ImportError: Se pandas ou openpyxl não estiverem disponíveis
+        FileNotFoundError: Se arquivos necessários não forem encontrados
+        ValueError: Se formato do requerimento for inválido
+    """
+    # Verificar se dependências estão disponíveis
+    if not PANDAS_AVAILABLE or not OPENPYXL_AVAILABLE:
+        missing = []
+        if not PANDAS_AVAILABLE:
+            missing.append("pandas")
+        if not OPENPYXL_AVAILABLE:
+            missing.append("openpyxl")
+        log_info(f"Erro: Dependências necessárias não encontradas: {', '.join(missing)}")
+        log_info("Execute: pip install pandas openpyxl")
+        return
+    
+    from core.const import EXCEL_PATH, REQUERIMENTOS_PATH, TAB_REQUERIMENTOS, EXCEL_SHEET_NAME
+    
+    # Validar se arquivos e diretórios existem
+    if not os.path.exists(EXCEL_PATH):
+        log_info(f"Erro: Planilha não encontrada: {EXCEL_PATH}")
+        return
+    
+    if not os.path.exists(REQUERIMENTOS_PATH):
+        log_info(f"Erro: Diretório de requerimentos não encontrado: {REQUERIMENTOS_PATH}")
+        return
+    
+    try:
+        # Carregar planilha Excel
+        df = pd.read_excel(EXCEL_PATH, sheet_name=EXCEL_SHEET_NAME)
+        log_info(f"Planilha carregada com {len(df)} linhas")
+        
+        # Obter lista de requerimentos já existentes na coluna B
+        coluna_req = df.columns[TAB_REQUERIMENTOS['num_req']]  # Coluna B (índice 1)
+        requerimentos_existentes = set(df[coluna_req].dropna().astype(str))
+        log_info(f"Requerimentos existentes na planilha: {len(requerimentos_existentes)}")
+        
+        # Determinar quais requerimentos processar
+        if num_req == "*":
+            # Processar todos os requerimentos do diretório
+            log_info("Processando todos os requerimentos do diretório...")
+            requerimentos_para_processar = []
+            
+            for item in os.listdir(REQUERIMENTOS_PATH):
+                caminho_item = os.path.join(REQUERIMENTOS_PATH, item)
+                if os.path.isdir(caminho_item) and re.match(r'^\d{2}\.\d{5}$', item):
+                    requerimentos_para_processar.append(item)
+            
+            log_info(f"Encontrados {len(requerimentos_para_processar)} diretórios de requerimentos")
+        else:
+            # Processar requerimento específico
+            if not re.match(r'^\d{2}\.\d{5}$', num_req):
+                log_info(f"Erro: Formato inválido do requerimento: {num_req}. Use formato xx.xxxxx")
+                return
+            
+            requerimentos_para_processar = [num_req]
+            log_info(f"Processando requerimento específico: {num_req}")
+        
+        # Processar cada requerimento
+        requerimentos_adicionados = []
+        requerimentos_ja_existentes = []
+        requerimentos_com_erro = []
+        novas_linhas_para_excel = []  # Armazenar linhas para adicionar diretamente no Excel
+        
+        for req in requerimentos_para_processar:
+            try:
+                # Verificar se já existe na planilha (formato pode variar)
+                formatos_possíveis = [
+                    req,  # formato 25.06969
+                    req.replace('.', '/'),  # formato 25/06969 (como aparece no JSON)
+                    f"0{req.split('.')[1]}/{req.split('.')[0]}"  # formato 06969/25
+                ]
+                
+                req_existe = any(fmt in requerimentos_existentes for fmt in formatos_possíveis)
+                
+                if req_existe:
+                    log_info(f"Requerimento {req} já existe na planilha")
+                    requerimentos_ja_existentes.append(req)
+                    continue
+                
+                # Ler arquivo JSON do requerimento
+                arquivo_json = os.path.join(REQUERIMENTOS_PATH, req, f"{req}.json")
+                
+                if not os.path.exists(arquivo_json):
+                    log_info(f"Aviso: Arquivo JSON não encontrado: {arquivo_json}")
+                    requerimentos_com_erro.append(req)
+                    continue
+                
+                # Carregar dados do JSON
+                with open(arquivo_json, 'r', encoding='utf-8') as f:
+                    dados_req = json.load(f)
+                
+                # Extrair informações do JSON conforme estrutura esperada
+                req_data = dados_req.get('requerimento', {})
+                
+                # Mapear dados do JSON para colunas da planilha
+                nova_linha = _mapear_dados_json_para_excel(req_data)
+                
+                if nova_linha:
+                    # Armazenar linha para adicionar no Excel
+                    novas_linhas_para_excel.append(nova_linha)
+                    requerimentos_adicionados.append(req)
+                    log_info(f"Requerimento {req} preparado para adição à planilha")
+                else:
+                    log_info(f"Erro: Não foi possível mapear dados do requerimento {req}")
+                    requerimentos_com_erro.append(req)
+                    
+            except Exception as e:
+                log_info(f"Erro ao processar requerimento {req}: {e}")
+                requerimentos_com_erro.append(req)
+        
+        # Salvar planilha se houver alterações
+        if requerimentos_adicionados and novas_linhas_para_excel:
+            # Usar openpyxl para preservar todas as abas existentes
+            wb = load_workbook(EXCEL_PATH)
+            ws = wb[EXCEL_SHEET_NAME]
+            
+            # Encontrar a próxima linha vazia
+            proxima_linha = ws.max_row + 1
+            
+            # Adicionar cada nova linha diretamente no Excel
+            for nova_linha in novas_linhas_para_excel:
+                for col_idx, valor in enumerate(nova_linha):
+                    ws.cell(row=proxima_linha, column=col_idx + 1, value=valor)
+                proxima_linha += 1
+            
+            # Salvar preservando todas as abas
+            wb.save(EXCEL_PATH)
+            wb.close()
+            log_info(f"Planilha atualizada com {len(requerimentos_adicionados)} novos requerimentos (todas as abas preservadas)")
+        else:
+            log_info("Nenhum requerimento novo para adicionar")
+        
+        # Relatório final
+        log_info("\n=== RELATÓRIO DE PROCESSAMENTO ===")
+        log_info(f"Requerimentos processados: {len(requerimentos_para_processar)}")
+        log_info(f"Requerimentos adicionados: {len(requerimentos_adicionados)}")
+        log_info(f"Requerimentos já existentes: {len(requerimentos_ja_existentes)}")
+        log_info(f"Requerimentos com erro: {len(requerimentos_com_erro)}")
+        
+        if requerimentos_adicionados:
+            log_info(f"Novos requerimentos: {', '.join(requerimentos_adicionados)}")
+        
+        if requerimentos_com_erro:
+            log_info(f"Requerimentos com erro: {', '.join(requerimentos_com_erro)}")
+            
+    except Exception as e:
+        log_info(f"Erro ao processar planilha: {e}")
+
+
+def _converter_para_excel(valor: Any) -> Any:
+    """
+    Converte valores para formatos compatíveis com Excel.
+    
+    Args:
+        valor: Valor a ser convertido
+    
+    Returns:
+        Valor convertido para formato compatível com Excel
+    """
+    if valor is None:
+        return None
+    elif isinstance(valor, list):
+        # Converter lista para string separada por vírgulas
+        return ', '.join(str(item) for item in valor)
+    elif isinstance(valor, dict):
+        # Converter dicionário para string representativa
+        return str(valor)
+    elif isinstance(valor, (int, float, bool)):
+        return valor
+    else:
+        # Para strings e outros tipos, converter para string
+        return str(valor)
+
+
+def _mapear_dados_json_para_excel(req_data: Dict[str, Any]) -> Optional[List[Any]]:
+    """
+    Mapeia dados do JSON do requerimento para formato da planilha Excel.
+    
+    Args:
+        req_data: Dados do requerimento extraídos do JSON
+    
+    Returns:
+        Lista com dados mapeados para colunas da planilha ou None se erro
+    """
+    try:
+        from core.const import TAB_REQUERIMENTOS
+        
+        # Criar linha vazia com tamanho correto (11 colunas total)
+        nova_linha = [None] * 11
+        
+        # Mapear campos do JSON para posições da planilha
+        # Coluna A (índice 0): 'Análise' - deixar vazio ou colocar valor padrão
+        nova_linha[0] = 'AUTOMATICO'
+        
+        # Coluna B (índice 1): 'Nº do Requerimento'
+        nova_linha[TAB_REQUERIMENTOS['num_req']] = _converter_para_excel(req_data.get('num_req', ''))
+        
+        # Coluna C (índice 2): 'Nº de Homologação'
+        nova_linha[TAB_REQUERIMENTOS['cod_homologacao']] = _converter_para_excel(req_data.get('cod_homologacao', ''))
+        
+        # Coluna D (índice 3): 'Nº do Certificado'
+        nova_linha[TAB_REQUERIMENTOS['num_cct']] = _converter_para_excel(req_data.get('num_cct', ''))
+        
+        # Coluna E (índice 4): 'Tipo do Produto'
+        nova_linha[TAB_REQUERIMENTOS['tipo_equipamento']] = _converter_para_excel(req_data.get('tipo_equipamento', ''))
+        
+        # Coluna F (índice 5): 'Modelo'
+        nova_linha[TAB_REQUERIMENTOS['modelos']] = _converter_para_excel(req_data.get('modelos', ''))
+        
+        # Coluna G (índice 6): 'Solicitante'
+        nova_linha[TAB_REQUERIMENTOS['solicitante']] = _converter_para_excel(req_data.get('solicitante', ''))
+        
+        # Coluna H (índice 7): 'Fabricante'
+        nova_linha[TAB_REQUERIMENTOS['fabricante']] = _converter_para_excel(req_data.get('fabricante', ''))
+        
+        # Coluna I (índice 8): 'Data da Conclusão'
+        data = req_data.get('data', '')
+        if data:
+            # Converter formato de data se necessário
+            try:
+                # Assumindo formato DD/MM/YYYY do JSON
+                data_obj = datetime.strptime(data, '%d/%m/%Y')
+                nova_linha[TAB_REQUERIMENTOS['data']] = data_obj
+            except ValueError:
+                # Manter string original se conversão falhar
+                nova_linha[TAB_REQUERIMENTOS['data']] = data
+        
+        # Coluna J (índice 9): 'Situação'
+        nova_linha[TAB_REQUERIMENTOS['status']] = _converter_para_excel(req_data.get('status', 'Em Análise'))
+        
+        # Coluna K (índice 10): 'Tempo' - deixar vazio
+        nova_linha[10] = None
+        
+        return nova_linha
+        
+    except Exception as e:
+        log_info(f"Erro ao mapear dados JSON: {e}")
+        return None

@@ -3,8 +3,10 @@ from core.analyzer import analisar_requerimento
 from core.menu import exibir_menu
 from core.log_print import log_info, log_erro, log_erro_critico
 from core.const import OPCOES_MENU, SEPARADOR_MENOR
+#from core.utils import processar_requerimentos_excel
 
 def main():
+    #processar_requerimentos_excel("*")
     while True:
         try:
             opcao = exibir_menu()

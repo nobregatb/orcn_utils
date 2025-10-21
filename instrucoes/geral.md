@@ -148,3 +148,56 @@ Antes de executar, certifique-se de que os arquivos JSON na pasta `utils/` estã
 - **Itens por página**: 100 requerimentos
 - **Formato de saída**: PDF + JSON
 - **Controle de duplicatas**: Automático
+
+## 📊 Atualização da Planilha ORCN
+
+### Função `processar_requerimentos_excel`
+
+A função `processar_requerimentos_excel` em `core/utils.py` permite atualizar automaticamente a planilha ORCN.xlsx com informações de requerimentos.
+
+#### Uso da Função
+
+```python
+from core.utils import processar_requerimentos_excel
+
+# Processar um requerimento específico
+processar_requerimentos_excel("25.06969")
+
+# Processar todos os requerimentos do diretório
+processar_requerimentos_excel("*")
+```
+
+#### Funcionalidades
+
+- **Leitura de JSONs**: Lê arquivos `xx.xxxxx.json` do diretório de requerimentos
+- **Verificação de Duplicatas**: Verifica se o requerimento já existe na coluna B da planilha
+- **Mapeamento Automático**: Mapeia dados do JSON para colunas da planilha (B-J):
+  - **B**: Nº do Requerimento
+  - **C**: Nº de Homologação  
+  - **D**: Nº do Certificado
+  - **E**: Tipo do Produto
+  - **F**: Modelo
+  - **G**: Solicitante
+  - **H**: Fabricante
+  - **I**: Data da Conclusão
+  - **J**: Situação
+- **Processamento em Lote**: Suporte ao caractere "*" para processar todos os requerimentos
+- **Relatório Detalhado**: Gera relatório de processamento com estatísticas
+
+#### Requisitos
+
+- **Dependências**: `pandas`, `openpyxl`
+- **Arquivos**: Planilha ORCN.xlsx na localização configurada
+- **Estrutura**: Diretórios de requerimentos no formato `xx.xxxxx` com arquivos JSON correspondentes
+
+#### Comportamento
+
+1. **Validação**: Verifica existência de arquivos e diretórios necessários
+2. **Carregamento**: Lê planilha Excel e identifica requerimentos existentes
+3. **Processamento**: Para cada requerimento:
+   - Verifica se já existe na planilha
+   - Lê arquivo JSON correspondente
+   - Mapeia dados para formato da planilha
+   - Adiciona nova linha se necessário
+4. **Salvamento**: Atualiza planilha com novos requerimentos
+5. **Relatório**: Apresenta estatísticas de processamento

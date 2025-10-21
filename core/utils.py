@@ -13,22 +13,16 @@ import unicodedata
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Union
+import pandas as pd
+from openpyxl import load_workbook
+from core.const import TAB_REQUERIMENTOS
 
 # Imports opcionais para funcionalidades específicas
-try:
-    import pandas as pd
-    PANDAS_AVAILABLE = True
-except ImportError:
-    PANDAS_AVAILABLE = False
 
-try:
-    from openpyxl import load_workbook
-    OPENPYXL_AVAILABLE = True
-except ImportError:
-    OPENPYXL_AVAILABLE = False
+
 
 from core.const import (
-    TBN_FILES_FOLDER, CHROME_PROFILE_DIR, REQUERIMENTOS_DIR_PREFIX,
+    TBN_FILES_FOLDER, CHROME_PROFILE_DIR, REQUERIMENTOS_DIR_INBOX,
     GIT_COMMANDS, GIT_TIMEOUT, VERSAO_PADRAO, MENSAGENS_STATUS, TIPOS_DOCUMENTOS
 )
 from core.log_print import log_info
@@ -278,7 +272,7 @@ def get_profile_dir() -> str:
 def req_para_fullpath(req: str) -> str:
     """Converte número do requerimento (num/ano) para caminho completo da pasta"""
     num, ano = req.split("/")
-    requerimento = rf"{REQUERIMENTOS_DIR_PREFIX}\{ano}.{num}"
+    requerimento = rf"{REQUERIMENTOS_DIR_INBOX}\{ano}.{num}"
     full_path = os.path.join(get_files_folder(), requerimento)
     return full_path
 
@@ -492,18 +486,7 @@ def processar_requerimentos_excel(num_req: str) -> None:
         ImportError: Se pandas ou openpyxl não estiverem disponíveis
         FileNotFoundError: Se arquivos necessários não forem encontrados
         ValueError: Se formato do requerimento for inválido
-    """
-    # Verificar se dependências estão disponíveis
-    if not PANDAS_AVAILABLE or not OPENPYXL_AVAILABLE:
-        missing = []
-        if not PANDAS_AVAILABLE:
-            missing.append("pandas")
-        if not OPENPYXL_AVAILABLE:
-            missing.append("openpyxl")
-        log_info(f"Erro: Dependências necessárias não encontradas: {', '.join(missing)}")
-        log_info("Execute: pip install pandas openpyxl")
-        return
-    
+    """    
     from core.const import EXCEL_PATH, REQUERIMENTOS_PATH, TAB_REQUERIMENTOS, EXCEL_SHEET_NAME
     
     # Validar se arquivos e diretórios existem
@@ -674,14 +657,14 @@ def _mapear_dados_json_para_excel(req_data: Dict[str, Any]) -> Optional[List[Any
         Lista com dados mapeados para colunas da planilha ou None se erro
     """
     try:
-        from core.const import TAB_REQUERIMENTOS
+        
         
         # Criar linha vazia com tamanho correto (11 colunas total)
         nova_linha = [None] * 11
         
         # Mapear campos do JSON para posições da planilha
         # Coluna A (índice 0): 'Análise' - deixar vazio ou colocar valor padrão
-        nova_linha[0] = 'AUTOMATICO'
+        #nova_linha[0] = 'AUTOMATICO'
         
         # Coluna B (índice 1): 'Nº do Requerimento'
         nova_linha[TAB_REQUERIMENTOS['num_req']] = _converter_para_excel(req_data.get('num_req', ''))
@@ -711,10 +694,10 @@ def _mapear_dados_json_para_excel(req_data: Dict[str, Any]) -> Optional[List[Any
             try:
                 # Assumindo formato DD/MM/YYYY do JSON
                 data_obj = datetime.strptime(data, '%d/%m/%Y')
-                nova_linha[TAB_REQUERIMENTOS['data']] = data_obj
+                nova_linha[TAB_REQUERIMENTOS['data']] = _converter_para_excel(data_obj)
             except ValueError:
                 # Manter string original se conversão falhar
-                nova_linha[TAB_REQUERIMENTOS['data']] = data
+                nova_linha[TAB_REQUERIMENTOS['data']] = _converter_para_excel(data)
         
         # Coluna J (índice 9): 'Situação'
         nova_linha[TAB_REQUERIMENTOS['status']] = _converter_para_excel(req_data.get('status', 'Em Análise'))

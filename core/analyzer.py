@@ -8,11 +8,11 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Set#, Any 
 import subprocess
 
-from core.utils import limpar_texto, extrair_normas_por_padrao
+from core.utils import extrair_normas_por_padrao, processar_requerimentos_excel
 from core.log_print import log_info, log_erro, log_erro_critico
 from core.const import (
     TESSERACT_PATH, JSON_FILES, GIT_COMMANDS, GIT_TIMEOUT, VERSAO_PADRAO,
-    TBN_FILES_FOLDER, SEPARADOR_LINHA, SEPARADOR_MENOR, REQUERIMENTOS_DIR_PREFIX,
+    TBN_FILES_FOLDER, SEPARADOR_LINHA, SEPARADOR_MENOR, REQUERIMENTOS_DIR_INBOX, REQUERIMENTOS_DIR_REPORT,
     UTILS_DIR, EXT_PDF, EXT_JSON, EXT_TEX, EXT_XLSX, GLOB_PDF,
     STATUS_CONFORME, STATUS_NAO_CONFORME, STATUS_INCONCLUSIVO, STATUS_ERRO, STATUS_PROCESSADO,
     VALOR_NAO_DISPONIVEL, ENCODING_UTF8, PALAVRAS_CHAVE_MANUAL,
@@ -474,8 +474,8 @@ class AnalisadorRequerimentos:
     
     def __init__(self):
         # Usar constante centralizada para diretório base
-        self.pasta_base = Path(TBN_FILES_FOLDER) / REQUERIMENTOS_DIR_PREFIX
-        self.pasta_resultados = Path(TBN_FILES_FOLDER) / 'resultados_analise'
+        self.pasta_base = Path(TBN_FILES_FOLDER) / REQUERIMENTOS_DIR_INBOX
+        self.pasta_resultados = Path(TBN_FILES_FOLDER) / REQUERIMENTOS_DIR_REPORT
         self.pasta_resultados.mkdir(exist_ok=True)
         
         # Carregar configurações
@@ -1971,8 +1971,9 @@ A seguir são apresentados os requisitos legais e normas utilizados como referê
 
                 for req in requerimentos:
                     log_info(f"  🔍 Analisando: {req}")
-                    if req in ["25.06969"]:
-                        x = 1
+                    processar_requerimentos_excel(req)
+                    #if req in ["25.06969"]:
+                    #    x = 1
                     resultado = self._analisar_requerimento_individual(req)
                     if resultado:
                         self.resultados_analise.append(resultado)

@@ -9,7 +9,7 @@ from datetime import datetime
 from core.log_print import log_info, log_erro, log_erro_critico
 from core.const import (
     CHROME_PATH, TBN_FILES_FOLDER, CHROME_PROFILE_DIR, 
-    REQUERIMENTOS_DIR_PREFIX, MOSAICO_BASE_URL, BOTOES_PDF, CHROME_ARGS,
+    REQUERIMENTOS_DIR_INBOX, MOSAICO_BASE_URL, BOTOES_PDF, CHROME_ARGS,
     TIMEOUT_LIMITE_SESSAO, EXCEL_SHEET_NAME, EXCEL_TABLE_NAME, 
     STATUS_EM_ANALISE, STATUS_AUTOMATICO, SEPARADOR_LINHA,
     MENSAGENS_STATUS, MENSAGENS_ERRO, CARACTERES_INVALIDOS, FORMATO_NOME_ARQUIVO,
@@ -702,10 +702,10 @@ def baixar_documentos():
                                                         return resultado;
                                                     }
                                                     """)	
-                        tabelas_ids = page.eval_on_selector_all("table[id]", """
+                        '''tabelas_ids = page.eval_on_selector_all("table[id]", """
                             (tabelas) => tabelas.map(t => t.id)
-                            """)
-                        ocd_id = 'formAnalise:j_idt202'
+                            """)'''
+                        ocd_id = 'formAnalise:j_idt232'
                         selector = "#" + ocd_id.replace(":", "\\:")
                         dados_ocd = page.eval_on_selector(selector, """
                                                     (t) => {

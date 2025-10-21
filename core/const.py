@@ -18,20 +18,22 @@ TBN_FILES_FOLDER = r"C:\Users\tbnobrega\OneDrive - ANATEL\Anatel\_ORCN"
 # Nomes de diretórios e arquivos
 CHROME_PROFILE_DIR = "meu_perfil_chrome"
 EXCEL_FILENAME = 'ORCN.xlsx'
-REQUERIMENTOS_DIR_PREFIX = "Requerimentos"
+REQUERIMENTOS_DIR_INBOX = "req_inbox"
+REQUERIMENTOS_DIR_OUTBOX = "req_outbox"
+REQUERIMENTOS_DIR_REPORT = "req_report"
 UTILS_DIR = "utils"
 
 # Caminhos completos para planilha e requerimentos
-EXCEL_PATH = r"C:\Users\tbnobrega\OneDrive - ANATEL\Anatel\_ORCN\ORCN.xlsx"
-REQUERIMENTOS_PATH = r"C:\Users\tbnobrega\OneDrive - ANATEL\Anatel\_ORCN\Requerimentos"
+EXCEL_PATH = rf"{TBN_FILES_FOLDER}\ORCN.xlsx"
+REQUERIMENTOS_PATH = rf"{TBN_FILES_FOLDER}\{REQUERIMENTOS_DIR_INBOX}"
 
 # Arquivos JSON de configuração
 JSON_FILES = {
-    'regras': "utils/regras.json",
-    'equipamentos': "utils/equipamentos.json", 
-    'requisitos': "utils/requisitos.json",
-    'normas': "utils/normas.json",
-    'ocds': "utils/ocds.json"
+    'regras': f"{UTILS_DIR}/regras.json",
+    'equipamentos': f"{UTILS_DIR}/equipamentos.json",
+    'requisitos': f"{UTILS_DIR}/requisitos.json",
+    'normas': f"{UTILS_DIR}/normas.json",
+    'ocds': f"{UTILS_DIR}/ocds.json"
 }
 
 # ================================
@@ -345,6 +347,8 @@ STATUS_PROCESSADO = "PROCESSADO"
 # Estrutura: {"palavra_chave": {"normas": ["norma1", "norma2"]}}
 PALAVRAS_CHAVE_MANUAL = {
     "declaração em conformidade com os Requisitos de Segurança Cibernética": {"normas": []},
+    "vinculada à vigência da homologação": {"normas": []},
+    "módulo de RF modelo": {"normas": []},
     "produto não acabado": {"normas": []},
     "uso profissional": {"normas": []},
     "ipv6": {"normas": ["ato77", "ato7971"]},
@@ -380,8 +384,7 @@ PALAVRAS_CHAVE_MANUAL = {
     "epon": {"normas": []},
     "xpon": {"normas": []},
     "satélite": {"normas": []},
-    "satellite": {"normas": []},
-    "produto não acabado": {"normas": []},
+    "satellite": {"normas": []}    
 }
 
 # ================================

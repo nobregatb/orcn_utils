@@ -8,12 +8,12 @@ from playwright.sync_api import sync_playwright
 from datetime import datetime
 from core.log_print import log_info, log_erro, log_erro_critico
 from core.const import (
-    CHROME_PATH, TBN_FILES_FOLDER, CHROME_PROFILE_DIR, 
+    BOTOES, CHROME_PATH, TBN_FILES_FOLDER, CHROME_PROFILE_DIR, 
     REQUERIMENTOS_DIR_INBOX, MOSAICO_BASE_URL, BOTOES_PDF, CHROME_ARGS,
     TIMEOUT_LIMITE_SESSAO, EXCEL_SHEET_NAME, EXCEL_TABLE_NAME, 
     STATUS_EM_ANALISE, STATUS_AUTOMATICO, SEPARADOR_LINHA,
     MENSAGENS_STATUS, MENSAGENS_ERRO, CARACTERES_INVALIDOS, FORMATO_NOME_ARQUIVO,
-    CSS_SELECTORS, TAB_REQUERIMENTOS, TIPOS_DOCUMENTOS
+    CSS_SELECTORS, TAB_REQUERIMENTOS, TIPOS_DOCUMENTOS, FRASES
 )
 from core.utils import (
     is_bundled, get_files_folder, get_profile_dir, req_para_fullpath, 
@@ -190,6 +190,115 @@ def primefaces_click(page, element, description="elemento"):
         log_erro(f"Force click falhou: {str(e)[:50]}")
     
     return False
+
+def preencher_minuta(page):
+    """
+    Preenche os formulários de características técnicas e informações adicionais
+    
+    Args:
+        page: Objeto page do Playwright para navegação
+    """
+    try:
+        #log_info("📝 Iniciando preenchimento de minuta...")
+        
+        # ========================
+        # PARTE 1: CARACTERÍSTICAS TÉCNICAS
+        # ========================
+        #log_info("🔧 Acessando Características Técnicas...")
+        
+        # Clica no botão de características técnicas
+        btn_carac = page.get_by_role("button", name=BOTOES['caracteristicas'])
+        if btn_carac.count() > 0:
+            btn_carac.click(no_wait_after=True)            
+            # Aguarda carregamento
+            page.wait_for_selector(".ui-blockui", state="detached", timeout=15000)
+            wait_primefaces_ajax(page)
+            time.sleep(1)            
+            #log_info("✅ Página de Características Técnicas carregada")            
+            # Busca e preenche o textarea
+            try:
+                #observação sobre radiação restrita
+                page.fill("textarea:visible", FRASES['radiacao_Restrita_ct'])
+
+                # Clica no botão salvar
+                #botao_salvar_carac = page.query_selector("#formAnalise\\:j_idt736")
+                botao_salvar = page.get_by_role("button", name="Salvar")                
+
+                if botao_salvar:                                     
+                    time.sleep(1)
+                    botao_salvar.click()
+                    time.sleep(2)
+                    wait_primefaces_ajax(page)
+                else:
+                    log_erro("❌ Botão salvar características não encontrado")
+            except Exception as e:
+                log_erro(f"❌ Erro ao preencher características: {str(e)[:50]}")
+        else:
+            log_erro("❌ Botão 'Características Técnicas' não encontrado")
+        
+        # ========================
+        # PARTE 2: INFORMAÇÕES ADICIONAIS
+        # ========================
+        log_info("📋 Acessando Informações Adicionais...")
+        
+        # Clica no botão de informações adicionais
+        btn_infos = page.get_by_role("button", name=BOTOES['infos_adicionais'])
+        if btn_infos.count() > 0:
+            btn_infos.click(no_wait_after=True)
+            
+            # Aguarda carregamento
+            page.wait_for_selector(".ui-blockui", state="detached", timeout=15000)
+            wait_primefaces_ajax(page)
+            time.sleep(1)
+            
+            log_info("✅ Página de Informações Adicionais carregada")
+            
+            # Ativa o checkbox
+            try:
+                checkbox_div = page.query_selector("#formAnalise\\:checkBoxAcompanharProcesso")
+                if checkbox_div:
+                    # Clica na div do checkbox para ativá-lo
+                    checkbox_box = checkbox_div.query_selector(".ui-chkbox-box")
+                    if checkbox_box:
+                        checkbox_box.click()
+                        log_info("✅ Checkbox ativado")
+                        time.sleep(0.5)
+                    else:
+                        log_erro("❌ Elemento checkbox-box não encontrado")
+                else:
+                    log_erro("❌ Checkbox não encontrado")
+            except Exception as e:
+                log_erro(f"❌ Erro ao ativar checkbox: {str(e)[:50]}")
+            
+            # Preenche o textarea das informações adicionais
+            try:
+                textarea_infos = page.query_selector("#formAnalise\\:textAreaAcompanhar")
+                if textarea_infos:                    
+                    page.fill("#formAnalise\\:textAreaAcompanhar", FRASES['analise_simplificada'])
+                    log_info("✅ Textarea de informações adicionais preenchido")                    
+                    # Clica no botão salvar informações adicionais
+                    botao_salvar_infos = page.query_selector("#formAnalise\\:j_idt778")
+                    if botao_salvar_infos:
+                        # Usa primefaces_click para submeter corretamente
+                        if primefaces_click(page, botao_salvar_infos, "Salvar Informações"):
+                            log_info("✅ Informações adicionais salvas")
+                            time.sleep(2)
+                            wait_primefaces_ajax(page)
+                        else:
+                            log_erro("❌ Falha ao salvar informações adicionais")
+                    else:
+                        log_erro("❌ Botão salvar informações não encontrado")
+                else:
+                    log_erro("❌ Textarea de informações adicionais não encontrado")
+            except Exception as e:
+                log_erro(f"❌ Erro ao preencher informações adicionais: {str(e)[:50]}")
+        else:
+            log_erro("❌ Botão 'Informações Adicionais' não encontrado")
+        
+        log_info("📝 Preenchimento de minuta concluído")
+        
+    except Exception as e:
+        log_erro(f"❌ Erro crítico no preenchimento de minuta: {str(e)[:80]}")
 
 def baixar_pdfs(page, requerimento):
     """Baixa todos os PDFs da página de anexos"""
@@ -635,7 +744,7 @@ def baixar_documentos():
                         '''tabelas_ids = page.eval_on_selector_all("table[id]", """
                             (tabelas) => tabelas.map(t => t.id)
                             """)'''
-                        ocd_id = 'formAnalise:j_idt232'
+                        ocd_id = 'formAnalise:j_idt226'
                         selector = "#" + ocd_id.replace(":", "\\:")
                         dados_ocd = page.eval_on_selector(selector, """
                                                     (t) => {
@@ -670,8 +779,10 @@ def baixar_documentos():
 
                         with open(os.path.join(json_path, f"{nome_json}.json"), "w", encoding="utf-8") as f:
                             json.dump(dados_json, f, ensure_ascii=False, indent=4)
+                        # Chama função para preenchimento de formulários
+                        #preencher_minuta(page)
 
-                        anexos_btn = page.get_by_role("button", name="Anexos")
+                        anexos_btn = page.get_by_role("button", name=BOTOES['anexos'])
                         try:
                             if anexos_btn:                        
                                 anexos_btn.click(no_wait_after=True)

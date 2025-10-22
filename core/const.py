@@ -40,6 +40,18 @@ JSON_FILES = {
 # CONFIGURAÇÕES WEB E SCRAPING
 # ================================
 
+# NAVEGAÇÃO NO REQUERIMENTO
+BOTOES = {
+    'anexos': "Anexos",
+    'caracteristicas': "Características Técnicas",
+    'infos_adicionais': "Informações Adicionais"
+}
+
+FRASES = {
+    'radiacao_Restrita_ct': "Na instalação do produto devem ser observadas as condições de uso conforme estabelecido no Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita.",
+    'analise_simplificada': "Este processo foi analisado conforme Portaria n° 2257, de 03 de março de 2022."
+}
+
 # URLs do sistema
 MOSAICO_BASE_URL = "https://sistemasnet.anatel.gov.br/mosaico/sch/worklist/"
 
@@ -95,7 +107,7 @@ EXCEL_SHEET_NAME = 'Requerimentos-Análise'
 EXCEL_TABLE_NAME = 'tabRequerimentos'
 
 # Status de requerimentos
-STATUS_EM_ANALISE = ['Em Análise', 'Em Análise - RE']
+STATUS_EM_ANALISE = ['Em Análise']#, 'Em Análise - RE']
 STATUS_AUTOMATICO = 'AUTOMATICO'
 
 # Índices de colunas na planilha

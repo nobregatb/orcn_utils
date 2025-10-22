@@ -58,7 +58,9 @@ MOSAICO_BASE_URL = "https://sistemasnet.anatel.gov.br/mosaico/sch/worklist/"
 # Seletores CSS
 CSS_SELECTORS = {
     'menu_todos': "#menuForm\\:todos",
+    'menu_emAnalise': "#menuForm\\:emAnalise",
     'tabela_dados': "css=#form\\:tarefasTable_data tr",
+    'tabela_dados_em_analise': "css=#form\\:datatableForm\\:tarefasTable_data tr",
     'iframe_detalhe': "#__frameDetalhe",
     'tabela_analise': "table.analiseTable",
     'link_pdf': "a[href*='.pdf'], a[href*='download']",
@@ -334,7 +336,6 @@ GIT_TIMEOUT = 5
 EXT_PDF = '.pdf'
 EXT_JSON = '.json'
 EXT_TEX = '.tex'
-EXT_XLSX = '.xlsx'
 
 # Padrões de glob
 GLOB_PDF = '*.pdf'

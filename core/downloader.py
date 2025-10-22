@@ -527,9 +527,9 @@ def abrir_caixa_de_entrada(page_obj):
     lista_url = f"{MOSAICO_BASE_URL}"
     page_obj.goto(lista_url)
     page_obj.wait_for_load_state("load")
-    
-    # Clica em "Todos"
-    page_obj.click("#menuForm\\:todos", timeout=3600000) 
+
+    # Clica em "Em Análise"
+    page_obj.click(CSS_SELECTORS['menu_emAnalise'], timeout=3600000) 
     page_obj.wait_for_load_state("load")
     
     # Seleciona 100 itens por página e aguarda atualização
@@ -569,7 +569,7 @@ def baixar_documentos():
             log_info(SEPARADOR_LINHA)
             
             # Seleciona todas as linhas
-            rows = page.query_selector_all(CSS_SELECTORS['tabela_dados'])
+            rows = page.query_selector_all(CSS_SELECTORS['tabela_dados_em_analise'])
             log_info(f"🔎 {len(rows)} linhas encontradas na tabela")
             
             criar_json_dos_novos_requerimentos(rows)
@@ -634,7 +634,7 @@ def baixar_documentos():
                 row_atual = None
                 try:
                     # Recarrega todas as linhas da tabela
-                    linhas_atualizadas = page.query_selector_all(CSS_SELECTORS['tabela_dados'])
+                    linhas_atualizadas = page.query_selector_all(CSS_SELECTORS['tabela_dados_em_analise'])
                     
                     # Procura manualmente pela linha com o requerimento
                     for idx, linha in enumerate(linhas_atualizadas):

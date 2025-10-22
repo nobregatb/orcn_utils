@@ -677,10 +677,10 @@ def baixar_documentos():
                     pass
                 wait_primefaces_ajax(page)
                 
-                log_info(f"🌐 URL: {page.url}")
+                #log_info(f"🌐 URL: {page.url}")
                 
                 # Busca botão "Anexos"
-                time.sleep(2)
+                time.sleep(1)
                 
                 iframe_element = page.wait_for_selector("#__frameDetalhe", timeout=10000)
 
@@ -744,7 +744,7 @@ def baixar_documentos():
                         '''tabelas_ids = page.eval_on_selector_all("table[id]", """
                             (tabelas) => tabelas.map(t => t.id)
                             """)'''
-                        ocd_id = 'formAnalise:j_idt226'
+                        ocd_id = 'formAnalise:j_idt202'
                         selector = "#" + ocd_id.replace(":", "\\:")
                         dados_ocd = page.eval_on_selector(selector, """
                                                     (t) => {
@@ -782,7 +782,9 @@ def baixar_documentos():
                         # Chama função para preenchimento de formulários
                         #preencher_minuta(page)
 
+                    
                         anexos_btn = page.get_by_role("button", name=BOTOES['anexos'])
+                        
                         try:
                             if anexos_btn:                        
                                 anexos_btn.click(no_wait_after=True)
@@ -804,7 +806,7 @@ def baixar_documentos():
                     continue
 
                 # Volta para a lista
-                log_info("↩ Voltando para a lista...")
+                #log_info("↩ Voltando para a lista...")
                 page = abrir_caixa_de_entrada(page)
             
             log_info(SEPARADOR_LINHA)

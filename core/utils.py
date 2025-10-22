@@ -253,10 +253,10 @@ def get_files_folder() -> str:
     """Retorna o diretório base para arquivos baseado no modo de execução."""
     if is_bundled():
         folder = os.path.dirname(sys.executable)
-        log_info(MENSAGENS_STATUS['modo_executavel'].format(folder))
+        #log_info(MENSAGENS_STATUS['modo_executavel'].format(folder))
         return folder
     else:
-        log_info(MENSAGENS_STATUS['modo_script'].format(TBN_FILES_FOLDER))
+        #log_info(MENSAGENS_STATUS['modo_script'].format(TBN_FILES_FOLDER))
         return TBN_FILES_FOLDER
 
 
@@ -501,17 +501,17 @@ def processar_requerimentos_excel(num_req: str) -> None:
     try:
         # Carregar planilha Excel
         df = pd.read_excel(EXCEL_PATH, sheet_name=EXCEL_SHEET_NAME)
-        log_info(f"Planilha carregada com {len(df)} linhas")
+        #log_info(f"Planilha carregada com {len(df)} linhas")
         
         # Obter lista de requerimentos já existentes na coluna B
         coluna_req = df.columns[TAB_REQUERIMENTOS['num_req']]  # Coluna B (índice 1)
         requerimentos_existentes = set(df[coluna_req].dropna().astype(str))
-        log_info(f"Requerimentos existentes na planilha: {len(requerimentos_existentes)}")
+        #log_info(f"Requerimentos existentes na planilha: {len(requerimentos_existentes)}")
         
         # Determinar quais requerimentos processar
         if num_req == "*":
             # Processar todos os requerimentos do diretório
-            log_info("Processando todos os requerimentos do diretório...")
+            #log_info("Processando todos os requerimentos do diretório...")
             requerimentos_para_processar = []
             
             for item in os.listdir(REQUERIMENTOS_PATH):
@@ -519,7 +519,7 @@ def processar_requerimentos_excel(num_req: str) -> None:
                 if os.path.isdir(caminho_item) and re.match(r'^\d{2}\.\d{5}$', item):
                     requerimentos_para_processar.append(item)
             
-            log_info(f"Encontrados {len(requerimentos_para_processar)} diretórios de requerimentos")
+            #log_info(f"Encontrados {len(requerimentos_para_processar)} diretórios de requerimentos")
         else:
             # Processar requerimento específico
             if not re.match(r'^\d{2}\.\d{5}$', num_req):
@@ -527,7 +527,7 @@ def processar_requerimentos_excel(num_req: str) -> None:
                 return
             
             requerimentos_para_processar = [num_req]
-            log_info(f"Processando requerimento específico: {num_req}")
+            #log_info(f"Processando requerimento específico: {num_req}")
         
         # Processar cada requerimento
         requerimentos_adicionados = []
@@ -605,17 +605,15 @@ def processar_requerimentos_excel(num_req: str) -> None:
             log_info("Nenhum requerimento novo para adicionar")
         
         # Relatório final
-        log_info("\n=== RELATÓRIO DE PROCESSAMENTO ===")
-        log_info(f"Requerimentos processados: {len(requerimentos_para_processar)}")
-        log_info(f"Requerimentos adicionados: {len(requerimentos_adicionados)}")
-        log_info(f"Requerimentos já existentes: {len(requerimentos_ja_existentes)}")
-        log_info(f"Requerimentos com erro: {len(requerimentos_com_erro)}")
-        
-        if requerimentos_adicionados:
-            log_info(f"Novos requerimentos: {', '.join(requerimentos_adicionados)}")
-        
-        if requerimentos_com_erro:
-            log_info(f"Requerimentos com erro: {', '.join(requerimentos_com_erro)}")
+        #log_info("\n=== RELATÓRIO DE PROCESSAMENTO ===")
+        #log_info(f"Requerimentos processados: {len(requerimentos_para_processar)}")
+        #log_info(f"Requerimentos adicionados: {len(requerimentos_adicionados)}")
+        #log_info(f"Requerimentos já existentes: {len(requerimentos_ja_existentes)}")
+        #log_info(f"Requerimentos com erro: {len(requerimentos_com_erro)}")        
+        #if requerimentos_adicionados:
+        #    log_info(f"Novos requerimentos: {', '.join(requerimentos_adicionados)}")        
+        #if requerimentos_com_erro:
+        #    log_info(f"Requerimentos com erro: {', '.join(requerimentos_com_erro)}")
             
     except Exception as e:
         log_info(f"Erro ao processar planilha: {e}")

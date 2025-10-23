@@ -1652,7 +1652,8 @@ class AnalisadorRequerimentos:
                     return {
                         'nome': norma.get('nome', norma_id),
                         'descricao': norma.get('descricao', ''),
-                        'url': norma.get('url', '')
+                        'url': norma.get('url', ''),
+                        'status': norma.get('status', '')
                     }
         except Exception as e:
             log_erro(f"Erro ao buscar detalhes da norma {norma_id}: {str(e)}")
@@ -1661,7 +1662,8 @@ class AnalisadorRequerimentos:
         return {
             'nome': norma_id,
             'descricao': 'Norma não encontrada na base de dados',
-            'url': ''
+            'url': '',
+            'status': ''
         }
 
     def _gerar_secao_requisitos_legais(self, equipamentos_unicos: Dict[str, Dict]) -> str:
@@ -1775,7 +1777,7 @@ class AnalisadorRequerimentos:
 \\fancyhead[L]{{Análise Simplificada Automatizada}}
 \\fancyhead[R]{{\\textgreek{{θεoγενης}} - {versao_git}}}
 \\fancyfoot[C]{{\\thepage}}
-\\setcounter{{tocdepth}}{2}
+\\setcounter{{tocdepth}}{{2}}
 
 \\title{{\\Large\\textbf{{Análise Simplificada Automatizada}}}}
 \\author{{Teógenes Brito da Nóbrega (\\href{{mailto:tbnobrega@anatel.gov.br}}{{tbnobrega@anatel.gov.br}})}}
@@ -1975,6 +1977,36 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} e \\tex
             else:
                 latex_content += "\\textit{Nenhuma palavra-chave específica foi analisada neste requerimento.}\n\n"
 
+            # Verificar se há normativos revogados e gerar seção específica
+            normativos_revogados = []
+            for norma_id in normas_verificadas:
+                detalhes_norma = self._obter_detalhes_norma(norma_id)
+                status_norma = detalhes_norma.get('status', '').lower()
+                if status_norma and (status_norma in ['revogada', 'revogado', 'acessório', 'acessória', 'obsoleta', 'obsoleto']):
+                    normativos_revogados.append({
+                        'id': norma_id,
+                        'nome': detalhes_norma['nome'],
+                        'url': detalhes_norma['url'],
+                        'status': detalhes_norma['status']
+                    })
+            
+            if normativos_revogados:
+                latex_content += """\\subsection{\\textcolor{red}{Normativos Problemáticos}}
+Lista de normativos revogados, ou que apenas modificam um normativo vigente, identificados na análise deste requerimento:
+\\begin{itemize}
+"""
+                for normativo in sorted(normativos_revogados, key=lambda x: x['nome']):
+                    nome_normativo = escapar_latex(normativo['nome'])
+                    status_normativo = escapar_latex(normativo['status'])
+                    url_normativo = normativo['url']
+
+                    if status_normativo in ['revogada', 'revogado', 'obsoleta', 'obsoleto']:
+                        latex_content += f"    \\item \\textcolor{{red}}{{\\href{{{url_normativo}}}{{{nome_normativo}}} - {status_normativo}}}\n"
+                    else:
+                        latex_content += f"    \\item \\href{{{url_normativo}}}{{{nome_normativo}}} - {status_normativo}\n"
+                latex_content += """\\end{itemize}
+"""
+
             latex_content += """
 """
         
@@ -1984,6 +2016,7 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} e \\tex
         
         # Finalizar o documento
         latex_content += f"""
+        \\subsection{{Norma}}
 \\section{{{referencias}}}
 A seguir são apresentados os requisitos legais e normas utilizados como referência na análise dos equipamentos identificados.
 

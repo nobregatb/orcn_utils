@@ -1627,12 +1627,7 @@ class AnalisadorRequerimentos:
             normas_lista.sort(key=lambda x: x['id'])
             
             # Fazer backup do arquivo original
-            normas_path = JSON_FILES['normas']
-            backup_path = f"{normas_path}.backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-            
-            if Path(normas_path).exists():
-                shutil.copy2(normas_path, backup_path)
-                log_info(f"Backup criado: {backup_path}")
+            normas_path = JSON_FILES['normas']        
             
             # Salvar arquivo atualizado
             with open(normas_path, 'w', encoding='utf-8') as f:
@@ -1641,8 +1636,8 @@ class AnalisadorRequerimentos:
             # Atualizar cache interno
             self.normas = normas_lista
             
-            log_info(f"Arquivo normas.json atualizado com {len(novas_normas)} nova(s) norma(s)")
-            log_info(f"Total de normas no arquivo: {len(normas_lista)}")
+            #log_info(f"Arquivo normas.json atualizado com {len(novas_normas)} nova(s) norma(s)")
+            #log_info(f"Total de normas no arquivo: {len(normas_lista)}")
             return True
             
         except Exception as e:

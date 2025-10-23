@@ -1,45 +1,32 @@
 [
   {
-    "id": "resolucao715",
-    "nome": "Resolução nº 715, de 23 de outubro de 2019",
-    "descricao": "Aprova o Regulamento de Avaliação da Conformidade e de Homologação de Produtos para Telecomunicações, estabelecendo as regras gerais e os procedimentos para certificação e homologação de produtos no Brasil.",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2019/1350-resolucao-715",
-	"status": "vigente"
-  },
-  {
-    "id": "ato17087",
-    "nome": "Ato nº 17087, de 19 de dezembro de 2022",
-    "descricao": "Requisitos Técnicos de Segurança Elétrica.",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1823-ato-17087",
-	"status": "vigente"
+    "id": "ato10988",
+    "nome": "Ato nº 10988, de 26 de julho de 2024",
+    "descricao": "Requisitos Técnicos e Operacionais para uso de Bloqueador de Sinais de Radiocomunicações (BSR), definindo as faixas de frequência para bloqueio.",
+    "tipo": "Requisito Técnico (BSR)",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2024/1969-ato-10988",
+    "status": "vigente"
   },
   {
     "id": "ato1120",
     "nome": "Ato nº 1120, de 19 de fevereiro de 2018",
     "descricao": "Requisitos Técnicos de Compatibilidade Eletromagnética (EMC).",
     "url": "https://www.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1181-ato-1120",
-	"status": "vigente"
+    "status": "vigente"
   },
   {
-    "id": "resolucao680",
-    "nome": "Resolução nº 680, de 27 de junho de 2017",
-    "descricao": "Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita.",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2017/1057-resolucao-680",
-	"status": "vigente"
+    "id": "ato1379",
+    "nome": "Norma citada no requerimento 25.06521",
+    "descricao": "Norma identificada durante análise do requerimento 25.06521",
+    "url": "a definir",
+    "status": "a definir"
   },
   {
-    "id": "ato3484",
-    "nome": "Ato nº 3484, de 31 de maio de 2019",
-    "descricao": "Requisitos Técnicos de Ensaio para a Avaliação da Conformidade de Baterias de Lítio Utilizadas em Telefones Celulares e produtos similares (Categoria I).",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1301-ato-3484",
-	"status": "vigente"
-  },
-  {
-    "id": "ato6506",
-    "nome": "Ato nº 6506, de 27 de agosto de 2018",
-    "descricao": "Requisitos Técnicos para Terminal de Linhas Ópticas (OLT) e Unidade de Rede Óptica (ONU) (Categoria III).",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1231-ato-6506",
-	"status": "vigente"
+    "id": "ato14444",
+    "nome": "Norma citada no requerimento 25.07053",
+    "descricao": "Norma identificada durante análise do requerimento 25.07053",
+    "url": "a definir",
+    "status": "a definir"
   },
   {
     "id": "ato14448",
@@ -47,39 +34,99 @@
     "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita.",
     "tipo": "Requisito Técnico (Radiação Restrita)",
     "url": "https://www.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2017/1139-ato-14448",
-	"status": "vigente"
+    "status": "vigente"
   },
   {
-    "id": "ato10988",
-    "nome": "Ato nº 10988, de 26 de julho de 2024",
-    "descricao": "Requisitos Técnicos e Operacionais para uso de Bloqueador de Sinais de Radiocomunicações (BSR), definindo as faixas de frequência para bloqueio.",
-    "tipo": "Requisito Técnico (BSR)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2024/1969-ato-10988",
-	"status": "vigente"
+    "id": "ato1630",
+    "nome": "Norma citada no requerimento 25.06367",
+    "descricao": "Norma identificada durante análise do requerimento 25.06367",
+    "url": "a definir",
+    "status": "a definir"
   },
   {
-    "id": "ato954",
-    "nome": "Ato nº 954, de 08 de fevereiro de 2018",
-    "descricao": "Requisitos técnicos para Bloqueador de Sinais de Radiocomunicações (BSR)",
-    "tipo": "Requisito Técnico (BSR)",
-    "url": "https://www.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1167-ato-954",
-	"status": "vigente"
+    "id": "ato16539",
+    "nome": "Norma citada no requerimento 25.07059",
+    "descricao": "Norma identificada durante análise do requerimento 25.07059",
+    "url": "a definir",
+    "status": "a definir"
   },
   {
-    "id": "ato77",
-    "nome": "Ato nº 77, de 05 de janeiro de 2021",
-    "descricao": "Requisitos de Segurança Cibernética para Equipamentos para Telecomunicações.",
-    "tipo": "Norma Nacional (Cabos)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1505-ato-77",
-	"status": "vigente"
-  },  
+    "id": "ato17087",
+    "nome": "Ato nº 17087, de 19 de dezembro de 2022",
+    "descricao": "Requisitos Técnicos de Segurança Elétrica.",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1823-ato-17087",
+    "status": "vigente"
+  },
+  {
+    "id": "ato17865",
+    "nome": "Norma citada no requerimento 25.06367",
+    "descricao": "Norma identificada durante análise do requerimento 25.06367",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato19434",
+    "nome": "Norma citada no requerimento 25.07107",
+    "descricao": "Norma identificada durante análise do requerimento 25.07107",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato237",
+    "nome": "Norma citada no requerimento 25.06521",
+    "descricao": "Norma identificada durante análise do requerimento 25.06521",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato2436",
+    "nome": "Norma citada no requerimento 25.07158",
+    "descricao": "Norma identificada durante análise do requerimento 25.07158",
+    "url": "a definir",
+    "status": "a definir"
+  },
   {
     "id": "ato3151",
     "nome": "Ato nº 3151, de 12 de junho de 2020",
     "descricao": "Requisitos técnicos para avaliação da conformidade de Estação Terminal de Acesso.",
     "tipo": "Norma Nacional (Cabos)",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1429-ato-3151",
-	"status": "vigente"
+    "status": "vigente"
+  },
+  {
+    "id": "ato3484",
+    "nome": "Ato nº 3484, de 31 de maio de 2019",
+    "descricao": "Requisitos Técnicos de Ensaio para a Avaliação da Conformidade de Baterias de Lítio Utilizadas em Telefones Celulares e produtos similares (Categoria I).",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1301-ato-3484",
+    "status": "vigente"
+  },
+  {
+    "id": "ato3609",
+    "nome": "Norma citada no requerimento 25.07141",
+    "descricao": "Norma identificada durante análise do requerimento 25.07141",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato4083",
+    "nome": "Norma citada no requerimento 25.06367",
+    "descricao": "Norma identificada durante análise do requerimento 25.06367",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato4084",
+    "nome": "Norma citada no requerimento 25.07059",
+    "descricao": "Norma identificada durante análise do requerimento 25.07059",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato4088",
+    "nome": "Norma citada no requerimento 25.07059",
+    "descricao": "Norma identificada durante análise do requerimento 25.07059",
+    "url": "a definir",
+    "status": "a definir"
   },
   {
     "id": "ato4776",
@@ -87,14 +134,198 @@
     "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita.",
     "tipo": "Norma Nacional (Cabos)",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1429-ato-3151",
-	"status": "vigente"
+    "status": "vigente"
   },
   {
-	"id": "ato7971",
+    "id": "ato48668",
+    "nome": "Norma citada no requerimento 25.07053",
+    "descricao": "Norma identificada durante análise do requerimento 25.07053",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato5155",
+    "nome": "Norma citada no requerimento 25.07125",
+    "descricao": "Norma identificada durante análise do requerimento 25.07125",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato57860",
+    "nome": "Norma citada no requerimento 25.07038",
+    "descricao": "Norma identificada durante análise do requerimento 25.07038",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato6112",
+    "nome": "Norma citada no requerimento 25.06713",
+    "descricao": "Norma identificada durante análise do requerimento 25.06713",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato6247",
+    "nome": "Norma citada no requerimento 25.07106",
+    "descricao": "Norma identificada durante análise do requerimento 25.07106",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato6506",
+    "nome": "Ato nº 6506, de 27 de agosto de 2018",
+    "descricao": "Requisitos Técnicos para Terminal de Linhas Ópticas (OLT) e Unidade de Rede Óptica (ONU) (Categoria III).",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1231-ato-6506",
+    "status": "vigente"
+  },
+  {
+    "id": "ato713",
+    "nome": "Norma citada no requerimento 25.06713",
+    "descricao": "Norma identificada durante análise do requerimento 25.06713",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato714",
+    "nome": "Norma citada no requerimento 25.06713",
+    "descricao": "Norma identificada durante análise do requerimento 25.06713",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato715",
+    "nome": "Norma citada no requerimento 25.06713",
+    "descricao": "Norma identificada durante análise do requerimento 25.06713",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato716",
+    "nome": "Norma citada no requerimento 25.06713",
+    "descricao": "Norma identificada durante análise do requerimento 25.06713",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato717",
+    "nome": "Norma citada no requerimento 25.06713",
+    "descricao": "Norma identificada durante análise do requerimento 25.06713",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato7280",
+    "nome": "Norma citada no requerimento 25.07053",
+    "descricao": "Norma identificada durante análise do requerimento 25.07053",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato77",
+    "nome": "Ato nº 77, de 05 de janeiro de 2021",
+    "descricao": "Requisitos de Segurança Cibernética para Equipamentos para Telecomunicações.",
+    "tipo": "Norma Nacional (Cabos)",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1505-ato-77",
+    "status": "vigente"
+  },
+  {
+    "id": "ato7971",
     "nome": "Ato nº 7971, de 22 de junho de 2023",
     "descricao": "Requisitos Técnicos para avaliação da conformidade do protocolo IPv6 em produtos para telecomunicações.",
     "tipo": "Norma Nacional (Cabos)",
     "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/160-atos-de-certificacao-de-produtos/2023/1878-ato-7971",
-	"status": "vigente"	
-  }  
+    "status": "vigente"
+  },
+  {
+    "id": "ato8111",
+    "nome": "Norma citada no requerimento 25.06713",
+    "descricao": "Norma identificada durante análise do requerimento 25.06713",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato915",
+    "nome": "Norma citada no requerimento 25.07059",
+    "descricao": "Norma identificada durante análise do requerimento 25.07059",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato950",
+    "nome": "Norma citada no requerimento 25.07141",
+    "descricao": "Norma identificada durante análise do requerimento 25.07141",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato954",
+    "nome": "Ato nº 954, de 08 de fevereiro de 2018",
+    "descricao": "Requisitos técnicos para Bloqueador de Sinais de Radiocomunicações (BSR)",
+    "tipo": "Requisito Técnico (BSR)",
+    "url": "https://www.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1167-ato-954",
+    "status": "vigente"
+  },
+  {
+    "id": "ato9688",
+    "nome": "Norma citada no requerimento 25.07020",
+    "descricao": "Norma identificada durante análise do requerimento 25.07020",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "resolucao1630",
+    "nome": "Norma citada no requerimento 25.07106",
+    "descricao": "Norma identificada durante análise do requerimento 25.07106",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "resolucao323",
+    "nome": "Norma citada no requerimento 25.07083",
+    "descricao": "Norma identificada durante análise do requerimento 25.07083",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "resolucao680",
+    "nome": "Resolução nº 680, de 27 de junho de 2017",
+    "descricao": "Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita.",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2017/1057-resolucao-680",
+    "status": "vigente"
+  },
+  {
+    "id": "resolucao700",
+    "nome": "Norma citada no requerimento 25.06367",
+    "descricao": "Norma identificada durante análise do requerimento 25.06367",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "resolucao715",
+    "nome": "Resolução nº 715, de 23 de outubro de 2019",
+    "descricao": "Aprova o Regulamento de Avaliação da Conformidade e de Homologação de Produtos para Telecomunicações, estabelecendo as regras gerais e os procedimentos para certificação e homologação de produtos no Brasil.",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2019/1350-resolucao-715",
+    "status": "vigente"
+  },
+  {
+    "id": "resolucao757",
+    "nome": "Norma citada no requerimento 25.06713",
+    "descricao": "Norma identificada durante análise do requerimento 25.06713",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "resolucao772",
+    "nome": "Norma citada no requerimento 25.07059",
+    "descricao": "Norma identificada durante análise do requerimento 25.07059",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "resolucao773",
+    "nome": "Norma citada no requerimento 25.06713",
+    "descricao": "Norma identificada durante análise do requerimento 25.06713",
+    "url": "a definir",
+    "status": "a definir"
+  }
 ]

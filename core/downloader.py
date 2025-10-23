@@ -10,10 +10,10 @@ from core.log_print import log_info, log_erro, log_erro_critico
 from core.const import (
     BOTOES, CHROME_PATH, TBN_FILES_FOLDER, CHROME_PROFILE_DIR, 
     REQUERIMENTOS_DIR_INBOX, MOSAICO_BASE_URL, BOTOES_PDF, CHROME_ARGS,
-    TIMEOUT_LIMITE_SESSAO, EXCEL_SHEET_NAME, EXCEL_TABLE_NAME, 
-    STATUS_EM_ANALISE, STATUS_AUTOMATICO, SEPARADOR_LINHA,
-    MENSAGENS_STATUS, MENSAGENS_ERRO, CARACTERES_INVALIDOS, FORMATO_NOME_ARQUIVO,
-    CSS_SELECTORS, TAB_REQUERIMENTOS, TIPOS_DOCUMENTOS, FRASES
+    TIMEOUT_SESSAO_MFA, MAX_TENTATIVAS_BOTAO, MAX_TENTATIVAS_DOWNLOAD,
+    EXCEL_SHEET_NAME, EXCEL_TABLE_NAME, STATUS_EM_ANALISE, STATUS_AUTOMATICO, 
+    SEPARADOR_LINHA, MENSAGENS_STATUS, MENSAGENS_ERRO, CARACTERES_INVALIDOS, 
+    FORMATO_NOME_ARQUIVO, CSS_SELECTORS, TAB_REQUERIMENTOS, TIPOS_DOCUMENTOS, FRASES
 )
 from core.utils import (
     is_bundled, get_files_folder, get_profile_dir, req_para_fullpath, 
@@ -26,10 +26,8 @@ FILES_FOLDER = get_files_folder()
 PROFILE_DIR = get_profile_dir()
 
 
-
-# Funções req_para_fullpath e criar_pasta_se_nao_existir movidas para core/utils.py
-
 def criar_json_dos_novos_requerimentos(rows):
+    """Cria arquivos JSON para novos requerimentos"""
     for i, row in enumerate(rows, start=1):
         try:
             cols = row.query_selector_all("td") 
@@ -59,6 +57,7 @@ def criar_json_dos_novos_requerimentos(rows):
 
     log_info(f"Total de requerimentos processados e arquivos JSON salvos!")
 
+
 def wait_primefaces_ajax(page, timeout=5000):
     """Espera todas as requisições AJAX do PrimeFaces terminarem"""
     try:
@@ -74,6 +73,7 @@ def wait_primefaces_ajax(page, timeout=5000):
     except:
         pass
     time.sleep(0.3)
+
 
 def primefaces_click(page, element, description="elemento"):
     """
@@ -93,7 +93,7 @@ def primefaces_click(page, element, description="elemento"):
         onclick_executed = page.evaluate("""(button) => {
             const onclick = button.getAttribute('onclick');
             if (onclick) {
-                try {
+                try:
                     // Executa o código onclick
                     eval(onclick);
                     return true;
@@ -115,7 +115,7 @@ def primefaces_click(page, element, description="elemento"):
     # MÉTODO 2: Submit via PrimeFaces.ajax.Request
     try:
         success = page.evaluate("""(button) => {
-            try {
+            try:
                 const form = button.closest('form');
                 if (!form) return false;
                 
@@ -191,6 +191,7 @@ def primefaces_click(page, element, description="elemento"):
     
     return False
 
+
 def preencher_minuta(page):
     """
     Preenche os formulários de características técnicas e informações adicionais
@@ -199,13 +200,9 @@ def preencher_minuta(page):
         page: Objeto page do Playwright para navegação
     """
     try:
-        #log_info("📝 Iniciando preenchimento de minuta...")
-        
         # ========================
         # PARTE 1: CARACTERÍSTICAS TÉCNICAS
         # ========================
-        #log_info("🔧 Acessando Características Técnicas...")
-        
         # Clica no botão de características técnicas
         btn_carac = page.get_by_role("button", name=BOTOES['caracteristicas'])
         if btn_carac.count() > 0:
@@ -214,14 +211,12 @@ def preencher_minuta(page):
             page.wait_for_selector(".ui-blockui", state="detached", timeout=15000)
             wait_primefaces_ajax(page)
             time.sleep(1)            
-            #log_info("✅ Página de Características Técnicas carregada")            
             # Busca e preenche o textarea
             try:
                 #observação sobre radiação restrita
                 page.fill("textarea:visible", FRASES['radiacao_Restrita_ct'])
 
                 # Clica no botão salvar
-                #botao_salvar_carac = page.query_selector("#formAnalise\\:j_idt736")
                 botao_salvar = page.get_by_role("button", name="Salvar")                
 
                 if botao_salvar:                                     
@@ -300,27 +295,75 @@ def preencher_minuta(page):
     except Exception as e:
         log_erro(f"❌ Erro crítico no preenchimento de minuta: {str(e)[:80]}")
 
-def baixar_pdfs(page, requerimento):
-    """Baixa todos os PDFs da página de anexos"""
+
+def solicitar_reautenticacao_mfa():
+    """
+    Solicita ao usuário que faça re-autenticação MFA
+    Retorna quando o usuário confirmar que concluiu
+    """
+    log_info(SEPARADOR_LINHA)
+    log_info("🔐 REAUTENTICAÇÃO MFA NECESSÁRIA")
+    log_info(SEPARADOR_LINHA)
+    log_info("⏰ Passaram-se mais de 30 minutos desde o primeiro download")
+    log_info("🔑 Por favor, realize a autenticação MFA no navegador")
+    log_info("✅ Pressione ENTER quando tiver concluído a autenticação")
+    log_info(SEPARADOR_LINHA)
+    input()
+    log_info("✅ Continuando processamento de downloads...")
+
+
+def baixar_pdfs(page, requerimento, tempo_primeiro_download):
+    """
+    Baixa todos os PDFs da página de anexos com retry inteligente
+    
+    Args:
+        page: Objeto page do Playwright
+        requerimento: Número do requerimento (formato XX/XXXXX)
+        tempo_primeiro_download: Tempo do primeiro download bem-sucedido (None se ainda não houve)
+    
+    Returns:
+        tuple: (total_pdfs_baixados, tempo_primeiro_download_atualizado, requer_reautenticacao)
+    """
     num, ano = requerimento.split("/")
-    pasta_destino = os.path.join(FILES_FOLDER, f"Requerimentos\\_{ano}.{num}")
     
     # Cria a pasta do requerimento se não existir
     pasta_destino = criar_pasta_se_nao_existir(requerimento)
     
     total_pdfs_baixados = 0
+    requer_reautenticacao = False
     
     # Percorre cada botão para revelar PDFs
     for nome_botao in BOTOES_PDF:
-        try:
-            # Busca o botão pelo nome/texto
-            botao = page.get_by_role("button", name=nome_botao)
+        tentativa_botao = 0
+        sucesso_botao = False
+        
+        # Retry para cada botão
+        while tentativa_botao < MAX_TENTATIVAS_BOTAO and not sucesso_botao:
+            tentativa_botao += 1
             
-            # Verifica se o botão existe e está visível
-            if botao.count() > 0:
-                log_info(f"🎯 Buscando: {nome_botao}")
+            try:
+                # Busca o botão pelo nome/texto
+                botao = page.get_by_role("button", name=nome_botao)
                 
-                # Clica no botão
+                # Verifica se o botão NÃO existe - indica erro
+                if botao.count() == 0:
+                    log_erro(f"❌ Botão '{nome_botao}' não encontrado (tentativa {tentativa_botao}/{MAX_TENTATIVAS_BOTAO})")
+                    
+                    # Verifica se passou de 30 minutos desde o primeiro download
+                    if tempo_primeiro_download is not None:
+                        tempo_decorrido = time.time() - tempo_primeiro_download
+                        if tempo_decorrido > TIMEOUT_SESSAO_MFA:
+                            log_info(f"⏰ Mais de 30 minutos desde o primeiro download ({int(tempo_decorrido // 60)} min)")
+                            solicitar_reautenticacao_mfa()
+                            # Zera o contador após re-autenticação
+                            tempo_primeiro_download = time.time()
+                    
+                    # Aguarda antes de tentar novamente
+                    time.sleep(2)
+                    continue
+                
+                # Clica no botão para revelar PDFs
+                log_info(f"🎯 Buscando: {nome_botao}")
                 botao.first.click()
                 
                 # Aguarda o carregamento dos PDFs
@@ -329,7 +372,7 @@ def baixar_pdfs(page, requerimento):
                 
                 # Busca todos os links de PDF que foram revelados
                 pdf_links = page.query_selector_all("a[href*='.pdf'], a[href*='download']")
-
+                
                 # Extrai informações da tabela
                 tabela = page.query_selector("table.analiseTable")
                 linhas_dados = []
@@ -362,164 +405,212 @@ def baixar_pdfs(page, requerimento):
                     if len(pdf_links) != len(linhas_dados):
                         log_info(f"⚠ AVISO: {len(pdf_links)} PDFs mas {len(linhas_dados)} linhas na tabela!")
                     
+                    # Conta quantos PDFs foram processados (baixados ou já existentes)
+                    pdfs_processados_neste_botao = 0
+                    
                     # Baixa cada PDF encontrado
                     for idx, link in enumerate(pdf_links):
-                        try:
-                            # Verifica se o link está visível/disponível
-                            if not link.is_visible():
-                                continue
+                        tentativa_download = 0
+                        download_bem_sucedido = False
+                        
+                        while tentativa_download < MAX_TENTATIVAS_DOWNLOAD and not download_bem_sucedido:
+                            tentativa_download += 1
                             
-                            # Pega informações da linha correspondente da tabela
-                            linha_info = None
-                            if idx < len(linhas_dados):
-                                linha_info = linhas_dados[idx]
-                            
-                            # Pega o nome do arquivo original do link
-                            href = link.get_attribute('href')
-                            texto = link.inner_text().strip()
-                            
-                            # Gera nome do arquivo baseado nas informações da tabela (ANTES do download)
-                            nome_arquivo_temp = f"anexo_{idx + 1}.pdf"  # Nome temporário padrão
-                            
-                            if linha_info:
-                                try:
-                                    # Extrai informações da tabela
-                                    doc_id = linha_info.get("ID", f"#{idx + 1}")
-                                    tipo_doc = linha_info.get("Tipo de Documento", "Documento")
-                                    data_hora = linha_info.get("Data - Hora", "")
-                                    
-                                    # Processa a data para formato yyyy.mm.dd
-                                    data_formatada = ""
-                                    if data_hora:
-                                        try:
-                                            # Remove espaços extras e separa data da hora
+                            try:
+                                # Verifica se o link está visível/disponível
+                                if not link.is_visible():
+                                    break
+                                
+                                # Pega informações da linha correspondente da tabela
+                                linha_info = None
+                                if idx < len(linhas_dados):
+                                    linha_info = linhas_dados[idx]
+                                
+                                # Gera nome do arquivo baseado nas informações da tabela (ANTES do download)
+                                nome_arquivo_temp = f"anexo_{idx + 1}.pdf"  # Nome temporário padrão
+                                
+                                if linha_info:
+                                    try:
+                                        # Extrai informações da tabela
+                                        doc_id = linha_info.get("ID", f"#{idx + 1}")
+                                        tipo_doc = linha_info.get("Tipo de Documento", "Documento")
+                                        data_hora = linha_info.get("Data - Hora", "")
+                                        
+                                        # Processa a data para formato yyyy.mm.dd
+                                        data_formatada = ""
+                                        if data_hora:
+                                            try:
+                                                # Remove espaços extras e separa data da hora
+                                                data_parte = data_hora.split()[0] if data_hora else ""
+                                                
+                                                # Padrões de data comuns
+                                                padroes = [
+                                                    r"(\d{2})/(\d{2})/(\d{4})",  # dd/mm/yyyy
+                                                    r"(\d{4})-(\d{2})-(\d{2})",  # yyyy-mm-dd
+                                                    r"(\d{2})-(\d{2})-(\d{4})",  # dd-mm-yyyy
+                                                ]
+                                                
+                                                for padrao in padroes:
+                                                    match = re.search(padrao, data_parte)
+                                                    if match:
+                                                        if padrao == padroes[0] or padrao == padroes[2]:  # dd/mm/yyyy ou dd-mm-yyyy
+                                                            dia, mes, ano_data = match.groups()
+                                                        else:  # yyyy-mm-dd
+                                                            ano_data, mes, dia = match.groups()
+                                                        
+                                                        data_formatada = f"{ano_data}.{mes.zfill(2)}.{dia.zfill(2)}"
+                                                        break
+                                                
+                                                if not data_formatada:
+                                                    data_formatada = "0000.00.00"
+                                            except Exception as e:
+                                                data_formatada = "0000.00.00"
+                                                log_erro(f"Erro ao processar data: {str(e)[:50]}")
+                                        else:
+                                            data_formatada = "0000.00.00"
+                                        
+                                        # Limpa caracteres inválidos para nome de arquivo
+                                        tipo_doc_limpo = re.sub(CARACTERES_INVALIDOS, '_', tipo_doc)
+                                        doc_id_limpo = re.sub(CARACTERES_INVALIDOS, '_', str(doc_id))
+                                        
+                                        # Monta o novo nome: [tipo][data - ID id] nome_original [req num de ano].ext
+                                        nome_arquivo_temp = f"[{tipo_doc_limpo}][{data_formatada} - ID {doc_id_limpo}] temp [req {num} de {ano}].pdf"
+                                        
+                                    except Exception as e:
+                                        log_erro(f"Erro ao processar informações da tabela: {str(e)[:50]}")
+                                        # Fallback para nome simples
+                                        nome_arquivo_temp = f"[{nome_botao}] anexo_{idx + 1}.pdf"
+                                else:
+                                    # Fallback quando não há informação da tabela
+                                    nome_arquivo_temp = f"[{nome_botao}] anexo_{idx + 1}.pdf"
+                                
+                                # Procura por arquivos existentes que começem com o mesmo padrão
+                                nome_base_busca = nome_arquivo_temp.split('] temp [')[0] + ']'  # Remove "temp" e tudo depois
+                                arquivos_existentes = [f for f in os.listdir(pasta_destino) if f.startswith(nome_base_busca)]
+                                
+                                if arquivos_existentes:
+                                    #log_info(f"⏭️ Arquivo já existe, pulando: {arquivos_existentes[0]}")
+                                    download_bem_sucedido = True  # Marca como sucesso para não tentar novamente
+                                    pdfs_processados_neste_botao += 1  # Conta como processado
+                                    break
+                                
+                                # Se não existe, faz o download
+                                with page.expect_download() as download_info:
+                                    link.click()
+                                
+                                download = download_info.value
+                                
+                                # Pega o nome real do arquivo baixado
+                                nome_arquivo_real = download.suggested_filename
+                                if not nome_arquivo_real or nome_arquivo_real == "":
+                                    nome_arquivo_real = f"anexo_{idx + 1}.pdf"
+                                
+                                # Extrai nome base e extensão do arquivo real
+                                nome_base_real, extensao_real = os.path.splitext(nome_arquivo_real)
+                                
+                                # Monta o nome final usando o nome real do arquivo
+                                if linha_info:
+                                    try:
+                                        doc_id = linha_info.get("ID", f"#{idx + 1}")
+                                        tipo_doc = linha_info.get("Tipo de Documento", "Documento")
+                                        data_hora = linha_info.get("Data - Hora", "")
+                                        
+                                        # Usa a mesma lógica de formatação de data
+                                        data_formatada = "0000.00.00"
+                                        if data_hora:
                                             data_parte = data_hora.split()[0] if data_hora else ""
-                                            
-                                            # Padrões de data comuns
                                             padroes = [
-                                                r"(\d{2})/(\d{2})/(\d{4})",  # dd/mm/yyyy
-                                                r"(\d{4})-(\d{2})-(\d{2})",  # yyyy-mm-dd
-                                                r"(\d{2})-(\d{2})-(\d{4})",  # dd-mm-yyyy
+                                                r"(\d{2})/(\d{2})/(\d{4})",
+                                                r"(\d{4})-(\d{2})-(\d{2})",
+                                                r"(\d{2})-(\d{2})-(\d{4})",
                                             ]
-                                            
                                             for padrao in padroes:
                                                 match = re.search(padrao, data_parte)
                                                 if match:
-                                                    if padrao == padroes[0] or padrao == padroes[2]:  # dd/mm/yyyy ou dd-mm-yyyy
-                                                        dia, mes, ano = match.groups()
-                                                    else:  # yyyy-mm-dd
-                                                        ano, mes, dia = match.groups()
-                                                    
-                                                    data_formatada = f"{ano}.{mes.zfill(2)}.{dia.zfill(2)}"
+                                                    if padrao == padroes[0] or padrao == padroes[2]:
+                                                        dia, mes, ano_data = match.groups()
+                                                    else:
+                                                        ano_data, mes, dia = match.groups()
+                                                    data_formatada = f"{ano_data}.{mes.zfill(2)}.{dia.zfill(2)}"
                                                     break
-                                            
-                                            if not data_formatada:
-                                                data_formatada = "0000.00.00"
-                                                log_info(f"⚠ Não foi possível processar a data: {data_hora}")
-                                        except Exception as e:
-                                            data_formatada = "0000.00.00"
-                                            log_erro(f"Erro ao processar data: {str(e)[:50]}")
-                                    else:
-                                        data_formatada = "0000.00.00"
-                                    
-                                    # Limpa caracteres inválidos para nome de arquivo
-                                    tipo_doc_limpo = re.sub(CARACTERES_INVALIDOS, '_', tipo_doc)
-                                    doc_id_limpo = re.sub(CARACTERES_INVALIDOS, '_', str(doc_id))
-                                    
-                                    # Monta o novo nome: [tipo][data - ID id] nome_original [req num de ano].ext
-                                    nome_arquivo_temp = f"[{tipo_doc_limpo}][{data_formatada} - ID {doc_id_limpo}] temp [req {num} de {ano}].pdf"
-                                    
-                                except Exception as e:
-                                    log_erro(f"Erro ao processar informações da tabela: {str(e)[:50]}")
-                                    # Fallback para nome simples
-                                    nome_arquivo_temp = f"[{nome_botao}] anexo_{idx + 1}.pdf"
-                            else:
-                                # Fallback quando não há informação da tabela
-                                nome_arquivo_temp = f"[{nome_botao}] anexo_{idx + 1}.pdf"
-                            
-                            # Verifica se arquivo já existe ANTES de iniciar o download
-                            caminho_completo_temp = os.path.join(pasta_destino, nome_arquivo_temp)
-                            
-                            # Procura por arquivos existentes que começem com o mesmo padrão
-                            nome_base_busca = nome_arquivo_temp.split('] temp [')[0] + ']'  # Remove "temp" e tudo depois
-                            arquivos_existentes = [f for f in os.listdir(pasta_destino) if f.startswith(nome_base_busca)]
-                            
-                            if arquivos_existentes:
-                                log_info(f"⏭️ Arquivo já existe, pulando: {arquivos_existentes[0]}")
-                                continue
-                            
-                            # Se não existe, faz o download
-                            with page.expect_download() as download_info:
-                                link.click()
-                            
-                            download = download_info.value
-                            
-                            # Pega o nome real do arquivo baixado
-                            nome_arquivo_real = download.suggested_filename
-                            if not nome_arquivo_real or nome_arquivo_real == "":
-                                nome_arquivo_real = f"anexo_{idx + 1}.pdf"
-                            
-                            # Extrai nome base e extensão do arquivo real
-                            nome_base_real, extensao_real = os.path.splitext(nome_arquivo_real)
-                            
-                            # Monta o nome final usando o nome real do arquivo
-                            if linha_info:
-                                try:
-                                    doc_id = linha_info.get("ID", f"#{idx + 1}")
-                                    tipo_doc = linha_info.get("Tipo de Documento", "Documento")
-                                    data_hora = linha_info.get("Data - Hora", "")
-                                    
-                                    # Usa a mesma lógica de formatação de data
-                                    data_formatada = "0000.00.00"
-                                    if data_hora:
-                                        data_parte = data_hora.split()[0] if data_hora else ""
-                                        padroes = [
-                                            r"(\d{2})/(\d{2})/(\d{4})",
-                                            r"(\d{4})-(\d{2})-(\d{2})",
-                                            r"(\d{2})-(\d{2})-(\d{4})",
-                                        ]
-                                        for padrao in padroes:
-                                            match = re.search(padrao, data_parte)
-                                            if match:
-                                                if padrao == padroes[0] or padrao == padroes[2]:
-                                                    dia, mes, ano = match.groups()
-                                                else:
-                                                    ano, mes, dia = match.groups()
-                                                data_formatada = f"{ano}.{mes.zfill(2)}.{dia.zfill(2)}"
-                                                break
-                                    
-                                    tipo_doc_limpo = re.sub(CARACTERES_INVALIDOS, '_', tipo_doc)
-                                    doc_id_limpo = re.sub(CARACTERES_INVALIDOS, '_', str(doc_id))
-                                    
-                                    nome_arquivo_final = f"[{tipo_doc_limpo}][{data_formatada} - ID {doc_id_limpo}] {nome_base_real} [req {num} de {ano}]{extensao_real}"
-                                except:
+                                        
+                                        tipo_doc_limpo = re.sub(CARACTERES_INVALIDOS, '_', tipo_doc)
+                                        doc_id_limpo = re.sub(CARACTERES_INVALIDOS, '_', str(doc_id))
+                                        
+                                        nome_arquivo_final = f"[{tipo_doc_limpo}][{data_formatada} - ID {doc_id_limpo}] {nome_base_real} [req {num} de {ano}]{extensao_real}"
+                                    except:
+                                        nome_arquivo_final = f"[{nome_botao}] {nome_base_real}{extensao_real}"
+                                else:
                                     nome_arquivo_final = f"[{nome_botao}] {nome_base_real}{extensao_real}"
-                            else:
-                                nome_arquivo_final = f"[{nome_botao}] {nome_base_real}{extensao_real}"
-                            
-                            # Salva o arquivo com o nome final
-                            caminho_completo = os.path.join(pasta_destino, nome_arquivo_final)
-                            download.save_as(caminho_completo)
-                            
-                            log_info(f"✅ Baixado: {nome_arquivo_final}")
-                            total_pdfs_baixados += 1
-                            
-                        except Exception as e:
-                            log_erro(f"Erro ao baixar PDF {idx + 1} de {nome_botao}: {str(e)[:50]}")
-                else:
-                    log_info(f"ℹ Nenhum PDF encontrado para: {nome_botao}")
+                                
+                                # Salva o arquivo com o nome final
+                                caminho_completo = os.path.join(pasta_destino, nome_arquivo_final)
+                                download.save_as(caminho_completo)
+                                
+                                log_info(f"✅ Baixado: {nome_arquivo_final}")
+                                total_pdfs_baixados += 1
+                                pdfs_processados_neste_botao += 1  # Conta como processado
+                                download_bem_sucedido = True
+                                
+                                # Marca o tempo do primeiro download
+                                if tempo_primeiro_download is None:
+                                    tempo_primeiro_download = time.time()
+                                    log_info("⏱️ Primeiro download realizado - iniciando contagem de tempo")
+                                
+                            except Exception as e:
+                                log_erro(f"❌ Erro ao baixar PDF {idx + 1} de {nome_botao} (tent {tentativa_download}/{MAX_TENTATIVAS_DOWNLOAD}): {str(e)[:50]}")
+                                
+                                # Verifica se passou de 30 minutos desde o primeiro download
+                                if tempo_primeiro_download is not None:
+                                    tempo_decorrido = time.time() - tempo_primeiro_download
+                                    if tempo_decorrido > TIMEOUT_SESSAO_MFA:
+                                        log_info(f"⏰ Mais de 30 minutos desde o primeiro download ({int(tempo_decorrido // 60)} min)")
+                                        solicitar_reautenticacao_mfa()
+                                        # Zera o contador após re-autenticação
+                                        tempo_primeiro_download = time.time()
+                                
+                                if tentativa_download < MAX_TENTATIVAS_DOWNLOAD:
+                                    log_info(f"🔄 Tentando novamente em 2 segundos...")
+                                    time.sleep(2)
                     
-            else:
-                log_info(f"⚠ Botão não encontrado: {nome_botao}")
+                    # Verifica se todos os PDFs esperados foram processados (baixados ou já existentes)
+                    if len(pdf_links) > 0 and pdfs_processados_neste_botao == len(pdf_links):
+                        sucesso_botao = True
+                        log_info(f"✅ Todos os {len(pdf_links)} PDFs foram processados com sucesso")
+                    elif len(pdf_links) > 0 and pdfs_processados_neste_botao > 0:
+                        # Alguns arquivos foram processados, mas não todos
+                        log_erro(f"⚠️ Esperava processar {len(pdf_links)} PDFs, mas apenas {pdfs_processados_neste_botao} foram processados")
+                    elif len(pdf_links) > 0:
+                        # Nenhum arquivo foi processado
+                        log_erro(f"❌ Nenhum dos {len(pdf_links)} PDFs foi processado")
+                    
+                else:
+                    log_info(f"ℹ️ Nenhum PDF encontrado para: {nome_botao}")
+                    sucesso_botao = True  # Não há PDFs, então não precisa tentar novamente
+                    
+            except Exception as e:
+                log_erro(f"❌ Erro ao processar botão {nome_botao} (tentativa {tentativa_botao}/{MAX_TENTATIVAS_BOTAO}): {str(e)[:50]}")
                 
-        except Exception as e:
-            log_erro(f"Erro ao processar botão {nome_botao}: {str(e)[:50]}")
-            continue
+                # Verifica se passou de 30 minutos desde o primeiro download
+                if tempo_primeiro_download is not None:
+                    tempo_decorrido = time.time() - tempo_primeiro_download
+                    if tempo_decorrido > TIMEOUT_SESSAO_MFA:
+                        log_info(f"⏰ Mais de 30 minutos desde o primeiro download ({int(tempo_decorrido // 60)} min)")
+                        solicitar_reautenticacao_mfa()
+                        # Zera o contador após re-autenticação
+                        tempo_primeiro_download = time.time()
+                
+                if tentativa_botao < MAX_TENTATIVAS_BOTAO:
+                    log_info(f"🔄 Tentando botão novamente em 2 segundos...")
+                    time.sleep(2)
     
-    if total_pdfs_baixados == 0:
-        log_info("⚠ Nenhum PDF foi baixado")
-    else:
+    if total_pdfs_baixados > 0:
+        #log_info("⚠️ Nenhum PDF foi baixado")
+    #else:
         log_info(f"💾 Total de {total_pdfs_baixados} PDF(s) salvos em: {pasta_destino}")
+    
+    return total_pdfs_baixados, tempo_primeiro_download, requer_reautenticacao
+
 
 def abrir_caixa_de_entrada(page_obj):
     """Navega para a lista de requerimentos e configura visualização"""
@@ -537,9 +628,9 @@ def abrir_caixa_de_entrada(page_obj):
     time.sleep(2) 
     page_obj.wait_for_load_state("networkidle")  # Aguarda requisições AJAX terminarem
     wait_primefaces_ajax(page_obj)
-     # Pausa adicional para garantir que a tabela seja recarregada
     
     return page_obj
+
 
 def baixar_documentos():
     """Função principal que baixa documentos dos requerimentos ORCN"""
@@ -557,9 +648,8 @@ def baixar_documentos():
             
             page = browser.new_page()
             
-            # Inicia timer para controle de timeout do Mosaico
-            inicio_execucao = time.time()
-            limite_tempo = TIMEOUT_LIMITE_SESSAO  # 28 minutos em segundos
+            # Controle de tempo - inicia apenas após o primeiro download
+            tempo_primeiro_download = None
             
             # Navega para a lista
             page = abrir_caixa_de_entrada(page)
@@ -600,37 +690,14 @@ def baixar_documentos():
 
             # Processa cada linha dos dados salvos
             for linha_info in linhas_dados:
-                # Verifica se o tempo limite foi atingido (27 minutos)
-                tempo_decorrido = time.time() - inicio_execucao
-                if tempo_decorrido > limite_tempo:
-                    minutos_decorridos = int(tempo_decorrido // 60)
-                    log_info(SEPARADOR_LINHA)
-                    log_info("⏰ TIMEOUT PREVENTIVO ATIVADO!")
-                    log_info(SEPARADOR_LINHA)
-                    log_info(f"⚠ Tempo decorrido: {minutos_decorridos} minutos")
-                    log_info("⚠ Encerrando aplicação para evitar timeout do Mosaico (30 min)")
-                    log_info("⚠ Execute novamente o script para continuar processando")
-                    log_info(SEPARADOR_LINHA)
-                    log_info("Pressione ENTER para encerrar...")
-                    input()
-                    browser.close()
-                    return
-                
                 i = linha_info['indice']
                 requerimento = linha_info['requerimento']
                 
-                # Só processa se for um requerimento que ainda não foi baixado
-                '''full_path = req_para_fullpath(requerimento)
-                if os.path.exists(full_path):
-                    log_info(f"⏭️ Requerimento {requerimento} já processado, pulando...")
-                    continue'''
-                
                 log_info(SEPARADOR_LINHA)
-                log_info(f"▶ Requerimento {i}: {requerimento}")
+                log_info(f"▶️ Requerimento {i}: {requerimento}")
                 log_info(SEPARADOR_LINHA)
                 
                 # IMPORTANTE: Recarrega a linha atual usando busca manual
-                # Busca pela linha que contém este requerimento específico
                 row_atual = None
                 try:
                     # Recarrega todas as linhas da tabela
@@ -649,7 +716,7 @@ def baixar_documentos():
                             continue
                     
                     if not row_atual:
-                        log_info(f"⚠ Requerimento {requerimento} não encontrado na lista atualizada, pulando...")
+                        log_info(f"⚠️ Requerimento {requerimento} não encontrado na lista atualizada, pulando...")
                         continue
                         
                 except Exception as e:
@@ -662,12 +729,12 @@ def baixar_documentos():
                     btn = row_atual.query_selector("button[title*='Tela cheia']")
                 
                 if not btn:
-                    log_info("⚠ Botão não encontrado, pulando...")
+                    log_info("⚠️ Botão não encontrado, pulando...")
                     continue
                 
                 # Clica no botão
                 if not primefaces_click(page, btn, "Visualizar em Tela cheia"):
-                    log_info("⚠ Não foi possível clicar, pulando...")
+                    log_info("⚠️ Não foi possível clicar, pulando...")
                     continue
                 
                 # Aguarda carregar
@@ -677,9 +744,6 @@ def baixar_documentos():
                     pass
                 wait_primefaces_ajax(page)
                 
-                #log_info(f"🌐 URL: {page.url}")
-                
-                # Busca botão "Anexos"
                 time.sleep(1)
                 
                 iframe_element = page.wait_for_selector("#__frameDetalhe", timeout=10000)
@@ -688,7 +752,8 @@ def baixar_documentos():
                     detalhes_requerimento = iframe_element.get_attribute("src")
                     if detalhes_requerimento:
                         page.goto(detalhes_requerimento)
-                        ## recupera dados do requerente, ocd, fabricante, etc
+                        
+                        # Recupera dados do solicitante, fabricante, laboratório e OCD
                         solicitante_id = "formAnalise:output-solicitante-requerimento:output-solicitante-requerimento"
                         selector = "#" + solicitante_id.replace(":", "\\:")
                         dados_solicitante = page.eval_on_selector(selector, """
@@ -706,8 +771,8 @@ def baixar_documentos():
                                 return resultado;
                             }
                             """)
+                        
                         fabricante_id = "formAnalise:output-fabricante-requerimento:output-fabricante-requerimento"
-                        ## recupera dados do fabricante
                         selector = "#" + fabricante_id.replace(":", "\\:")
                         dados_fabricante = page.eval_on_selector(selector, """
                             (t) => {
@@ -724,65 +789,63 @@ def baixar_documentos():
                                 return resultado;
                             }
                             """)
+                        
                         lab_id = "formAnalise:output-laboratorio-requerimento:output-laboratorio-requerimento"
                         selector = "#" + lab_id.replace(":", "\\:")
-                        dados_lab= page.eval_on_selector(selector, """
-                                                    (t) => {
-                                                        const linhas = Array.from(t.querySelectorAll("tr"));
-                                                        const resultado = {};
-                                                        for (const tr of linhas) {
-                                                            const celulas = tr.querySelectorAll("td");
-                                                            if (celulas.length === 2) {
-                                                                const chave = celulas[0].innerText.trim().replace(/:$/, '');
-                                                                const valor = celulas[1].innerText.trim();
-                                                                resultado[chave] = valor;
-                                                            }
-                                                        }
-                                                        return resultado;
-                                                    }
-                                                    """)	
-                        '''tabelas_ids = page.eval_on_selector_all("table[id]", """
-                            (tabelas) => tabelas.map(t => t.id)
-                            """)'''
+                        dados_lab = page.eval_on_selector(selector, """
+                            (t) => {
+                                const linhas = Array.from(t.querySelectorAll("tr"));
+                                const resultado = {};
+                                for (const tr of linhas) {
+                                    const celulas = tr.querySelectorAll("td");
+                                    if (celulas.length === 2) {
+                                        const chave = celulas[0].innerText.trim().replace(/:$/, '');
+                                        const valor = celulas[1].innerText.trim();
+                                        resultado[chave] = valor;
+                                    }
+                                }
+                                return resultado;
+                            }
+                            """)	
+                        
                         ocd_id = 'formAnalise:j_idt202'
                         selector = "#" + ocd_id.replace(":", "\\:")
                         dados_ocd = page.eval_on_selector(selector, """
-                                                    (t) => {
-                                                        const linhas = Array.from(t.querySelectorAll("tr"));
-                                                        const resultado = {};
-                                                        for (const tr of linhas) {
-                                                            const celulas = tr.querySelectorAll("td");
-                                                            if (celulas.length === 2) {
-                                                                const chave = celulas[0].innerText.trim().replace(/:$/, '');
-                                                                const valor = celulas[1].innerText.trim();
-                                                                resultado[chave] = valor;
-                                                            }
-                                                        }
-                                                        return resultado;
-                                                    }
-                                                    """)
+                            (t) => {
+                                const linhas = Array.from(t.querySelectorAll("tr"));
+                                const resultado = {};
+                                for (const tr of linhas) {
+                                    const celulas = tr.querySelectorAll("td");
+                                    if (celulas.length === 2) {
+                                        const chave = celulas[0].innerText.trim().replace(/:$/, '');
+                                        const valor = celulas[1].innerText.trim();
+                                        resultado[chave] = valor;
+                                    }
+                                }
+                                return resultado;
+                            }
+                            """)
+                        
+                        # Salva os dados coletados no JSON do requerimento
                         json_path = req_para_fullpath(requerimento)                
-                        nome_json = Path(json_path).name # o json tem o mesmo nome da pasta do requerimento
+                        nome_json = Path(json_path).name
+                        
                         with open(os.path.join(json_path, f"{nome_json}.json"), "r", encoding="utf-8") as f:
-                            #dados_ocd = {}
                             dados_json = json.load(f)
-                            #dados_json = dados_req
-                            #dados_json["requerimento"] = dados_req
-                            if dados_ocd != {}:
-                                dados_json["ocd"] = dados_ocd  # Use indexação, não append
-                            if dados_lab != '':
-                                dados_json["lab"] = dados_lab
-                            if dados_fabricante != '':
-                                dados_json["fabricante"] = dados_fabricante
-                            if dados_solicitante != '':
-                                dados_json["solicitante"] = dados_solicitante
+                        
+                        if dados_ocd != {}:
+                            dados_json["ocd"] = dados_ocd
+                        if dados_lab != '':
+                            dados_json["lab"] = dados_lab
+                        if dados_fabricante != '':
+                            dados_json["fabricante"] = dados_fabricante
+                        if dados_solicitante != '':
+                            dados_json["solicitante"] = dados_solicitante
 
                         with open(os.path.join(json_path, f"{nome_json}.json"), "w", encoding="utf-8") as f:
                             json.dump(dados_json, f, ensure_ascii=False, indent=4)
-                        # Chama função para preenchimento de formulários
-                        #preencher_minuta(page)
-
-                    
+                        
+                        # Navega para anexos
                         anexos_btn = page.get_by_role("button", name=BOTOES['anexos'])
                         
                         try:
@@ -792,21 +855,25 @@ def baixar_documentos():
                                 page.wait_for_selector(".ui-blockui", state="detached", timeout=15000)
                                 log_info("🔄 Buscando anexos...")
                             else:
-                                log_info("Botão 'Anexos' não encontrado.")
-                            wait_primefaces_ajax(page)
+                                log_info("⚠️ Botão 'Anexos' não encontrado.")
                             
+                            wait_primefaces_ajax(page)
                             log_info("✅ Página de Anexos carregada")
                             
-                            # BAIXA OS PDFs
-                            baixar_pdfs(page, requerimento)                        
+                            # BAIXA OS PDFs com retry inteligente
+                            pdfs_baixados, tempo_primeiro_download, requer_reautenticacao = baixar_pdfs(
+                                page, 
+                                requerimento, 
+                                tempo_primeiro_download
+                            )
+                            
                         except Exception as e:
-                            log_erro(f"expect_navigation falhou: {str(e)}")
+                            log_erro(f"Erro ao acessar anexos: {str(e)}")
                 else:
-                    log_info("⚠ iframe_element não encontrado, pulando...")
+                    log_info("⚠️ iframe_element não encontrado, pulando...")
                     continue
 
                 # Volta para a lista
-                #log_info("↩ Voltando para a lista...")
                 page = abrir_caixa_de_entrada(page)
             
             log_info(SEPARADOR_LINHA)

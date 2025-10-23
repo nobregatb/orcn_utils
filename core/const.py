@@ -87,8 +87,12 @@ TIMEOUT_LOAD_STATE = 10000
 TIMEOUT_BLOCKUI = 15000
 TIMEOUT_MENU_CLICK = 3600000
 
-# Timeouts em segundos
-TIMEOUT_LIMITE_SESSAO = 28 * 60  # 28 minutos para evitar timeout do Mosaico
+# Timeouts em segundos para controle de sessão/MFA
+TIMEOUT_SESSAO_MFA = 30 * 60  # 30 minutos para solicitar re-autenticação MFA
+
+# Configurações de retry
+MAX_TENTATIVAS_BOTAO = 5  # Máximo de tentativas por botão ao buscar PDFs
+MAX_TENTATIVAS_DOWNLOAD = 5  # Máximo de tentativas por arquivo individual
 
 # Delays
 SLEEP_AFTER_CLICK = 1

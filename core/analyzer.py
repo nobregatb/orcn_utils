@@ -1,4 +1,5 @@
 from pdf2image import convert_from_path
+import pymupdf as fitz
 import pytesseract
 import json
 import re
@@ -33,7 +34,7 @@ from core.utils import (
     normalizar, normalizar_dados, obter_versao_git, carregar_json, salvar_json, validar_cnpj, fullpath_para_req
 )
 
-import pymupdf as fitz
+
 PYMUPDF_DISPONIVEL = True
 
 try:    
@@ -1530,7 +1531,7 @@ class AnalisadorRequerimentos:
         
         return palavras_consolidadas, sorted(list(palavras_nao_encontradas_set))
 
-    def _normalizar_id_norma(self, norma_original: str) -> str:
+    def _normalizar_id_norma(self, norma_original: str) -> Optional[str]:
         """
         Converte uma norma encontrada para o formato de ID usado no normas.json
         
@@ -1743,7 +1744,7 @@ class AnalisadorRequerimentos:
         
         # Conteúdo do relatório LaTeX
         agora = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
-        versao_git = 'v. 0.2.1'  # obter_versao_git()
+        versao_git = 'v. 0.2.2'  # obter_versao_git()
         #utils_dir = Path(__file__).parent.parent / UTILS_DIR
         #classe_path = rf"{Path(__file__).parent.parent / UTILS_DIR / 'IEEEtran'}"
         #latex_content = f"""\\documentclass{{{classe_path}}}
@@ -1861,7 +1862,8 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
             \\item OCD: {nome_ocd_escapado}
             \\item Equipamento(s): {equipamentos_texto}
             \\end{{itemize}}
-            \\subsection{{Normas aplicáveis}}
+            \\subsection{{Dispositivos Normativos}}
+            Abaixo estão listados os dispositivos normativos aplicáveis ao requerimento - dado(s) o(s) tipo(s) de equipamento(s) listado(s) nesse requerimento -, assim como normativos citados que estão revogados, ou que são apenas acessórios (apenas modificam itens de dispositivos aplicáveis) ou que estão obsoletos.
             """           
             # Coletar normas aplicáveis para este requerimento
             normas_aplicaveis = self._coletar_normas_aplicaveis_requerimento(req)
@@ -1871,6 +1873,10 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
             #log_info(f"Normas aplicáveis encontradas para {numero_req}: {len(normas_aplicaveis)} normas")
             #if normas_aplicaveis:
                 #log_info(f"Normas: {list(normas_aplicaveis.keys())}")
+            
+            # Subsubsection de dispositivos aplicáveis
+            latex_content += """\\subsubsection{{Normas aplicáveis}}
+"""
             
             if normas_aplicaveis:
                 latex_content += """\\begin{longtable}{p{2cm}p{5cm}p{9cm}}
@@ -1907,7 +1913,37 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
                 latex_content += """\\end{longtable}
 """
             else:
-                latex_content += f"\\textit{{Nenhuma norma específica identificada como requisito identificado para: {equipamentos_texto}}}"
+                latex_content += f"\\textit{{Nenhuma norma específica identificada como requisito identificado para: {equipamentos_texto}}}\n\n"
+
+            # Verificar se há normativos revogados e gerar subsubsection específica
+            normativos_revogados = []
+            for norma_id in normas_verificadas:
+                detalhes_norma = self._obter_detalhes_norma(norma_id)
+                status_norma = detalhes_norma.get('status', '').lower()
+                if status_norma and (status_norma in ['revogada', 'revogado', 'acessório', 'acessória', 'obsoleta', 'obsoleto']):
+                    normativos_revogados.append({
+                        'id': norma_id,
+                        'nome': detalhes_norma['nome'],
+                        'url': detalhes_norma['url'],
+                        'status': detalhes_norma['status']
+                    })
+            
+            if normativos_revogados:
+                latex_content += """\\subsubsection{Normas Problemáticas}
+Lista de normativos revogados, ou que apenas modificam um normativo vigente, identificados na análise deste requerimento:
+\\begin{itemize}
+"""
+                for normativo in sorted(normativos_revogados, key=lambda x: x['nome']):
+                    nome_normativo = escapar_latex(normativo['nome'])
+                    status_normativo = escapar_latex(normativo['status'])
+                    url_normativo = normativo['url']
+
+                    if status_normativo in ['revogada', 'revogado', 'obsoleta', 'obsoleto']:
+                        latex_content += f"    \\item \\textcolor{{red}}{{\\href{{{url_normativo}}}{{{nome_normativo}}} - {status_normativo}}}\n"
+                    else:
+                        latex_content += f"    \\item \\href{{{url_normativo}}}{{{nome_normativo}}} - {status_normativo}\n"
+                latex_content += """\\end{itemize}
+"""
 
             latex_content += f"""
 \\subsection{{Documentos Processados}}
@@ -1976,39 +2012,6 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} e \\tex
                 latex_content += "\n\n"
             else:
                 latex_content += "\\textit{Nenhuma palavra-chave específica foi analisada neste requerimento.}\n\n"
-
-            # Verificar se há normativos revogados e gerar seção específica
-            normativos_revogados = []
-            for norma_id in normas_verificadas:
-                detalhes_norma = self._obter_detalhes_norma(norma_id)
-                status_norma = detalhes_norma.get('status', '').lower()
-                if status_norma and (status_norma in ['revogada', 'revogado', 'acessório', 'acessória', 'obsoleta', 'obsoleto']):
-                    normativos_revogados.append({
-                        'id': norma_id,
-                        'nome': detalhes_norma['nome'],
-                        'url': detalhes_norma['url'],
-                        'status': detalhes_norma['status']
-                    })
-            
-            if normativos_revogados:
-                latex_content += """\\subsection{\\textcolor{red}{Normativos Problemáticos}}
-Lista de normativos revogados, ou que apenas modificam um normativo vigente, identificados na análise deste requerimento:
-\\begin{itemize}
-"""
-                for normativo in sorted(normativos_revogados, key=lambda x: x['nome']):
-                    nome_normativo = escapar_latex(normativo['nome'])
-                    status_normativo = escapar_latex(normativo['status'])
-                    url_normativo = normativo['url']
-
-                    if status_normativo in ['revogada', 'revogado', 'obsoleta', 'obsoleto']:
-                        latex_content += f"    \\item \\textcolor{{red}}{{\\href{{{url_normativo}}}{{{nome_normativo}}} - {status_normativo}}}\n"
-                    else:
-                        latex_content += f"    \\item \\href{{{url_normativo}}}{{{nome_normativo}}} - {status_normativo}\n"
-                latex_content += """\\end{itemize}
-"""
-
-            latex_content += """
-"""
         
         # Gerar seção de requisitos legais
         equipamentos_unicos = self._coletar_equipamentos_unicos()

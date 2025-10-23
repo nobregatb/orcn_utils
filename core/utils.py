@@ -573,7 +573,7 @@ def processar_requerimentos_excel(num_req: str) -> None:
                     # Armazenar linha para adicionar no Excel
                     novas_linhas_para_excel.append(nova_linha)
                     requerimentos_adicionados.append(req)
-                    log_info(f"Requerimento {req} preparado para adição à planilha")
+                    #log_info(f"Requerimento {req} preparado para adição à planilha")
                 else:
                     log_info(f"Erro: Não foi possível mapear dados do requerimento {req}")
                     requerimentos_com_erro.append(req)
@@ -600,7 +600,7 @@ def processar_requerimentos_excel(num_req: str) -> None:
             # Salvar preservando todas as abas
             wb.save(EXCEL_PATH)
             wb.close()
-            log_info(f"Planilha atualizada com {len(requerimentos_adicionados)} novos requerimentos (todas as abas preservadas)")
+            #log_info(f"Planilha atualizada com {len(requerimentos_adicionados)} novos requerimentos (todas as abas preservadas)")
         else:
             log_info("Nenhum requerimento novo para adicionar")
         

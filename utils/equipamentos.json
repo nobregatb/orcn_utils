@@ -1118,7 +1118,19 @@
   {
     "escopo": "mosaico",
     "id": "EQ093",
+    "nome": "Sistemas de identificação por radiofrequência",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
     "nome": "Sistema de Identificação por Radiofrequências",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Sistema de Identificação por Radiofrequência",
     "categoria": "Cat. 2"
   },
   {

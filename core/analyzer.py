@@ -1026,10 +1026,203 @@ class AnalisadorRequerimentos:
         return resultado
     
     def _analisar_relatorio_ensaio(self, caminho: Path, resultado: Dict) -> Dict:
-        """Análise específica para Relatório de Ensaio."""
-        resultado["observacoes"].append("Análise de Relatório de Ensaio: Validando testes realizados")
-        resultado["status"] = "CONFORME"  # Temporário
-        return resultado
+        """
+        Análise específica para Relatório de Ensaio.
+        
+        Verifica:
+        1. Presença do solicitante ou fabricante no PDF
+        2. Presença do laboratório (nome e/ou CNPJ) no PDF
+        3. Lista as normas encontradas no PDF
+        
+        Args:
+            caminho: Path para o arquivo PDF do relatório
+            resultado: Dicionário com resultado parcial da análise
+            
+        Returns:
+            Dict atualizado com resultado da análise
+        """
+        try:
+            # Extrai o conteúdo do PDF usando PyMuPDF
+            texto_pdf = self._extrair_texto_pdf(caminho)
+            if not texto_pdf:
+                resultado["status"] = STATUS_ERRO
+                resultado["observacoes"].append("❌ Erro ao extrair conteúdo do PDF")
+                return resultado
+            
+            # Normaliza o texto para comparações
+            texto_normalizado = normalizar(texto_pdf)
+            
+            # Obtém dados do JSON do requerimento
+            nome_requerimento = str(caminho.parent.name)
+            pasta_requerimento = caminho.parent
+            dados_req = self._processar_dados_requerimento_json(nome_requerimento, pasta_requerimento)
+            
+            if not dados_req:
+                resultado["observacoes"].append("⚠️ Dados do requerimento não disponíveis para validação")
+            
+            problemas = []
+            
+            # ============================================
+            # 1. VERIFICAR SOLICITANTE OU FABRICANTE
+            # ============================================
+            solicitante_encontrado = False
+            fabricante_encontrado = False
+            
+            if dados_req:
+                dados_solicitante = dados_req.get("solicitante", {})
+                dados_fabricante = dados_req.get("fabricante", {})
+                
+                # Verifica solicitante
+                if dados_solicitante and isinstance(dados_solicitante, dict):
+                    nome_solicitante = dados_solicitante.get("Nome", "")
+                    cnpj_solicitante = dados_solicitante.get("CNPJ", "")
+                    
+                    if nome_solicitante:
+                        nome_normalizado = normalizar(nome_solicitante)
+                        # Busca o nome completo ou partes significativas (>= 3 palavras)
+                        palavras = nome_normalizado.split()
+                        if len(palavras) >= 3:
+                            # Busca sequências de 3 palavras consecutivas
+                            for i in range(len(palavras) - 2):
+                                sequencia = " ".join(palavras[i:i+3])
+                                if sequencia in texto_normalizado:
+                                    solicitante_encontrado = True
+                                    break
+                        elif nome_normalizado in texto_normalizado:
+                            solicitante_encontrado = True
+                    
+                    if not solicitante_encontrado and cnpj_solicitante:
+                        # Tenta encontrar o CNPJ (com ou sem formatação)
+                        cnpj_limpo = desformatar_cnpj(cnpj_solicitante)
+                        if cnpj_limpo in texto_normalizado.replace(".", "").replace("/", "").replace("-", ""):
+                            solicitante_encontrado = True
+                
+                # Se solicitante não foi encontrado, verifica fabricante
+                if not solicitante_encontrado and dados_fabricante and isinstance(dados_fabricante, dict):
+                    nome_fabricante = dados_fabricante.get("Nome", "")
+                    cnpj_fabricante = dados_fabricante.get("CNPJ", "")
+                    
+                    if nome_fabricante:
+                        nome_normalizado = normalizar(nome_fabricante)
+                        palavras = nome_normalizado.split()
+                        if len(palavras) >= 3:
+                            for i in range(len(palavras) - 2):
+                                sequencia = " ".join(palavras[i:i+3])
+                                if sequencia in texto_normalizado:
+                                    fabricante_encontrado = True
+                                    break
+                        elif nome_normalizado in texto_normalizado:
+                            fabricante_encontrado = True
+                    
+                    if not fabricante_encontrado and cnpj_fabricante:
+                        cnpj_limpo = desformatar_cnpj(cnpj_fabricante)
+                        if cnpj_limpo in texto_normalizado.replace(".", "").replace("/", "").replace("-", ""):
+                            fabricante_encontrado = True
+                
+                # Avaliação da verificação de solicitante/fabricante
+                if solicitante_encontrado:
+                    resultado["observacoes"].append("✅ Solicitante identificado no relatório")
+                elif fabricante_encontrado:
+                    resultado["observacoes"].append("✅ Fabricante identificado no relatório")
+                else:
+                    problemas.append("Solicitante/Fabricante não identificado no relatório")
+                    resultado["observacoes"].append("❌ Nem solicitante nem fabricante foram identificados no relatório")
+            
+            # ============================================
+            # 2. VERIFICAR LABORATÓRIO
+            # ============================================
+            laboratorio_encontrado = False
+            
+            if dados_req:
+                dados_lab = dados_req.get("lab", {})
+                
+                if dados_lab and isinstance(dados_lab, dict):
+                    nome_lab = dados_lab.get("Nome", "")
+                    cnpj_lab = dados_lab.get("CNPJ", "")
+                    
+                    # Verifica nome do laboratório
+                    if nome_lab:
+                        nome_lab_normalizado = normalizar(nome_lab)
+                        palavras = nome_lab_normalizado.split()
+                        
+                        # Busca por partes significativas do nome (>= 3 palavras)
+                        if len(palavras) >= 3:
+                            for i in range(len(palavras) - 2):
+                                sequencia = " ".join(palavras[i:i+3])
+                                if sequencia in texto_normalizado:
+                                    laboratorio_encontrado = True
+                                    resultado["observacoes"].append(f"✅ Laboratório identificado (nome): {nome_lab}")
+                                    break
+                        elif nome_lab_normalizado in texto_normalizado:
+                            laboratorio_encontrado = True
+                            resultado["observacoes"].append(f"✅ Laboratório identificado (nome): {nome_lab}")
+                    
+                    # Verifica CNPJ do laboratório
+                    if not laboratorio_encontrado and cnpj_lab:
+                        cnpj_limpo = desformatar_cnpj(cnpj_lab)
+                        texto_limpo = texto_normalizado.replace(".", "").replace("/", "").replace("-", "")
+                        
+                        if cnpj_limpo in texto_limpo:
+                            laboratorio_encontrado = True
+                            resultado["observacoes"].append(f"✅ Laboratório identificado (CNPJ): {cnpj_lab}")
+                    
+                    if not laboratorio_encontrado:
+                        problemas.append(f"Laboratório não identificado: {nome_lab or cnpj_lab}")
+                        resultado["observacoes"].append(f"❌ Laboratório não identificado no relatório")
+                else:
+                    resultado["observacoes"].append("⚠️ Dados do laboratório não disponíveis no JSON")
+            
+            # ============================================
+            # 3. LISTAR NORMAS VERIFICADAS (Atos e Resoluções ANATEL)
+            # ============================================
+            normas_verificadas = self._extract_normas_from_ract(texto_pdf)
+            
+            if normas_verificadas:
+                resultado["observacoes"].append(f"📋 Normas verificadas: {', '.join(sorted(set(normas_verificadas)))}")
+                resultado["normas_verificadas"] = sorted(set(normas_verificadas))
+            else:
+                resultado["observacoes"].append("⚠️ Nenhuma norma ANATEL identificada no relatório")
+                resultado["normas_verificadas"] = []
+            
+            # ============================================
+            # DEFINIR STATUS FINAL
+            # ============================================
+            if problemas:
+                resultado["status"] = STATUS_NAO_CONFORME
+                resultado["problemas"] = problemas
+            else:
+                resultado["status"] = STATUS_CONFORME
+                resultado["observacoes"].append("✅ Relatório de Ensaio validado com sucesso")
+            
+            return resultado
+            
+        except Exception as e:
+            log_erro(f"Erro ao analisar relatório de ensaio {caminho.name}: {str(e)}")
+            resultado["status"] = STATUS_ERRO
+            resultado["observacoes"].append(f"❌ Erro durante análise: {str(e)[:100]}")
+            return resultado
+    
+    def _extrair_texto_pdf(self, caminho: Path) -> Optional[str]:
+        """
+        Extrai texto de um arquivo PDF usando PyMuPDF.
+        
+        Args:
+            caminho: Path para o arquivo PDF
+            
+        Returns:
+            String com o texto extraído ou None em caso de erro
+        """
+        try:
+            with fitz.open(caminho) as pdf:
+                texto = ""
+                for pagina in pdf:
+                    texto_pagina = pagina.get_text("text")
+                    if isinstance(texto_pagina, str):
+                        texto += texto_pagina + "\n"
+                return texto if texto.strip() else None
+        except Exception as e:
+            log_erro(f"Erro ao extrair texto do PDF {caminho.name}: {str(e)}")
+            return None
     
     def _analisar_art(self, caminho: Path, resultado: Dict) -> Dict:
         """Análise específica para ART."""
@@ -1219,7 +1412,7 @@ class AnalisadorRequerimentos:
         for arquivo in arquivos_pdf:
             tipo_doc = self._determinar_tipo_documento(arquivo.name)
             # Processar todos os tipos de documentos para não perder informações
-            if tipo_doc not in [TIPO_CCT, TIPO_MANUAL, TIPO_RACT]:
+            if tipo_doc not in [TIPO_CCT, TIPO_MANUAL, TIPO_RACT, TIPO_RELATORIO_ENSAIO]:
                 continue
             # Extrair dados do OCD do JSON do requerimento
             dados_ocd = dados_req_json.get('ocd', {}) if dados_req_json else {}

@@ -1449,22 +1449,47 @@ class AnalisadorRequerimentos:
     def _coletar_normas_verificadas_requerimento(self, req_dados: Dict) -> Set[str]:
         """
         Coleta todas as normas que foram verificadas nos documentos do requerimento.
+        Automaticamente inclui no arquivo normas.json as normas que não estiverem cadastradas.
         
         Returns:
             Set[norma_id] das normas que foram efetivamente verificadas
         """
         normas_verificadas = set()
+        novas_normas = {}
+        numero_requerimento = req_dados.get("numero_requerimento", "N/A")
         
         try:
             documentos = req_dados.get("documentos_analisados", [])
+            
+            # Criar set com IDs das normas já existentes para verificação rápida
+            normas_existentes_ids = {norma['id'] for norma in self.normas}
             
             for doc in documentos:
                 dados_extraidos = doc.get("dados_extraidos", {})
                 normas_doc = dados_extraidos.get("normas_verificadas", [])
                 
                 # Adicionar todas as normas verificadas deste documento
-                for norma in normas_doc:
-                    normas_verificadas.add(norma)
+                for norma_original in normas_doc:
+                    if isinstance(norma_original, str) and norma_original.strip():
+                        # Normalizar o ID da norma
+                        norma_id = self._normalizar_id_norma(norma_original.strip())
+                        
+                        if norma_id:
+                            normas_verificadas.add(norma_id)
+                            
+                            # Verificar se a norma não existe no arquivo normas.json
+                            if norma_id not in normas_existentes_ids and norma_id not in novas_normas:
+                                novas_normas[norma_id] = self._criar_entrada_norma(norma_id, numero_requerimento)
+                                log_info(f"Nova norma identificada: {norma_id} (do requerimento {numero_requerimento})")
+            
+            # Atualizar arquivo normas.json se há normas novas
+            if novas_normas:
+                log_info(f"Atualizando normas.json com {len(novas_normas)} nova(s) norma(s) do requerimento {numero_requerimento}")
+                if self._atualizar_arquivo_normas(novas_normas):
+                    # Atualizar o set de normas existentes
+                    normas_existentes_ids.update(novas_normas.keys())
+                else:
+                    log_erro(f"Falha ao atualizar normas.json com normas do requerimento {numero_requerimento}")
                     
         except Exception as e:
             log_erro(f"Erro ao coletar normas verificadas: {str(e)}")
@@ -1504,6 +1529,125 @@ class AnalisadorRequerimentos:
             log_erro(f"Erro ao consolidar palavras-chave: {str(e)}")
         
         return palavras_consolidadas, sorted(list(palavras_nao_encontradas_set))
+
+    def _normalizar_id_norma(self, norma_original: str) -> str:
+        """
+        Converte uma norma encontrada para o formato de ID usado no normas.json
+        
+        Exemplos:
+        - "Ato 1234" -> "ato1234"  
+        - "Resolução 715" -> "resolucao715"
+        - "ABNT NBR 7866" -> "abnt_nbr_7866"
+        - "IEC 61300" -> "iec61300"
+        """
+        
+        norma_clean = norma_original.strip()
+        
+        # Padrões para normalização
+        patterns = [
+            # Atos da ANATEL
+            (r'(?:ato|act)\s*n?°?\s*(\d+)', r'ato\1'),
+            
+            # Resoluções da ANATEL
+            (r'(?:resolução|resolution)\s*n?°?\s*(\d+)', r'resolucao\1'),
+            
+            # ABNT NBR
+            (r'abnt\s+nbr\s+(\d+)(?:\:?\d{4})?', r'abnt_nbr_\1'),
+            
+            # IEC
+            (r'iec\s+(\d+)(?:-\d+)?(?:\:?\d{4})?', r'iec\1'),
+            
+            # CISPR
+            (r'cispr\s+(\d+)(?:\:?\d{4})?', r'cispr\1'),
+            
+            # ITU-T G.xxx
+            (r'itu-?t\s+g\.?(\d+)', r'itu_g\1'),
+            
+            # ITU-R M.xxx
+            (r'itu-?r\s+m\.?(\d+)(?:-\d+)?', r'itu_r_m\1'),
+            
+            # ETSI TS
+            (r'etsi\s+ts\s+(\d+)\s+(\d+)-(\d+)', r'etsi_ts_\1_\2'),
+            
+            # IETF RFC
+            (r'(?:ietf\s+)?rfc\s*(\d+)', r'ietf_rfc\1'),
+            
+            # IEEE
+            (r'ieee\s+std\s+([\d\.]+)', r'ieee_std_\1'),
+        ]
+        
+        # Aplicar padrões de normalização
+        for pattern, replacement in patterns:
+            match = re.search(pattern, norma_clean, re.IGNORECASE)
+            if match:
+                resultado = re.sub(pattern, replacement, norma_clean, flags=re.IGNORECASE).lower()
+                # Limpar caracteres especiais e espaços
+                resultado = re.sub(r'[^\w]', '_', resultado)
+                resultado = re.sub(r'_+', '_', resultado)
+                resultado = resultado.strip('_')
+                return resultado
+        
+        # Se não encontrou padrão conhecido, criar ID genérico
+        id_generico = re.sub(r'[^\w\s]', '', norma_clean)  # Remove caracteres especiais
+        id_generico = re.sub(r'\s+', '_', id_generico)      # Substitui espaços por underscore
+        id_generico = id_generico.lower().strip('_')
+        
+        if id_generico and len(id_generico) > 2:
+            return id_generico
+        
+        return None
+
+    def _criar_entrada_norma(self, norma_id: str, numero_requerimento: str) -> Dict:
+        """Cria uma nova entrada de norma com os parâmetros solicitados"""
+        return {
+            "id": norma_id,
+            "nome": f"Norma citada no requerimento {numero_requerimento}",
+            "descricao": f"Norma identificada durante análise do requerimento {numero_requerimento}",
+            "url": "a definir",
+            "status": "a definir"
+        }
+
+    def _atualizar_arquivo_normas(self, novas_normas: Dict) -> bool:
+        """Atualiza o arquivo normas.json com as novas normas"""
+        from datetime import datetime
+        import shutil
+        
+        if not novas_normas:
+            return True
+            
+        try:
+            # Converter normas existentes para dicionário usando ID como chave
+            normas_existentes = {norma['id']: norma for norma in self.normas}
+            
+            # Combinar normas existentes com novas
+            todas_normas = {**normas_existentes, **novas_normas}
+            
+            # Converter de volta para lista ordenada por ID
+            normas_lista = list(todas_normas.values())
+            normas_lista.sort(key=lambda x: x['id'])
+            
+            # Fazer backup do arquivo original
+            normas_path = JSON_FILES['normas']
+            backup_path = f"{normas_path}.backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            
+            if Path(normas_path).exists():
+                shutil.copy2(normas_path, backup_path)
+                log_info(f"Backup criado: {backup_path}")
+            
+            # Salvar arquivo atualizado
+            with open(normas_path, 'w', encoding='utf-8') as f:
+                json.dump(normas_lista, f, indent=2, ensure_ascii=False)
+            
+            # Atualizar cache interno
+            self.normas = normas_lista
+            
+            log_info(f"Arquivo normas.json atualizado com {len(novas_normas)} nova(s) norma(s)")
+            log_info(f"Total de normas no arquivo: {len(normas_lista)}")
+            return True
+            
+        except Exception as e:
+            log_erro(f"Erro ao atualizar arquivo normas.json: {str(e)}")
+            return False
 
     def _obter_detalhes_norma(self, norma_id: str) -> Dict[str, str]:
         """Obtém detalhes de uma norma pelo seu ID do arquivo normas.json."""

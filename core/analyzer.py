@@ -1121,10 +1121,51 @@ class AnalisadorRequerimentos:
                             resultado["observacoes"].append(f"✅ Laboratório identificado (nome): {nome_lab}")                                                    
                     
                     if not laboratorio_encontrado:
-                        problemas.append(f"Laboratório não identificado: {nome_lab or cnpj_lab}")
+                        problemas.append(f"Laboratório não identificado: {nome_lab}")
                         resultado["observacoes"].append(f"❌ Laboratório não identificado no relatório")
                 else:
                     resultado["observacoes"].append("⚠️ Dados do laboratório não disponíveis no JSON")
+            
+            # ============================================
+            # 3. VERIFICAR MODELOS
+            # ============================================
+            modelo_encontrado = False
+            modelos_identificados = []
+            lista_modelos = []  # Inicializar sempre
+            
+            if dados_req:
+                # Buscar modelos nos dados do requerimento - pode estar no nível raiz ou dentro de "requerimento"
+                modelos_req = dados_req.get("modelos", "")
+                if not modelos_req and "requerimento" in dados_req:
+                    modelos_req = dados_req["requerimento"].get("modelos", "")
+                
+                if modelos_req and isinstance(modelos_req, str):
+                    # Se modelos vem como string, separar por vírgulas ou outros delimitadores
+                    lista_modelos = [m.strip() for m in re.split(r'[,;/\|]', modelos_req) if m.strip()]
+                elif modelos_req and isinstance(modelos_req, list):
+                    # Se modelos já é uma lista
+                    lista_modelos = [str(m).strip() for m in modelos_req if str(m).strip()]
+                
+                # Verificar cada modelo no texto do relatório
+                for modelo in lista_modelos:
+                    if modelo:  # Verificar se não é string vazia
+                        modelo_normalizado = normalizar(modelo)
+                        contador = texto_normalizado.count(modelo_normalizado)
+                        if contador > 0:
+                            modelo_encontrado = True
+                            modelos_identificados.append(modelo)
+                
+                # Avaliar resultado da verificação de modelos
+                if modelo_encontrado:
+                    resultado["observacoes"].append(f"✅ Modelo(s) identificado(s) no relatório: {', '.join(modelos_identificados)}")
+                else:
+                    if lista_modelos:
+                        problemas.append(f"Modelo(s) não identificado(s) no relatório: {', '.join(lista_modelos)}")
+                        resultado["observacoes"].append(f"❌ Nenhum modelo identificado no relatório (esperados: {', '.join(lista_modelos)})")
+                    else:
+                        resultado["observacoes"].append("⚠️ Nenhum modelo especificado no requerimento para validação")
+            else:
+                resultado["observacoes"].append("⚠️ Dados do requerimento não disponíveis para validação de modelos")
             
             # ============================================
             # 3. LISTAR NORMAS VERIFICADAS (Atos e Resoluções ANATEL)
@@ -1145,9 +1186,12 @@ class AnalisadorRequerimentos:
                 "solicitante_identificado": solicitante_encontrado,
                 "fabricante_identificado": fabricante_encontrado,
                 "laboratorio_identificado": laboratorio_encontrado,
+                "modelo_identificado": modelo_encontrado,
                 "nome_solicitante": dados_req.get("solicitante", {}).get("Nome", "") if dados_req else "",
                 "nome_fabricante": dados_req.get("fabricante", {}).get("Nome", "") if dados_req else "",
-                "nome_laboratorio": dados_req.get("lab", {}).get("Nome", "") if dados_req else ""
+                "nome_laboratorio": dados_req.get("lab", {}).get("Nome", "") if dados_req else "",
+                "modelos_esperados": lista_modelos,
+                "modelos_identificados": modelos_identificados
             }
             
             # ============================================
@@ -1945,7 +1989,7 @@ class AnalisadorRequerimentos:
 \\fancyhead[R]{{\\textgreek{{θεoγενης}} - {versao_git}}}
 \\fancyfoot[C]{{\\thepage}}
 \\setcounter{{tocdepth}}{{2}}
-
+\\setlength{{\\tabcolsep}}{{2pt}}
 \\title{{\\Large\\textbf{{Análise Simplificada Automatizada}}}}
 \\author{{Teógenes Brito da Nóbrega (\\href{{mailto:tbnobrega@anatel.gov.br}}{{tbnobrega@anatel.gov.br}})}}
 %\\date{{{agora}}}
@@ -2069,7 +2113,7 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
 """
             
             if normas_aplicaveis:
-                latex_content += """\\begin{longtable}{p{0.05\\textwidth}p{0.5\\textwidth}p{0.35\\textwidth}}
+                latex_content += """\\begin{longtable}{p{0.15\\textwidth}p{0.45\\textwidth}p{0.3\\textwidth}}
 \\hline
 \\textbf{Status} & \\textbf{Norma} & \\textbf{Motivador(es)} \\\\
 \\hline
@@ -2153,10 +2197,10 @@ Apresenta-se a seguir a lista dos documentos processados neste requerimento, com
             # Seção específica para Relatórios de Ensaio (APENAS relatórios de ensaio)
             if relatorios_ensaio:
                 latex_content += """\\subsubsection{Relatórios de Ensaios}
-Identificação do laboratório, solicitante e fabricante nos relatórios de ensaio processados:
-\\begin{longtable}{p{0.6\\textwidth}p{0.1\\textwidth}p{0.1\\textwidth}p{0.1\\textwidth}}
+Identificação do laboratório, solicitante, fabricante e modelo nos relatórios de ensaio processados:
+\\begin{longtable}{p{0.5\\textwidth}p{0.1\\textwidth}p{0.1\\textwidth}p{0.1\\textwidth}p{0.1\\textwidth}}
 \\hline
-\\textbf{Documento} & \\textbf{Laboratório} & \\textbf{Solicitante} & \\textbf{Fabricante} \\\\
+\\textbf{Documento} & \\textbf{Lab} & \\textbf{Sol} & \\textbf{Fab} & \\textbf{Mod} \\\\
 \\hline
 \\endhead
 """
@@ -2178,13 +2222,15 @@ Identificação do laboratório, solicitante e fabricante nos relatórios de ens
                     laboratorio_identificado = dados_extraidos.get("laboratorio_identificado", False)
                     solicitante_identificado = dados_extraidos.get("solicitante_identificado", False)
                     fabricante_identificado = dados_extraidos.get("fabricante_identificado", False)
+                    modelo_identificado = dados_extraidos.get("modelo_identificado", False)
                     
                     # Formatar status com símbolos coloridos
                     status_lab = "\\textbf{\\textcolor{green}{$\\checkmark$}}" if laboratorio_identificado else "\\textcolor{red}{$\\times$}"
                     status_sol = "\\textbf{\\textcolor{green}{$\\checkmark$}}" if solicitante_identificado else "\\textcolor{red}{$\\times$}"
                     status_fab = "\\textbf{\\textcolor{green}{$\\checkmark$}}" if fabricante_identificado else "\\textcolor{red}{$\\times$}"
+                    status_mod = "\\textbf{\\textcolor{green}{$\\checkmark$}}" if modelo_identificado else "\\textcolor{red}{$\\times$}"
                     
-                    latex_content += f"{nome_item_link} & {status_lab} & {status_sol} & {status_fab} \\\\ \\hline\n"
+                    latex_content += f"{nome_item_link} & {status_lab} & {status_sol} & {status_fab} & {status_mod} \\\\ \\hline\n"
                 
                 latex_content += """\\end{longtable}
 

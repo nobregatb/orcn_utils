@@ -178,6 +178,20 @@
     "status": "a definir"
   },
   {
+    "id": "ato4077",
+    "nome": "Norma citada no requerimento 25.07165",
+    "descricao": "Norma identificada durante análise do requerimento 25.07165",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
+    "id": "ato4082",
+    "nome": "Norma citada no requerimento 25.07165",
+    "descricao": "Norma identificada durante análise do requerimento 25.07165",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
     "id": "ato4083",
     "nome": "Ato nº 4083, de 31 de julho de 2020",
     "descricao": "Procedimento Operacional para Avaliação da Conformidade de Produtos para Telecomunicações por Certificação",
@@ -194,6 +208,13 @@
     "status": "vigente"
   },
   {
+    "id": "ato4085",
+    "nome": "Norma citada no requerimento 25.07165",
+    "descricao": "Norma identificada durante análise do requerimento 25.07165",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
     "id": "ato4088",
     "nome": "Ato nº 4088, de 31 de julho de 2020",
     "descricao": "Procedimento Operacional para Marcação da Identificação da Homologação Anatel em Produtos para Telecomunicações",
@@ -202,12 +223,26 @@
     "status": "vigente"
   },
   {
+    "id": "ato4091",
+    "nome": "Norma citada no requerimento 25.07165",
+    "descricao": "Norma identificada durante análise do requerimento 25.07165",
+    "url": "a definir",
+    "status": "a definir"
+  },
+  {
     "id": "ato418",
     "nome": "Ato nº 418, de 22 de Janeiro de 2018",
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
     "status": "obsoleto"
+  },
+  {
+    "id": "ato458",
+    "nome": "Norma citada no requerimento 25.07161",
+    "descricao": "Norma identificada durante análise do requerimento 25.07161",
+    "url": "a definir",
+    "status": "a definir"
   },
   {
     "id": "ato4776",
@@ -572,6 +607,13 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2019/1350-resolucao-715",
     "entidade": "Anatel",
     "status": "vigente"
+  },
+  {
+    "id": "resolucao718",
+    "nome": "Norma citada no requerimento 25.07171",
+    "descricao": "Norma identificada durante análise do requerimento 25.07171",
+    "url": "a definir",
+    "status": "a definir"
   },
   {
     "id": "resolucao721",

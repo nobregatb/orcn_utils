@@ -100,7 +100,7 @@ class CCTAnalyzerIntegrado:
             # Extrai texto de cada página via OCR
             for i, pagina in enumerate(paginas, start=1):
                 texto_pagina = pytesseract.image_to_string(pagina, lang='por')
-                texto_completo += f"\n--- Página {i} ---\n"
+                #texto_completo += f"\n--- Página {i} ---\n"
                 texto_completo += texto_pagina
                 
             return texto_completo
@@ -600,7 +600,7 @@ class AnalisadorRequerimentos:
         """
         Analisa um documento específico baseado no seu tipo.
         """
-        info = re.findall(r'\[(.*?)\]', caminho_documento.name)
+        #info = re.findall(r'\[(.*?)\]', caminho_documento.name)
         #log_info(f"Analisando documento: {info[:2]}")
         
         resultado = {
@@ -1042,8 +1042,12 @@ class AnalisadorRequerimentos:
             Dict atualizado com resultado da análise
         """
         try:
-            # Extrai o conteúdo do PDF usando PyMuPDF
-            texto_pdf = self._extrair_texto_pdf(caminho)
+            # Instanciar CCTAnalyzer integrado para extração de PDF
+            utils_dir = Path(__file__).parent.parent / UTILS_DIR
+            cct_analyzer = CCTAnalyzerIntegrado(utils_dir)
+            
+            # Extrai o conteúdo do PDF usando extract_pdf_content (com fallback OCR)
+            texto_pdf = cct_analyzer.extract_pdf_content(caminho)
             if not texto_pdf:
                 resultado["status"] = STATUS_ERRO
                 resultado["observacoes"].append("❌ Erro ao extrair conteúdo do PDF")
@@ -1066,57 +1070,27 @@ class AnalisadorRequerimentos:
             # 1. VERIFICAR SOLICITANTE OU FABRICANTE
             # ============================================
             solicitante_encontrado = False
-            fabricante_encontrado = False
-            
+            fabricante_encontrado = False            
             if dados_req:
                 dados_solicitante = dados_req.get("solicitante", {})
-                dados_fabricante = dados_req.get("fabricante", {})
-                
+                dados_fabricante = dados_req.get("fabricante", {})                
                 # Verifica solicitante
                 if dados_solicitante and isinstance(dados_solicitante, dict):
                     nome_solicitante = dados_solicitante.get("Nome", "")
-                    cnpj_solicitante = dados_solicitante.get("CNPJ", "")
-                    
+                    cnpj_solicitante = dados_solicitante.get("CPF/CNPJ", "")                   
                     if nome_solicitante:
                         nome_normalizado = normalizar(nome_solicitante)
-                        # Busca o nome completo ou partes significativas (>= 3 palavras)
-                        palavras = nome_normalizado.split()
-                        if len(palavras) >= 3:
-                            # Busca sequências de 3 palavras consecutivas
-                            for i in range(len(palavras) - 2):
-                                sequencia = " ".join(palavras[i:i+3])
-                                if sequencia in texto_normalizado:
-                                    solicitante_encontrado = True
-                                    break
-                        elif nome_normalizado in texto_normalizado:
-                            solicitante_encontrado = True
-                    
-                    if not solicitante_encontrado and cnpj_solicitante:
-                        # Tenta encontrar o CNPJ (com ou sem formatação)
-                        cnpj_limpo = desformatar_cnpj(cnpj_solicitante)
-                        if cnpj_limpo in texto_normalizado.replace(".", "").replace("/", "").replace("-", ""):
+                        contador = texto_normalizado.count(nome_normalizado)
+                        if contador > 0:
                             solicitante_encontrado = True
                 
                 # Se solicitante não foi encontrado, verifica fabricante
                 if not solicitante_encontrado and dados_fabricante and isinstance(dados_fabricante, dict):
-                    nome_fabricante = dados_fabricante.get("Nome", "")
-                    cnpj_fabricante = dados_fabricante.get("CNPJ", "")
-                    
+                    nome_fabricante = dados_fabricante.get("Nome", "")                    
                     if nome_fabricante:
                         nome_normalizado = normalizar(nome_fabricante)
-                        palavras = nome_normalizado.split()
-                        if len(palavras) >= 3:
-                            for i in range(len(palavras) - 2):
-                                sequencia = " ".join(palavras[i:i+3])
-                                if sequencia in texto_normalizado:
-                                    fabricante_encontrado = True
-                                    break
-                        elif nome_normalizado in texto_normalizado:
-                            fabricante_encontrado = True
-                    
-                    if not fabricante_encontrado and cnpj_fabricante:
-                        cnpj_limpo = desformatar_cnpj(cnpj_fabricante)
-                        if cnpj_limpo in texto_normalizado.replace(".", "").replace("/", "").replace("-", ""):
+                        contador = texto_normalizado.count(nome_normalizado)
+                        if contador > 0:
                             fabricante_encontrado = True
                 
                 # Avaliação da verificação de solicitante/fabricante
@@ -1137,34 +1111,14 @@ class AnalisadorRequerimentos:
                 dados_lab = dados_req.get("lab", {})
                 
                 if dados_lab and isinstance(dados_lab, dict):
-                    nome_lab = dados_lab.get("Nome", "")
-                    cnpj_lab = dados_lab.get("CNPJ", "")
-                    
+                    nome_lab = dados_lab.get("Nome", "")                    
                     # Verifica nome do laboratório
                     if nome_lab:
                         nome_lab_normalizado = normalizar(nome_lab)
-                        palavras = nome_lab_normalizado.split()
-                        
-                        # Busca por partes significativas do nome (>= 3 palavras)
-                        if len(palavras) >= 3:
-                            for i in range(len(palavras) - 2):
-                                sequencia = " ".join(palavras[i:i+3])
-                                if sequencia in texto_normalizado:
-                                    laboratorio_encontrado = True
-                                    resultado["observacoes"].append(f"✅ Laboratório identificado (nome): {nome_lab}")
-                                    break
-                        elif nome_lab_normalizado in texto_normalizado:
+                        contador = texto_normalizado.count(nome_lab_normalizado)
+                        if contador > 0:
                             laboratorio_encontrado = True
-                            resultado["observacoes"].append(f"✅ Laboratório identificado (nome): {nome_lab}")
-                    
-                    # Verifica CNPJ do laboratório
-                    if not laboratorio_encontrado and cnpj_lab:
-                        cnpj_limpo = desformatar_cnpj(cnpj_lab)
-                        texto_limpo = texto_normalizado.replace(".", "").replace("/", "").replace("-", "")
-                        
-                        if cnpj_limpo in texto_limpo:
-                            laboratorio_encontrado = True
-                            resultado["observacoes"].append(f"✅ Laboratório identificado (CNPJ): {cnpj_lab}")
+                            resultado["observacoes"].append(f"✅ Laboratório identificado (nome): {nome_lab}")                                                    
                     
                     if not laboratorio_encontrado:
                         problemas.append(f"Laboratório não identificado: {nome_lab or cnpj_lab}")
@@ -1175,14 +1129,26 @@ class AnalisadorRequerimentos:
             # ============================================
             # 3. LISTAR NORMAS VERIFICADAS (Atos e Resoluções ANATEL)
             # ============================================
-            normas_verificadas = self._extract_normas_from_ract(texto_pdf)
+            ''' normas_verificadas = self._extract_normas_from_ract(texto_pdf)
             
             if normas_verificadas:
                 resultado["observacoes"].append(f"📋 Normas verificadas: {', '.join(sorted(set(normas_verificadas)))}")
                 resultado["normas_verificadas"] = sorted(set(normas_verificadas))
             else:
                 resultado["observacoes"].append("⚠️ Nenhuma norma ANATEL identificada no relatório")
-                resultado["normas_verificadas"] = []
+                resultado["normas_verificadas"] = []'''
+            
+            # ============================================
+            # ARMAZENAR DADOS EXTRAÍDOS PARA RELATÓRIO
+            # ============================================
+            resultado["dados_extraidos"] = {
+                "solicitante_identificado": solicitante_encontrado,
+                "fabricante_identificado": fabricante_encontrado,
+                "laboratorio_identificado": laboratorio_encontrado,
+                "nome_solicitante": dados_req.get("solicitante", {}).get("Nome", "") if dados_req else "",
+                "nome_fabricante": dados_req.get("fabricante", {}).get("Nome", "") if dados_req else "",
+                "nome_laboratorio": dados_req.get("lab", {}).get("Nome", "") if dados_req else ""
+            }
             
             # ============================================
             # DEFINIR STATUS FINAL
@@ -1201,28 +1167,6 @@ class AnalisadorRequerimentos:
             resultado["status"] = STATUS_ERRO
             resultado["observacoes"].append(f"❌ Erro durante análise: {str(e)[:100]}")
             return resultado
-    
-    def _extrair_texto_pdf(self, caminho: Path) -> Optional[str]:
-        """
-        Extrai texto de um arquivo PDF usando PyMuPDF.
-        
-        Args:
-            caminho: Path para o arquivo PDF
-            
-        Returns:
-            String com o texto extraído ou None em caso de erro
-        """
-        try:
-            with fitz.open(caminho) as pdf:
-                texto = ""
-                for pagina in pdf:
-                    texto_pagina = pagina.get_text("text")
-                    if isinstance(texto_pagina, str):
-                        texto += texto_pagina + "\n"
-                return texto if texto.strip() else None
-        except Exception as e:
-            log_erro(f"Erro ao extrair texto do PDF {caminho.name}: {str(e)}")
-            return None
     
     def _analisar_art(self, caminho: Path, resultado: Dict) -> Dict:
         """Análise específica para ART."""
@@ -1483,6 +1427,35 @@ class AnalisadorRequerimentos:
         except Exception as e:
             log_erro(f"Erro ao consultar ocds.json: {str(e)}")
             return nome_ocd_extraido
+
+    def _coletar_todas_palavras_chave_globais(self) -> Tuple[Set[str], Set[str]]:
+        """
+        Coleta todas as palavras-chave encontradas e não encontradas em todos os requerimentos.
+        
+        Returns:
+            Tuple[Set[palavras_encontradas], Set[palavras_nao_encontradas]]
+        """
+        todas_palavras_encontradas = set()
+        todas_palavras_nao_encontradas = set()
+        
+        try:
+            for req in self.resultados_analise:
+                documentos = req.get("documentos_analisados", [])
+                for doc in documentos:
+                    dados_extraidos = doc.get("dados_extraidos", {})
+                    
+                    # Coletar palavras encontradas
+                    palavras_encontradas = dados_extraidos.get("palavras_encontradas", {})
+                    todas_palavras_encontradas.update(palavras_encontradas.keys())
+                    
+                    # Coletar palavras não encontradas
+                    palavras_nao_encontradas = dados_extraidos.get("palavras_nao_encontradas", [])
+                    todas_palavras_nao_encontradas.update(palavras_nao_encontradas)
+                    
+        except Exception as e:
+            log_erro(f"Erro ao coletar palavras-chave globais: {str(e)}")
+        
+        return todas_palavras_encontradas, todas_palavras_nao_encontradas
 
     def _coletar_equipamentos_unicos(self) -> Dict[str, Dict]:
         """Coleta todos os equipamentos únicos encontrados na análise."""
@@ -1937,7 +1910,7 @@ class AnalisadorRequerimentos:
         
         # Conteúdo do relatório LaTeX
         agora = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
-        versao_git = 'v. 0.2.2'  # obter_versao_git()
+        versao_git = 'v. 0.3.1'  # obter_versao_git()
         #utils_dir = Path(__file__).parent.parent / UTILS_DIR
         #classe_path = rf"{Path(__file__).parent.parent / UTILS_DIR / 'IEEEtran'}"
         #latex_content = f"""\\documentclass{{{classe_path}}}
@@ -2055,7 +2028,31 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
             \\item OCD: {nome_ocd_escapado}
             \\item Equipamento(s): {equipamentos_texto}
             \\end{{itemize}}
-            \\subsection{{Dispositivos Normativos}}
+            """
+            
+            # Coletar palavras-chave consolidadas
+            palavras_consolidadas, palavras_nao_encontradas = self._coletar_palavras_chave_consolidadas(req)
+            
+            latex_content += """
+Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste requerimento: 
+
+"""            
+            
+            if palavras_consolidadas:
+                palavras_formatadas = []
+                
+                # Palavras encontradas em azul com contador
+                palavras_ordenadas = sorted(palavras_consolidadas.items(), key=lambda x: x[1], reverse=True)
+                for palavra, contador in palavras_ordenadas:
+                    palavra_escapada = escapar_latex(palavra)
+                    palavras_formatadas.append(f"\\textcolor{{blue}}{{{palavra_escapada} (x{contador})}}")
+                
+                latex_content += " ".join(palavras_formatadas)
+                latex_content += "\n\n"
+            else:
+                latex_content += "\\textit{Nenhuma palavra-chave específica foi encontrada neste requerimento.}\n\n"
+            
+            latex_content += """\\subsection{{Dispositivos Normativos}}
             Abaixo estão listados os dispositivos normativos aplicáveis ao requerimento - dado(s) o(s) tipo(s) de equipamento(s) listado(s) nesse requerimento -, assim como normativos citados que estão revogados, ou que são apenas acessórios (apenas modificam itens de dispositivos aplicáveis) ou que estão obsoletos.
             """           
             # Coletar normas aplicáveis para este requerimento
@@ -2072,7 +2069,7 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
 """
             
             if normas_aplicaveis:
-                latex_content += """\\begin{longtable}{p{2cm}p{5cm}p{9cm}}
+                latex_content += """\\begin{longtable}{p{0.05\\textwidth}p{0.5\\textwidth}p{0.35\\textwidth}}
 \\hline
 \\textbf{Status} & \\textbf{Norma} & \\textbf{Motivador(es)} \\\\
 \\hline
@@ -2140,71 +2137,122 @@ Lista de normativos revogados, ou que apenas modificam um normativo vigente, ide
 
             latex_content += f"""
 \\subsection{{Documentos Processados}}
-
-\\begin{{itemize}}
+Apresenta-se a seguir a lista dos documentos processados neste requerimento, com os respectivos resultados da análise automatizada.
 """
+            
+            # Separar relatórios de ensaio dos outros documentos
+            relatorios_ensaio = []
+            outros_documentos = []
             
             for doc in documentos:
-                nome_completo = escapar_latex(doc.get("nome_arquivo", "N/A"))
-                tipo = escapar_latex(doc.get("tipo", "N/A"))
-                ocorrencias = re.findall(r'\[([^\]]+)\]', nome_completo)
-                nome_item = nome_completo
-                if len(ocorrencias) >= 2:
-                    #nome_item = f"[{tipo}] {ocorrencias[1]}"
-                    nome_item = f"{ocorrencias[0]} ({ocorrencias[1]})"
-                #status = doc.get("status", "N/A")
-                caminho = doc.get("caminho", "N/A")
-                caminho_normalizado = latex_escape_path(caminho)
-
-                # Usar siglas e colorir status
-                '''if status == "CONFORME":
-                    status_colorido = "\\textcolor{green}{C}"
-                elif status == "NAO_CONFORME":
-                    status_colorido = "\\textcolor{red}{NC}"
-                elif status == "INCONCLUSIVO":
-                    status_colorido = "\\textcolor{orange}{I}"
-                elif status == "PROCESSADO":
-                    status_colorido = "\\textcolor{purple}{P}"
-                elif status == "ERRO":
-                    status_colorido = "\\textcolor{red}{E}"
+                if doc.get("tipo") == TIPO_RELATORIO_ENSAIO:
+                    relatorios_ensaio.append(doc)
                 else:
-                    status_colorido = "\\textcolor{red}{E}"'''
+                    outros_documentos.append(doc)
+            
+            # Seção específica para Relatórios de Ensaio (APENAS relatórios de ensaio)
+            if relatorios_ensaio:
+                latex_content += """\\subsubsection{Relatórios de Ensaios}
+Identificação do laboratório, solicitante e fabricante nos relatórios de ensaio processados:
+\\begin{longtable}{p{0.6\\textwidth}p{0.1\\textwidth}p{0.1\\textwidth}p{0.1\\textwidth}}
+\\hline
+\\textbf{Documento} & \\textbf{Laboratório} & \\textbf{Solicitante} & \\textbf{Fabricante} \\\\
+\\hline
+\\endhead
+"""
                 
-                # Extrair informações básicas de dados_extraidos se disponível
-                dados_extraidos = doc.get("dados_extraidos", {})
-
-
-                latex_content += f"    \\item \\href{{file:{caminho_normalizado}}}{{{nome_item}}}\n"# [{status_colorido}]\n"
-            latex_content += """\\end{itemize}
-
-\\subsection{Palavras-chave}
-Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} e \\textcolor{gray}{\\sout{não encontradas}} neste requerimento: 
+                # Processar APENAS relatórios de ensaio na tabela
+                for doc in relatorios_ensaio:
+                    nome_completo = escapar_latex(doc.get("nome_arquivo", "N/A"))
+                    ocorrencias = re.findall(r'\[([^\]]+)\]', nome_completo)
+                    nome_item = nome_completo
+                    if len(ocorrencias) >= 2:
+                        nome_item = f"{ocorrencias[0]} ({ocorrencias[1]})"
+                    
+                    caminho = doc.get("caminho", "N/A")
+                    caminho_normalizado = latex_escape_path(caminho)
+                    nome_item_link = f"\\href{{file:{caminho_normalizado}}}{{{nome_item}}}"
+                    
+                    # Extrair status das avaliações
+                    dados_extraidos = doc.get("dados_extraidos", {})
+                    laboratorio_identificado = dados_extraidos.get("laboratorio_identificado", False)
+                    solicitante_identificado = dados_extraidos.get("solicitante_identificado", False)
+                    fabricante_identificado = dados_extraidos.get("fabricante_identificado", False)
+                    
+                    # Formatar status com símbolos coloridos
+                    status_lab = "\\textbf{\\textcolor{green}{$\\checkmark$}}" if laboratorio_identificado else "\\textcolor{red}{$\\times$}"
+                    status_sol = "\\textbf{\\textcolor{green}{$\\checkmark$}}" if solicitante_identificado else "\\textcolor{red}{$\\times$}"
+                    status_fab = "\\textbf{\\textcolor{green}{$\\checkmark$}}" if fabricante_identificado else "\\textcolor{red}{$\\times$}"
+                    
+                    latex_content += f"{nome_item_link} & {status_lab} & {status_sol} & {status_fab} \\\\ \\hline\n"
+                
+                latex_content += """\\end{longtable}
 
 """
             
-            # Coletar palavras-chave consolidadas
-            palavras_consolidadas, palavras_nao_encontradas = self._coletar_palavras_chave_consolidadas(req)
+            # Seção para outros documentos (NÃO relatórios de ensaio)
+            if outros_documentos:
+                latex_content += """\\subsubsection{Outros Documentos Processados}
+
+\\begin{longtable}{p{0.9\\textwidth}}
+\\hline
+\\textbf{Documento} \\\\
+\\hline
+\\endhead
+"""
+                for doc in outros_documentos:
+                    nome_completo = escapar_latex(doc.get("nome_arquivo", "N/A"))
+                    ocorrencias = re.findall(r'\[([^\]]+)\]', nome_completo)
+                    nome_item = nome_completo
+                    if len(ocorrencias) >= 2:
+                        nome_item = f"{ocorrencias[0]} ({ocorrencias[1]})"
+                    
+                    caminho = doc.get("caminho", "N/A")
+                    caminho_normalizado = latex_escape_path(caminho)
+                    
+                    latex_content += f"\\href{{file:{caminho_normalizado}}}{{{nome_item}}} \\\\ \\hline\n"
+                
+                latex_content += """\\end{longtable}
+
+"""
+        
+        # Coletar todas as palavras-chave globais
+        todas_palavras_encontradas, todas_palavras_nao_encontradas = self._coletar_todas_palavras_chave_globais()
+        
+        # Adicionar seção global de palavras-chave
+        latex_content += f"""
+\\section{{Palavras-chave}}
+Lista completa de todas as palavras-chave identificadas durante a análise dos requerimentos processados.
+
+\\subsection{{Palavras-chave encontradas}}
+"""
+        
+        if todas_palavras_encontradas:
+            palavras_encontradas_ordenadas = sorted(todas_palavras_encontradas)
+            palavras_encontradas_formatadas = []
+            for palavra in palavras_encontradas_ordenadas:
+                palavra_escapada = escapar_latex(palavra)
+                palavras_encontradas_formatadas.append(palavra_escapada)
             
-            if palavras_consolidadas or palavras_nao_encontradas:
-                palavras_formatadas = []
-                
-                # Palavras encontradas em azul com contador
-                if palavras_consolidadas:
-                    palavras_ordenadas = sorted(palavras_consolidadas.items(), key=lambda x: x[1], reverse=True)
-                    for palavra, contador in palavras_ordenadas:
-                        palavra_escapada = escapar_latex(palavra)
-                        palavras_formatadas.append(f"\\textcolor{{blue}}{{{palavra_escapada} (x{contador})}}")
-                
-                # Palavras não encontradas tachadas em cinza
-                if palavras_nao_encontradas:
-                    for palavra in palavras_nao_encontradas:
-                        palavra_escapada = escapar_latex(palavra)
-                        palavras_formatadas.append(f"\\textcolor{{gray}}{{\\sout{{{palavra_escapada}}}}}")
-                
-                latex_content += " ".join(palavras_formatadas)
-                latex_content += "\n\n"
-            else:
-                latex_content += "\\textit{Nenhuma palavra-chave específica foi analisada neste requerimento.}\n\n"
+            latex_content += " ".join(palavras_encontradas_formatadas)
+            latex_content += "\n\n"
+        else:
+            latex_content += "\\textit{Nenhuma palavra-chave foi encontrada nos documentos analisados.}\n\n"
+        
+        latex_content += """\\subsection{Palavras-chave não encontradas}
+"""
+        
+        if todas_palavras_nao_encontradas:
+            palavras_nao_encontradas_ordenadas = sorted(todas_palavras_nao_encontradas)
+            palavras_nao_encontradas_formatadas = []
+            for palavra in palavras_nao_encontradas_ordenadas:
+                palavra_escapada = escapar_latex(palavra)
+                palavras_nao_encontradas_formatadas.append(palavra_escapada)
+            
+            latex_content += " ".join(palavras_nao_encontradas_formatadas)
+            latex_content += "\n\n"
+        else:
+            latex_content += "\\textit{Não há palavras-chave não encontradas.}\n\n"
         
         # Gerar seção de requisitos legais
         equipamentos_unicos = self._coletar_equipamentos_unicos()
@@ -2212,7 +2260,6 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} e \\tex
         
         # Finalizar o documento
         latex_content += f"""
-        \\subsection{{Norma}}
 \\section{{{referencias}}}
 A seguir são apresentados os requisitos legais e normas utilizados como referência na análise dos equipamentos identificados.
 
@@ -2339,9 +2386,9 @@ A seguir são apresentados os requisitos legais e normas utilizados como referê
 
                 for req in requerimentos:
                     log_info(f"  🔍 Analisando: {req}")
-                    processar_requerimentos_excel(req)
-                    #if req in ["25.06969"]:
-                    #    x = 1
+                    if req in ["25.07061"]:
+                        x = 1
+                    processar_requerimentos_excel(req)                    
                     resultado = self._analisar_requerimento_individual(req)
                     if resultado:
                         self.resultados_analise.append(resultado)

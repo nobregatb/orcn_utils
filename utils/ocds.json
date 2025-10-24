@@ -32,7 +32,7 @@
   {
     "cnpj": "32.193.729/0001-18",
     "nome": "PCN DO BRASIL TELECOMUNICAÇÕES",
-    "data_atualizacao": "26/09/2025"
+    "data_atualizacao": "01/10/2025"
   },
   {
     "cnpj": "02.641.663/0001-10",
@@ -67,7 +67,7 @@
   {
     "cnpj": "21.546.034/0001-56",
     "nome": "QC Certificacoes Ltda",
-    "data_atualizacao": "25/09/2025"
+    "data_atualizacao": "26/09/2025"
   },
   {
     "cnpj": "04.848.581/0001-77",
@@ -77,6 +77,21 @@
   {
     "cnpj": "32.215.918/0001-44",
     "nome": "Acert Organismo de Certificacao de Produtos em Sistemas Ltda",
+    "data_atualizacao": "01/10/2025"
+  },
+  {
+    "cnpj": "02.437.460/0003-79",
+    "nome": "Instituto de Pesquisas Eldorado",
+    "data_atualizacao": "01/10/2025"
+  },
+  {
+    "cnpj": "46.054.470/0001-39",
+    "nome": "Brasil Certificacoes Ltda",
+    "data_atualizacao": "08/07/2025"
+  },
+  {
+    "cnpj": "35.983.502/0001-64",
+    "nome": "ABCP CERTIFICADORA DE PRODUTOS LTDA",
     "data_atualizacao": "01/10/2025"
   }
 ]

@@ -177,13 +177,13 @@ def primefaces_click(page, element, description="elemento"):
         else:
             log_erro("Submit falhou")
     except Exception as e:
-        log_erro(f"Erro: {str(e)[:80]}")
+        x = 1 #log_erro(f"Erro: {str(e)[:80]}")
     
     # MÉTODO 3: Force click como último recurso
     try:
-        log_info("🔄 Tentando force click...")
+        #log_info("🔄 Tentando force click...")
         element.click(force=True, timeout=2000)
-        log_info("✅ Force click funcionou")
+        #log_info("✅ Force click funcionou")
         time.sleep(1)
         return True
     except Exception as e:
@@ -192,12 +192,13 @@ def primefaces_click(page, element, description="elemento"):
     return False
 
 
-def preencher_minuta(page):
+def preencher_minuta(page, rad_restrita: bool = True):
     """
     Preenche os formulários de características técnicas e informações adicionais
-    
+
     Args:
         page: Objeto page do Playwright para navegação
+        rad_restrita: Indica se a radiação restrita deve ser preenchida
     """
     try:
         # ========================
@@ -205,7 +206,7 @@ def preencher_minuta(page):
         # ========================
         # Clica no botão de características técnicas
         btn_carac = page.get_by_role("button", name=BOTOES['caracteristicas'])
-        if btn_carac.count() > 0:
+        if btn_carac.count() > 0 and rad_restrita:
             btn_carac.click(no_wait_after=True)            
             # Aguarda carregamento
             page.wait_for_selector(".ui-blockui", state="detached", timeout=15000)
@@ -228,8 +229,6 @@ def preencher_minuta(page):
                     log_erro("❌ Botão salvar características não encontrado")
             except Exception as e:
                 log_erro(f"❌ Erro ao preencher características: {str(e)[:50]}")
-        else:
-            log_erro("❌ Botão 'Características Técnicas' não encontrado")
         
         # ========================
         # PARTE 2: INFORMAÇÕES ADICIONAIS
@@ -845,6 +844,9 @@ def baixar_documentos():
                         with open(os.path.join(json_path, f"{nome_json}.json"), "w", encoding="utf-8") as f:
                             json.dump(dados_json, f, ensure_ascii=False, indent=4)
                         
+                       
+                        #preencher_minuta(page)
+
                         # Navega para anexos
                         anexos_btn = page.get_by_role("button", name=BOTOES['anexos'])
                         

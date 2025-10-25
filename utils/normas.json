@@ -22,7 +22,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato1379",
@@ -38,7 +38,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato14038",
@@ -46,7 +46,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato14040",
@@ -54,7 +54,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato14041",
@@ -62,7 +62,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato14444",
@@ -143,7 +143,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato3151",
@@ -160,7 +160,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato3484",
@@ -171,25 +171,18 @@
     "status": "vigente"
   },
   {
-    "id": "ato3609",
-    "nome": "Norma citada no requerimento 25.07141",
-    "descricao": "Norma identificada durante análise do requerimento 25.07141",
-    "url": "a definir",
-    "status": "a definir"
-  },
-  {
     "id": "ato4077",
-    "nome": "Norma citada no requerimento 25.07165",
-    "descricao": "Norma identificada durante análise do requerimento 25.07165",
-    "url": "a definir",
-    "status": "a definir"
+    "nome": "Ato nº 4077, de 31 de julho de 2020",
+    "descricao": "Procedimento Operacional para Alteração Técnica em Produto para Telecomunicações Homologado por Certificado de Conformidade ou por Declaração de Conformidade",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1446-ato-4077",
+    "status": "vigente"
   },
   {
     "id": "ato4082",
-    "nome": "Norma citada no requerimento 25.07165",
-    "descricao": "Norma identificada durante análise do requerimento 25.07165",
-    "url": "a definir",
-    "status": "a definir"
+    "nome": "Ato nº 4082, de 31 de julho de 2020",
+    "descricao": "Procedimento Operacional que Estabelece os Meios de Exercício de Direitos e de Cumprimento de Obrigações pelos Agentes Envolvidos na Avaliação da Conformidade de Produtos para Telecomunicações",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1450-ato-4082",
+    "status": "vigente"
   },
   {
     "id": "ato4083",
@@ -209,10 +202,10 @@
   },
   {
     "id": "ato4085",
-    "nome": "Norma citada no requerimento 25.07165",
-    "descricao": "Norma identificada durante análise do requerimento 25.07165",
-    "url": "a definir",
-    "status": "a definir"
+    "nome": "Ato nº 4085, de 31 de julho de 2020",
+    "descricao": "Procedimento Operacional para Reconhecimento de Profissional como Especialista na Avaliação da Conformidade de Produtos para Telecomunicações",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1448-ato-4085",
+    "status": "vigente"
   },
   {
     "id": "ato4088",
@@ -224,25 +217,25 @@
   },
   {
     "id": "ato4091",
-    "nome": "Norma citada no requerimento 25.07165",
-    "descricao": "Norma identificada durante análise do requerimento 25.07165",
-    "url": "a definir",
-    "status": "a definir"
+    "nome": "Ato nº 4091, de 31 de julho de 2020",
+    "descricao": "Procedimento Operacional para Seleção, Avaliação e Habilitação de Laboratórios de Ensaios para Fins de Avaliação da Conformidade de Produtos para Telecomunicações",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1452-ato-4091",
+    "status": "vigente"
   },
   {
     "id": "ato418",
     "nome": "Ato nº 418, de 22 de Janeiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato458",
-    "nome": "Norma citada no requerimento 25.07161",
-    "descricao": "Norma identificada durante análise do requerimento 25.07161",
-    "url": "a definir",
-    "status": "a definir"
+    "nome": "Ato nº 458, de 24 de janeiro de 2019",
+    "descricao": "Detalhar os limites de exposição ocupacional e da população em geral a campos elétricos, magnéticos e eletromagnéticos na faixa de radiofrequências entre 8,3 kHz e 300 GHz (CEMRF) gerados por estações transmissoras de radiocomunicação e por terminais de usuários, propostos pela Comissão Internacional de Proteção Contra Radiação Não Ionizante (ICNIRP)",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2019/1237-ato-458",
+    "status": "revogado"
   },
   {
     "id": "ato4776",
@@ -275,7 +268,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato57860",
@@ -289,8 +282,8 @@
     "id": "ato6112",
     "nome": "Norma citada no requerimento 25.06713",
     "descricao": "Norma identificada durante análise do requerimento 25.06713",
-    "url": "a definir",
-    "status": "a definir"
+    "url": "fantasma",
+    "status": "revogado"
   },
   {
     "id": "ato6247",
@@ -314,7 +307,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato7127",
@@ -322,7 +315,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato7128",
@@ -330,14 +323,14 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato713",
     "nome": "Norma citada no requerimento 25.06713",
     "descricao": "Norma identificada durante análise do requerimento 25.06713",
-    "url": "a definir",
-    "status": "a definir"
+    "url": "fantasma",
+    "status": "revogado"
   },
   {
     "id": "ato7133",
@@ -345,7 +338,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato7134",
@@ -353,7 +346,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato7135",
@@ -361,35 +354,35 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato714",
     "nome": "Norma citada no requerimento 25.06713",
     "descricao": "Norma identificada durante análise do requerimento 25.06713",
-    "url": "a definir",
-    "status": "a definir"
+    "url": "fantasma",
+    "status": "revogado"
   },
   {
     "id": "ato715",
     "nome": "Norma citada no requerimento 25.06713",
     "descricao": "Norma identificada durante análise do requerimento 25.06713",
-    "url": "a definir",
-    "status": "a definir"
+    "url": "fantasma",
+    "status": "revogado"
   },
   {
     "id": "ato716",
     "nome": "Norma citada no requerimento 25.06713",
     "descricao": "Norma identificada durante análise do requerimento 25.06713",
-    "url": "a definir",
-    "status": "a definir"
+    "url": "fantasma",
+    "status": "revogado"
   },
   {
     "id": "ato717",
     "nome": "Norma citada no requerimento 25.06713",
     "descricao": "Norma identificada durante análise do requerimento 25.06713",
-    "url": "a definir",
-    "status": "a definir"
+    "url": "fantasma",
+    "status": "revogado"
   },
   {
     "id": "ato7280",
@@ -421,8 +414,8 @@
     "id": "ato8111",
     "nome": "Norma citada no requerimento 25.06713",
     "descricao": "Norma identificada durante análise do requerimento 25.06713",
-    "url": "a definir",
-    "status": "a definir"
+    "url": "fantasma",
+    "status": "revogado"
   },
   {
     "id": "ato8210",
@@ -430,7 +423,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato8385",
@@ -438,7 +431,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato849",
@@ -446,7 +439,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato915",
@@ -462,7 +455,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato933",
@@ -470,7 +463,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato934",
@@ -478,7 +471,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato940",
@@ -486,7 +479,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato941",
@@ -494,7 +487,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato943",
@@ -502,7 +495,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato944",
@@ -510,7 +503,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato946",
@@ -518,7 +511,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato948",
@@ -526,7 +519,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato949",
@@ -534,7 +527,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "ato950",
@@ -562,13 +555,6 @@
     "status": "vigente"
   },
   {
-    "id": "resolucao1630",
-    "nome": "Norma citada no requerimento 25.07106",
-    "descricao": "Norma identificada durante análise do requerimento 25.07106",
-    "url": "a definir",
-    "status": "a definir"
-  },
-  {
     "id": "resolucao323",
     "nome": "Resolução nº 323, de 7 de novembro de 2002",
     "descricao": "Norma para Certificação de Produtos para Telecomunicações",
@@ -582,7 +568,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "resolucao680",
@@ -610,10 +596,11 @@
   },
   {
     "id": "resolucao718",
-    "nome": "Norma citada no requerimento 25.07171",
-    "descricao": "Norma identificada durante análise do requerimento 25.07171",
-    "url": "a definir",
-    "status": "a definir"
+    "nome": "Resolução nº 718, de 07 de fevereiro de 2020",
+    "descricao": "Altera o Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita e revoga o Regulamento para Uso de Femtocélulas em Redes do Serviço Móvel Pessoal, do Serviço Móvel Especializado e do Serviço de Comunicação Multimídia",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2020/1380-resolucao-718",
+	"entidade": "Anatel",
+    "status": "acessório"
   },
   {
     "id": "resolucao721",
@@ -621,7 +608,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "resolucao748",
@@ -629,7 +616,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "resolucao752",
@@ -637,7 +624,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "resolucao757",
@@ -653,7 +640,7 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "obsoleto"
+    "status": "revogado"
   },
   {
     "id": "resolucao772",

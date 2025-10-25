@@ -591,8 +591,8 @@ class AnalisadorRequerimentos:
         
         requerimentos = []
         for item in self.pasta_base.iterdir():
-            #if item.is_dir() and item.name.startswith("_"):
-                requerimentos.append(item.name)
+            if item.is_dir() and item.name.startswith("_"):
+                requerimentos.append(item.name[1:])
         
         return sorted(requerimentos)
 
@@ -1359,8 +1359,8 @@ class AnalisadorRequerimentos:
         """Analisa todos os documentos de um requerimento específico."""
         tempo_inicio_req = datetime.now()
         #log_info(f"Iniciando análise do requerimento: {nome_requerimento}")
-        
-        pasta_requerimento = self.pasta_base / nome_requerimento
+        pasta_req = "_" + nome_requerimento
+        pasta_requerimento = self.pasta_base / pasta_req
         if not pasta_requerimento.exists():
             log_erro(f"Pasta do requerimento não encontrada: {pasta_requerimento}")
             return {}
@@ -1690,7 +1690,7 @@ class AnalisadorRequerimentos:
                             
                             # Verificar se a norma não existe no arquivo normas.json
                             if norma_id not in normas_existentes_ids and norma_id not in novas_normas:
-                                novas_normas[norma_id] = self._criar_entrada_norma(norma_id, numero_requerimento)
+                                novas_normas[norma_id] = self.acessorio(norma_id, numero_requerimento)
                                 log_info(f"Nova norma identificada: {norma_id} (do requerimento {numero_requerimento})")
             
             # Atualizar arquivo normas.json se há normas novas
@@ -1813,9 +1813,10 @@ class AnalisadorRequerimentos:
         return {
             "id": norma_id,
             "nome": f"Norma citada no requerimento {numero_requerimento}",
-            "descricao": f"Norma identificada durante análise do requerimento {numero_requerimento}",
+            "descricao": f"Norma precisando de definição detalhada. Citada no requerimento {numero_requerimento}.",
             "url": "a definir",
-            "status": "a definir"
+            "entidade": "Anatel",
+            "status": "revogado"
         }
 
     def _atualizar_arquivo_normas(self, novas_normas: Dict) -> bool:
@@ -2154,7 +2155,7 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
             for norma_id in normas_verificadas:
                 detalhes_norma = self._obter_detalhes_norma(norma_id)
                 status_norma = detalhes_norma.get('status', '').lower()
-                if status_norma and (status_norma in ['revogada', 'revogado', 'acessório', 'acessória', 'obsoleta', 'obsoleto']):
+                if status_norma and (status_norma in ['revogada', 'revogado', 'acessório', 'acessorio', 'acessoria', 'acessória', 'obsoleta', 'obsoleto']):
                     normativos_revogados.append({
                         'id': norma_id,
                         'nome': detalhes_norma['nome'],

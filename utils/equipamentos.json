@@ -481,6 +481,12 @@
   },
   {
     "escopo": "tab_requisitos",
+    "id": "EQ078",
+    "nome": "Equipamentos de Radiocomunicação de Radiação Restrita",
+    "categoria": 2
+  },  
+  {
+    "escopo": "tab_requisitos",
     "id": "EQ079",
     "nome": "Excitador de RF (Radiodifusão)",
     "categoria": 2

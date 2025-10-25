@@ -15,8 +15,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any, Union
 import pandas as pd
 from openpyxl import load_workbook
-from core.const import TAB_REQUERIMENTOS
-
+from core.const import EXCEL_PATH, REQUERIMENTOS_PATH, TAB_REQUERIMENTOS, EXCEL_SHEET_NAME
 # Imports opcionais para funcionalidades específicas
 
 
@@ -487,7 +486,7 @@ def processar_requerimentos_excel(num_req: str) -> None:
         FileNotFoundError: Se arquivos necessários não forem encontrados
         ValueError: Se formato do requerimento for inválido
     """    
-    from core.const import EXCEL_PATH, REQUERIMENTOS_PATH, TAB_REQUERIMENTOS, EXCEL_SHEET_NAME
+    
     
     # Validar se arquivos e diretórios existem
     if not os.path.exists(EXCEL_PATH):
@@ -552,7 +551,8 @@ def processar_requerimentos_excel(num_req: str) -> None:
                     continue
                 
                 # Ler arquivo JSON do requerimento
-                arquivo_json = os.path.join(REQUERIMENTOS_PATH, req, f"{req}.json")
+                pasta_req = "_" + req
+                arquivo_json = os.path.join(REQUERIMENTOS_PATH, pasta_req, f"{req}.json")
                 
                 if not os.path.exists(arquivo_json):
                     log_info(f"Aviso: Arquivo JSON não encontrado: {arquivo_json}")

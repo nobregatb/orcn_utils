@@ -209,7 +209,7 @@ def _gerar_botoes_pdf():
     for botao in botoes_especiais:
         if botao not in botoes:
             botoes.append(botao)
-    
+    botoes = ['Certificado de Conformidade Técnica', 'Relatório de Avaliação da Conformidade - RACT', 'Manual do Produto', 'Relatório de Ensaio', 'Fotos do produto', 'Selo ANATEL', 'Fotos internas']
     return botoes
 
 BOTOES_PDF = _gerar_botoes_pdf()

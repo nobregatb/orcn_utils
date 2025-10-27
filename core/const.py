@@ -22,6 +22,7 @@ REQUERIMENTOS_DIR_INBOX = "req_inbox"
 REQUERIMENTOS_DIR_OUTBOX = "req_outbox"
 REQUERIMENTOS_DIR_REPORT = "req_report"
 UTILS_DIR = "utils"
+DOWNLOAD_LOG_FILENAME = "download_status.json"
 
 # Caminhos completos para planilha e requerimentos
 EXCEL_PATH = rf"{TBN_FILES_FOLDER}\ORCN.xlsx"

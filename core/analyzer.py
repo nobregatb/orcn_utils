@@ -187,7 +187,8 @@ class CCTAnalyzerIntegrado:
                 equipamentos_data = json.load(f)
             
             content_normalizado = normalizar(content)
-            
+            content_normalizado = content_normalizado.replace("\n", " ")
+            content_normalizado = re.sub(r'\s+', ' ', content_normalizado).strip()
             for equipamento in equipamentos_data:
                 if isinstance(equipamento, dict) and 'nome' in equipamento:
                     nome_equipamento = equipamento['nome']
@@ -1690,7 +1691,7 @@ class AnalisadorRequerimentos:
                             
                             # Verificar se a norma não existe no arquivo normas.json
                             if norma_id not in normas_existentes_ids and norma_id not in novas_normas:
-                                novas_normas[norma_id] = self.acessorio(norma_id, numero_requerimento)
+                                novas_normas[norma_id] = self._criar_entrada_norma(norma_id, numero_requerimento)
                                 log_info(f"Nova norma identificada: {norma_id} (do requerimento {numero_requerimento})")
             
             # Atualizar arquivo normas.json se há normas novas
@@ -1812,7 +1813,7 @@ class AnalisadorRequerimentos:
         """Cria uma nova entrada de norma com os parâmetros solicitados"""
         return {
             "id": norma_id,
-            "nome": f"Norma citada no requerimento {numero_requerimento}",
+            "nome": f"Norma ({norma_id}) citada no requerimento {numero_requerimento}",
             "descricao": f"Norma precisando de definição detalhada. Citada no requerimento {numero_requerimento}.",
             "url": "a definir",
             "entidade": "Anatel",
@@ -2433,8 +2434,9 @@ A seguir são apresentados os requisitos legais e normas utilizados como referê
 
                 for req in requerimentos:
                     log_info(f"  🔍 Analisando: {req}")
-                    if req in ["25.07061"]:
-                        x = 1
+                    # só para debug
+                    if req not in ["25.07053"]:
+                         continue
                     processar_requerimentos_excel(req)                    
                     resultado = self._analisar_requerimento_individual(req)
                     if resultado:

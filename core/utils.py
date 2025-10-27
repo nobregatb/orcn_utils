@@ -15,7 +15,8 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any, Union
 import pandas as pd
 from openpyxl import load_workbook
-from core.const import EXCEL_PATH, REQUERIMENTOS_PATH, TAB_REQUERIMENTOS, EXCEL_SHEET_NAME
+from core.const import EXCEL_PATH, REQUERIMENTOS_PATH, TAB_REQUERIMENTOS, EXCEL_SHEET_NAME, DOWNLOAD_LOG_FILENAME
+from core.log_print import log_info, log_erro
 # Imports opcionais para funcionalidades específicas
 
 
@@ -271,7 +272,7 @@ def get_profile_dir() -> str:
 def req_para_fullpath(req: str) -> str:
     """Converte número do requerimento (num/ano) para caminho completo da pasta"""
     num, ano = req.split("/")
-    requerimento = rf"{REQUERIMENTOS_DIR_INBOX}\{ano}.{num}"
+    requerimento = rf"{REQUERIMENTOS_DIR_INBOX}\_{ano}.{num}"
     full_path = os.path.join(get_files_folder(), requerimento)
     return full_path
 
@@ -413,7 +414,7 @@ def extrair_normas_por_padrao(content: str) -> List[str]:
     normas = []
     custom_patterns = ['ATO', 'RESOLUÇÃO']
     
-    normas_section = limpar_texto(content, palavras=["Nº","N°","NO","nº","n°","no","de","do", "da", "anatel"], simbolos=["."])
+    normas_section = limpar_texto(content, palavras=["contato","Contato","Nº","N°","NO","nº","n°","no","de","do", "da", "anatel"], simbolos=["."])
 
     lines = [
         subcampo.strip()
@@ -708,3 +709,196 @@ def _mapear_dados_json_para_excel(req_data: Dict[str, Any]) -> Optional[List[Any
     except Exception as e:
         log_info(f"Erro ao mapear dados JSON: {e}")
         return None
+
+
+# ================================
+# FUNÇÕES DE CONTROLE DE LOG DE DOWNLOADS
+# ================================
+
+def get_download_log_path() -> str:
+    """Retorna o caminho completo para o arquivo de log de downloads."""
+    files_folder = get_files_folder()
+    return os.path.join(files_folder, DOWNLOAD_LOG_FILENAME)
+
+
+def carregar_log_downloads() -> Dict[str, Dict]:
+    """
+    Carrega o log de status dos downloads dos requerimentos.
+    
+    Returns:
+        Dict[str, Dict]: Dicionário com status dos downloads por requerimento.
+                        Formato: {
+                            "requerimento": {
+                                "status": "completed" | "in_progress" | "failed",
+                                "timestamp": "2025-01-01 10:30:00",
+                                "arquivos_baixados": 5,
+                                "erro": "mensagem de erro (se houver)"
+                            }
+                        }
+    """
+    log_path = get_download_log_path()
+    log_data = carregar_json(log_path)
+    return log_data if log_data else {}
+
+
+def salvar_log_downloads(log_data: Dict[str, Dict]) -> bool:
+    """
+    Salva o log de status dos downloads dos requerimentos.
+    
+    Args:
+        log_data: Dicionário com status dos downloads por requerimento
+        
+    Returns:
+        bool: True se salvou com sucesso, False caso contrário
+    """
+    log_path = get_download_log_path()
+    return salvar_json(log_data, log_path, indent=2)
+
+
+def requerimento_ja_baixado(requerimento: str) -> bool:
+    """
+    Verifica se um requerimento já foi baixado com sucesso.
+    
+    Args:
+        requerimento: Número do requerimento no formato "num/ano"
+        
+    Returns:
+        bool: True se o requerimento já foi baixado completamente
+    """
+    log_data = carregar_log_downloads()
+    req_status = log_data.get(requerimento, {})
+    return req_status.get("status") == "completed"
+
+
+def marcar_requerimento_em_progresso(requerimento: str) -> bool:
+    """
+    Marca um requerimento como em progresso no log de downloads.
+    
+    Args:
+        requerimento: Número do requerimento no formato "num/ano"
+        
+    Returns:
+        bool: True se marcou com sucesso
+    """
+    log_data = carregar_log_downloads()
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    log_data[requerimento] = {
+        "status": "in_progress",
+        "timestamp": timestamp,
+        "arquivos_baixados": 0
+    }
+    
+    return salvar_log_downloads(log_data)
+
+
+def marcar_requerimento_concluido(requerimento: str, arquivos_baixados: int) -> bool:
+    """
+    Marca um requerimento como concluído no log de downloads.
+    
+    Args:
+        requerimento: Número do requerimento no formato "num/ano"
+        arquivos_baixados: Quantidade de arquivos baixados
+        
+    Returns:
+        bool: True se marcou com sucesso
+    """
+    log_data = carregar_log_downloads()
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    log_data[requerimento] = {
+        "status": "completed",
+        "timestamp": timestamp,
+        "arquivos_baixados": arquivos_baixados
+    }
+    
+    return salvar_log_downloads(log_data)
+
+
+def marcar_requerimento_com_erro(requerimento: str, erro: str) -> bool:
+    """
+    Marca um requerimento com erro no log de downloads.
+    
+    Args:
+        requerimento: Número do requerimento no formato "num/ano"
+        erro: Mensagem de erro
+        
+    Returns:
+        bool: True se marcou com sucesso
+    """
+    log_data = carregar_log_downloads()
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    log_data[requerimento] = {
+        "status": "failed",
+        "timestamp": timestamp,
+        "erro": erro,
+        "arquivos_baixados": 0
+    }
+    
+    return salvar_log_downloads(log_data)
+
+
+def limpar_log_downloads_se_completo(requerimentos_processados: List[str]) -> bool:
+    """
+    Limpa o log de downloads se todos os requerimentos da lista foram concluídos.
+    
+    Args:
+        requerimentos_processados: Lista de requerimentos que foram processados na sessão atual
+        
+    Returns:
+        bool: True se o log foi limpo (todos concluídos), False caso contrário
+    """
+    log_data = carregar_log_downloads()
+    
+    # Verifica se todos os requerimentos processados foram concluídos
+    todos_concluidos = True
+    for req in requerimentos_processados:
+        req_status = log_data.get(req, {})
+        if req_status.get("status") != "completed":
+            todos_concluidos = False
+            break
+    
+    if todos_concluidos and requerimentos_processados:
+        # Limpa o log
+        log_path = get_download_log_path()
+        try:
+            if os.path.exists(log_path):
+                #os.remove(log_path)
+                log_info("🗑️ Log de downloads limpo - todos os requerimentos foram processados com sucesso")
+            return True
+        except Exception as e:
+            log_erro(f"Erro ao limpar log de downloads: {e}")
+            return False
+    
+    return False
+
+
+def obter_requerimentos_pendentes(todos_requerimentos: List[str]) -> List[str]:
+    """
+    Filtra lista de requerimentos removendo os que já foram baixados com sucesso.
+    
+    Args:
+        todos_requerimentos: Lista com todos os requerimentos encontrados
+        
+    Returns:
+        List[str]: Lista apenas com requerimentos que ainda precisam ser baixados
+    """
+    requerimentos_pendentes = []
+    requerimentos_ja_baixados = []
+    
+    for req in todos_requerimentos:
+        if requerimento_ja_baixado(req):
+            requerimentos_ja_baixados.append(req)
+        else:
+            requerimentos_pendentes.append(req)
+    
+    if requerimentos_ja_baixados:
+        log_info(f"✅ {len(requerimentos_ja_baixados)} requerimento(s) já baixado(s): {', '.join(requerimentos_ja_baixados)}")
+    
+    if requerimentos_pendentes:
+        log_info(f"⏳ {len(requerimentos_pendentes)} requerimento(s) pendente(s): {', '.join(requerimentos_pendentes)}")
+    else:
+        log_info("✅ Todos os requerimentos já foram baixados!")
+    
+    return requerimentos_pendentes

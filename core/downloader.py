@@ -17,7 +17,10 @@ from core.const import (
 )
 from core.utils import (
     is_bundled, get_files_folder, get_profile_dir, req_para_fullpath, 
-    criar_pasta_se_nao_existir, carregar_json, salvar_json
+    criar_pasta_se_nao_existir, carregar_json, salvar_json,
+    requerimento_ja_baixado, marcar_requerimento_em_progresso,
+    marcar_requerimento_concluido, marcar_requerimento_com_erro,
+    obter_requerimentos_pendentes, limpar_log_downloads_se_completo
 )
 
 
@@ -50,7 +53,7 @@ def criar_json_dos_novos_requerimentos(rows):
                     nome_pasta = os.path.basename(pasta)
                     dados_json = {}
                     dados_json["requerimento"] = requerimento_json
-                    with open(os.path.join(pasta, f"{nome_pasta}.json"), "w", encoding="utf-8") as f:
+                    with open(os.path.join(pasta, f"{nome_pasta[1:]}.json"), "w", encoding="utf-8") as f:
                         json.dump(dados_json, f, ensure_ascii=False, indent=4)
         except Exception as e:
             log_erro(f"Erro ao ler linha {i}: {str(e)[:50]}")
@@ -636,6 +639,15 @@ def baixar_documentos():
     try:
         log_info(MENSAGENS_STATUS['iniciando_automacao'])
         
+        # Mostra informações do log de downloads se existir
+        from core.utils import carregar_log_downloads
+        log_downloads = carregar_log_downloads()
+        if log_downloads:
+            log_info(f"📋 Log de downloads encontrado com {len(log_downloads)} requerimento(s) registrado(s)")
+            concluidos = sum(1 for status in log_downloads.values() if status.get('status') == 'completed')
+            if concluidos > 0:
+                log_info(f"✅ {concluidos} requerimento(s) já baixado(s) com sucesso")
+        
         with sync_playwright() as p:
             browser = p.chromium.launch_persistent_context(
                 PROFILE_DIR,
@@ -666,6 +678,7 @@ def baixar_documentos():
             # Cria um dicionário com os dados de cada linha ANTES de iterar
             log_info("📋 Mapeando requerimentos...")
             linhas_dados = []
+            todos_requerimentos = []
             
             for i, row in enumerate(reversed(rows), start=1):
                 try:
@@ -675,6 +688,7 @@ def baixar_documentos():
                         continue
                     
                     requerimento = cols[1].inner_text().strip()
+                    todos_requerimentos.append(requerimento)
                     
                     # Armazena os dados da linha
                     linhas_dados.append({
@@ -686,8 +700,26 @@ def baixar_documentos():
                     log_erro(f"Erro ao ler linha {i}: {str(e)[:50]}")
 
             log_info(f"✅ {len(linhas_dados)} requerimentos mapeados")
+            
+            # Filtra requerimentos que já foram baixados com sucesso
+            requerimentos_pendentes = obter_requerimentos_pendentes(todos_requerimentos)
+            
+            # Se não há requerimentos pendentes, finaliza
+            if not requerimentos_pendentes:
+                log_info("🎉 Todos os requerimentos já foram baixados com sucesso!")
+                limpar_log_downloads_se_completo(todos_requerimentos)
+                log_info("Pressione ENTER para encerrar...")
+                input()
+                browser.close()
+                return
+            
+            # Filtra linhas_dados para incluir apenas requerimentos pendentes
+            linhas_dados = [linha for linha in linhas_dados if linha['requerimento'] in requerimentos_pendentes]
+            log_info(f"⏳ {len(linhas_dados)} requerimento(s) serão processados")
 
             # Processa cada linha dos dados salvos
+            requerimentos_processados = []
+            
             for linha_info in linhas_dados:
                 i = linha_info['indice']
                 requerimento = linha_info['requerimento']
@@ -695,6 +727,9 @@ def baixar_documentos():
                 log_info(SEPARADOR_LINHA)
                 log_info(f"▶️ Requerimento {i}: {requerimento}")
                 log_info(SEPARADOR_LINHA)
+                
+                # Marca o requerimento como em progresso no log
+                marcar_requerimento_em_progresso(requerimento)
                 
                 # IMPORTANTE: Recarrega a linha atual usando busca manual
                 row_atual = None
@@ -753,96 +788,157 @@ def baixar_documentos():
                         page.goto(detalhes_requerimento)
                         
                         # Recupera dados do solicitante, fabricante, laboratório e OCD
+                        log_info("📊 Coletando dados adicionais do requerimento...")
                         solicitante_id = "formAnalise:output-solicitante-requerimento:output-solicitante-requerimento"
                         selector = "#" + solicitante_id.replace(":", "\\:")
-                        dados_solicitante = page.eval_on_selector(selector, """
-                            (t) => {
-                                const linhas = Array.from(t.querySelectorAll("tr"));
-                                const resultado = {};
-                                for (const tr of linhas) {
-                                    const celulas = tr.querySelectorAll("td");
-                                    if (celulas.length === 2) {
-                                        const chave = celulas[0].innerText.trim().replace(/:$/, '');
-                                        const valor = celulas[1].innerText.trim();
-                                        resultado[chave] = valor;
+                        try:
+                            dados_solicitante = page.eval_on_selector(selector, """
+                                (t) => {
+                                    const linhas = Array.from(t.querySelectorAll("tr"));
+                                    const resultado = {};
+                                    for (const tr of linhas) {
+                                        const celulas = tr.querySelectorAll("td");
+                                        if (celulas.length === 2) {
+                                            const chave = celulas[0].innerText.trim().replace(/:$/, '');
+                                            const valor = celulas[1].innerText.trim();
+                                            resultado[chave] = valor;
+                                        }
                                     }
+                                    return resultado;
                                 }
-                                return resultado;
-                            }
-                            """)
+                                """)
+                            log_info(f"✅ Dados do solicitante coletados: {len(dados_solicitante)} campo(s)")
+                        except Exception as e:
+                            log_erro(f"❌ Erro ao coletar dados do solicitante: {str(e)[:50]}")
+                            dados_solicitante = {}
                         
                         fabricante_id = "formAnalise:output-fabricante-requerimento:output-fabricante-requerimento"
                         selector = "#" + fabricante_id.replace(":", "\\:")
-                        dados_fabricante = page.eval_on_selector(selector, """
-                            (t) => {
-                                const linhas = Array.from(t.querySelectorAll("tr"));
-                                const resultado = {};
-                                for (const tr of linhas) {
-                                    const celulas = tr.querySelectorAll("td");
-                                    if (celulas.length === 2) {
-                                        const chave = celulas[0].innerText.trim().replace(/:$/, '');
-                                        const valor = celulas[1].innerText.trim();
-                                        resultado[chave] = valor;
+                        try:
+                            dados_fabricante = page.eval_on_selector(selector, """
+                                (t) => {
+                                    const linhas = Array.from(t.querySelectorAll("tr"));
+                                    const resultado = {};
+                                    for (const tr of linhas) {
+                                        const celulas = tr.querySelectorAll("td");
+                                        if (celulas.length === 2) {
+                                            const chave = celulas[0].innerText.trim().replace(/:$/, '');
+                                            const valor = celulas[1].innerText.trim();
+                                            resultado[chave] = valor;
+                                        }
                                     }
+                                    return resultado;
                                 }
-                                return resultado;
-                            }
-                            """)
+                                """)
+                            log_info(f"✅ Dados do fabricante coletados: {len(dados_fabricante)} campo(s)")
+                        except Exception as e:
+                            log_erro(f"❌ Erro ao coletar dados do fabricante: {str(e)[:50]}")
+                            dados_fabricante = {}
                         
                         lab_id = "formAnalise:output-laboratorio-requerimento:output-laboratorio-requerimento"
                         selector = "#" + lab_id.replace(":", "\\:")
-                        dados_lab = page.eval_on_selector(selector, """
-                            (t) => {
-                                const linhas = Array.from(t.querySelectorAll("tr"));
-                                const resultado = {};
-                                for (const tr of linhas) {
-                                    const celulas = tr.querySelectorAll("td");
-                                    if (celulas.length === 2) {
-                                        const chave = celulas[0].innerText.trim().replace(/:$/, '');
-                                        const valor = celulas[1].innerText.trim();
-                                        resultado[chave] = valor;
+                        try:
+                            dados_lab = page.eval_on_selector(selector, """
+                                (t) => {
+                                    const linhas = Array.from(t.querySelectorAll("tr"));
+                                    const resultado = {};
+                                    for (const tr of linhas) {
+                                        const celulas = tr.querySelectorAll("td");
+                                        if (celulas.length === 2) {
+                                            const chave = celulas[0].innerText.trim().replace(/:$/, '');
+                                            const valor = celulas[1].innerText.trim();
+                                            resultado[chave] = valor;
+                                        }
                                     }
+                                    return resultado;
                                 }
-                                return resultado;
-                            }
-                            """)	
+                                """)
+                            log_info(f"✅ Dados do laboratório coletados: {len(dados_lab)} campo(s)")
+                        except Exception as e:
+                            log_erro(f"❌ Erro ao coletar dados do laboratório: {str(e)[:50]}")
+                            dados_lab = {}	
                         
                         ocd_id = 'formAnalise:j_idt202'
                         selector = "#" + ocd_id.replace(":", "\\:")
-                        dados_ocd = page.eval_on_selector(selector, """
-                            (t) => {
-                                const linhas = Array.from(t.querySelectorAll("tr"));
-                                const resultado = {};
-                                for (const tr of linhas) {
-                                    const celulas = tr.querySelectorAll("td");
-                                    if (celulas.length === 2) {
-                                        const chave = celulas[0].innerText.trim().replace(/:$/, '');
-                                        const valor = celulas[1].innerText.trim();
-                                        resultado[chave] = valor;
+                        try:
+                            dados_ocd = page.eval_on_selector(selector, """
+                                (t) => {
+                                    const linhas = Array.from(t.querySelectorAll("tr"));
+                                    const resultado = {};
+                                    for (const tr of linhas) {
+                                        const celulas = tr.querySelectorAll("td");
+                                        if (celulas.length === 2) {
+                                            const chave = celulas[0].innerText.trim().replace(/:$/, '');
+                                            const valor = celulas[1].innerText.trim();
+                                            resultado[chave] = valor;
+                                        }
                                     }
+                                    return resultado;
                                 }
-                                return resultado;
-                            }
-                            """)
+                                """)
+                            log_info(f"✅ Dados do OCD coletados: {len(dados_ocd)} campo(s)")
+                        except Exception as e:
+                            log_erro(f"❌ Erro ao coletar dados do OCD: {str(e)[:50]}")
+                            dados_ocd = {}
                         
                         # Salva os dados coletados no JSON do requerimento
                         json_path = req_para_fullpath(requerimento)                
                         nome_json = Path(json_path).name
                         
-                        with open(os.path.join(json_path, f"{nome_json}.json"), "r", encoding="utf-8") as f:
-                            dados_json = json.load(f)
+                        # Remove underscore inicial para manter consistência com criação inicial
+                        nome_arquivo_json = nome_json[1:] if nome_json.startswith('_') else nome_json
+                        caminho_json = os.path.join(json_path, f"{nome_arquivo_json}.json")
                         
+                        # Verifica se o JSON existe, se não, cria um básico
+                        if not os.path.exists(caminho_json):
+                            log_info(f"📝 JSON não encontrado, criando arquivo básico: {nome_arquivo_json}.json")
+                            # Cria estrutura básica do JSON
+                            dados_json = {
+                                "requerimento": {
+                                    "num_req": requerimento,
+                                    "status": "Em Análise"
+                                }
+                            }
+                            try:
+                                with open(caminho_json, "w", encoding="utf-8") as f:
+                                    json.dump(dados_json, f, ensure_ascii=False, indent=4)
+                            except Exception as e:
+                                log_erro(f"❌ Erro ao criar JSON básico: {str(e)[:50]}")
+                                continue
+                        
+                        # Carrega o JSON existente ou recém-criado
+                        try:
+                            with open(caminho_json, "r", encoding="utf-8") as f:
+                                dados_json = json.load(f)
+                        except Exception as e:
+                            log_erro(f"❌ Erro ao ler JSON: {str(e)[:50]}")
+                            continue
+                        
+                        # Atualiza os dados coletados
+                        dados_atualizados = False
                         if dados_ocd != {}:
                             dados_json["ocd"] = dados_ocd
+                            dados_atualizados = True
                         if dados_lab != '':
                             dados_json["lab"] = dados_lab
+                            dados_atualizados = True
                         if dados_fabricante != '':
                             dados_json["fabricante"] = dados_fabricante
+                            dados_atualizados = True
                         if dados_solicitante != '':
                             dados_json["solicitante"] = dados_solicitante
+                            dados_atualizados = True
 
-                        with open(os.path.join(json_path, f"{nome_json}.json"), "w", encoding="utf-8") as f:
-                            json.dump(dados_json, f, ensure_ascii=False, indent=4)
+                        # Salva apenas se houve atualizações
+                        if dados_atualizados:
+                            try:
+                                with open(caminho_json, "w", encoding="utf-8") as f:
+                                    json.dump(dados_json, f, ensure_ascii=False, indent=4)
+                                log_info(f"✅ Dados adicionais salvos no JSON: {nome_arquivo_json}.json")
+                            except Exception as e:
+                                log_erro(f"❌ Erro ao salvar JSON: {str(e)[:50]}")
+                        else:
+                            log_info("ℹ️ Nenhum dado adicional coletado para salvar")
                         
                        
                         #preencher_minuta(page)
@@ -869,10 +965,23 @@ def baixar_documentos():
                                 tempo_primeiro_download
                             )
                             
+                            # Marca o requerimento como concluído no log
+                            if pdfs_baixados > 0:
+                                marcar_requerimento_concluido(requerimento, pdfs_baixados)
+                                requerimentos_processados.append(requerimento)
+                                log_info(f"✅ Requerimento {requerimento} marcado como concluído ({pdfs_baixados} arquivos)")
+                            else:
+                                marcar_requerimento_com_erro(requerimento, "Nenhum arquivo foi baixado")
+                                log_info(f"⚠️ Requerimento {requerimento} marcado com erro (0 arquivos baixados)")
+                            
                         except Exception as e:
-                            log_erro(f"Erro ao acessar anexos: {str(e)}")
+                            erro_msg = f"Erro ao acessar anexos: {str(e)}"
+                            log_erro(erro_msg)
+                            marcar_requerimento_com_erro(requerimento, erro_msg)
                 else:
-                    log_info("⚠️ iframe_element não encontrado, pulando...")
+                    erro_msg = "iframe_element não encontrado"
+                    log_info(f"⚠️ {erro_msg}, pulando...")
+                    marcar_requerimento_com_erro(requerimento, erro_msg)
                     continue
 
                 # Volta para a lista
@@ -881,6 +990,10 @@ def baixar_documentos():
             log_info(SEPARADOR_LINHA)
             log_info("✅ PROCESSAMENTO CONCLUÍDO!")
             log_info(SEPARADOR_LINHA)
+            
+            # Verifica se todos os requerimentos foram processados com sucesso e limpa o log
+            limpar_log_downloads_se_completo(requerimentos_processados)
+            
             log_info("Pressione ENTER para encerrar...")
             input()
             browser.close()

@@ -19,10 +19,10 @@
   {
     "id": "ato1326",
     "nome": "Ato nº 1326, de 9 de Fevereiro de 2023",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
-    "url": "",
+    "descricao": "Requisitos Técnicos para Avaliação da Conformidade dos produtos com Interface Usuário–Rede e Terminais do Serviço Telefônico Fixo Comutado",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/1867-ato-1326",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "vigente"
   },
   {
     "id": "ato1379",
@@ -63,14 +63,6 @@
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
-  },
-  {
-    "id": "ato14444",
-    "nome": "Norma citada, inicialmente, no requerimento 25.07053",
-    "descricao": "Norma inexistente",
-    "url": "Norma inexistente",
-    "entidade": "Anatel",
-    "status": "erro"
   },
   {
     "id": "ato14448",
@@ -279,13 +271,6 @@
     "status": "vigente"
   },
   {
-    "id": "ato6112",
-    "nome": "Norma citada no requerimento 25.06713",
-    "descricao": "Norma identificada durante análise do requerimento 25.06713",
-    "url": "fantasma",
-    "status": "revogado"
-  },
-  {
     "id": "ato6247",
     "nome": "Ato nº 6247, de 05 de maio de 2022",
     "descricao": " Designar a Moderna Tecnologia Ltda, regularmente inscrito no CNPJ sob nº 44.458.010/0001-40, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 04/2022 (SEI nº 8325756), as funções de Organismo de Certificação Designado - OCD.",
@@ -326,13 +311,6 @@
     "status": "revogado"
   },
   {
-    "id": "ato713",
-    "nome": "Norma citada no requerimento 25.06713",
-    "descricao": "Norma identificada durante análise do requerimento 25.06713",
-    "url": "fantasma",
-    "status": "revogado"
-  },
-  {
     "id": "ato7133",
     "nome": "Ato nº 7133, de 12 de Novembro de 2019",
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
@@ -354,34 +332,6 @@
     "descricao": "Requisito técnico conforme documento oficial da Anatel.",
     "url": "",
     "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato714",
-    "nome": "Norma citada no requerimento 25.06713",
-    "descricao": "Norma identificada durante análise do requerimento 25.06713",
-    "url": "fantasma",
-    "status": "revogado"
-  },
-  {
-    "id": "ato715",
-    "nome": "Norma citada no requerimento 25.06713",
-    "descricao": "Norma identificada durante análise do requerimento 25.06713",
-    "url": "fantasma",
-    "status": "revogado"
-  },
-  {
-    "id": "ato716",
-    "nome": "Norma citada no requerimento 25.06713",
-    "descricao": "Norma identificada durante análise do requerimento 25.06713",
-    "url": "fantasma",
-    "status": "revogado"
-  },
-  {
-    "id": "ato717",
-    "nome": "Norma citada no requerimento 25.06713",
-    "descricao": "Norma identificada durante análise do requerimento 25.06713",
-    "url": "fantasma",
     "status": "revogado"
   },
   {
@@ -409,13 +359,6 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/160-atos-de-certificacao-de-produtos/2023/1878-ato-7971",
     "entidade": "Anatel",
     "status": "vigente"
-  },
-  {
-    "id": "ato8111",
-    "nome": "Norma citada no requerimento 25.06713",
-    "descricao": "Norma identificada durante análise do requerimento 25.06713",
-    "url": "fantasma",
-    "status": "revogado"
   },
   {
     "id": "ato8210",
@@ -599,7 +542,7 @@
     "nome": "Resolução nº 718, de 07 de fevereiro de 2020",
     "descricao": "Altera o Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita e revoga o Regulamento para Uso de Femtocélulas em Redes do Serviço Móvel Pessoal, do Serviço Móvel Especializado e do Serviço de Comunicação Multimídia",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2020/1380-resolucao-718",
-	"entidade": "Anatel",
+    "entidade": "Anatel",
     "status": "acessório"
   },
   {

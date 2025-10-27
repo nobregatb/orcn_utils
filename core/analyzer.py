@@ -2435,8 +2435,8 @@ A seguir são apresentados os requisitos legais e normas utilizados como referê
                 for req in requerimentos:
                     log_info(f"  🔍 Analisando: {req}")
                     # só para debug
-                    if req not in ["25.07053"]:
-                         continue
+                    #if req not in ["25.07053"]:
+                    #    continue
                     processar_requerimentos_excel(req)                    
                     resultado = self._analisar_requerimento_individual(req)
                     if resultado:

@@ -224,9 +224,9 @@ def preencher_minuta(page, rad_restrita: bool = True):
                 botao_salvar = page.get_by_role("button", name="Salvar")                
 
                 if botao_salvar:                                     
-                    time.sleep(1)
+                    #time.sleep(1)
                     botao_salvar.click()
-                    time.sleep(2)
+                    time.sleep(3)
                     wait_primefaces_ajax(page)
                 else:
                     log_erro("❌ Botão salvar características não encontrado")
@@ -274,17 +274,14 @@ def preencher_minuta(page, rad_restrita: bool = True):
                     page.fill("#formAnalise\\:textAreaAcompanhar", FRASES['analise_simplificada'])
                     log_info("✅ Textarea de informações adicionais preenchido")                    
                     # Clica no botão salvar informações adicionais
-                    botao_salvar_infos = page.query_selector("#formAnalise\\:j_idt778")
+                    botao_salvar_infos = page.get_by_role("button", name="Salvar")
                     if botao_salvar_infos:
-                        # Usa primefaces_click para submeter corretamente
-                        if primefaces_click(page, botao_salvar_infos, "Salvar Informações"):
-                            log_info("✅ Informações adicionais salvas")
-                            time.sleep(2)
-                            wait_primefaces_ajax(page)
-                        else:
-                            log_erro("❌ Falha ao salvar informações adicionais")
+                        botao_salvar_infos.click()
+                        log_info("✅ Informações adicionais salvas")
+                        time.sleep(2)
+                        wait_primefaces_ajax(page)
                     else:
-                        log_erro("❌ Botão salvar informações não encontrado")
+                            log_erro("❌ Falha ao salvar informações adicionais")
                 else:
                     log_erro("❌ Textarea de informações adicionais não encontrado")
             except Exception as e:
@@ -941,7 +938,7 @@ def baixar_documentos():
                             log_info("ℹ️ Nenhum dado adicional coletado para salvar")
                         
                        
-                        #preencher_minuta(page)
+                        preencher_minuta(page)
 
                         # Navega para anexos
                         anexos_btn = page.get_by_role("button", name=BOTOES['anexos'])

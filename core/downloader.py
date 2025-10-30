@@ -185,7 +185,7 @@ def primefaces_click(page, element, description="elemento"):
     # MÉTODO 3: Force click como último recurso
     try:
         #log_info("🔄 Tentando force click...")
-        element.click(force=True, timeout=2000)
+        element.click(force=True, timeout=5000)
         #log_info("✅ Force click funcionou")
         time.sleep(1)
         return True

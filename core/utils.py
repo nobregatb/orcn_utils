@@ -541,7 +541,7 @@ def processar_requerimentos_excel(num_req: str) -> None:
                 formatos_possíveis = [
                     req,  # formato 25.06969
                     req.replace('.', '/'),  # formato 25/06969 (como aparece no JSON)
-                    f"0{req.split('.')[1]}/{req.split('.')[0]}"  # formato 06969/25
+                    f"{req.split('.')[1]}/{req.split('.')[0]}"  # formato 06969/25
                 ]
                 
                 req_existe = any(fmt in requerimentos_existentes for fmt in formatos_possíveis)
@@ -738,7 +738,10 @@ def carregar_log_downloads() -> Dict[str, Dict]:
     """
     log_path = get_download_log_path()
     log_data = carregar_json(log_path)
-    return log_data if log_data else {}
+    # Garante que retorna um dicionário válido
+    if isinstance(log_data, dict):
+        return log_data
+    return {}
 
 
 def salvar_log_downloads(log_data: Dict[str, Dict]) -> bool:

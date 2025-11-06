@@ -275,7 +275,7 @@ def coletar_dados_completos_requerimento(page, requerimento, dados_basicos):
             dados_lab = {}	
         
         # Coleta dados do OCD
-        ocd_id = 'formAnalise:j_idt202'
+        ocd_id = 'formAnalise:j_idt232'
         selector = "#" + ocd_id.replace(":", "\\:")
         try:
             dados_ocd = page.eval_on_selector(selector, """

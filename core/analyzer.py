@@ -17,7 +17,7 @@ from core.const import (
     UTILS_DIR, EXT_PDF, EXT_JSON, EXT_TEX, GLOB_PDF,
     STATUS_CONFORME, STATUS_NAO_CONFORME, STATUS_INCONCLUSIVO, STATUS_ERRO, STATUS_PROCESSADO,
     VALOR_NAO_DISPONIVEL, ENCODING_UTF8, PALAVRAS_CHAVE_MANUAL,
-    TIPOS_DOCUMENTOS
+    TIPOS_DOCUMENTOS, MIN_FILE_SIZE
 )
 
 # Constantes para tipos de documento (chaves da estrutura TIPOS_DOCUMENTOS)
@@ -76,7 +76,7 @@ class CCTAnalyzerIntegrado:
                 content = ""                              
                 for pagina in pdf:
                     content += str(pagina.get_text("text")) + "\n"
-                if content.strip() == "":
+                if len(content.strip()) < MIN_FILE_SIZE:
                     #log_info(f"PDF aparentemente vazio, tentando OCR: {pdf_path.name}")
                     content = self.extract_pdf_content_from_ocr(pdf_path)
                 
@@ -1956,7 +1956,7 @@ class AnalisadorRequerimentos:
         
         # Conteúdo do relatório LaTeX
         agora = datetime.now().strftime("%H:%M:%S %d/%m/%Y")
-        versao_git = 'v. 0.3.1'  # obter_versao_git()
+        versao_git = 'v. 0.3.2'  # obter_versao_git()
         #utils_dir = Path(__file__).parent.parent / UTILS_DIR
         #classe_path = rf"{Path(__file__).parent.parent / UTILS_DIR / 'IEEEtran'}"
         #latex_content = f"""\\documentclass{{{classe_path}}}
@@ -2435,7 +2435,7 @@ A seguir são apresentados os requisitos legais e normas utilizados como referê
                 for req in requerimentos:
                     log_info(f"  🔍 Analisando: {req}")
                     # só para debug
-                    #if req not in ["25.07053"]:
+                    # if req not in ["25.08049"]:
                     #    continue
                     processar_requerimentos_excel(req)                    
                     resultado = self._analisar_requerimento_individual(req)

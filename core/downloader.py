@@ -6,6 +6,7 @@ import re
 from openpyxl import load_workbook
 from playwright.sync_api import sync_playwright
 from datetime import datetime
+from core.utils import carregar_log_downloads
 from core.log_print import log_info, log_erro, log_erro_critico
 from core.const import (
     BOTOES, CHROME_PATH, TBN_FILES_FOLDER, CHROME_PROFILE_DIR, 
@@ -225,8 +226,7 @@ def preencher_minuta(page, rad_restrita: bool = True):
 
                 if botao_salvar:                                     
                     #time.sleep(1)
-                    botao_salvar.click()
-                    time.sleep(3)
+                    botao_salvar.click(force=True, timeout=8000)                    
                     wait_primefaces_ajax(page)
                 else:
                     log_erro("❌ Botão salvar características não encontrado")
@@ -259,7 +259,7 @@ def preencher_minuta(page, rad_restrita: bool = True):
                     if checkbox_box:
                         checkbox_box.click()
                         log_info("✅ Checkbox ativado")
-                        time.sleep(0.5)
+                        time.sleep(1)
                     else:
                         log_erro("❌ Elemento checkbox-box não encontrado")
                 else:
@@ -276,7 +276,7 @@ def preencher_minuta(page, rad_restrita: bool = True):
                     # Clica no botão salvar informações adicionais
                     botao_salvar_infos = page.get_by_role("button", name="Salvar")
                     if botao_salvar_infos:
-                        botao_salvar_infos.click()
+                        botao_salvar_infos.click(force=True, timeout=8000)
                         log_info("✅ Informações adicionais salvas")
                         time.sleep(2)
                         wait_primefaces_ajax(page)
@@ -637,7 +637,7 @@ def baixar_documentos():
         log_info(MENSAGENS_STATUS['iniciando_automacao'])
         
         # Mostra informações do log de downloads se existir
-        from core.utils import carregar_log_downloads
+        
         log_downloads = carregar_log_downloads()
         if log_downloads:
             log_info(f"📋 Log de downloads encontrado com {len(log_downloads)} requerimento(s) registrado(s)")
@@ -855,7 +855,7 @@ def baixar_documentos():
                             log_erro(f"❌ Erro ao coletar dados do laboratório: {str(e)[:50]}")
                             dados_lab = {}	
                         
-                        ocd_id = 'formAnalise:j_idt202'
+                        ocd_id = 'formAnalise:j_idt201'
                         selector = "#" + ocd_id.replace(":", "\\:")
                         try:
                             dados_ocd = page.eval_on_selector(selector, """
@@ -927,7 +927,7 @@ def baixar_documentos():
                             dados_atualizados = True
 
                         # Salva apenas se houve atualizações
-                        if dados_atualizados:
+                        if dados_atualizados: #teogenes
                             try:
                                 with open(caminho_json, "w", encoding="utf-8") as f:
                                     json.dump(dados_json, f, ensure_ascii=False, indent=4)

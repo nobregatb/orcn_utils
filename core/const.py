@@ -9,6 +9,7 @@ Centraliza todos os valores estáticos e configurações do sistema.
 # ================================
 
 # Caminhos de execução
+MIN_FILE_SIZE = 1000
 CHROME_PATH = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
 TESSERACT_PATH = r"C:\Users\tbnobrega\AppData\Local\Programs\Tesseract-OCR\tesseract.exe"
 

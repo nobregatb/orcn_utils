@@ -17,6 +17,14 @@
     "status": "vigente"
   },
   {
+    "id": "ato1306",
+    "nome": "Ato nº 1306, de 26 de fevereiro de 2021",
+    "descricao": "Alterar os seguintes itens do Anexo I ao Ato nº 14.448",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1510-ato-1306",
+    "entidade": "Anatel",
+    "status": "acessorio"
+  },
+  {
     "id": "ato1326",
     "nome": "Ato nº 1326, de 9 de Fevereiro de 2023",
     "descricao": "Requisitos Técnicos para Avaliação da Conformidade dos produtos com Interface Usuário–Rede e Terminais do Serviço Telefônico Fixo Comutado",
@@ -155,6 +163,14 @@
     "status": "revogado"
   },
   {
+    "id": "ato3384",
+    "nome": "Ato nº 3384, de 26 de junho de 2020",
+    "descricao": "Designar a DEKRA CERTIFICATION B.V., CNPJ 26.600.714/0001-24, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD Nº 01/2020 (SEI nº 5694684), as funções de Organismo de Certificação Designado - OCD",
+    "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=6401327&id_documento=6444156",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
     "id": "ato3484",
     "nome": "Ato nº 3484, de 31 de maio de 2019",
     "descricao": "Requisitos Técnicos de Ensaio para a Avaliação da Conformidade de Baterias de Lítio Utilizadas em Telefones Celulares e produtos similares (Categoria I).",
@@ -221,6 +237,14 @@
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
+  },
+  {
+    "id": "ato423",
+    "nome": "Ato nº 423, de 12 de janeiro de 2022",
+    "descricao": "Alterar os seguintes itens e seus respectivos subitens do Anexo I do Ato nº 14.448",
+    "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/155-atos-de-certificacao-de-produtos/2022/1633-ato-423",
+    "entidade": "Anatel",
+    "status": "acessorio"
   },
   {
     "id": "ato458",

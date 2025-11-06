@@ -855,7 +855,7 @@ def baixar_documentos():
                             log_erro(f"❌ Erro ao coletar dados do laboratório: {str(e)[:50]}")
                             dados_lab = {}	
                         
-                        ocd_id = 'formAnalise:j_idt201'
+                        ocd_id = 'formAnalise:j_idt232'
                         selector = "#" + ocd_id.replace(":", "\\:")
                         try:
                             dados_ocd = page.eval_on_selector(selector, """

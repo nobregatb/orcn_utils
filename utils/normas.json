@@ -1,5 +1,21 @@
 [
   {
+    "id": "ato10002",
+    "nome": "Ato nº 10002, de 16 de novembro de 2021",
+    "descricao": "Atualizar o Anexo ao Ato nº 3151, de 12 de junho de 2020, que aprova os requisitos técnicos para avaliação da conformidade de Estação Terminal de Acesso",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1604-ato-10002",
+    "entidade": "Anatel",
+    "status": "acessorio"
+  },
+  {
+    "id": "ato10029",
+    "nome": "Ato nº 10029, de 14 de julho de 2023",
+    "descricao": "Requisitos técnicos para avaliação da conformidade dos seguintes transmissores e transceptores",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2023/1887-ato-10029",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "ato10988",
     "nome": "Ato nº 10988, de 26 de julho de 2024",
     "descricao": "Requisitos Técnicos e Operacionais para uso de Bloqueador de Sinais de Radiocomunicações (BSR), definindo as faixas de frequência para bloqueio.",
@@ -23,6 +39,14 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1510-ato-1306",
     "entidade": "Anatel",
     "status": "acessorio"
+  },
+  {
+    "id": "ato13083",
+    "nome": "Ato nº 13083, de 14 de setembro de 2022",
+    "descricao": "Aprovar os requisitos técnicos para avaliação da conformidade de telefones móveis por satélite",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1742-ato-13083",
+    "entidade": "Anatel",
+    "status": "vigente"
   },
   {
     "id": "ato1326",
@@ -120,6 +144,14 @@
     "url": "http://www.anatel.gov.br/Portal/verificaDocumentos/documento.asp?numeroPublicacao=30709&assuntoPublicacao=Ato%20n.%C2%BA%2019434/2001-Anatel&caminhoRel=In%C3%ADcio-Certifica%C3%A7%C3%A3o%20de%20Produtos-Apresenta%C3%A7%C3%A3o&filtro=1&documentoPath=biblioteca/atos/2001/ato_19434_2001.pdf",
     "entidade": "Anatel",
     "status": "vigente"
+  },
+  {
+    "id": "ato2105",
+    "nome": "Ato nº 2105, de 14 de fevereiro de 2025",
+    "descricao": "Atualizar o Anexo ao Ato nº 3151, de 12 de junho de 2020, que aprova os requisitos técnicos para avaliação da conformidade de Estação Terminal de Acesso",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2025/2010-ato-2105",
+    "entidade": "Anatel",
+    "status": "acessorio"
   },
   {
     "id": "ato237",
@@ -394,11 +426,11 @@
   },
   {
     "id": "ato8385",
-    "nome": "Ato nº 8385, de 3 de Maio de 2017",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
-    "url": "",
+    "nome": "Ato nº 8385, de 03 de maio de 2017",
+    "descricao": "Alterar os requisitos técnicos relativos ao produto Transmissor e transceptor digital ponto a ponto",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2017/1207-ato-8385",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "vigente"
   },
   {
     "id": "ato849",
@@ -459,34 +491,34 @@
   {
     "id": "ato943",
     "nome": "Ato nº 943, de 8 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
-    "url": "",
+    "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores monocanais analógicos FM e PM operando em faixas de frequências abaixo de 1 GHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1170-ato-943",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "vigente"
   },
   {
     "id": "ato944",
-    "nome": "Ato nº 944, de 8 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
-    "url": "",
+    "nome": "Ato nº 944, de 08 de fevereiro de 2018",
+    "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores de estações rádio base e de estações repetidoras",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1197-ato-944",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "vigente"
   },
   {
     "id": "ato946",
-    "nome": "Ato nº 946, de 8 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
-    "url": "",
+    "nome": "Ato nº 946, de 08 de fevereiro de 2018",
+    "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores digitais para o serviço fixo em aplicações ponto-multiponto nas faixas de frequências abaixo de 1 GHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1169-ato-946",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "vigente"
   },
   {
     "id": "ato948",
-    "nome": "Ato nº 948, de 8 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
-    "url": "",
+    "nome": "Ato nº 948, de 08 de fevereiro de 2018",
+    "descricao": "Requisitos técnicos relativos ao produto Cabos de Fibras Ópticas",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1164-ato-948",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "vigente"
   },
   {
     "id": "ato949",
@@ -536,6 +568,14 @@
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
+  },
+  {
+    "id": "resolucao647",
+    "nome": "Resolução nº 647, de 9 de fevereiro de 2015",
+    "descricao": "Norma de adaptação dos instrumentos de permissão e de autorização do Serviço Móvel Especializado (SME) para o Serviço Móvel Pessoal (SMP), Serviço Limitado Privado (SLP) ou Serviço Limitado Especializado (SLE)",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2015/787-resolucao-647",
+    "entidade": "Anatel",
+    "status": "acessorio"
   },
   {
     "id": "resolucao680",

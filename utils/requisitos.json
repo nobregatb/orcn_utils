@@ -10,5 +10,17 @@
   {
     "equipamento": "EQ029",
     "norma": ["ato3151"]
-  }
+  },
+  {
+    "equipamento": "EQ053",
+    "norma": ["resolucao680", "ato14448", "ato1120", "ato17087"]
+  },
+  {
+    "equipamento": "EQ094",
+    "norma": ["ato1120", "ato8385"]
+  },
+  {
+    "equipamento": "EQ069",
+    "norma": ["ato17087", "ato1120", "ato10029", "resolucao700"]
+  }  
 ]

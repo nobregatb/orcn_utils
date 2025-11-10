@@ -578,7 +578,13 @@
   {
     "escopo": "tab_requisitos",
     "id": "EQ094",
-    "nome": "Transceptor e Transmissor Digital",
+    "nome": "Transmissor Digital",
+    "categoria": 2
+  },
+   {
+    "escopo": "tab_requisitos",
+    "id": "EQ094",
+    "nome": "Transceptor Digital",
     "categoria": 2
   },
   {
@@ -1198,5 +1204,11 @@
     "id": "EQ093",
     "nome": "Sistema de Compartilhamento de Acesso ao Meio nas Faixas 5.150-5.350 MHz, 5.470-5.725 MHz e 5.725-5.850 MHz",
     "categoria": "Cat. 2"
+  },
+    {
+    "escopo": "mosaico",
+    "id": "EQ069",
+    "nome": "Transceptor portátil",
+    "categoria": 1
   }   
 ]

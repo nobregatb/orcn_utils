@@ -855,7 +855,7 @@ def baixar_documentos():
                             log_erro(f"❌ Erro ao coletar dados do laboratório: {str(e)[:50]}")
                             dados_lab = {}	
                         
-                        ocd_id = 'formAnalise:j_idt232'
+                        ocd_id = 'formAnalise:j_idt202'
                         selector = "#" + ocd_id.replace(":", "\\:")
                         try:
                             dados_ocd = page.eval_on_selector(selector, """
@@ -925,7 +925,7 @@ def baixar_documentos():
                         if dados_solicitante != '':
                             dados_json["solicitante"] = dados_solicitante
                             dados_atualizados = True
-
+                    
                         # Salva apenas se houve atualizações
                         if dados_atualizados: #teogenes
                             try:

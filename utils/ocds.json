@@ -52,7 +52,7 @@
   {
     "cnpj": "04.538.402/0001-03",
     "nome": "OCP-TELI - ORGANIZAÇÃO CERTIFICADORA DE PRODUTOS DE TELECOMUNICAÇÕES E INFORMÁTICA",
-    "data_atualizacao": "15/10/2025"
+    "data_atualizacao": "20/10/2025"
   },
   {
     "cnpj": "43.297.697/0001-17",
@@ -87,7 +87,7 @@
   {
     "cnpj": "46.054.470/0001-39",
     "nome": "Brasil Certificacoes Ltda",
-    "data_atualizacao": "09/10/2025"
+    "data_atualizacao": "14/10/2025"
   },
   {
     "cnpj": "35.983.502/0001-64",
@@ -103,5 +103,10 @@
     "cnpj": "33.182.809/0083-87",
     "nome": "Sgs do Brasil Ltda",
     "data_atualizacao": "27/10/2025"
+  },
+  {
+    "cnpj": "48.333.960/0001-08",
+    "nome": "CCPE CENTRO DE CERTIFICACAO DE PRODUTOS ELETRONICOS LTDA",
+    "data_atualizacao": "20/10/2025"
   }
 ]

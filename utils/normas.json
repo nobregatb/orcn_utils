@@ -8,6 +8,14 @@
     "status": "acessorio"
   },
   {
+    "id": "ato10003",
+    "nome": "Ato nº 10003, de 16 de novembro de 2021",
+    "descricao": "Atualizar o Anexo ao Ato nº 3152, de 12 de junho de 2020",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1605-ato-1003",
+    "entidade": "Anatel",
+    "status": "acessorio"
+  },
+  {
     "id": "ato10029",
     "nome": "Ato nº 10029, de 14 de julho de 2023",
     "descricao": "Requisitos técnicos para avaliação da conformidade dos seguintes transmissores e transceptores",
@@ -18,7 +26,7 @@
   {
     "id": "ato10988",
     "nome": "Ato nº 10988, de 26 de julho de 2024",
-    "descricao": "Requisitos Técnicos e Operacionais para uso de Bloqueador de Sinais de Radiocomunicações (BSR), definindo as faixas de frequência para bloqueio.",
+    "descricao": "Requisitos Técnicos e Operacionais para uso de Bloqueador de Sinais de Radiocomunicações (BSR), definindo as faixas de frequência para bloqueio",
     "tipo": "Requisito Técnico (BSR)",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2024/1969-ato-10988",
     "entidade": "Anatel",
@@ -27,7 +35,7 @@
   {
     "id": "ato1120",
     "nome": "Ato nº 1120, de 19 de fevereiro de 2018",
-    "descricao": "Requisitos Técnicos de Compatibilidade Eletromagnética (EMC).",
+    "descricao": "Requisitos Técnicos de Compatibilidade Eletromagnética (EMC)",
     "url": "https://www.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1181-ato-1120",
     "entidade": "Anatel",
     "status": "vigente"
@@ -67,7 +75,7 @@
   {
     "id": "ato14037",
     "nome": "Ato nº 14037, de 5 de Outubro de 2022",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -75,7 +83,7 @@
   {
     "id": "ato14038",
     "nome": "Ato nº 14038, de 5 de Outubro de 2022",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -83,7 +91,7 @@
   {
     "id": "ato14040",
     "nome": "Ato nº 14040, de 5 de Outubro de 2022",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -91,7 +99,7 @@
   {
     "id": "ato14041",
     "nome": "Ato nº 14041, de 5 de Outubro de 2022",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -99,7 +107,7 @@
   {
     "id": "ato14448",
     "nome": "Ato nº 14448, de 04 de dezembro de 2017",
-    "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita.",
+    "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita",
     "tipo": "Requisito Técnico (Radiação Restrita)",
     "url": "https://www.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2017/1139-ato-14448",
     "entidade": "Anatel",
@@ -124,7 +132,7 @@
   {
     "id": "ato17087",
     "nome": "Ato nº 17087, de 19 de dezembro de 2022",
-    "descricao": "Requisitos Técnicos de Segurança Elétrica.",
+    "descricao": "Requisitos Técnicos de Segurança Elétrica",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1823-ato-17087",
     "entidade": "Anatel",
     "status": "vigente"
@@ -172,7 +180,7 @@
   {
     "id": "ato2921",
     "nome": "Ato nº 2921, de 15 de Março de 2024",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -180,16 +188,24 @@
   {
     "id": "ato3151",
     "nome": "Ato nº 3151, de 12 de junho de 2020",
-    "descricao": "Requisitos técnicos para avaliação da conformidade de Estação Terminal de Acesso.",
+    "descricao": "Requisitos técnicos para avaliação da conformidade de Estação Terminal de Acesso",
     "tipo": "Norma Nacional (Cabos)",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1429-ato-3151",
     "entidade": "Anatel",
     "status": "vigente"
   },
   {
+    "id": "ato3152",
+    "nome": "Ato nº 3152, de 12 de junho de 2020",
+    "descricao": "Requisitos técnicos para avaliação da conformidade de Telefone Móvel Celular",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1430-ato-3152",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
     "id": "ato3153",
     "nome": "Ato nº 3153, de 12 de Junho de 2020",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -205,7 +221,7 @@
   {
     "id": "ato3484",
     "nome": "Ato nº 3484, de 31 de maio de 2019",
-    "descricao": "Requisitos Técnicos de Ensaio para a Avaliação da Conformidade de Baterias de Lítio Utilizadas em Telefones Celulares e produtos similares (Categoria I).",
+    "descricao": "Requisitos Técnicos de Ensaio para a Avaliação da Conformidade de Baterias de Lítio Utilizadas em Telefones Celulares e produtos similares (Categoria I)",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1301-ato-3484",
     "entidade": "Anatel",
     "status": "vigente"
@@ -288,7 +304,7 @@
   {
     "id": "ato4776",
     "nome": "Ato nº 4776, de 01 de setembro de 2020",
-    "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita.",
+    "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita",
     "tipo": "Norma Nacional (Cabos)",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1429-ato-3151",
     "entidade": "Anatel",
@@ -297,7 +313,7 @@
   {
     "id": "ato48668",
     "nome": "ATO nº 48.668, de 22 de desembro de 2004",
-    "descricao": "Designar a Associação de Certificação de Produto para Telecomunicações, Radiodifusão, Cinema, Vídeo e Áudio-Visual – CTCP – Centro Tecnológico de Certificação e Pesquisa para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade no 012/RFCEC/RFCE/SRF, as funções de Organismo de Certificação Designado – OCD.",
+    "descricao": "Designar a Associação de Certificação de Produto para Telecomunicações, Radiodifusão, Cinema, Vídeo e Áudio-Visual – CTCP – Centro Tecnológico de Certificação e Pesquisa para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade no 012/RFCEC/RFCE/SRF, as funções de Organismo de Certificação Designado – OCD",
     "url": "https://www.anatel.gov.br/Portal/verificaDocumentos/documento.asp?numeroPublicacao=105961&assuntoPublicacao=Ato%20n.%C2%BA%2048668/2004-Anatel&caminhoRel=In%C3%ADcio-Certifica%C3%A7%C3%A3o%20de%20Produtos-Apresenta%C3%A7%C3%A3o&filtro=1&documentoPath=biblioteca/atos/2005/ato_48668_2005.pdf",
     "entidade": "Anatel",
     "status": "vigente"
@@ -313,7 +329,7 @@
   {
     "id": "ato5171",
     "nome": "Ato nº 5171, de 9 de Maio de 2023",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -329,7 +345,7 @@
   {
     "id": "ato6247",
     "nome": "Ato nº 6247, de 05 de maio de 2022",
-    "descricao": " Designar a Moderna Tecnologia Ltda, regularmente inscrito no CNPJ sob nº 44.458.010/0001-40, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 04/2022 (SEI nº 8325756), as funções de Organismo de Certificação Designado - OCD.",
+    "descricao": " Designar a Moderna Tecnologia Ltda, regularmente inscrito no CNPJ sob nº 44.458.010/0001-40, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 04/2022 (SEI nº 8325756), as funções de Organismo de Certificação Designado - OCD",
     "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=documento_visualizar&acao_origem=protocolo_pesquisar&id_documento=9500620&infra_sistema=100000100&infra_unidade_atual=110001100&infra_hash=91940960b0ea3da1302dc2c7dc0189c7b4bbc384fd65944512794d5cbb528f86",
     "entidade": "Anatel",
     "status": "vigente"
@@ -337,7 +353,7 @@
   {
     "id": "ato6506",
     "nome": "Ato nº 6506, de 27 de agosto de 2018",
-    "descricao": "Requisitos Técnicos para Terminal de Linhas Ópticas (OLT) e Unidade de Rede Óptica (ONU) (Categoria III).",
+    "descricao": "Requisitos Técnicos para Terminal de Linhas Ópticas (OLT) e Unidade de Rede Óptica (ONU) (Categoria III)",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1231-ato-6506",
     "entidade": "Anatel",
     "status": "vigente"
@@ -345,7 +361,7 @@
   {
     "id": "ato6553",
     "nome": "Ato nº 6553, de 29 de Outubro de 2020",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -353,7 +369,7 @@
   {
     "id": "ato7127",
     "nome": "Ato nº 7127, de 12 de Novembro de 2019",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -361,7 +377,7 @@
   {
     "id": "ato7128",
     "nome": "Ato nº 7128, de 12 de Novembro de 2019",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -369,7 +385,7 @@
   {
     "id": "ato7133",
     "nome": "Ato nº 7133, de 12 de Novembro de 2019",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -377,7 +393,7 @@
   {
     "id": "ato7134",
     "nome": "Ato nº 7134, de 12 de Novembro de 2019",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -385,7 +401,7 @@
   {
     "id": "ato7135",
     "nome": "Ato nº 7135, de 12 de Novembro de 2019",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -401,7 +417,7 @@
   {
     "id": "ato77",
     "nome": "Ato nº 77, de 05 de janeiro de 2021",
-    "descricao": "Requisitos de Segurança Cibernética para Equipamentos para Telecomunicações.",
+    "descricao": "Requisitos de Segurança Cibernética para Equipamentos para Telecomunicações",
     "tipo": "Norma Nacional (Cabos)",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1505-ato-77",
     "entidade": "Anatel",
@@ -410,7 +426,7 @@
   {
     "id": "ato7971",
     "nome": "Ato nº 7971, de 22 de junho de 2023",
-    "descricao": "Requisitos Técnicos para avaliação da conformidade do protocolo IPv6 em produtos para telecomunicações.",
+    "descricao": "Requisitos Técnicos para avaliação da conformidade do protocolo IPv6 em produtos para telecomunicações",
     "tipo": "Norma Nacional (Cabos)",
     "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/160-atos-de-certificacao-de-produtos/2023/1878-ato-7971",
     "entidade": "Anatel",
@@ -419,7 +435,7 @@
   {
     "id": "ato8210",
     "nome": "Ato nº 8210, de 27 de Dezembro de 2019",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -435,7 +451,7 @@
   {
     "id": "ato849",
     "nome": "Ato nº 849, de 5 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -451,7 +467,7 @@
   {
     "id": "ato932",
     "nome": "Ato nº 932, de 8 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -459,7 +475,7 @@
   {
     "id": "ato933",
     "nome": "Ato nº 933, de 8 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -467,7 +483,7 @@
   {
     "id": "ato934",
     "nome": "Ato nº 934, de 8 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -475,7 +491,7 @@
   {
     "id": "ato940",
     "nome": "Ato nº 940, de 8 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -483,7 +499,7 @@
   {
     "id": "ato941",
     "nome": "Ato nº 941, de 8 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -523,7 +539,7 @@
   {
     "id": "ato949",
     "nome": "Ato nº 949, de 8 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -564,7 +580,7 @@
   {
     "id": "resolucao527",
     "nome": "Resolução nº 527, de 8 de Abril de 2009",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -580,7 +596,7 @@
   {
     "id": "resolucao680",
     "nome": "Resolução nº 680, de 27 de junho de 2017",
-    "descricao": "Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita.",
+    "descricao": "Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2017/1057-resolucao-680",
     "entidade": "Anatel",
     "status": "vigente"
@@ -596,7 +612,7 @@
   {
     "id": "resolucao715",
     "nome": "Resolução nº 715, de 23 de outubro de 2019",
-    "descricao": "Regulamento de Avaliação da Conformidade e de Homologação de Produtos para Telecomunicações, estabelecendo as regras gerais e os procedimentos para certificação e homologação de produtos no Brasil.",
+    "descricao": "Regulamento de Avaliação da Conformidade e de Homologação de Produtos para Telecomunicações, estabelecendo as regras gerais e os procedimentos para certificação e homologação de produtos no Brasil",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2019/1350-resolucao-715",
     "entidade": "Anatel",
     "status": "vigente"
@@ -612,7 +628,7 @@
   {
     "id": "resolucao721",
     "nome": "Resolução nº 721, de 11 de Fevereiro de 2020",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -620,7 +636,7 @@
   {
     "id": "resolucao748",
     "nome": "Resolução nº 748, de 22 de Outubro de 2021",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -628,7 +644,7 @@
   {
     "id": "resolucao752",
     "nome": "Resolução nº 752, de 22 de Junho de 2022",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"
@@ -636,7 +652,7 @@
   {
     "id": "resolucao757",
     "nome": "Resolução Anatel nº 757, de 08 de novembro de 2022",
-    "descricao": "Regulamento de Condições de Uso de Radiofrequências.",
+    "descricao": "Regulamento de Condições de Uso de Radiofrequências",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2022/1760-resolucao-",
     "entidade": "Anatel",
     "status": "revogada"
@@ -644,7 +660,7 @@
   {
     "id": "resolucao759",
     "nome": "Resolução nº 759, de 19 de Janeiro de 2023",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel.",
+    "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
     "entidade": "Anatel",
     "status": "revogado"

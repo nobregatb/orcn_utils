@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Set#, Any 
 import subprocess
 
-from core.utils import extrair_normas_por_padrao, processar_requerimentos_excel
+from core.utils import extrair_normas_por_padrao, processar_requerimentos_excel, extract_pdf_content_from_ocr
 from core.log_print import log_info, log_erro, log_erro_critico
 from core.const import (
     TESSERACT_PATH, JSON_FILES, GIT_COMMANDS, GIT_TIMEOUT, VERSAO_PADRAO,
@@ -68,7 +68,7 @@ class CCTAnalyzerIntegrado:
         try:
             if not PYMUPDF_DISPONIVEL:
                 log_erro("PyMuPDF não disponível. Tentando OCR...")
-                return self.extract_pdf_content_from_ocr(pdf_path)
+                return extract_pdf_content_from_ocr(pdf_path)
             
             #log_info(f"Extraindo conteúdo de: {pdf_path.name}")
             
@@ -78,35 +78,12 @@ class CCTAnalyzerIntegrado:
                     content += str(pagina.get_text("text")) + "\n"
                 if len(content.strip()) < MIN_FILE_SIZE:
                     #log_info(f"PDF aparentemente vazio, tentando OCR: {pdf_path.name}")
-                    content = self.extract_pdf_content_from_ocr(pdf_path)
+                    content = extract_pdf_content_from_ocr(pdf_path)
                 
             return content
             
         except Exception as e:
             log_erro(f"Falha ao extrair {pdf_path.name}: {e}")
-            return None
-
-    def extract_pdf_content_from_ocr(self, pdf_path: Path) -> Optional[str]:
-        """Extrai conteúdo usando OCR como fallback."""
-        try:
-            if not OCR_DISPONIVEL:
-                log_erro("Dependências de OCR não disponíveis (pdf2image, pytesseract)")
-                return None
-                
-            # Converte cada página do PDF em imagem
-            paginas = convert_from_path(pdf_path)
-            texto_completo = ""
-
-            # Extrai texto de cada página via OCR
-            for i, pagina in enumerate(paginas, start=1):
-                texto_pagina = pytesseract.image_to_string(pagina, lang='por')
-                #texto_completo += f"\n--- Página {i} ---\n"
-                texto_completo += texto_pagina
-                
-            return texto_completo
-        
-        except Exception as e:
-            log_erro(f"Falha ao extrair por OCR {pdf_path.name}: {e}")
             return None
 
     '''def extract_ocd_from_content(self, content: str) -> Optional[str]:
@@ -854,6 +831,12 @@ class AnalisadorRequerimentos:
                         for pagina_num in range(total_paginas):  # Analisar todas as páginas
                             texto_completo += str(doc[pagina_num].get_text()).lower() + "\n"
                         
+                        if len(texto_completo.strip()) < MIN_FILE_SIZE:
+                            #log_info(f"PDF aparentemente vazio, tentando OCR: {pdf_path.name}")
+                            texto_ocr = extract_pdf_content_from_ocr(caminho)
+                            if texto_ocr:
+                                texto_completo = texto_ocr.lower()
+
                         # Usar palavras-chave definidas em const.py
                         palavras_chave_manual = [palavra.lower() for palavra in PALAVRAS_CHAVE_MANUAL.keys()]
                         palavras_chave_manual = sorted(palavras_chave_manual)                           
@@ -2435,8 +2418,8 @@ A seguir são apresentados os requisitos legais e normas utilizados como referê
                 for req in requerimentos:
                     log_info(f"  🔍 Analisando: {req}")
                     # só para debug
-                    # if req not in ["25.08049"]:
-                    #    continue
+                    if req not in ["25.07808"]:
+                        continue
                     processar_requerimentos_excel(req)                    
                     resultado = self._analisar_requerimento_individual(req)
                     if resultado:

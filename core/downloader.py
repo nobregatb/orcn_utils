@@ -220,13 +220,12 @@ def preencher_minuta(page, rad_restrita: bool = True):
             try:
                 #observação sobre radiação restrita
                 page.fill("textarea:visible", FRASES['radiacao_Restrita_ct'])
-
                 # Clica no botão salvar
-                botao_salvar = page.get_by_role("button", name="Salvar")                
+                botao_salvar = page.get_by_role("button", name="Salvar")               
 
-                if botao_salvar:                                     
-                    #time.sleep(1)
-                    botao_salvar.click(force=True, timeout=8000)                    
+                if botao_salvar:                                                        
+                    botao_salvar.click(force=True, timeout=8000) 
+                    time.sleep(2)                   
                     wait_primefaces_ajax(page)
                 else:
                     log_erro("❌ Botão salvar características não encontrado")

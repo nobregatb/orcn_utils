@@ -18,14 +18,19 @@ from openpyxl import load_workbook
 from core.const import EXCEL_PATH, REQUERIMENTOS_PATH, TAB_REQUERIMENTOS, EXCEL_SHEET_NAME, DOWNLOAD_LOG_FILENAME
 from core.log_print import log_info, log_erro
 # Imports opcionais para funcionalidades específicas
-
-
+try:
+    from pdf2image import convert_from_path
+    import pytesseract
+    OCR_DISPONIVEL = True
+except ImportError:
+    OCR_DISPONIVEL = False
 
 from core.const import (
     TBN_FILES_FOLDER, CHROME_PROFILE_DIR, REQUERIMENTOS_DIR_INBOX,
-    GIT_COMMANDS, GIT_TIMEOUT, VERSAO_PADRAO, MENSAGENS_STATUS, TIPOS_DOCUMENTOS
+    GIT_COMMANDS, GIT_TIMEOUT, VERSAO_PADRAO, MENSAGENS_STATUS, TIPOS_DOCUMENTOS,
+    TESSERACT_PATH
 )
-from core.log_print import log_info
+from core.log_print import log_info, log_erro
 
 # ================================
 # FUNÇÕES DE FORMATAÇÃO
@@ -541,7 +546,7 @@ def processar_requerimentos_excel(num_req: str) -> None:
                 formatos_possíveis = [
                     req,  # formato 25.06969
                     req.replace('.', '/'),  # formato 25/06969 (como aparece no JSON)
-                    f"{req.split('.')[1]}/{req.split('.')[0]}"  # formato 06969/25
+                    f"0{req.split('.')[1]}/{req.split('.')[0]}"  # formato 06969/25
                 ]
                 
                 req_existe = any(fmt in requerimentos_existentes for fmt in formatos_possíveis)
@@ -738,7 +743,7 @@ def carregar_log_downloads() -> Dict[str, Dict]:
     """
     log_path = get_download_log_path()
     log_data = carregar_json(log_path)
-    # Garante que retorna um dicionário válido
+    # Garantir que sempre retorna um dicionário
     if isinstance(log_data, dict):
         return log_data
     return {}
@@ -905,3 +910,41 @@ def obter_requerimentos_pendentes(todos_requerimentos: List[str]) -> List[str]:
         log_info("✅ Todos os requerimentos já foram baixados!")
     
     return requerimentos_pendentes
+
+
+def extract_pdf_content_from_ocr(pdf_path: Path) -> Optional[str]:
+    """
+    Extrai conteúdo de PDF usando OCR (Tesseract).
+    Função utilitária reutilizável em todo o projeto.
+    
+    Args:
+        pdf_path: Path para o arquivo PDF
+        
+    Returns:
+        str com o texto extraído ou None em caso de erro
+    """
+    if not OCR_DISPONIVEL:
+        log_erro("Dependências de OCR não disponíveis (pdf2image, pytesseract)")
+        return None
+    
+    try:
+        # Configurar caminho do Tesseract se necessário
+        try:
+            pytesseract.pytesseract.tesseract_cmd = TESSERACT_PATH  # type: ignore
+        except:
+            pass
+        
+        # Converte cada página do PDF em imagem
+        paginas = convert_from_path(pdf_path)  # type: ignore
+        texto_completo = ""
+
+        # Extrai texto de cada página via OCR
+        for i, pagina in enumerate(paginas, start=1):
+            texto_pagina = pytesseract.image_to_string(pagina, lang='por')  # type: ignore
+            texto_completo += texto_pagina
+            
+        return texto_completo
+    
+    except Exception as e:
+        log_erro(f"Falha ao extrair por OCR {pdf_path.name}: {e}")
+        return None

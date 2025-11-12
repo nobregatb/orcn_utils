@@ -41,6 +41,14 @@
     "status": "vigente"
   },
   {
+    "id": "ato1134",
+    "nome": "Ato nº 1134, de 03 de fevereiro de 2023",
+    "descricao": "Designar o CCPE CENTRO DE CERTIFICAÇÃO DE PRODUTOS ELETRÔNICOS LTDA., regularmente inscrito no CNPJ sob nº 48.333.960/0001-08, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 1/2023 (SEI nº 9704928), as funções de Organismo de Certificação Designado - OCD",
+    "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=10623324&id_documento=11038880",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
     "id": "ato1306",
     "nome": "Ato nº 1306, de 26 de fevereiro de 2021",
     "descricao": "Alterar os seguintes itens do Anexo I ao Ato nº 14.448",
@@ -105,11 +113,27 @@
     "status": "revogado"
   },
   {
+    "id": "ato14430",
+    "nome": "Ato nº 14430, de 07 de outubro de 2024",
+    "descricao": "Incluir novos subitens com numeração 4.4 e 4.5 ao Anexo ao Ato nº 3151, de 12 de junho de 2020,",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1980-ato-14430",
+    "entidade": "Anatel",
+    "status": "acessorio"
+  },
+  {
     "id": "ato14448",
     "nome": "Ato nº 14448, de 04 de dezembro de 2017",
     "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita",
     "tipo": "Requisito Técnico (Radiação Restrita)",
     "url": "https://www.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2017/1139-ato-14448",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
+    "id": "ato14468",
+    "nome": "Ato nº 14468, de 05 de dezembro de 2017",
+    "descricao": "Aprovar os requisitos técnicos para avaliação da conformidade do produto Equipamento de Rede de dados",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2017/1260-ato-14468",
     "entidade": "Anatel",
     "status": "vigente"
   },
@@ -124,7 +148,7 @@
   {
     "id": "ato16539",
     "nome": "Ato nº 16539, de 27 de novembro de 2023",
-    "descricao": "Requisitos Técnicos e Operacionais de Uso das faixas de frequências associadas aos serviços de interesse coletivo, prestados por sistemas terrestres, conforme o Anexo deste Ato",
+    "descricao": "Requisitos Técnicos e Operacionais de Uso das faixas de frequências associadas aos serviços de interesse coletivo, prestados por sistemas terrestres",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2023/1904-ato-16539",
     "entidade": "Anatel",
     "status": "vigente"

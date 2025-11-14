@@ -594,6 +594,14 @@
     "status": "vigente"
   },
   {
+    "id": "resolucao1630",
+    "nome": "Norma (resolucao1630) citada no requerimento 25.07409",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 25.07409.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "resolucao323",
     "nome": "Resolução nº 323, de 7 de novembro de 2002",
     "descricao": "Norma para Certificação de Produtos para Telecomunicações",

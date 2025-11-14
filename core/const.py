@@ -67,7 +67,8 @@ CSS_SELECTORS = {
     'tabela_analise': "table.analiseTable",
     'link_pdf': "a[href*='.pdf'], a[href*='download']",
     'paginator_options': "select.ui-paginator-rpp-options",
-    'blockui': ".ui-blockui"
+    'blockui': ".ui-blockui",
+    'salvarFraseRR': "#formAnalise\\:j_idt666"
 }
 
 # Botões de anexos para download (será definido após TIPOS_DOCUMENTOS)

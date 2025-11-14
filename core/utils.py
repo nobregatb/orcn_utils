@@ -30,7 +30,88 @@ from core.const import (
     GIT_COMMANDS, GIT_TIMEOUT, VERSAO_PADRAO, MENSAGENS_STATUS, TIPOS_DOCUMENTOS,
     TESSERACT_PATH
 )
-from core.log_print import log_info, log_erro
+from core.log_print import log_info, log_erro, log_erro_critico
+
+# ================================
+# FUNÇÕES DE VALIDAÇÃO CRÍTICA  
+# ================================
+
+def validar_dados_criticos(requerimento_json=None, dados_ocd=None, dados_lab=None, 
+                         dados_fabricante=None, dados_solicitante=None, 
+                         nome_requerimento="", contexto=""):
+    """
+    Valida se os dados críticos foram lidos corretamente e para a aplicação se necessário.
+    
+    Args:
+        requerimento_json: Dados do requerimento extraídos
+        dados_ocd: Dados do OCD extraídos  
+        dados_lab: Dados do laboratório extraídos
+        dados_fabricante: Dados do fabricante extraídos
+        dados_solicitante: Dados do solicitante extraídos
+        nome_requerimento: Nome do requerimento para identificação
+        contexto: Contexto da operação (download, análise, etc.)
+    
+    Raises:
+        SystemExit: Se dados críticos não forem válidos
+    """
+    #log_info(f"🔍 Validando dados críticos do requerimento {nome_requerimento} ({contexto})")
+    
+    erros_criticos = []
+    
+    # Validar requerimento_json
+    if requerimento_json is not None:
+        if not isinstance(requerimento_json, dict) or not requerimento_json:
+            erros_criticos.append("requerimento_json não é um dicionário válido ou está vazio")
+        elif not requerimento_json.get('num_req'):
+            erros_criticos.append("requerimento_json não contém número do requerimento (num_req)")
+    
+    # Validar dados_ocd
+    if dados_ocd is not None:
+        if not isinstance(dados_ocd, dict):
+            erros_criticos.append("dados_ocd não é um dicionário válido")
+        elif not dados_ocd:
+            erros_criticos.append("dados_ocd está vazio - dados do OCD são obrigatórios")
+        elif not dados_ocd.get('CNPJ') and not dados_ocd.get('Nome'):
+            erros_criticos.append("dados_ocd não contém CNPJ nem Nome do OCD")
+    
+    # Validar dados_lab  
+    if dados_lab is not None:
+        if not isinstance(dados_lab, dict):
+            erros_criticos.append("dados_lab não é um dicionário válido")
+        elif not dados_lab:
+            erros_criticos.append("dados_lab está vazio - dados do laboratório são obrigatórios")
+        elif not dados_lab.get('Nome') and not dados_lab.get('CNPJ'):
+            erros_criticos.append("dados_lab não contém Nome nem CNPJ do laboratório")
+    
+    # Validar dados_fabricante
+    if dados_fabricante is not None:
+        if not isinstance(dados_fabricante, dict):
+            erros_criticos.append("dados_fabricante não é um dicionário válido")
+        elif not dados_fabricante:
+            erros_criticos.append("dados_fabricante está vazio - dados do fabricante são obrigatórios")
+        elif not dados_fabricante.get('Nome') and not dados_fabricante.get('CNPJ'):
+            erros_criticos.append("dados_fabricante não contém Nome nem CNPJ do fabricante")
+    
+    # Validar dados_solicitante
+    if dados_solicitante is not None:
+        if not isinstance(dados_solicitante, dict):
+            erros_criticos.append("dados_solicitante não é um dicionário válido")
+        elif not dados_solicitante:
+            erros_criticos.append("dados_solicitante está vazio - dados do solicitante são obrigatórios")
+        elif not dados_solicitante.get('Nome') and not dados_solicitante.get('CNPJ'):
+            erros_criticos.append("dados_solicitante não contém Nome nem CNPJ do solicitante")
+    
+    # Se há erros críticos, parar a aplicação
+    if erros_criticos:
+        log_erro_critico(f"❌ ERRO CRÍTICO no requerimento {nome_requerimento} ({contexto}):")
+        for erro in erros_criticos:
+            log_erro_critico(f"   • {erro}")
+        log_erro_critico(f"🛑 APLICAÇÃO INTERROMPIDA - Dados essenciais não foram lidos corretamente!")
+        log_erro_critico(f"   Requerimento: {nome_requerimento}")
+        log_erro_critico(f"   Contexto: {contexto}")
+        sys.exit(1)
+    
+    #log_info(f"✅ Validação de dados críticos concluída com sucesso para {nome_requerimento}")
 
 # ================================
 # FUNÇÕES DE FORMATAÇÃO
@@ -294,11 +375,11 @@ def fullpath_para_req(nome_diretorio: str) -> str:
     
     Examples:
         >>> fullpath_para_req("25.12345")
-        "12345/2025"
+        "12345/25"
         >>> fullpath_para_req("_25.12345")
-        "12345/2025"
+        "12345/25"
         >>> fullpath_para_req("24.98765")
-        "98765/2024"
+        "98765/24"
     """
     # Remove underscore inicial se existir
     nome_limpo = nome_diretorio.lstrip('_')
@@ -313,7 +394,7 @@ def fullpath_para_req(nome_diretorio: str) -> str:
     
     # Converte ano de 2 dígitos para 4 dígitos
     # Assume que anos 00-99 são 2000-2099
-    ano_completo = f"20{ano_curto.zfill(2)}"
+    ano_completo = f"{ano_curto.zfill(2)}"
     
     return f"{numero}/{ano_completo}"
 
@@ -546,7 +627,7 @@ def processar_requerimentos_excel(num_req: str) -> None:
                 formatos_possíveis = [
                     req,  # formato 25.06969
                     req.replace('.', '/'),  # formato 25/06969 (como aparece no JSON)
-                    f"0{req.split('.')[1]}/{req.split('.')[0]}"  # formato 06969/25
+                    f"{req.split('.')[1]}/{req.split('.')[0]}"  # formato 06969/25
                 ]
                 
                 req_existe = any(fmt in requerimentos_existentes for fmt in formatos_possíveis)

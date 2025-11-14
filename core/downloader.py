@@ -50,6 +50,15 @@ def criar_json_dos_novos_requerimentos(rows):
                                 requerimento_json[atributo] = valor
                         else:
                             requerimento_json[atributo] = ""
+                    
+                    # Validação crítica dos dados do requerimento
+                    from core.utils import validar_dados_criticos
+                    validar_dados_criticos(
+                        requerimento_json=requerimento_json,
+                        nome_requerimento=requerimento_json.get('num_req', 'DESCONHECIDO'),
+                        contexto="criação de JSON de novos requerimentos"
+                    )
+                    
                     pasta = criar_pasta_se_nao_existir(requerimento_json['num_req'])
                     nome_pasta = os.path.basename(pasta)
                     dados_json = {}
@@ -114,7 +123,7 @@ def primefaces_click(page, element, description="elemento"):
             time.sleep(1)
             return True
     except Exception as e:
-        log_erro(f"Onclick falhou: {str(e)[:50]}")
+        X = 1#log_erro(f"Onclick falhou: {str(e)[:50]}")
     
     # MÉTODO 2: Submit via PrimeFaces.ajax.Request
     try:
@@ -215,22 +224,25 @@ def preencher_minuta(page, rad_restrita: bool = True):
             # Aguarda carregamento
             page.wait_for_selector(".ui-blockui", state="detached", timeout=15000)
             wait_primefaces_ajax(page)
-            time.sleep(1)            
+            #time.sleep(1)            
             # Busca e preenche o textarea
             try:
                 #observação sobre radiação restrita
                 page.fill("textarea:visible", FRASES['radiacao_Restrita_ct'])
                 # Clica no botão salvar
-                botao_salvar = page.get_by_role("button", name="Salvar")               
-
+                botao_salvar = page.get_by_role("button", name="Salvar") 
                 if botao_salvar:                                                        
-                    botao_salvar.click(force=True, timeout=8000) 
-                    time.sleep(2)                   
-                    wait_primefaces_ajax(page)
+                    page.evaluate("""
+                        const btn = document.getElementById('formAnalise:j_idt666');
+                        btn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+                        btn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+                        btn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+                    """)
+                    
                 else:
                     log_erro("❌ Botão salvar características não encontrado")
             except Exception as e:
-                log_erro(f"❌ Erro ao preencher características: {str(e)[:50]}")
+                log_erro(f"❌ Erro ao preencher características: {str(e)[:500]}")
         
         # ========================
         # PARTE 2: INFORMAÇÕES ADICIONAIS
@@ -255,36 +267,38 @@ def preencher_minuta(page, rad_restrita: bool = True):
                 if checkbox_div:
                     # Clica na div do checkbox para ativá-lo
                     checkbox_box = checkbox_div.query_selector(".ui-chkbox-box")
-                    if checkbox_box:
-                        checkbox_box.click()
-                        log_info("✅ Checkbox ativado")
-                        time.sleep(1)
-                    else:
-                        log_erro("❌ Elemento checkbox-box não encontrado")
+                    is_checked = checkbox_box.evaluate("el => el.classList.contains('ui-state-active')")
+                    if not is_checked:
+                        if checkbox_box:
+                            checkbox_box.click()
+                            log_info("✅ Checkbox ativado")
+                            time.sleep(1)
+                        else:
+                            log_erro("❌ Elemento checkbox-box não encontrado")
+                        # Preenche o textarea das informações adicionais
+                        try:
+                            textarea_infos = page.query_selector("#formAnalise\\:textAreaAcompanhar")
+                            if textarea_infos:                    
+                                page.fill("#formAnalise\\:textAreaAcompanhar", FRASES['analise_simplificada'])
+                                log_info("✅ Textarea de informações adicionais preenchido")                    
+                                # Clica no botão salvar informações adicionais
+                                botao_salvar_infos = page.get_by_role("button", name="Salvar")
+                                if botao_salvar_infos:
+                                    botao_salvar_infos.click(force=True, timeout=8000)
+                                    log_info("✅ Informações adicionais salvas")
+                                    time.sleep(2)
+                                    wait_primefaces_ajax(page)
+                                else:
+                                        log_erro("❌ Falha ao salvar informações adicionais")
+                            else:
+                                log_erro("❌ Textarea de informações adicionais não encontrado")
+                        except Exception as e:
+                            log_erro(f"❌ Erro ao preencher informações adicionais: {str(e)[:50]}")
                 else:
                     log_erro("❌ Checkbox não encontrado")
             except Exception as e:
-                log_erro(f"❌ Erro ao ativar checkbox: {str(e)[:50]}")
+                log_erro(f"❌ Erro ao ativar checkbox: {str(e)[:50]}")            
             
-            # Preenche o textarea das informações adicionais
-            try:
-                textarea_infos = page.query_selector("#formAnalise\\:textAreaAcompanhar")
-                if textarea_infos:                    
-                    page.fill("#formAnalise\\:textAreaAcompanhar", FRASES['analise_simplificada'])
-                    log_info("✅ Textarea de informações adicionais preenchido")                    
-                    # Clica no botão salvar informações adicionais
-                    botao_salvar_infos = page.get_by_role("button", name="Salvar")
-                    if botao_salvar_infos:
-                        botao_salvar_infos.click(force=True, timeout=8000)
-                        log_info("✅ Informações adicionais salvas")
-                        time.sleep(2)
-                        wait_primefaces_ajax(page)
-                    else:
-                            log_erro("❌ Falha ao salvar informações adicionais")
-                else:
-                    log_erro("❌ Textarea de informações adicionais não encontrado")
-            except Exception as e:
-                log_erro(f"❌ Erro ao preencher informações adicionais: {str(e)[:50]}")
         else:
             log_erro("❌ Botão 'Informações Adicionais' não encontrado")
         
@@ -808,6 +822,14 @@ def baixar_documentos():
                             log_erro(f"❌ Erro ao coletar dados do solicitante: {str(e)[:50]}")
                             dados_solicitante = {}
                         
+                        # Validação crítica dos dados do solicitante
+                        from core.utils import validar_dados_criticos
+                        validar_dados_criticos(
+                            dados_solicitante=dados_solicitante,
+                            nome_requerimento=requerimento,
+                            contexto="coleta de dados do solicitante"
+                        )
+                        
                         fabricante_id = "formAnalise:output-fabricante-requerimento:output-fabricante-requerimento"
                         selector = "#" + fabricante_id.replace(":", "\\:")
                         try:
@@ -830,6 +852,14 @@ def baixar_documentos():
                         except Exception as e:
                             log_erro(f"❌ Erro ao coletar dados do fabricante: {str(e)[:50]}")
                             dados_fabricante = {}
+                        
+                        # Validação crítica dos dados do fabricante
+                        from core.utils import validar_dados_criticos
+                        validar_dados_criticos(
+                            dados_fabricante=dados_fabricante,
+                            nome_requerimento=requerimento,
+                            contexto="coleta de dados do fabricante"
+                        )
                         
                         lab_id = "formAnalise:output-laboratorio-requerimento:output-laboratorio-requerimento"
                         selector = "#" + lab_id.replace(":", "\\:")
@@ -854,28 +884,40 @@ def baixar_documentos():
                             log_erro(f"❌ Erro ao coletar dados do laboratório: {str(e)[:50]}")
                             dados_lab = {}	
                         
-                        ocd_id = 'formAnalise:j_idt202'
-                        selector = "#" + ocd_id.replace(":", "\\:")
-                        try:
-                            dados_ocd = page.eval_on_selector(selector, """
-                                (t) => {
-                                    const linhas = Array.from(t.querySelectorAll("tr"));
-                                    const resultado = {};
-                                    for (const tr of linhas) {
-                                        const celulas = tr.querySelectorAll("td");
-                                        if (celulas.length === 2) {
-                                            const chave = celulas[0].innerText.trim().replace(/:$/, '');
-                                            const valor = celulas[1].innerText.trim();
-                                            resultado[chave] = valor;
-                                        }
-                                    }
-                                    return resultado;
-                                }
-                                """)
+                        # Validação crítica dos dados do laboratório
+                        from core.utils import validar_dados_criticos
+                        validar_dados_criticos(
+                            dados_lab=dados_lab,
+                            nome_requerimento=requerimento,
+                            contexto="coleta de dados do laboratório"
+                        )
+                        
+                        labelOCD = page.locator("text=Dados do Certificado")
+                        table = labelOCD.locator("xpath=following::table[1]")
+
+                        dados_ocd = table.evaluate("""
+                        (t) => {
+                            const r = {};
+                            for (const tr of t.querySelectorAll("tr")) {
+                                const td = tr.querySelectorAll("td");
+                                if (td.length === 2) r[td[0].innerText.trim().replace(/:$/, '')] = td[1].innerText.trim();
+                            }
+                            return r;
+                        }
+                        """)
+
+                        if len(dados_ocd) > 0:  
                             log_info(f"✅ Dados do OCD coletados: {len(dados_ocd)} campo(s)")
-                        except Exception as e:
-                            log_erro(f"❌ Erro ao coletar dados do OCD: {str(e)[:50]}")
-                            dados_ocd = {}
+                        else:
+                            log_erro(f"❌ Erro ao coletar dados do OCD")
+                        
+                        # Validação crítica dos dados do OCD
+                        from core.utils import validar_dados_criticos
+                        validar_dados_criticos(
+                            dados_ocd=dados_ocd,
+                            nome_requerimento=requerimento,
+                            contexto="coleta de dados do OCD"
+                        )
                         
                         # Salva os dados coletados no JSON do requerimento
                         json_path = req_para_fullpath(requerimento)                

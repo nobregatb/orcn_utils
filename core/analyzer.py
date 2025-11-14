@@ -1244,8 +1244,26 @@ class AnalisadorRequerimentos:
                 
             #log_info(f"Dados do requerimento carregados de: {arquivo_json_req.name}")
             
-            # Extrair informações do OCD se disponível
+            # Validação crítica dos dados essenciais do JSON
+            from core.utils import validar_dados_criticos
+            requerimento_json = dados_req.get("requerimento")
             dados_ocd = dados_req.get("ocd")
+            dados_lab = dados_req.get("lab")
+            dados_fabricante = dados_req.get("fabricante")
+            dados_solicitante = dados_req.get("solicitante")
+            
+            # Validar apenas os dados que estão presentes no JSON
+            validar_dados_criticos(
+                requerimento_json=requerimento_json,
+                dados_ocd=dados_ocd,
+                dados_lab=dados_lab,
+                dados_fabricante=dados_fabricante,
+                dados_solicitante=dados_solicitante,
+                nome_requerimento=nome_requerimento,
+                contexto="análise de documentos"
+            )
+            
+            # Extrair informações do OCD se disponível
             if dados_ocd and isinstance(dados_ocd, dict) and dados_ocd.get("CNPJ"):
                 self._atualizar_ocds_json(dados_ocd)
             
@@ -2418,8 +2436,8 @@ A seguir são apresentados os requisitos legais e normas utilizados como referê
                 for req in requerimentos:
                     log_info(f"  🔍 Analisando: {req}")
                     # só para debug
-                    if req not in ["25.07808"]:
-                        continue
+                    #if req not in ["25.07808"]:
+                    #    continue
                     processar_requerimentos_excel(req)                    
                     resultado = self._analisar_requerimento_individual(req)
                     if resultado:

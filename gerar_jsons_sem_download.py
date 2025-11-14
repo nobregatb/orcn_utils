@@ -226,6 +226,14 @@ def coletar_dados_completos_requerimento(page, requerimento, dados_basicos):
             log_erro(f"❌ Erro ao coletar dados do solicitante: {str(e)[:50]}")
             dados_solicitante = {}
         
+        # Validação crítica dos dados do solicitante
+        from core.utils import validar_dados_criticos
+        validar_dados_criticos(
+            dados_solicitante=dados_solicitante,
+            nome_requerimento=requerimento,
+            contexto="coleta de dados do solicitante (geração JSON sem download)"
+        )
+        
         # Coleta dados do fabricante
         fabricante_id = "formAnalise:output-fabricante-requerimento:output-fabricante-requerimento"
         selector = "#" + fabricante_id.replace(":", "\\:")
@@ -249,6 +257,14 @@ def coletar_dados_completos_requerimento(page, requerimento, dados_basicos):
         except Exception as e:
             log_erro(f"❌ Erro ao coletar dados do fabricante: {str(e)[:50]}")
             dados_fabricante = {}
+        
+        # Validação crítica dos dados do fabricante
+        from core.utils import validar_dados_criticos
+        validar_dados_criticos(
+            dados_fabricante=dados_fabricante,
+            nome_requerimento=requerimento,
+            contexto="coleta de dados do fabricante (geração JSON sem download)"
+        )
         
         # Coleta dados do laboratório
         lab_id = "formAnalise:output-laboratorio-requerimento:output-laboratorio-requerimento"
@@ -274,6 +290,14 @@ def coletar_dados_completos_requerimento(page, requerimento, dados_basicos):
             log_erro(f"❌ Erro ao coletar dados do laboratório: {str(e)[:50]}")
             dados_lab = {}	
         
+        # Validação crítica dos dados do laboratório
+        from core.utils import validar_dados_criticos
+        validar_dados_criticos(
+            dados_lab=dados_lab,
+            nome_requerimento=requerimento,
+            contexto="coleta de dados do laboratório (geração JSON sem download)"
+        )
+        
         # Coleta dados do OCD
         ocd_id = 'formAnalise:j_idt233'
         selector = "#" + ocd_id.replace(":", "\\:")
@@ -297,6 +321,14 @@ def coletar_dados_completos_requerimento(page, requerimento, dados_basicos):
         except Exception as e:
             log_erro(f"❌ Erro ao coletar dados do OCD: {str(e)[:50]}")
             dados_ocd = {}
+        
+        # Validação crítica dos dados do OCD
+        from core.utils import validar_dados_criticos
+        validar_dados_criticos(
+            dados_ocd=dados_ocd,
+            nome_requerimento=requerimento,
+            contexto="coleta de dados do OCD (geração JSON sem download)"
+        )
         
         # Cria o JSON completo com todos os dados
         dados_json_completo = {
@@ -444,6 +476,14 @@ def gerar_jsons_sem_download():
                                 requerimento_json[atributo] = valor
                         else:
                             requerimento_json[atributo] = ""
+                    
+                    # Validação crítica dos dados do requerimento
+                    from core.utils import validar_dados_criticos
+                    validar_dados_criticos(
+                        requerimento_json=requerimento_json,
+                        nome_requerimento=requerimento_json.get('num_req', 'DESCONHECIDO'),
+                        contexto="criação de JSON sem download"
+                    )
                     
                     # Armazena os dados da linha
                     linhas_dados.append({

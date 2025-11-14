@@ -28,7 +28,7 @@ except ImportError:
 from core.const import (
     TBN_FILES_FOLDER, CHROME_PROFILE_DIR, REQUERIMENTOS_DIR_INBOX,
     GIT_COMMANDS, GIT_TIMEOUT, VERSAO_PADRAO, MENSAGENS_STATUS, TIPOS_DOCUMENTOS,
-    TESSERACT_PATH
+    TESSERACT_PATH, JSON_FILES
 )
 from core.log_print import log_info, log_erro, log_erro_critico
 
@@ -428,6 +428,31 @@ def carregar_json(caminho: Union[str, Path], encoding: str = 'utf-8') -> Optiona
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError, Exception):
         return None
+
+
+def carregar_json_com_fallback(caminho: str) -> Dict:
+    """
+    Carrega arquivo JSON de configuração com logging de erro e fallback para dict vazio.
+    Função migrada do AnalisadorRequerimentos para uso geral no projeto.
+    
+    Args:
+        caminho: Caminho para o arquivo JSON de configuração
+        
+    Returns:
+        Dict com os dados do JSON ou dict vazio em caso de erro
+    """
+    try:
+        with open(caminho, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        log_erro(f"Arquivo de configuração não encontrado: {caminho}")
+        return {}
+    except json.JSONDecodeError:
+        log_erro(f"Erro ao decodificar JSON: {caminho}")
+        return {}
+    except Exception as e:
+        log_erro(f"Erro inesperado ao carregar JSON {caminho}: {str(e)}")
+        return {}
 
 
 def salvar_json(dados: Union[Dict, List], caminho: Union[str, Path], encoding: str = 'utf-8', indent: int = 2) -> bool:
@@ -1029,3 +1054,30 @@ def extract_pdf_content_from_ocr(pdf_path: Path) -> Optional[str]:
     except Exception as e:
         log_erro(f"Falha ao extrair por OCR {pdf_path.name}: {e}")
         return None
+
+
+def testar_radiacao_restrita(nome_equipamento: str) -> bool:
+    """
+    Testa se um equipamento é do tipo "Radiação Restrita" buscando no arquivo equipamentos.json.
+    
+    Busca pelo nome exato do equipamento e verifica se o ID correspondente é "EQ078".
+    
+    Args:
+        nome_equipamento (str): Nome do equipamento para buscar
+        
+    Returns:
+        bool: True se o equipamento for de radiação restrita (EQ078), False caso contrário
+    """
+    try:
+        # Carregar dados do arquivo equipamentos.json        
+        equipamentos = carregar_json_com_fallback(JSON_FILES['equipamentos'])
+        
+        # Buscar equipamento por nome exato usando a função utilitária
+        id_equipamento = buscar_valor(equipamentos, 'nome', nome_equipamento, 'id')
+        
+        # Verificar se o ID encontrado é EQ093 (Radiação Restrita)
+        return id_equipamento == 'EQ093'
+        
+    except Exception as e:
+        log_erro(f"Erro ao testar radiação restrita para '{nome_equipamento}': {e}")
+        return False

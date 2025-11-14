@@ -21,7 +21,7 @@ from core.utils import (
     criar_pasta_se_nao_existir, carregar_json, salvar_json,
     requerimento_ja_baixado, marcar_requerimento_em_progresso,
     marcar_requerimento_concluido, marcar_requerimento_com_erro,
-    obter_requerimentos_pendentes, limpar_log_downloads_se_completo
+    obter_requerimentos_pendentes, limpar_log_downloads_se_completo, testar_radiacao_restrita
 )
 
 
@@ -978,8 +978,8 @@ def baixar_documentos():
                         else:
                             log_info("ℹ️ Nenhum dado adicional coletado para salvar")
                         
-                       
-                        preencher_minuta(page)
+                        eh_rad_restrita = testar_radiacao_restrita(dados_json["requerimento"].get("tipo_equipamento", ""))
+                        preencher_minuta(page,rad_restrita=eh_rad_restrita)
 
                         # Navega para anexos
                         anexos_btn = page.get_by_role("button", name=BOTOES['anexos'])

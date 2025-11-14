@@ -9,7 +9,10 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Set#, Any 
 import subprocess
 
-from core.utils import extrair_normas_por_padrao, processar_requerimentos_excel, extract_pdf_content_from_ocr
+from core.utils import (
+    extrair_normas_por_padrao, processar_requerimentos_excel, extract_pdf_content_from_ocr,
+    carregar_json_com_fallback
+)
 from core.log_print import log_info, log_erro, log_erro_critico
 from core.const import (
     TESSERACT_PATH, JSON_FILES, GIT_COMMANDS, GIT_TIMEOUT, VERSAO_PADRAO,
@@ -458,11 +461,11 @@ class AnalisadorRequerimentos:
         self.pasta_resultados.mkdir(exist_ok=True)
         
         # Carregar configurações
-        self.regras = self._carregar_json(JSON_FILES['regras'])
-        self.equipamentos = self._carregar_json(JSON_FILES['equipamentos'])
-        self.requisitos = self._carregar_json(JSON_FILES['requisitos'])
-        self.normas = self._carregar_json(JSON_FILES['normas'])
-        self.ocds = self._carregar_json(JSON_FILES['ocds'])
+        self.regras = carregar_json_com_fallback(JSON_FILES['regras'])
+        self.equipamentos = carregar_json_com_fallback(JSON_FILES['equipamentos'])
+        self.requisitos = carregar_json_com_fallback(JSON_FILES['requisitos'])
+        self.normas = carregar_json_com_fallback(JSON_FILES['normas'])
+        self.ocds = carregar_json_com_fallback(JSON_FILES['ocds'])
         
         # Resultados da análise
         self.resultados_analise = []
@@ -473,18 +476,6 @@ class AnalisadorRequerimentos:
         # Variáveis de timing
         self.tempo_inicio_analise = None
         self.tempo_fim_analise = None
-        
-    def _carregar_json(self, caminho: str) -> Dict:
-        """Carrega arquivo JSON de configuração."""
-        try:
-            with open(caminho, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except FileNotFoundError:
-            log_erro(f"Arquivo de configuração não encontrado: {caminho}")
-            return {}
-        except json.JSONDecodeError:
-            log_erro(f"Erro ao decodificar JSON: {caminho}")
-            return {}
     
     def _obter_escopo_analise(self) -> str:
         """

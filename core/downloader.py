@@ -627,7 +627,7 @@ def baixar_pdfs(page, requerimento, tempo_primeiro_download):
     return total_pdfs_baixados, tempo_primeiro_download, requer_reautenticacao
 
 
-def abrir_caixa_de_entrada(page_obj):
+def abrir_caixa_de_entrada(page_obj, retorno_para_estudo=False):
     """Navega para a lista de requerimentos e configura visualização"""
     # Navega para a lista
     lista_url = f"{MOSAICO_BASE_URL}"
@@ -635,19 +635,24 @@ def abrir_caixa_de_entrada(page_obj):
     page_obj.wait_for_load_state("load")
 
     # Clica em "Em Análise"
-    page_obj.click(CSS_SELECTORS['menu_emAnalise'], timeout=3600000) 
+    if not retorno_para_estudo:
+        page_obj.click(CSS_SELECTORS['menu_emAnalise'], timeout=3600000) 
+        
+    else:  # Clica em "Retorno para Estudo"
+        page_obj.click(CSS_SELECTORS['menu_retornoParaEstudo'], timeout=3600000) 
+
     page_obj.wait_for_load_state("load")
     
     # Seleciona 100 itens por página e aguarda atualização
     page_obj.select_option("select.ui-paginator-rpp-options", value="100")
     time.sleep(2) 
     page_obj.wait_for_load_state("networkidle")  # Aguarda requisições AJAX terminarem
-    wait_primefaces_ajax(page_obj)
-    
+    wait_primefaces_ajax(page_obj)    
+
     return page_obj
 
 
-def baixar_documentos():
+def baixar_documentos(RETORNO_PARA_ESTUDO):
     """Função principal que baixa documentos dos requerimentos ORCN"""
     try:
         log_info(MENSAGENS_STATUS['iniciando_automacao'])
@@ -676,14 +681,17 @@ def baixar_documentos():
             tempo_primeiro_download = None
             
             # Navega para a lista
-            page = abrir_caixa_de_entrada(page)
+            page = abrir_caixa_de_entrada(page,retorno_para_estudo=RETORNO_PARA_ESTUDO)
             
             log_info(SEPARADOR_LINHA)
             log_info("🤖 AUTOMAÇÃO ORCN - DOWNLOAD DE ANEXOS")
             log_info(SEPARADOR_LINHA)
             
             # Seleciona todas as linhas
-            rows = page.query_selector_all(CSS_SELECTORS['tabela_dados_em_analise'])
+            if RETORNO_PARA_ESTUDO==False:
+                rows = page.query_selector_all(CSS_SELECTORS['tabela_dados_em_analise'])                
+            else:
+                rows = page.query_selector_all(CSS_SELECTORS['tabela_dados'])
             log_info(f"🔎 {len(rows)} linhas encontradas na tabela")
             
             criar_json_dos_novos_requerimentos(rows)
@@ -697,7 +705,7 @@ def baixar_documentos():
                 try:
                     cols = row.query_selector_all("td")
                     dados = [col.inner_text().strip() for col in cols]
-                    if (len(cols) < 2) or (dados[TAB_REQUERIMENTOS['status']] not in STATUS_EM_ANALISE):
+                    if (len(cols) < 2):# or (dados[TAB_REQUERIMENTOS['status']] not in STATUS_EM_ANALISE):
                         continue
                     
                     requerimento = cols[1].inner_text().strip()
@@ -748,7 +756,11 @@ def baixar_documentos():
                 row_atual = None
                 try:
                     # Recarrega todas as linhas da tabela
-                    linhas_atualizadas = page.query_selector_all(CSS_SELECTORS['tabela_dados_em_analise'])
+                    if RETORNO_PARA_ESTUDO==False:
+                        linhas_atualizadas = page.query_selector_all(CSS_SELECTORS['tabela_dados_em_analise'])
+                    else:
+                        linhas_atualizadas = page.query_selector_all(CSS_SELECTORS['tabela_dados'])
+                                    
                     
                     # Procura manualmente pela linha com o requerimento
                     for idx, linha in enumerate(linhas_atualizadas):
@@ -1026,7 +1038,7 @@ def baixar_documentos():
                     continue
 
                 # Volta para a lista
-                page = abrir_caixa_de_entrada(page)
+                page = abrir_caixa_de_entrada(page,retorno_para_estudo=RETORNO_PARA_ESTUDO)
             
             log_info(SEPARADOR_LINHA)
             log_info("✅ PROCESSAMENTO CONCLUÍDO!")

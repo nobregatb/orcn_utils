@@ -61,6 +61,7 @@ MOSAICO_BASE_URL = "https://sistemasnet.anatel.gov.br/mosaico/sch/worklist/"
 CSS_SELECTORS = {
     'menu_todos': "#menuForm\\:todos",
     'menu_emAnalise': "#menuForm\\:emAnalise",
+    'menu_retornoParaEstudo': "#menuForm\\:j_idt41",
     'tabela_dados': "css=#form\\:tarefasTable_data tr",
     'tabela_dados_em_analise': "css=#form\\:datatableForm\\:tarefasTable_data tr",
     'iframe_detalhe': "#__frameDetalhe",

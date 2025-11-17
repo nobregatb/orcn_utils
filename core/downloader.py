@@ -233,12 +233,12 @@ def preencher_minuta(page, rad_restrita: bool = True):
                 botao_salvar = page.get_by_role("button", name="Salvar") 
                 if botao_salvar:                                                        
                     page.evaluate("""
-                        const btn = document.getElementById('formAnalise:j_idt666');
+                        const btn = document.getElementById('formAnalise:j_idt925');
                         btn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
                         btn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
                         btn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
                     """)
-                    
+                    time.sleep(2)
                 else:
                     log_erro("❌ Botão salvar características não encontrado")
             except Exception as e:
@@ -250,57 +250,60 @@ def preencher_minuta(page, rad_restrita: bool = True):
         log_info("📋 Acessando Informações Adicionais...")
         
         # Clica no botão de informações adicionais
+        time.sleep(3)
         btn_infos = page.get_by_role("button", name=BOTOES['infos_adicionais'])
-        if btn_infos.count() > 0:
-            btn_infos.click(no_wait_after=True)
-            
-            # Aguarda carregamento
-            page.wait_for_selector(".ui-blockui", state="detached", timeout=15000)
-            wait_primefaces_ajax(page)
-            time.sleep(1)
-            
-            log_info("✅ Página de Informações Adicionais carregada")
-            
-            # Ativa o checkbox
-            try:
+        
+        while btn_infos.count() == 0:
+            btn_infos = page.get_by_role("button", name=BOTOES['infos_adicionais'])
+
+        btn_infos.click(no_wait_after=True)
+        
+        # Aguarda carregamento
+        page.wait_for_selector(".ui-blockui", state="detached", timeout=15000)
+        wait_primefaces_ajax(page)
+        time.sleep(1)
+        
+        log_info("✅ Página de Informações Adicionais carregada")
+        
+        # Ativa o checkbox
+        try:            
+            checkbox_div = page.query_selector("#formAnalise\\:checkBoxAcompanharProcesso")
+            while not checkbox_div:
                 checkbox_div = page.query_selector("#formAnalise\\:checkBoxAcompanharProcesso")
-                if checkbox_div:
-                    # Clica na div do checkbox para ativá-lo
-                    checkbox_box = checkbox_div.query_selector(".ui-chkbox-box")
-                    is_checked = checkbox_box.evaluate("el => el.classList.contains('ui-state-active')")
-                    if not is_checked:
-                        if checkbox_box:
-                            checkbox_box.click()
-                            log_info("✅ Checkbox ativado")
-                            time.sleep(1)
-                        else:
-                            log_erro("❌ Elemento checkbox-box não encontrado")
-                        # Preenche o textarea das informações adicionais
-                        try:
-                            textarea_infos = page.query_selector("#formAnalise\\:textAreaAcompanhar")
-                            if textarea_infos:                    
-                                page.fill("#formAnalise\\:textAreaAcompanhar", FRASES['analise_simplificada'])
-                                log_info("✅ Textarea de informações adicionais preenchido")                    
-                                # Clica no botão salvar informações adicionais
-                                botao_salvar_infos = page.get_by_role("button", name="Salvar")
-                                if botao_salvar_infos:
-                                    botao_salvar_infos.click(force=True, timeout=8000)
-                                    log_info("✅ Informações adicionais salvas")
-                                    time.sleep(2)
-                                    wait_primefaces_ajax(page)
-                                else:
-                                        log_erro("❌ Falha ao salvar informações adicionais")
+            if checkbox_div:
+                # Clica na div do checkbox para ativá-lo
+                checkbox_box = checkbox_div.query_selector(".ui-chkbox-box")
+                is_checked = checkbox_box.evaluate("el => el.classList.contains('ui-state-active')")
+                if not is_checked:
+                    if checkbox_box:
+                        checkbox_box.click()
+                        log_info("✅ Checkbox ativado")
+                        time.sleep(1)
+                    else:
+                        log_erro("❌ Elemento checkbox-box não encontrado")
+                    # Preenche o textarea das informações adicionais
+                    try:
+                        textarea_infos = page.query_selector("#formAnalise\\:textAreaAcompanhar")
+                        if textarea_infos:                    
+                            page.fill("#formAnalise\\:textAreaAcompanhar", FRASES['analise_simplificada'])
+                            log_info("✅ Textarea de informações adicionais preenchido")                    
+                            # Clica no botão salvar informações adicionais
+                            botao_salvar_infos = page.get_by_role("button", name="Salvar")
+                            if botao_salvar_infos:
+                                botao_salvar_infos.click(force=True, timeout=8000)
+                                log_info("✅ Informações adicionais salvas")
+                                time.sleep(2)
+                                wait_primefaces_ajax(page)
                             else:
-                                log_erro("❌ Textarea de informações adicionais não encontrado")
-                        except Exception as e:
-                            log_erro(f"❌ Erro ao preencher informações adicionais: {str(e)[:50]}")
-                else:
-                    log_erro("❌ Checkbox não encontrado")
-            except Exception as e:
-                log_erro(f"❌ Erro ao ativar checkbox: {str(e)[:50]}")            
-            
-        else:
-            log_erro("❌ Botão 'Informações Adicionais' não encontrado")
+                                    log_erro("❌ Falha ao salvar informações adicionais")
+                        else:
+                            log_erro("❌ Textarea de informações adicionais não encontrado")
+                    except Exception as e:
+                        log_erro(f"❌ Erro ao preencher informações adicionais: {str(e)[:50]}")
+            else:
+                log_erro("❌ Checkbox não encontrado")
+        except Exception as e:
+            log_erro(f"❌ Erro ao ativar checkbox: {str(e)[:50]}")            
         
         log_info("📝 Preenchimento de minuta concluído")
         

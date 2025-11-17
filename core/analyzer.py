@@ -1254,10 +1254,7 @@ class AnalisadorRequerimentos:
                 contexto="análise de documentos"
             )
             
-            # Extrair informações do OCD se disponível
-            if dados_ocd and isinstance(dados_ocd, dict) and dados_ocd.get("CNPJ"):
-                self._atualizar_ocds_json(dados_ocd)
-            
+      
             return dados_req
             
         except Exception as e:
@@ -1332,12 +1329,12 @@ class AnalisadorRequerimentos:
                     "data_atualizacao": data_certificado
                 }
                 dados_ocds.append(novo_registro)
-                dados_modificados = True
+                #dados_modificados = True
                 log_info(f"Novo OCD adicionado: {nome_ocd} (CNPJ: {cnpj_ocd})")
             
             # Salvar arquivo somente se houve modificação
-            if dados_modificados:
-                inutil = salvar_json(dados_ocds, ocds_file)
+            #if dados_modificados:
+                # inutil = salvar_json(dados_ocds, ocds_file)
                 #if salvar_json(dados_ocds, ocds_file):
                     #log_info("Arquivo ocds.json atualizado com sucesso")
                 #else:

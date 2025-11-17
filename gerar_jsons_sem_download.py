@@ -299,31 +299,27 @@ def coletar_dados_completos_requerimento(page, requerimento, dados_basicos):
         )
         
         # Coleta dados do OCD
-        ocd_id = 'formAnalise:j_idt233'
-        selector = "#" + ocd_id.replace(":", "\\:")
-        try:
-            dados_ocd = page.eval_on_selector(selector, """
-                (t) => {
-                    const linhas = Array.from(t.querySelectorAll("tr"));
-                    const resultado = {};
-                    for (const tr of linhas) {
-                        const celulas = tr.querySelectorAll("td");
-                        if (celulas.length === 2) {
-                            const chave = celulas[0].innerText.trim().replace(/:$/, '');
-                            const valor = celulas[1].innerText.trim();
-                            resultado[chave] = valor;
-                        }
-                    }
-                    return resultado;
-                }
-                """)
+        labelOCD = page.locator("text=Dados do Certificado")
+        table = labelOCD.locator("xpath=following::table[1]")
+
+        dados_ocd = table.evaluate("""
+        (t) => {
+            const r = {};
+            for (const tr of t.querySelectorAll("tr")) {
+                const td = tr.querySelectorAll("td");
+                if (td.length === 2) r[td[0].innerText.trim().replace(/:$/, '')] = td[1].innerText.trim();
+            }
+            return r;
+        }
+        """)
+
+        if len(dados_ocd) > 0:  
             log_info(f"✅ Dados do OCD coletados: {len(dados_ocd)} campo(s)")
-        except Exception as e:
-            log_erro(f"❌ Erro ao coletar dados do OCD: {str(e)[:50]}")
-            dados_ocd = {}
-        
+        else:
+            log_erro(f"❌ Erro ao coletar dados do OCD")
+
         # Validação crítica dos dados do OCD
-        from core.utils import validar_dados_criticos
+        
         validar_dados_criticos(
             dados_ocd=dados_ocd,
             nome_requerimento=requerimento,

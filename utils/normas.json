@@ -48,7 +48,7 @@
     "entidade": "Anatel",
     "status": "vigente"
   },
-  {
+    {
     "id": "ato1306",
     "nome": "Ato nº 1306, de 26 de fevereiro de 2021",
     "descricao": "Alterar os seguintes itens do Anexo I ao Ato nº 14.448",
@@ -592,6 +592,14 @@
     "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=documento_visualizar&acao_origem=protocolo_pesquisar&id_documento=15875583&infra_sistema=100000100&infra_unidade_atual=110001100&infra_hash=afe0cbfdc019cf8822c84658f9c71ae633f4624d209a5b91c1b26d03d86867aa",
     "entidade": "Anatel",
     "status": "vigente"
+  },
+  {
+    "id": "ato9960",
+    "nome": "Ato nº 9960, de 28 de junho de 2024",
+    "descricao": "Atualizar a Lista de Referência de Produtos para Telecomunicações, aprovada pelo Ato nº 7280, de 26 de novembro de 2020",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1959-ato-9960",
+    "entidade": "Anatel",
+    "status": "acessorio"
   },
   {
     "id": "resolucao1630",

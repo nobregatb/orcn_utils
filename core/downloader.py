@@ -36,35 +36,35 @@ def criar_json_dos_novos_requerimentos(rows):
         try:
             cols = row.query_selector_all("td") 
             dados = [col.inner_text().strip() for col in cols]
-            if dados[TAB_REQUERIMENTOS['status']] in STATUS_EM_ANALISE:
-                if type(dados) == list and len(dados) > 0:
-                    # Cria um dicionário com os dados do requerimento usando TAB_REQUERIMENTOS
-                    requerimento_json = {}                
-                    for atributo, indice in TAB_REQUERIMENTOS.items():
-                        if indice < len(dados):
-                            valor = dados[indice]
-                            # Se o valor contém '\n', cria um array de elementos
-                            if '\n' in valor:
-                                requerimento_json[atributo] = [item.strip() for item in valor.split('\n') if item.strip()]
-                            else:
-                                requerimento_json[atributo] = valor
+            # if dados[TAB_REQUERIMENTOS['status']] in STATUS_EM_ANALISE:
+            if type(dados) == list and len(dados) > 0:
+                # Cria um dicionário com os dados do requerimento usando TAB_REQUERIMENTOS
+                requerimento_json = {}                
+                for atributo, indice in TAB_REQUERIMENTOS.items():
+                    if indice < len(dados):
+                        valor = dados[indice]
+                        # Se o valor contém '\n', cria um array de elementos
+                        if '\n' in valor:
+                            requerimento_json[atributo] = [item.strip() for item in valor.split('\n') if item.strip()]
                         else:
-                            requerimento_json[atributo] = ""
-                    
-                    # Validação crítica dos dados do requerimento
-                    from core.utils import validar_dados_criticos
-                    validar_dados_criticos(
-                        requerimento_json=requerimento_json,
-                        nome_requerimento=requerimento_json.get('num_req', 'DESCONHECIDO'),
-                        contexto="criação de JSON de novos requerimentos"
-                    )
-                    
-                    pasta = criar_pasta_se_nao_existir(requerimento_json['num_req'])
-                    nome_pasta = os.path.basename(pasta)
-                    dados_json = {}
-                    dados_json["requerimento"] = requerimento_json
-                    with open(os.path.join(pasta, f"{nome_pasta[1:]}.json"), "w", encoding="utf-8") as f:
-                        json.dump(dados_json, f, ensure_ascii=False, indent=4)
+                            requerimento_json[atributo] = valor
+                    else:
+                        requerimento_json[atributo] = ""
+                
+                # Validação crítica dos dados do requerimento
+                from core.utils import validar_dados_criticos
+                validar_dados_criticos(
+                    requerimento_json=requerimento_json,
+                    nome_requerimento=requerimento_json.get('num_req', 'DESCONHECIDO'),
+                    contexto="criação de JSON de novos requerimentos"
+                )
+                
+                pasta = criar_pasta_se_nao_existir(requerimento_json['num_req'])
+                nome_pasta = os.path.basename(pasta)
+                dados_json = {}
+                dados_json["requerimento"] = requerimento_json
+                with open(os.path.join(pasta, f"{nome_pasta[1:]}.json"), "w", encoding="utf-8") as f:
+                    json.dump(dados_json, f, ensure_ascii=False, indent=4)
         except Exception as e:
             log_erro(f"Erro ao ler linha {i}: {str(e)[:50]}")
 

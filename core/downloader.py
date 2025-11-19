@@ -746,7 +746,7 @@ def baixar_documentos(RETORNO_PARA_ESTUDO):
                 requerimento = linha_info['requerimento']
                 
                 log_info(SEPARADOR_LINHA)
-                log_info(f"▶️ Requerimento {i}: {requerimento}")
+                log_info(f"▶️  Requerimento {i}: {requerimento}")
                 log_info(SEPARADOR_LINHA)
                 
                 # Marca o requerimento como em progresso no log

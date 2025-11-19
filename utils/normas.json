@@ -146,6 +146,14 @@
     "status": "vigente"
   },
   {
+    "id": "ato16417",
+    "nome": "Ato nº 16417, de 22 de novembro de 2024",
+    "descricao": "Procedimento Operacional contendo diretrizes para auditoria da política de segurança cibernética de fornecedores de produtos e equipamentos de telecomunicações para prestadoras",
+    "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/164-atos-de-certificacao-de-produtos/2024/1992-ato-16417",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
     "id": "ato16539",
     "nome": "Ato nº 16539, de 27 de novembro de 2023",
     "descricao": "Requisitos Técnicos e Operacionais de Uso das faixas de frequências associadas aos serviços de interesse coletivo, prestados por sistemas terrestres",
@@ -447,7 +455,7 @@
     "entidade": "Anatel",
     "status": "vigente"
   },
-  {
+    {
     "id": "ato7971",
     "nome": "Ato nº 7971, de 22 de junho de 2023",
     "descricao": "Requisitos Técnicos para avaliação da conformidade do protocolo IPv6 em produtos para telecomunicações",

@@ -48,7 +48,7 @@
     "entidade": "Anatel",
     "status": "vigente"
   },
-    {
+  {
     "id": "ato1306",
     "nome": "Ato nº 1306, de 26 de fevereiro de 2021",
     "descricao": "Alterar os seguintes itens do Anexo I ao Ato nº 14.448",
@@ -455,7 +455,7 @@
     "entidade": "Anatel",
     "status": "vigente"
   },
-    {
+  {
     "id": "ato7971",
     "nome": "Ato nº 7971, de 22 de junho de 2023",
     "descricao": "Requisitos Técnicos para avaliação da conformidade do protocolo IPv6 em produtos para telecomunicações",
@@ -493,6 +493,14 @@
     "nome": "Ato nº 915, de 01 de fevereiro de 2024",
     "descricao": "Requisitos Técnicos e Operacionais para uso das faixas de frequências associadas ao Serviço Limitado Privado, prestado por sistemas terrestres, na forma do Anexo a este Ato",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2024/1920-ato-915",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
+    "id": "ato9281",
+    "nome": "Ato nº 9281, de 5 de julho de 2023",
+    "descricao": "Requisitos técnicos para avaliação da conformidade do tipo de produto Smart TV Box",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2023/1879-ato-9281",
     "entidade": "Anatel",
     "status": "vigente"
   },

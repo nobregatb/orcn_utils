@@ -233,7 +233,7 @@ def preencher_minuta(page, rad_restrita: bool = True):
                 botao_salvar = page.get_by_role("button", name="Salvar") 
                 if botao_salvar:                                                        
                     page.evaluate("""
-                        const btn = document.getElementById('formAnalise:j_idt925');
+                        const btn = document.getElementById('formAnalise:j_idt841');
                         btn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
                         btn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
                         btn.dispatchEvent(new MouseEvent('click', { bubbles: true }));

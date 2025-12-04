@@ -533,7 +533,7 @@ def gerar_jsons_sem_download():
                 dados_basicos = linha_info['dados_basicos']
                 
                 log_info(SEPARADOR_LINHA)
-                log_info(f"▶️ Requerimento {i}: {requerimento}")
+                log_info(f"▶️  Requerimento {i}: {requerimento}")
                 log_info(SEPARADOR_LINHA)
                 
                 # IMPORTANTE: Recarrega a linha atual usando busca manual

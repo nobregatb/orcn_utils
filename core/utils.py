@@ -525,7 +525,7 @@ def extrair_normas_por_padrao(content: str) -> List[str]:
     normas = []
     custom_patterns = ['ATO', 'RESOLUÇÃO']
     
-    normas_section = limpar_texto(content, palavras=["contato","Contato","Nº","N°","NO","nº","n°","no","de","do", "da", "anatel"], simbolos=["."])
+    normas_section = limpar_texto(content, palavras=["contato","Contato","Nº","N°","NO","nº","n°","n.","N.","no","de","do", "da", "anatel"], simbolos=["."])
 
     lines = [
         subcampo.strip()
@@ -540,7 +540,7 @@ def extrair_normas_por_padrao(content: str) -> List[str]:
                 # Regex corrigida - o problema era \s+ que exige pelo menos 1 espaço
                 # Mudei para \s* para permitir zero ou mais espaços
                 norma_matches = re.findall(
-                    r'(ATO|RESOLUÇÃO|RESOLUÇÕES?)\s*(?:\([^)]+\))?\s*(?:da\s+\w+\s+)?(?:|Nº|N°|NO|nº|n°|no)?[\s:]*(\d+)',
+                    r'(ATO|RESOLUÇÃO|RESOLUÇÕES?)\s*(?:\([^)]+\))?\s*(?:da\s+\w+\s+)?(?:|Nº|N°|NO|nº|n°|no|n.|N.)?[\s:]*(\d+)',
                     normas_section,
                     re.IGNORECASE
                 )                       

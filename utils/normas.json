@@ -497,6 +497,14 @@
     "status": "vigente"
   },
   {
+    "id": "ato9281",
+    "nome": "Ato nº 9281, de 5 de julho de 2023",
+    "descricao": "Requisitos técnicos para avaliação da conformidade do tipo de produto Smart TV Box",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2023/1879-ato-9281",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
     "id": "ato932",
     "nome": "Ato nº 932, de 8 de Fevereiro de 2018",
     "descricao": "Requisito técnico conforme documento oficial da Anatel",
@@ -622,6 +630,14 @@
     "nome": "Resolução nº 323, de 7 de novembro de 2002",
     "descricao": "Norma para Certificação de Produtos para Telecomunicações",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2002/155-resolucao-323",
+    "entidade": "Anatel",
+    "status": "revogada"
+  },
+  {
+    "id": "resolucao454",
+    "nome": "Resolução nº 454, de 11 de dezembro de 2006",
+    "descricao": "Regulamento sobre Condições de Uso de Radiofreqüências nas Faixas de 800 MHz, 900 MHz, 1.800 MHz, 1.900 MHz e 2.100 MHz",
+    "url": "hhttps://informacoes.anatel.gov.br/legislacao/resolucoes/2006/89-resolucao-454",
     "entidade": "Anatel",
     "status": "revogada"
   },

@@ -48,7 +48,7 @@
     "entidade": "Anatel",
     "status": "vigente"
   },
-    {
+  {
     "id": "ato1306",
     "nome": "Ato nº 1306, de 26 de fevereiro de 2021",
     "descricao": "Alterar os seguintes itens do Anexo I ao Ato nº 14.448",
@@ -142,6 +142,14 @@
     "nome": "Ato nº 1630, de 11 de março de 2021",
     "descricao": "Procedimentos de Ensaio para Avaliação da Taxa de Absorção Específica (SAR) de Produtos para Telecomunicações, na forma do Anexo a este Ato, para efeitos de avaliação da conformidade técnica junto à Agência Nacional de Telecomunicações",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1523-ato-1630",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
+    "id": "ato16417",
+    "nome": "Ato nº 16417, de 22 de novembro de 2024",
+    "descricao": "Procedimento Operacional contendo diretrizes para auditoria da política de segurança cibernética de fornecedores de produtos e equipamentos de telecomunicações para prestadoras",
+    "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/164-atos-de-certificacao-de-produtos/2024/1992-ato-16417",
     "entidade": "Anatel",
     "status": "vigente"
   },

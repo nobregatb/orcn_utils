@@ -231,9 +231,9 @@ def preencher_minuta(page, rad_restrita: bool = True):
                 page.fill("textarea:visible", FRASES['radiacao_Restrita_ct'])
                 # Clica no botão salvar
                 botao_salvar = page.get_by_role("button", name="Salvar") 
-                if botao_salvar:                                                        
+                if botao_salvar:                                                                      
                     page.evaluate("""
-                        const btn = document.getElementById('formAnalise:j_idt841');
+                        const btn = document.getElementById('formAnalise:j_idt925');                        
                         btn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
                         btn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
                         btn.dispatchEvent(new MouseEvent('click', { bubbles: true }));

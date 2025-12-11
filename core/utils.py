@@ -1076,7 +1076,7 @@ def testar_radiacao_restrita(nome_equipamento: str) -> bool:
         id_equipamento = buscar_valor(equipamentos, 'nome', nome_equipamento, 'id')
         
         # Verificar se o ID encontrado é EQ093 (Radiação Restrita)
-        return id_equipamento == 'EQ093'
+        return id_equipamento in ['EQ093', 'EQ088', 'EQ078', 'EQ053'] 
         
     except Exception as e:
         log_erro(f"Erro ao testar radiação restrita para '{nome_equipamento}': {e}")

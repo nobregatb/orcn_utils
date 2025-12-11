@@ -41,5 +41,5 @@ def compactar_videos(pasta_entrada, fator=10):
 
 # ======= USO ========
 # Exemplo: compactar todos os vídeos em "C:\Videos"
-pasta = r"C:\Users\tbnobrega\Desktop\demo"
+pasta = r"C:\Users\tbnobrega\Desktop"
 compactar_videos(pasta, fator=10)

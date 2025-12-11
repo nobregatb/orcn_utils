@@ -545,6 +545,12 @@
     "nome": "Radar",
     "categoria": 2
   },
+    {
+    "escopo": "tab_requisitos",
+    "id": "EQ088",
+    "nome": "Emissor-sensor de sistema de radar de veículo",
+    "categoria": 2
+  },
   {
     "escopo": "tab_requisitos",
     "id": "EQ089",

@@ -362,6 +362,12 @@ def req_para_fullpath(req: str) -> str:
     full_path = os.path.join(get_files_folder(), requerimento)
     return full_path
 
+def req_para_usedpath(req: str) -> str:
+    """Converte número do requerimento (num/ano) para caminho completo da pasta"""
+    num, ano = req.split("/")
+    requerimento = rf"{REQUERIMENTOS_DIR_INBOX}\{ano}.{num}"
+    full_path = os.path.join(get_files_folder(), requerimento)
+    return full_path
 
 def fullpath_para_req(nome_diretorio: str) -> str:
     """
@@ -402,7 +408,32 @@ def fullpath_para_req(nome_diretorio: str) -> str:
 def criar_pasta_se_nao_existir(req: str) -> str:
     """Cria pasta do requerimento se não existir e retorna o caminho"""
     full_path = req_para_fullpath(req)
-    if not os.path.exists(full_path):
+    used_path = req_para_usedpath(req)
+    if os.path.exists(used_path):
+        # Se used_path existe, renomear para adicionar underscore
+        # Extrai o nome do último diretório e adiciona _
+        parent_dir = os.path.dirname(used_path)
+        dir_name = os.path.basename(used_path)
+        new_dir_name = f"_{dir_name}"
+        new_path = os.path.join(parent_dir, new_dir_name)
+        
+        # Verificar se o diretório de destino já existe
+        if not os.path.exists(new_path):
+            try:
+                os.rename(used_path, new_path)
+                log_info(f"📁 Diretório renomeado: {used_path} -> {new_path}")
+            except OSError as e:
+                log_erro(f"Erro ao renomear diretório {used_path}: {e}")
+        else:
+            log_info(f"📁 Diretório com underscore já existe, removendo duplicata: {used_path}")
+            try:
+                # Remove o diretório sem underscore se o com underscore já existe
+                import shutil
+                shutil.rmtree(used_path)
+                log_info(f"📁 Diretório duplicata removido: {used_path}")
+            except OSError as e:
+                log_erro(f"Erro ao remover diretório duplicata {used_path}: {e}")
+    elif not os.path.exists(full_path):
         os.makedirs(full_path, exist_ok=True)
         log_info(f"📁 Pasta criada: {full_path}")
     return full_path

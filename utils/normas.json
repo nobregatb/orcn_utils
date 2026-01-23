@@ -49,6 +49,62 @@
     "status": "vigente"
   },
   {
+    "id": "ato1135",
+    "nome": "Norma (ato1135) citada no requerimento 15.05752",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "ato11542",
+    "nome": "Norma (ato11542) citada no requerimento 15.05752",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "ato1213",
+    "nome": "Norma (ato1213) citada no requerimento 25.09510",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 25.09510.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "ato1214",
+    "nome": "Norma (ato1214) citada no requerimento 25.09604",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 25.09604.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "ato1224",
+    "nome": "Norma (ato1224) citada no requerimento 12.00395",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 12.00395.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "ato123",
+    "nome": "Norma (ato123) citada no requerimento 20.00935",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 20.00935.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "ato13",
+    "nome": "Norma (ato13) citada no requerimento 22.01314",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 22.01314.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "ato1306",
     "nome": "Ato nº 1306, de 26 de fevereiro de 2021",
     "descricao": "Alterar os seguintes itens do Anexo I ao Ato nº 14.448",
@@ -146,6 +202,22 @@
     "status": "vigente"
   },
   {
+    "id": "ato1477",
+    "nome": "Norma (ato1477) citada no requerimento 23.28342",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 23.28342.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "ato14888",
+    "nome": "Norma (ato14888) citada no requerimento 25.09701",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 25.09701.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "ato1630",
     "nome": "Ato nº 1630, de 11 de março de 2021",
     "descricao": "Procedimentos de Ensaio para Avaliação da Taxa de Absorção Específica (SAR) de Produtos para Telecomunicações, na forma do Anexo a este Ato, para efeitos de avaliação da conformidade técnica junto à Agência Nacional de Telecomunicações",
@@ -170,12 +242,36 @@
     "status": "vigente"
   },
   {
+    "id": "ato16865",
+    "nome": "Norma (ato16865) citada no requerimento 23.35510",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 23.35510.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "ato17087",
     "nome": "Ato nº 17087, de 19 de dezembro de 2022",
     "descricao": "Requisitos Técnicos de Segurança Elétrica",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1823-ato-17087",
     "entidade": "Anatel",
     "status": "vigente"
+  },
+  {
+    "id": "ato17394",
+    "nome": "Norma (ato17394) citada no requerimento 25.09717",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 25.09717.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "ato17423",
+    "nome": "Norma (ato17423) citada no requerimento 25.09573",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 25.09573.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
   },
   {
     "id": "ato17865",
@@ -218,10 +314,26 @@
     "status": "vigente"
   },
   {
+    "id": "ato2506",
+    "nome": "Norma (ato2506) citada no requerimento 19.12258",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 19.12258.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "ato2921",
     "nome": "Ato nº 2921, de 15 de Março de 2024",
     "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "ato2934",
+    "nome": "Norma (ato2934) citada no requerimento 23.28342",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 23.28342.",
+    "url": "a definir",
     "entidade": "Anatel",
     "status": "revogado"
   },
@@ -403,6 +515,14 @@
     "nome": "Ato nº 6553, de 29 de Outubro de 2020",
     "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "ato680",
+    "nome": "Norma (ato680) citada no requerimento 25.09523",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 25.09523.",
+    "url": "a definir",
     "entidade": "Anatel",
     "status": "revogado"
   },
@@ -610,6 +730,14 @@
     "status": "vigente"
   },
   {
+    "id": "ato955",
+    "nome": "Norma (ato955) citada no requerimento 15.05752",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "ato9688",
     "nome": "Ato nº 9688, de 08 de agosto de 2025",
     "descricao": "Designar o UL do Brasil Ltda, regularmente inscrito no CNPJ sob nº 02.839.483/0001-48, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 5/2025 (SEI nº 14160407), as funções de Organismo de Certificação Designado - OCD",
@@ -626,9 +754,33 @@
     "status": "acessorio"
   },
   {
+    "id": "resolucao1",
+    "nome": "Norma (resolucao1) citada no requerimento 25.09644",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 25.09644.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "resolucao1630",
     "nome": "Norma (resolucao1630) citada no requerimento 25.07409",
     "descricao": "Norma precisando de definição detalhada. Citada no requerimento 25.07409.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "resolucao242",
+    "nome": "Norma (resolucao242) citada no requerimento 15.05752",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "resolucao303",
+    "nome": "Norma (resolucao303) citada no requerimento 15.05752",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
     "url": "a definir",
     "entidade": "Anatel",
     "status": "revogado"
@@ -642,12 +794,44 @@
     "status": "revogada"
   },
   {
+    "id": "resolucao361",
+    "nome": "Norma (resolucao361) citada no requerimento 15.05752",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "resolucao442",
+    "nome": "Norma (resolucao442) citada no requerimento 15.05752",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "resolucao454",
     "nome": "Resolução nº 454, de 11 de dezembro de 2006",
     "descricao": "Regulamento sobre Condições de Uso de Radiofreqüências nas Faixas de 800 MHz, 900 MHz, 1.800 MHz, 1.900 MHz e 2.100 MHz",
     "url": "hhttps://informacoes.anatel.gov.br/legislacao/resolucoes/2006/89-resolucao-454",
     "entidade": "Anatel",
     "status": "revogada"
+  },
+  {
+    "id": "resolucao455",
+    "nome": "Norma (resolucao455) citada no requerimento 15.05752",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "resolucao506",
+    "nome": "Norma (resolucao506) citada no requerimento 15.05752",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
   },
   {
     "id": "resolucao527",
@@ -658,12 +842,68 @@
     "status": "revogado"
   },
   {
+    "id": "resolucao529",
+    "nome": "Norma (resolucao529) citada no requerimento 15.05752",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "resolucao533",
+    "nome": "Norma (resolucao533) citada no requerimento 15.04793",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.04793.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "resolucao557",
+    "nome": "Norma (resolucao557) citada no requerimento 15.05752",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "resolucao558",
+    "nome": "Norma (resolucao558) citada no requerimento 15.05752",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "resolucao568",
+    "nome": "Norma (resolucao568) citada no requerimento 15.05752",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "resolucao647",
     "nome": "Resolução nº 647, de 9 de fevereiro de 2015",
     "descricao": "Norma de adaptação dos instrumentos de permissão e de autorização do Serviço Móvel Especializado (SME) para o Serviço Móvel Pessoal (SMP), Serviço Limitado Privado (SLP) ou Serviço Limitado Especializado (SLE)",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2015/787-resolucao-647",
     "entidade": "Anatel",
     "status": "acessorio"
+  },
+  {
+    "id": "resolucao665",
+    "nome": "Norma (resolucao665) citada no requerimento 15.05752",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "resolucao674",
+    "nome": "Norma (resolucao674) citada no requerimento 15.05752",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
   },
   {
     "id": "resolucao680",
@@ -702,6 +942,30 @@
     "nome": "Resolução nº 721, de 11 de Fevereiro de 2020",
     "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "resolucao726",
+    "nome": "Norma (resolucao726) citada no requerimento 19.12258",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 19.12258.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "resolucao7280",
+    "nome": "Norma (resolucao7280) citada no requerimento 22.01252",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 22.01252.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "resolucao742",
+    "nome": "Norma (resolucao742) citada no requerimento 23.28342",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 23.28342.",
+    "url": "a definir",
     "entidade": "Anatel",
     "status": "revogado"
   },

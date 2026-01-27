@@ -50,57 +50,17 @@
   },
   {
     "id": "ato1135",
-    "nome": "Norma (ato1135) citada no requerimento 15.05752",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
-    "url": "a definir",
+    "nome": "Ato nº 1135 de 18 de fevereiro de 2013",
+    "descricao": "Procedimentos para a realização dos ensaios de avaliação da conformidade técnica de Equipamentos de Radiocomunicação de Radiação Restrita no ambiente do laboratório",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2013/1136-ato-1135",
     "entidade": "Anatel",
     "status": "revogado"
   },
   {
     "id": "ato11542",
-    "nome": "Norma (ato11542) citada no requerimento 15.05752",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato1213",
-    "nome": "Norma (ato1213) citada no requerimento 25.09510",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 25.09510.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato1214",
-    "nome": "Norma (ato1214) citada no requerimento 25.09604",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 25.09604.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato1224",
-    "nome": "Norma (ato1224) citada no requerimento 12.00395",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 12.00395.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato123",
-    "nome": "Norma (ato123) citada no requerimento 20.00935",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 20.00935.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato13",
-    "nome": "Norma (ato13) citada no requerimento 22.01314",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 22.01314.",
-    "url": "a definir",
+    "nome": "Ato nº 11542, de 23 de agosto de 2017",
+    "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2017/1137-ato-11542",
     "entidade": "Anatel",
     "status": "revogado"
   },
@@ -203,17 +163,9 @@
   },
   {
     "id": "ato1477",
-    "nome": "Norma (ato1477) citada no requerimento 23.28342",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 23.28342.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato14888",
-    "nome": "Norma (ato14888) citada no requerimento 25.09701",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 25.09701.",
-    "url": "a definir",
+    "nome": "Ato nº 1477, de 05 de março de 2021",
+    "descricao": "Requisitos técnicos e operacionais de condições de uso da subfaixa 3.300 MHz e 3.700 MHz, por estações no Serviço Móvel Pessoal – SMP, no Serviço de Comunicação Multimídia – SCM, no Serviço Telefônico Fixo Comutado – STFC e no Serviço Limitado Privado – SLP",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2021/1521-ato-1477",
     "entidade": "Anatel",
     "status": "revogado"
   },
@@ -242,14 +194,6 @@
     "status": "vigente"
   },
   {
-    "id": "ato16865",
-    "nome": "Norma (ato16865) citada no requerimento 23.35510",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 23.35510.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
     "id": "ato17087",
     "nome": "Ato nº 17087, de 19 de dezembro de 2022",
     "descricao": "Requisitos Técnicos de Segurança Elétrica",
@@ -259,19 +203,19 @@
   },
   {
     "id": "ato17394",
-    "nome": "Norma (ato17394) citada no requerimento 25.09717",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 25.09717.",
-    "url": "a definir",
+    "nome": "Ato nº 17.394, de 5 de julho de 2001",
+    "descricao": "Designar a FUNDAÇÃO CPqD – CENTRO DE PESQUISA E DESENVOLVIMENTO EM TELECOMUNICAÇÕES para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade n° 003/RFGCT/RFCE/SRF, as funções de Organismo de Certificação Designado – OCD",
+    "url": "https://sistemas.anatel.gov.br/anexar-api/publico/portal-publicar/documentos?numeroPublicacao=27461",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "vigente"
   },
   {
     "id": "ato17423",
-    "nome": "Norma (ato17423) citada no requerimento 25.09573",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 25.09573.",
-    "url": "a definir",
+    "nome": "Ato nº 17423, de 17 de novembro de 2025",
+    "descricao": "Designar a DEKRA TESTING, INSPECTION & CERTIFICATION LTDA, sociedade empresária regularmente inscrita no CNPJ sob nº 57.473.707/0001-24, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 6/2025 (SEI nº 14763987), as funções de Organismo de Certificação Designado - OCD",
+    "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=documento_visualizar&acao_origem=protocolo_pesquisar&id_documento=16531997&infra_sistema=100000100&infra_unidade_atual=110001100&infra_hash=c3a6dcc6379acc5b99ed1597c621eb2ec197819dcb685fe5519fb2156b7f7b0f",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "vigente"
   },
   {
     "id": "ato17865",
@@ -315,11 +259,11 @@
   },
   {
     "id": "ato2506",
-    "nome": "Norma (ato2506) citada no requerimento 19.12258",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 19.12258.",
-    "url": "a definir",
+    "nome": "Ato nº 2506, de 07 de maio de 2020",
+    "descricao": "Os itens abaixo indicados no Anexo I do Ato n° 14.448, de 04 de dezembro de 2017, que aprovou os Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita, passam a vigorar com a seguinte redação e mero reordenamento da numeração",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1413-ato-2506",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "acessorio"
   },
   {
     "id": "ato2921",
@@ -331,9 +275,9 @@
   },
   {
     "id": "ato2934",
-    "nome": "Norma (ato2934) citada no requerimento 23.28342",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 23.28342.",
-    "url": "a definir",
+    "nome": "Ato nº 2934, de 01 de junho de 2020",
+    "descricao": "Requisitos técnicos e operacionais de uso da faixa de 2.300 MHz a 2.400 MHz para utilização por estações no Serviço Móvel Pessoal – SMP, no Serviço de Comunicação Multimídia – SCM, no Serviço Telefônico Fixo Comutado – STFC e no Serviço Limitado Privado – SLP",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2020/1441-ato-2934",
     "entidade": "Anatel",
     "status": "revogado"
   },
@@ -515,14 +459,6 @@
     "nome": "Ato nº 6553, de 29 de Outubro de 2020",
     "descricao": "Requisito técnico conforme documento oficial da Anatel",
     "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato680",
-    "nome": "Norma (ato680) citada no requerimento 25.09523",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 25.09523.",
-    "url": "a definir",
     "entidade": "Anatel",
     "status": "revogado"
   },
@@ -731,9 +667,9 @@
   },
   {
     "id": "ato955",
-    "nome": "Norma (ato955) citada no requerimento 15.05752",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
-    "url": "a definir",
+    "nome": "Ato nº 955, de 08 de fevereiro de 2018",
+    "descricao": "Requisitos técnicos de taxa de absorção específica (SAR) para avaliação da conformidade de produtos para telecomunicações",
+    "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article?layout=edit&id=1194",
     "entidade": "Anatel",
     "status": "revogado"
   },
@@ -754,34 +690,18 @@
     "status": "acessorio"
   },
   {
-    "id": "resolucao1",
-    "nome": "Norma (resolucao1) citada no requerimento 25.09644",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 25.09644.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "resolucao1630",
-    "nome": "Norma (resolucao1630) citada no requerimento 25.07409",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 25.07409.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
     "id": "resolucao242",
-    "nome": "Norma (resolucao242) citada no requerimento 15.05752",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
-    "url": "a definir",
+    "nome": "Resolução nº 242, de 30 de novembro de 2000",
+    "descricao": "Regulamento para Certificação e Homologação de Produtos para Telecomunicações",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/15-2000/129-resolucao-242",
     "entidade": "Anatel",
     "status": "revogado"
   },
   {
     "id": "resolucao303",
-    "nome": "Norma (resolucao303) citada no requerimento 15.05752",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
-    "url": "a definir",
+    "nome": "Resolução nº 303, de 2 de julho de 2002",
+    "descricao": "Regulamento sobre Limitação da Exposição a Campos Elétricos, Magnéticos e Eletromagnéticos na Faixa de Radiofreqüências entre 9 kHz e 300 GHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/17-2002/128-resolucao-303",
     "entidade": "Anatel",
     "status": "revogado"
   },
@@ -795,19 +715,19 @@
   },
   {
     "id": "resolucao361",
-    "nome": "Norma (resolucao361) citada no requerimento 15.05752",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
-    "url": "a definir",
+    "nome": "Resolução nº 361, de 1º de abril de 2004",
+    "descricao": "Norma para Certificação e Homologação de Transmissores e Transceptores Monocanais Analógicos FM e PM para Operação nas Faixas de Freqüências Abaixo de 1 GHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/index.php/resolucoes/2004/360-resolucao-361",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "revogada"
   },
   {
     "id": "resolucao442",
-    "nome": "Norma (resolucao442) citada no requerimento 15.05752",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
-    "url": "a definir",
+    "nome": "Resolução nº 442, de 21 de julho de 2006",
+    "descricao": "Regulamento para a Certificação de Equipamentos de Telecomunicações quanto aos Aspectos de Compatibilidade Eletromagnética",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2006/352-resolucao-442",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "revogada"
   },
   {
     "id": "resolucao454",
@@ -819,67 +739,67 @@
   },
   {
     "id": "resolucao455",
-    "nome": "Norma (resolucao455) citada no requerimento 15.05752",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
-    "url": "a definir",
+    "nome": "Resolução nº 455, de 18 de dezembro de 2006",
+    "descricao": "Regulamento sobre Canalização e Condições de Uso de Radiofreqüências nas Faixas de 460 MHz, 800 MHz e 900 MHz para o Serviço Limitado Móvel Privativo (SLMP) e Serviço Móvel Especializado (SME)",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2006/327-resolucao-455",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "revogada"
   },
   {
     "id": "resolucao506",
-    "nome": "Norma (resolucao506) citada no requerimento 15.05752",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
-    "url": "a definir",
+    "nome": "Resolução nº 506, de 1º de julho de 2008",
+    "descricao": "Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/23-2008/104-resolucao-506",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "revogada"
   },
   {
     "id": "resolucao527",
     "nome": "Resolução nº 527, de 8 de Abril de 2009",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
+    "descricao": "Regulamento sobre Condições de Uso de Radiofreqüências por Sistemas de Banda Larga por meio de Redes de Energia Elétrica",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2009/101-resolucao-527",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "revogada"
   },
   {
     "id": "resolucao529",
-    "nome": "Norma (resolucao529) citada no requerimento 15.05752",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
-    "url": "a definir",
+    "nome": "Resolução nº 529, de 3 de junho de 2009",
+    "descricao": "Regulamento para Certificação de Equipamentos de Telecomunicações quanto aos Aspectos de Segurança Elétrica",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2009/149-resolucao-529",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "revogada"
   },
   {
     "id": "resolucao533",
-    "nome": "Norma (resolucao533) citada no requerimento 15.04793",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.04793.",
-    "url": "a definir",
+    "nome": "Resolução nº 533, de 10 de setembro de 2009",
+    "descricao": "Norma para Certificação e Homologação de Equipamentos de Telecomunicações quanto aos Aspectos da Avaliação da Taxa de Absorção Específica (SAR)",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2009/147-resolucao-533",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "revogada"
   },
   {
     "id": "resolucao557",
-    "nome": "Norma (resolucao557) citada no requerimento 15.05752",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
-    "url": "a definir",
+    "nome": "Resolução nº 557, de 20 de dezembro de 2010",
+    "descricao": "Regulamento sobre Canalização e Condições de Uso de Radiofreqüências na Faixa de 380 MHz a 400 MHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2010/20-resolucao-557",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "revogada"
   },
   {
     "id": "resolucao558",
-    "nome": "Norma (resolucao558) citada no requerimento 15.05752",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
-    "url": "a definir",
+    "nome": "Resolução nº 558, de 20 de dezembro de 2010",
+    "descricao": "Regulamento sobre Canalização e Condições de Uso de Radiofreqüências na Faixa de 450 MHz a 470 MHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2010/24-resolucao-558",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "revogada"
   },
   {
     "id": "resolucao568",
-    "nome": "Norma (resolucao568) citada no requerimento 15.05752",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
-    "url": "a definir",
+    "nome": "Resolução nº 568, de 15 de junho de 2011",
+    "descricao": "Regulamento sobre Canalização e Condições de Uso de Radiofrequências na Faixa de 148 MHz a 174 MHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2011/35-resolucao-568",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "revogada"
   },
   {
     "id": "resolucao647",
@@ -891,19 +811,19 @@
   },
   {
     "id": "resolucao665",
-    "nome": "Norma (resolucao665) citada no requerimento 15.05752",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
-    "url": "a definir",
+    "nome": "Resolução nº 665, de 02 de Maio de 2016",
+    "descricao": "Destina faixas de radiofrequência e aprova o Regulamento sobre Canalização e Condições de Uso da Faixa de Radiofrequências de 380 MHz a 400 MHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2016/902-resolucao-665",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "revogada"
   },
   {
     "id": "resolucao674",
-    "nome": "Norma (resolucao674) citada no requerimento 15.05752",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 15.05752.",
-    "url": "a definir",
+    "nome": "Resolução nº 674, de 13 de fevereiro de 2017",
+    "descricao": "Regulamento sobre Canalização e Condições de Uso de Radiofrequências na Faixa de 148 MHz a 174 MHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2017/928-resolucao-674",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "revogada"
   },
   {
     "id": "resolucao680",
@@ -947,27 +867,19 @@
   },
   {
     "id": "resolucao726",
-    "nome": "Norma (resolucao726) citada no requerimento 19.12258",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 19.12258.",
-    "url": "a definir",
+    "nome": "Resolução nº 726, de 05 de maio de 2020",
+    "descricao": "Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2020/1411-resolucao-726",
     "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "resolucao7280",
-    "nome": "Norma (resolucao7280) citada no requerimento 22.01252",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 22.01252.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
+    "status": "acessoria"
   },
   {
     "id": "resolucao742",
-    "nome": "Norma (resolucao742) citada no requerimento 23.28342",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 23.28342.",
-    "url": "a definir",
+    "nome": "Resolução Anatel nº 742, de 01 de março de 2021",
+    "descricao": "Altera a Resolução nº 711, de 28 de maio de 2019, publicada no Diário Oficial da União - DOU de 29 de maio de 2019, e o Regulamento sobre Condições de Uso da Faixa de Radiofrequências de 3,5 GHz a ela anexo, bem como aprova o Regulamento sobre Condições de Uso da Faixa de Radiofrequências de 24,25 GHz a 27,90 GHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2021/1512-resolucao-742",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "revogada"
   },
   {
     "id": "resolucao748",

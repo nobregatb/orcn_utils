@@ -50,7 +50,7 @@ BOTOES = {
 }
 
 FRASES = {
-    'radiacao_Restrita_ct': "Na instalação do produto devem ser observadas as condições de uso conforme estabelecido no Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita.",
+    'radiacao_Restrita_ct': "Na instalação do produto, devem ser observadas as condições de uso conforme estabelecido no Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita.",
     'analise_simplificada': "Este processo foi analisado conforme Portaria n° 2257, de 03 de março de 2022."
 }
 

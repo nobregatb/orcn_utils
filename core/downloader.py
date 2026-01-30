@@ -61,10 +61,14 @@ def criar_json_dos_novos_requerimentos(rows):
                 
                 pasta = criar_pasta_se_nao_existir(requerimento_json['num_req'])
                 nome_pasta = os.path.basename(pasta)
-                dados_json = {}
-                dados_json["requerimento"] = requerimento_json
-                with open(os.path.join(pasta, f"{nome_pasta[1:]}.json"), "w", encoding="utf-8") as f:
-                    json.dump(dados_json, f, ensure_ascii=False, indent=4)
+                caminho_json = os.path.join(pasta, f"{nome_pasta[1:]}.json")
+                
+                # Só cria o arquivo se ele não existir
+                if not os.path.exists(caminho_json):
+                    dados_json = {}
+                    dados_json["requerimento"] = requerimento_json
+                    with open(caminho_json, "w", encoding="utf-8") as f:
+                        json.dump(dados_json, f, ensure_ascii=False, indent=4)
         except Exception as e:
             log_erro(f"Erro ao ler linha {i}: {str(e)[:50]}")
 

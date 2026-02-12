@@ -75,7 +75,7 @@ def criar_json_dos_novos_requerimentos(rows):
     log_info(f"Total de requerimentos processados e arquivos JSON salvos!")
 
 
-def wait_primefaces_ajax(page, timeout=5000):
+def wait_primefaces_ajax(page, timeout=15000):
     """Espera todas as requisições AJAX do PrimeFaces terminarem"""
     try:
         page.wait_for_function(

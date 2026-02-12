@@ -1,5 +1,5 @@
 [
-  {
+    {
     "id": "ato10002",
     "nome": "Ato nº 10002, de 16 de novembro de 2021",
     "descricao": "Atualizar o Anexo ao Ato nº 3151, de 12 de junho de 2020, que aprova os requisitos técnicos para avaliação da conformidade de Estação Terminal de Acesso",
@@ -21,7 +21,7 @@
     "descricao": "Requisitos técnicos para avaliação da conformidade dos seguintes transmissores e transceptores",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2023/1887-ato-10029",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "vigente"
   },
   {
     "id": "ato10988",
@@ -323,6 +323,14 @@
     "status": "vigente"
   },
   {
+    "id": "ato3639",
+    "nome": "Ato nº 3639, de 27 de março de 2024",
+    "descricao": " Designar o SEVEN COMPLIANCE LTDA, regularmente inscrito no CNPJ sob nº 28.893.275/0001-10, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 1/2024 (SEI nº 11708112), as funções de Organismo de Certificação Designado - OCD",
+    "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=13023673&id_documento=13207718",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
     "id": "ato4077",
     "nome": "Ato nº 4077, de 31 de julho de 2020",
     "descricao": "Procedimento Operacional para Alteração Técnica em Produto para Telecomunicações Homologado por Certificado de Conformidade ou por Declaração de Conformidade",
@@ -401,10 +409,9 @@
     "id": "ato4776",
     "nome": "Ato nº 4776, de 01 de setembro de 2020",
     "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita",
-    "tipo": "Norma Nacional (Cabos)",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1429-ato-3151",
     "entidade": "Anatel",
-    "status": "vigente"
+    "status": "acessorio"
   },
   {
     "id": "ato48668",

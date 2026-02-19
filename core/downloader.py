@@ -199,7 +199,7 @@ def primefaces_click(page, element, description="elemento"):
     # MÉTODO 3: Force click como último recurso
     try:
         #log_info("🔄 Tentando force click...")
-        element.click(force=True, timeout=5000)
+        element.click(force=True, timeout=15000)
         #log_info("✅ Force click funcionou")
         time.sleep(1)
         return True
@@ -237,7 +237,7 @@ def preencher_minuta(page, rad_restrita: bool = True):
                 botao_salvar = page.get_by_role("button", name="Salvar") 
                 if botao_salvar:                                                                      
                     page.evaluate("""
-                        const btn = document.getElementById('formAnalise:j_idt445');                        
+                        const btn = document.getElementById('formAnalise:j_idt925');                        
                         btn.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
                         btn.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
                         btn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
@@ -294,7 +294,7 @@ def preencher_minuta(page, rad_restrita: bool = True):
                             # Clica no botão salvar informações adicionais
                             botao_salvar_infos = page.get_by_role("button", name="Salvar")
                             if botao_salvar_infos:
-                                botao_salvar_infos.click(force=True, timeout=8000)
+                                botao_salvar_infos.click(force=True, timeout=18000)
                                 log_info("✅ Informações adicionais salvas")
                                 time.sleep(2)
                                 wait_primefaces_ajax(page)

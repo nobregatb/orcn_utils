@@ -1,5 +1,5 @@
 [
-    {
+  {
     "id": "ato10002",
     "nome": "Ato nº 10002, de 16 de novembro de 2021",
     "descricao": "Atualizar o Anexo ao Ato nº 3151, de 12 de junho de 2020, que aprova os requisitos técnicos para avaliação da conformidade de Estação Terminal de Acesso",
@@ -552,6 +552,14 @@
     "status": "vigente"
   },
   {
+    "id": "ato8416",
+    "nome": "Ato nº 8416, de 08 de novembro de 2018",
+    "descricao": "Aprovar a alteração dos requisitos técnicos para homologação de Transmissores, Receptores e Amplificadores Lineares do Serviço de Radioamador",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1212-ato-8416",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
     "id": "ato849",
     "nome": "Ato nº 849, de 5 de Fevereiro de 2018",
     "descricao": "Requisito técnico conforme documento oficial da Anatel",
@@ -564,6 +572,14 @@
     "nome": "Ato nº 915, de 01 de fevereiro de 2024",
     "descricao": "Requisitos Técnicos e Operacionais para uso das faixas de frequências associadas ao Serviço Limitado Privado, prestado por sistemas terrestres, na forma do Anexo a este Ato",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2024/1920-ato-915",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
+    "id": "ato926",
+    "nome": "Ato nº 926, de 1 de fevereiro de 2024",
+    "descricao": "Requisitos Técnicos e Operacionais para uso de radiofrequências associadas ao Serviço de Radioamador",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2024/1919-ato-926",
     "entidade": "Anatel",
     "status": "vigente"
   },

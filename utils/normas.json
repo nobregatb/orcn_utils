@@ -97,38 +97,6 @@
     "status": "acessório"
   },
   {
-    "id": "ato14037",
-    "nome": "Ato nº 14037, de 5 de Outubro de 2022",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato14038",
-    "nome": "Ato nº 14038, de 5 de Outubro de 2022",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato14040",
-    "nome": "Ato nº 14040, de 5 de Outubro de 2022",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato14041",
-    "nome": "Ato nº 14041, de 5 de Outubro de 2022",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
     "id": "ato14158",
     "nome": "Ato nº 14158, de 1º de outubro de 2025",
     "descricao": "Modifica o Ato nº 14.448/2017 e o Ato nº 237/2022",
@@ -266,14 +234,6 @@
     "status": "acessorio"
   },
   {
-    "id": "ato2921",
-    "nome": "Ato nº 2921, de 15 de Março de 2024",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
     "id": "ato2934",
     "nome": "Ato nº 2934, de 01 de junho de 2020",
     "descricao": "Requisitos técnicos e operacionais de uso da faixa de 2.300 MHz a 2.400 MHz para utilização por estações no Serviço Móvel Pessoal – SMP, no Serviço de Comunicação Multimídia – SCM, no Serviço Telefônico Fixo Comutado – STFC e no Serviço Limitado Privado – SLP",
@@ -297,14 +257,6 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1430-ato-3152",
     "entidade": "Anatel",
     "status": "vigente"
-  },
-  {
-    "id": "ato3153",
-    "nome": "Ato nº 3153, de 12 de Junho de 2020",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
   },
   {
     "id": "ato3384",
@@ -383,14 +335,6 @@
     "status": "vigente"
   },
   {
-    "id": "ato418",
-    "nome": "Ato nº 418, de 22 de Janeiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
     "id": "ato423",
     "nome": "Ato nº 423, de 12 de janeiro de 2022",
     "descricao": "Alterar os seguintes itens e seus respectivos subitens do Anexo I do Ato nº 14.448",
@@ -430,14 +374,6 @@
     "status": "vigente"
   },
   {
-    "id": "ato5171",
-    "nome": "Ato nº 5171, de 9 de Maio de 2023",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
     "id": "ato57860",
     "nome": "Ato nº 57860, de 26 de abril de 2006",
     "descricao": "Designar a MASTER - Associação de Avaliação da Conformidade Telecom para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade no013/RFCEC/RFCE/SRF, as funções de Organismo de Certificação Designado – OCD",
@@ -460,54 +396,6 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1231-ato-6506",
     "entidade": "Anatel",
     "status": "vigente"
-  },
-  {
-    "id": "ato6553",
-    "nome": "Ato nº 6553, de 29 de Outubro de 2020",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato7127",
-    "nome": "Ato nº 7127, de 12 de Novembro de 2019",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato7128",
-    "nome": "Ato nº 7128, de 12 de Novembro de 2019",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato7133",
-    "nome": "Ato nº 7133, de 12 de Novembro de 2019",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato7134",
-    "nome": "Ato nº 7134, de 12 de Novembro de 2019",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato7135",
-    "nome": "Ato nº 7135, de 12 de Novembro de 2019",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
   },
   {
     "id": "ato7280",
@@ -536,14 +424,6 @@
     "status": "vigente"
   },
   {
-    "id": "ato8210",
-    "nome": "Ato nº 8210, de 27 de Dezembro de 2019",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
     "id": "ato8385",
     "nome": "Ato nº 8385, de 03 de maio de 2017",
     "descricao": "Alterar os requisitos técnicos relativos ao produto Transmissor e transceptor digital ponto a ponto",
@@ -558,14 +438,6 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1212-ato-8416",
     "entidade": "Anatel",
     "status": "vigente"
-  },
-  {
-    "id": "ato849",
-    "nome": "Ato nº 849, de 5 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
   },
   {
     "id": "ato915",
@@ -592,44 +464,12 @@
     "status": "vigente"
   },
   {
-    "id": "ato932",
-    "nome": "Ato nº 932, de 8 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato933",
-    "nome": "Ato nº 933, de 8 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
     "id": "ato934",
-    "nome": "Ato nº 934, de 8 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
+    "nome": "Ato nº 934, de 08 de fevereiro de 2018",
+    "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores digitais para o serviço fixo em aplicações ponto-multiponto nas faixas de frequências acima de 1 GHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1227-ato-934",
     "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato940",
-    "nome": "Ato nº 940, de 8 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato941",
-    "nome": "Ato nº 941, de 8 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
+    "status": "vigente"
   },
   {
     "id": "ato943",
@@ -662,14 +502,6 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1164-ato-948",
     "entidade": "Anatel",
     "status": "vigente"
-  },
-  {
-    "id": "ato949",
-    "nome": "Ato nº 949, de 8 de Fevereiro de 2018",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
   },
   {
     "id": "ato950",
@@ -881,14 +713,6 @@
     "status": "acessório"
   },
   {
-    "id": "resolucao721",
-    "nome": "Resolução nº 721, de 11 de Fevereiro de 2020",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
     "id": "resolucao726",
     "nome": "Resolução nº 726, de 05 de maio de 2020",
     "descricao": "Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita",
@@ -905,36 +729,12 @@
     "status": "revogada"
   },
   {
-    "id": "resolucao748",
-    "nome": "Resolução nº 748, de 22 de Outubro de 2021",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "resolucao752",
-    "nome": "Resolução nº 752, de 22 de Junho de 2022",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
     "id": "resolucao757",
     "nome": "Resolução Anatel nº 757, de 08 de novembro de 2022",
     "descricao": "Regulamento de Condições de Uso de Radiofrequências",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2022/1760-resolucao-",
     "entidade": "Anatel",
     "status": "revogada"
-  },
-  {
-    "id": "resolucao759",
-    "nome": "Resolução nº 759, de 19 de Janeiro de 2023",
-    "descricao": "Requisito técnico conforme documento oficial da Anatel",
-    "url": "",
-    "entidade": "Anatel",
-    "status": "revogado"
   },
   {
     "id": "resolucao772",

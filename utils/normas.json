@@ -65,14 +65,6 @@
     "status": "revogado"
   },
   {
-    "id": "ato1214",
-    "nome": "Norma (ato1214) citada no requerimento 26.01800",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.01800.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
     "id": "ato1306",
     "nome": "Ato nº 1306, de 26 de fevereiro de 2021",
     "descricao": "Alterar os seguintes itens do Anexo I ao Ato nº 14.448",
@@ -551,22 +543,6 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1959-ato-9960",
     "entidade": "Anatel",
     "status": "acessorio"
-  },
-  {
-    "id": "resolucao1",
-    "nome": "Norma (resolucao1) citada no requerimento 26.01749",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.01749.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "resolucao1280",
-    "nome": "Norma (resolucao1280) citada no requerimento 26.01754",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.01754.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
   },
   {
     "id": "resolucao242",

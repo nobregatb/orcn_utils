@@ -1127,6 +1127,13 @@
     "nome": "Equipamento de Localização de Cabos",
     "categoria": "Cat. 2"
   },
+  
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Sistema de Identificação de Radiofrequência",
+    "categoria": "Cat. 2"
+  },
   {
     "escopo": "mosaico",
     "id": "EQ093",

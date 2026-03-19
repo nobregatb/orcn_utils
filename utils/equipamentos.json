@@ -482,6 +482,12 @@
   {
     "escopo": "tab_requisitos",
     "id": "EQ093",
+    "nome": "Equipamento de Radiocomunicação Radiação Restrita",
+    "categoria": 2
+  },
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ093",
     "nome": "Equipamentos de Radiocomunicação de Radiação Restrita",
     "categoria": 2
   },  

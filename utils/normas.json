@@ -275,6 +275,14 @@
     "status": "vigente"
   },
   {
+    "id": "ato3481",
+    "nome": "Ato nº 3481, de 31 de maio de 2019",
+    "descricao": "Requisitos Técnicos e Procedimentos de Ensaio para Avaliação da Conformidade de Carregador Utilizado em Telefone Celular",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1287-ato-3481",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "ato3484",
     "nome": "Ato nº 3484, de 31 de maio de 2019",
     "descricao": "Requisitos Técnicos de Ensaio para a Avaliação da Conformidade de Baterias de Lítio Utilizadas em Telefones Celulares e produtos similares (Categoria I)",
@@ -380,6 +388,14 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1947-ato-5155",
     "entidade": "Anatel",
     "status": "vigente"
+  },
+  {
+    "id": "ato5159",
+    "nome": "Ato nº 5159, de 08 de abril de 2022",
+    "descricao": "Requisitos Técnicos e Procedimentos de Ensaio para Avaliação da Conformidade de Carregador Utilizado em Telefone Móvel Celular",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1657-ato-5159&quot;&gt;Anatel",
+    "entidade": "Anatel",
+    "status": "revogado"
   },
   {
     "id": "ato57860",

@@ -1191,6 +1191,12 @@
   {
     "escopo": "mosaico",
     "id": "EQ093",
+    "nome": "Sistemas Operando Na Faixa de 57 a 64 GHz",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
     "nome": "Sistemas Operando nas Faixas de Radiofrequência Ultra Larga",
     "categoria": "Cat. 2"
   },

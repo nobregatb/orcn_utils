@@ -407,6 +407,8 @@ def baixar_pdfs(page, requerimento, tempo_primeiro_download):
                     if len(linhas) > 0:
                         cabecalho = linhas[0].query_selector_all("th, td")
                         headers = [col.inner_text().strip() for col in cabecalho]
+                        # Mantém o último registro válido para preencher linhas parciais da tabela.
+                        ultimo_dado = {}
                         
                         # Processa as linhas de dados (exceto cabeçalho)
                         for linha in linhas[1:]:
@@ -418,6 +420,22 @@ def baixar_pdfs(page, requerimento, tempo_primeiro_download):
                                 for i, header in enumerate(headers):
                                     if i < len(dados):
                                         linha_info[header] = dados[i]
+                                linhas_dados.append(linha_info)
+                                ultimo_dado = linha_info.copy()
+                            else:
+                                linha_info = {}
+                                linha_info[headers[0]] = ultimo_dado.get(headers[0], "X")  # Usa o valor do último dado para a primeira coluna
+                                linha_info[headers[1]] = ultimo_dado.get(headers[1], "X")  # Usa o valor do último dado para a segunda coluna
+                                linha_info[headers[2]] = dados[0] if len(dados) > 0 else "X"  # Usa o valor da coluna atual se existir
+                                linha_info[headers[3]] = dados[1] if len(dados) > 1 else "X"  # Usa o valor da coluna atual se existir
+                                linha_info[headers[4]] = dados[2] if len(dados) > 2 else "X"  # Usa o valor da coluna atual se existir
+                                linha_info[headers[5]] = dados[3] if len(dados) > 3 else "X"  # Usa o valor da coluna atual se existir
+                                linha_info[headers[6]] = dados[4] if len(dados) > 4 else "X"  # Usa o valor da coluna atual se existir
+                                linha_info[headers[7]] = dados[5] if len(dados) > 5 else "X"  # Usa o valor da coluna atual se existir
+                                linha_info[headers[8]] = dados[6] if len(dados) > 6 else "X"  # Usa o valor da coluna atual se existir
+                                linha_info[headers[9]] = ultimo_dado.get(headers[9], "X")  # Usa o valor do último dado para a nona coluna
+                                linha_info[headers[10]] = dados[7] if len(dados) > 7 else "X"  # Usa o valor da coluna atual se existir
+                                linha_info[headers[11]] = dados[8] if len(dados) > 8 else "X"  # Usa o valor da coluna atual se existir                                
                                 linhas_dados.append(linha_info)
                 
                 if pdf_links:

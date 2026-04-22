@@ -368,7 +368,8 @@ STATUS_PROCESSADO = "PROCESSADO"
 # Estrutura: {"palavra_chave": {"normas": ["norma1", "norma2"]}}
 PALAVRAS_CHAVE_MANUAL = {
     "declaração em conformidade com os Requisitos de Segurança Cibernética": {"normas": []},
-    "vinculada à vigência da homologação": {"normas": []},
+    "vinculada à vigência": {"normas": []},
+    "vinculado à vigência": {"normas": []},
     "módulo de RF modelo": {"normas": []},
     "produto não acabado": {"normas": []},
     "uso profissional": {"normas": []},

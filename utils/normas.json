@@ -374,6 +374,14 @@
     "status": "acessorio"
   },
   {
+    "id": "ato4800",
+    "nome": "Ato nº 4800, de 01 de setembro de 2020",
+    "descricao": "Requisitos técnicos e operacionais de condições de uso das faixas acima de 2 GHz para aplicações do serviço fixo",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2020/1468-ato-4800",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "ato48668",
     "nome": "ATO nº 48.668, de 22 de desembro de 2004",
     "descricao": "Designar a Associação de Certificação de Produto para Telecomunicações, Radiodifusão, Cinema, Vídeo e Áudio-Visual – CTCP – Centro Tecnológico de Certificação e Pesquisa para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade no 012/RFCEC/RFCE/SRF, as funções de Organismo de Certificação Designado – OCD",
@@ -463,7 +471,7 @@
     "entidade": "Anatel",
     "status": "vigente"
   },
-  {
+    {
     "id": "ato915",
     "nome": "Ato nº 915, de 01 de fevereiro de 2024",
     "descricao": "Requisitos Técnicos e Operacionais para uso das faixas de frequências associadas ao Serviço Limitado Privado, prestado por sistemas terrestres, na forma do Anexo a este Ato",
@@ -569,12 +577,28 @@
     "status": "acessorio"
   },
   {
+    "id": "resolucao105",
+    "nome": "Resolução nº 105, de 26 de fevereiro de 1999",
+    "descricao": "Regulamento sobre Canalização e Condições de Uso da Faixa Inferior de 6 GHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/1999/413-resolucao-105",
+    "entidade": "Anatel",
+    "status": "revogada"
+  },
+  {
+    "id": "resolucao129",
+    "nome": "Resolução nº 129, de 26 de maio de 1999",
+    "descricao": "Regulamento sobre Canalização e Condições de Uso da Faixa de 15 GHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/1999/415-resolucao-129",
+    "entidade": "Anatel",
+    "status": "revogada"
+  },
+  {
     "id": "resolucao242",
     "nome": "Resolução nº 242, de 30 de novembro de 2000",
     "descricao": "Regulamento para Certificação e Homologação de Produtos para Telecomunicações",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/15-2000/129-resolucao-242",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "revogada"
   },
   {
     "id": "resolucao303",
@@ -582,7 +606,7 @@
     "descricao": "Regulamento sobre Limitação da Exposição a Campos Elétricos, Magnéticos e Eletromagnéticos na Faixa de Radiofreqüências entre 9 kHz e 300 GHz",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/17-2002/128-resolucao-303",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "revogada"
   },
   {
     "id": "resolucao323",
@@ -593,10 +617,34 @@
     "status": "revogada"
   },
   {
+    "id": "resolucao359",
+    "nome": "Resolução nº 359, de 1º de abril de 2004",
+    "descricao": "Norma para Certificação e Homologação de Transmissores e Transceptores Digitais para o Serviço Fixo em Aplicações Ponto-Multiponto nas Faixas de Freqüências abaixo de 1 GHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2004/344-resolucao-359",
+    "entidade": "Anatel",
+    "status": "revogada"
+  },
+  {
+    "id": "resolucao360",
+    "nome": "Resolução nº 360, de 1º de abril de 2004",
+    "descricao": "Norma para Certificação e Homologação de Transmissores e Transceptores Digitais para o Serviço Fixo em Aplicações Ponto-a-Ponto nas Faixas de Freqüências abaixo de 1 GHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2004/348-resolucao-360",
+    "entidade": "Anatel",
+    "status": "revogada"
+  },
+  {
     "id": "resolucao361",
     "nome": "Resolução nº 361, de 1º de abril de 2004",
     "descricao": "Norma para Certificação e Homologação de Transmissores e Transceptores Monocanais Analógicos FM e PM para Operação nas Faixas de Freqüências Abaixo de 1 GHz",
     "url": "https://informacoes.anatel.gov.br/legislacao/index.php/resolucoes/2004/360-resolucao-361",
+    "entidade": "Anatel",
+    "status": "revogada"
+  },
+  {
+    "id": "resolucao369",
+    "nome": "Resolução nº 369, de 13 de maio de 2004",
+    "descricao": "Norma para Certificação e Homologação de Transmissores e Transceptores Digitais para o Serviço Fixo em Aplicações Ponto-a-Ponto nas Faixas de Freqüências acima de 1 GHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2004/361-resolucao-369",
     "entidade": "Anatel",
     "status": "revogada"
   },
@@ -621,6 +669,14 @@
     "nome": "Resolução nº 455, de 18 de dezembro de 2006",
     "descricao": "Regulamento sobre Canalização e Condições de Uso de Radiofreqüências nas Faixas de 460 MHz, 800 MHz e 900 MHz para o Serviço Limitado Móvel Privativo (SLMP) e Serviço Móvel Especializado (SME)",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2006/327-resolucao-455",
+    "entidade": "Anatel",
+    "status": "revogada"
+  },
+  {
+    "id": "resolucao504",
+    "nome": "Resolução nº 504, de 14 de maio de 2008",
+    "descricao": "Regulamento sobre Canalização e Condições de Uso da Faixa de Radiofreqüências de 6.430 MHz a 7.110 MHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2008/181-resolucao-504",
     "entidade": "Anatel",
     "status": "revogada"
   },
@@ -653,6 +709,14 @@
     "nome": "Resolução nº 533, de 10 de setembro de 2009",
     "descricao": "Norma para Certificação e Homologação de Equipamentos de Telecomunicações quanto aos Aspectos da Avaliação da Taxa de Absorção Específica (SAR)",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2009/147-resolucao-533",
+    "entidade": "Anatel",
+    "status": "revogada"
+  },
+  {
+    "id": "resolucao544",
+    "nome": "Resolução nº 544, de 11 de agosto de 2010",
+    "descricao": "Modificar a Destinação de Radiofreqüências nas Faixas de 2.170 MHz a 2.182 MHz e de 2.500 MHz a 2.690 MHz, nos termos dos artigos seguintes, republicar, com alterações, conforme consta do Anexo I desta Resolução, o Regulamento sobre Condições de Uso de Radiofreqüências nas Faixas de 2.170 MHz a 2.182 MHz e de 2.500 MHz a 2.690 MHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2010/41-resolucao-544",
     "entidade": "Anatel",
     "status": "revogada"
   },
@@ -693,6 +757,14 @@
     "nome": "Resolução nº 665, de 02 de Maio de 2016",
     "descricao": "Destina faixas de radiofrequência e aprova o Regulamento sobre Canalização e Condições de Uso da Faixa de Radiofrequências de 380 MHz a 400 MHz",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2016/902-resolucao-665",
+    "entidade": "Anatel",
+    "status": "revogada"
+  },
+  {
+    "id": "resolucao669",
+    "nome": "Resolução nº 669, de 11 de julho de 2016",
+    "descricao": "Regulamento sobre Canalização e Condições de Uso da Faixa de 15 GHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2016/907-resolucao-n-669",
     "entidade": "Anatel",
     "status": "revogada"
   },
@@ -759,6 +831,14 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2022/1760-resolucao-",
     "entidade": "Anatel",
     "status": "revogada"
+  },
+  {
+    "id": "resolucao759",
+    "nome": "Resolução nº 759, de 19 de janeiro de 2023",
+    "descricao": "Plano de Atribuição, Destinação e Distribuição de Faixas de Frequências no Brasil (PDFF)",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2023/1834-resolucao-759",
+    "entidade": "Anatel",
+    "status": "revogado"
   },
   {
     "id": "resolucao772",

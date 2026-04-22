@@ -611,11 +611,23 @@ class AnalisadorRequerimentos:
         
         return resultado
     
-    def _determinar_tipo_documento(self, nome_arquivo: str) -> str:
-        """Determina o tipo de documento baseado no primeiro termo entre colchetes no nome do arquivo."""
+    def _determinar_tipo_documento(self, nome_arquivo: str) -> Tuple[str, datetime]:
+        """Determina o tipo de documento e extrai a data do segundo bloco entre colchetes."""
+        data_padrao = datetime(1900, 1, 1)
         
         # Extrair o primeiro termo entre colchetes
         match = re.search(r'\[([^\]]+)\]', nome_arquivo)
+
+        # Extrair data do segundo bloco: [YYYY.MM.DD - ...]
+        match_data = re.search(r'^\[[^\]]+\]\[(\d{4}\.\d{2}\.\d{2})\s*-\s*[^\]]+\]', nome_arquivo)
+        if not match_data:
+            data_documento = data_padrao
+        else:
+            try:
+                data_documento = datetime.strptime(match_data.group(1), "%Y.%m.%d")
+            except ValueError:
+                data_documento = data_padrao
+
         if match:
             tipo_extraido = match.group(1).lower().strip()
             
@@ -626,10 +638,10 @@ class AnalisadorRequerimentos:
                 
                 # Verificar correspondência exata
                 if tipo_extraido == nome_completo:
-                    return tipo_chave
+                    return tipo_chave, data_documento
         
         # Fallback final para "outros" se não encontrar correspondência
-        return TIPO_OUTROS
+        return TIPO_OUTROS, data_documento
     
     def _analisar_cct(self, caminho: Path, resultado: Dict, dados_ocd: Dict) -> Dict:
         """Análise específica para Certificado de Conformidade Técnica."""
@@ -1385,18 +1397,43 @@ class AnalisadorRequerimentos:
             return resultado_requerimento
         
         log_info(f"Encontrados {len(arquivos_pdf)} arquivos PDF passíveis de análise")
-        
-        # Analisar cada documento
+
+        # Selecionar apenas o documento mais recente para CCT e RACT;
+        # os demais tipos continuam sendo processados normalmente.
+        docs_mais_recentes: Dict[str, Optional[Tuple[Path, str, datetime]]] = {
+            TIPO_CCT: None,
+            TIPO_RACT: None
+        }
+        docs_demais_tipos: List[Tuple[Path, str, datetime]] = []
+
         for arquivo in arquivos_pdf:
-            tipo_doc = self._determinar_tipo_documento(arquivo.name)
-            # Processar todos os tipos de documentos para não perder informações
+            tipo_doc, data_doc = self._determinar_tipo_documento(arquivo.name)
+
+            # Processar apenas os tipos contemplados no fluxo de análise atual
             if tipo_doc not in [TIPO_CCT, TIPO_MANUAL, TIPO_RACT, TIPO_RELATORIO_ENSAIO]:
                 continue
+
+            if tipo_doc in [TIPO_CCT, TIPO_RACT]:
+                atual = docs_mais_recentes[tipo_doc]
+                if atual is None or data_doc > atual[2]:
+                    docs_mais_recentes[tipo_doc] = (arquivo, tipo_doc, data_doc)
+            else:
+                docs_demais_tipos.append((arquivo, tipo_doc, data_doc))
+
+        docs_para_processar = list(docs_demais_tipos)
+        for tipo_doc in [TIPO_CCT, TIPO_RACT]:
+            doc_recente = docs_mais_recentes[tipo_doc]
+            if doc_recente is not None:
+                docs_para_processar.append(doc_recente)
+
+        for doc_info in docs_para_processar:
+            arquivo, tipo_doc, _ = doc_info
+
             # Extrair dados do OCD do JSON do requerimento
             dados_ocd = dados_req_json.get('ocd', {}) if dados_req_json else {}
             resultado_doc = self._analisar_documento(arquivo, tipo_doc, dados_ocd)
             resultado_requerimento["documentos_analisados"].append(resultado_doc)
-            
+
             # Atualizar contadores de status
             status = resultado_doc["status"]
             if status in resultado_requerimento["resumo_status"]:

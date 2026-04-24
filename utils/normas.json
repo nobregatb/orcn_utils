@@ -471,7 +471,7 @@
     "entidade": "Anatel",
     "status": "vigente"
   },
-    {
+  {
     "id": "ato915",
     "nome": "Ato nº 915, de 01 de fevereiro de 2024",
     "descricao": "Requisitos Técnicos e Operacionais para uso das faixas de frequências associadas ao Serviço Limitado Privado, prestado por sistemas terrestres, na forma do Anexo a este Ato",
@@ -791,6 +791,14 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2018/1161-resolucao-700",
     "entidade": "Anatel",
     "status": "vigente"
+  },
+  {
+    "id": "resolucao710",
+    "nome": "Resolução nº 710, de 28 de maio de 2019",
+    "descricao": "Destinação da Faixa de Radiofrequências de 2,3 GHz ao Serviço Limitado Privado – SLP e o Regulamento sobre Condições de Uso da Faixa de Radiofrequências de 2,3 GHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2019/1284-resolucao-710",
+    "entidade": "Anatel",
+    "status": "revogada"
   },
   {
     "id": "resolucao715",

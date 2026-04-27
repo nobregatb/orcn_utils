@@ -242,6 +242,14 @@
     "status": "acessorio"
   },
   {
+    "id": "ato2873",
+    "nome": "Ato nº 2873, de 30 de abril de 2019",
+    "descricao": "Designar a BR APPROVAL-ASSOCIAÇÃO TÉCNICA DE CERTIFICAÇÃO, CNPJ 30.569.550/0001-97, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD Nº 1/2019 (SEI nº 4091483), as funções de Organismo de Certificação Designado - OCD",
+    "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=3433932&id_documento=4686417",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
     "id": "ato2934",
     "nome": "Ato nº 2934, de 01 de junho de 2020",
     "descricao": "Requisitos técnicos e operacionais de uso da faixa de 2.300 MHz a 2.400 MHz para utilização por estações no Serviço Móvel Pessoal – SMP, no Serviço de Comunicação Multimídia – SCM, no Serviço Telefônico Fixo Comutado – STFC e no Serviço Limitado Privado – SLP",

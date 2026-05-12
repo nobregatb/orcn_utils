@@ -97,6 +97,14 @@
     "status": "acessório"
   },
   {
+    "id": "ato14010",
+    "nome": "Ato nº 14010, de 04 de outubro de 2022",
+    "descricao": "Procedimento Operacional contendo Orientações para Fornecimento do Selo de Segurança de Homologação da Anatel para Baterias de Lítio e Carregadores Utilizados em Telefones Celulares",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1744-ato-14010",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
     "id": "ato14158",
     "nome": "Ato nº 14158, de 1º de outubro de 2025",
     "descricao": "Modifica o Ato nº 14.448/2017 e o Ato nº 237/2022",
@@ -414,6 +422,14 @@
     "status": "revogado"
   },
   {
+    "id": "ato5649",
+    "nome": "Ato nº 5649, de 12 de setembro de 2019",
+    "descricao": "Orientações para homologação de produtos por declaração de conformidade destinados aos Serviços de Radioamador, Rádio do Cidadão, Móvel Marítimo, Móvel Aeronáutico e Comunicação por Satélite",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1364-ato-5649",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
     "id": "ato57860",
     "nome": "Ato nº 57860, de 26 de abril de 2006",
     "descricao": "Designar a MASTER - Associação de Avaliação da Conformidade Telecom para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade no013/RFCEC/RFCE/SRF, as funções de Organismo de Certificação Designado – OCD",
@@ -500,6 +516,14 @@
     "nome": "Ato nº 9281, de 5 de julho de 2023",
     "descricao": "Requisitos técnicos para avaliação da conformidade do tipo de produto Smart TV Box",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2023/1879-ato-9281",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
+    "id": "ato933",
+    "nome": "Ato nº 933, de 08 de fevereiro de 2018",
+    "descricao": "Requisitos técnicos para avaliação da conformidade da interface analógica de adaptadores para terminal de assinante",
+    "url": "hhttps://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1192-ato-933",
     "entidade": "Anatel",
     "status": "vigente"
   },
@@ -749,6 +773,14 @@
     "nome": "Resolução nº 568, de 15 de junho de 2011",
     "descricao": "Regulamento sobre Canalização e Condições de Uso de Radiofrequências na Faixa de 148 MHz a 174 MHz",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2011/35-resolucao-568",
+    "entidade": "Anatel",
+    "status": "revogada"
+  },
+  {
+    "id": "resolucao625",
+    "nome": "Resolução nº 625, de 11 de novembro de 20131",
+    "descricao": "Atribuição, a Destinação e o Regulamento sobre Condições de Uso de Radiofrequências na Faixa de 698 MHz a 806 MHz",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2013/644-resolucao-625",
     "entidade": "Anatel",
     "status": "revogada"
   },

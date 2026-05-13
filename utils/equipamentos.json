@@ -653,6 +653,12 @@
     "nome": "Transceptor e Transmissor fixo, móvel e portátil",
     "categoria": 2
   },
+    {
+    "escopo": "tab_requisitos",
+    "id": "EQ103",
+    "nome": "TRANSMISSOR E TRANSCEPTOR (FIXO, MÓVEL E PORTÁTIL)",
+    "categoria": 2
+  },
   {
     "escopo": "tab_requisitos",
     "id": "EQ104",

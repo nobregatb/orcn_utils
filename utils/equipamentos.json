@@ -1211,6 +1211,12 @@
     "nome": "Sistemas Operando nas Faixas de Radiofrequência Ultra Larga",
     "categoria": "Cat. 2"
   },
+    {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Sistema operando em RF Ultra larga (UWB)",
+    "categoria": "Cat. 2"
+  },
   {
     "escopo": "mosaico",
     "id": "EQ093",

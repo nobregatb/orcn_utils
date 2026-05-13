@@ -653,12 +653,6 @@
     "nome": "Transceptor e Transmissor fixo, móvel e portátil",
     "categoria": 2
   },
-    {
-    "escopo": "tab_requisitos",
-    "id": "EQ103",
-    "nome": "TRANSMISSOR E TRANSCEPTOR (FIXO, MÓVEL E PORTÁTIL)",
-    "categoria": 2
-  },
   {
     "escopo": "tab_requisitos",
     "id": "EQ104",
@@ -1211,12 +1205,6 @@
     "nome": "Sistemas Operando nas Faixas de Radiofrequência Ultra Larga",
     "categoria": "Cat. 2"
   },
-    {
-    "escopo": "mosaico",
-    "id": "EQ093",
-    "nome": "Sistema operando em RF Ultra larga (UWB)",
-    "categoria": "Cat. 2"
-  },
   {
     "escopo": "mosaico",
     "id": "EQ093",
@@ -1247,10 +1235,16 @@
     "nome": "Sistema de Compartilhamento de Acesso ao Meio nas Faixas 5.150-5.350 MHz, 5.470-5.725 MHz e 5.725-5.850 MHz",
     "categoria": "Cat. 2"
   },
-    {
+  {
     "escopo": "mosaico",
     "id": "EQ069",
     "nome": "Transceptor portátil",
     "categoria": 1
-  }   
+  },   
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ069",
+    "nome": "TRANSMISSOR E TRANSCEPTOR (FIXO, MÓVEL E PORTÁTIL)",
+    "categoria": 2
+  }  
 ]

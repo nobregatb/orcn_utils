@@ -1208,6 +1208,12 @@
   {
     "escopo": "mosaico",
     "id": "EQ093",
+    "nome": "Sistema operando em RF Ultra larga (UWB)",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
     "nome": "Sistemas de Transmissão de Áudio, Vídeo ou Outras Aplicações",
     "categoria": "Cat. 2"
   },
@@ -1244,7 +1250,13 @@
   {
     "escopo": "tab_requisitos",
     "id": "EQ069",
-    "nome": "TRANSMISSOR E TRANSCEPTOR (FIXO, MÓVEL E PORTÁTIL)",
+    "nome": "Transmissor e Transceptor (Fixo, Móvel e Portátil)",
     "categoria": 2
-  }  
+  } ,   
+  {
+    "escopo": "tab_requisitos",
+    "id": "EQ069",
+    "nome": "Transceptor Móvel (Móvel Marítimo)",
+    "categoria": 2
+  }   
 ]

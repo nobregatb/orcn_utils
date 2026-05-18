@@ -1145,6 +1145,12 @@
     "nome": "Sistemas de identificação por rádio frequência",
     "categoria": "Cat. 2"
   },
+    {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Sistema de Identificação por rádio frequência",
+    "categoria": "Cat. 2"
+  },
   {
     "escopo": "mosaico",
     "id": "EQ093",
@@ -1215,6 +1221,12 @@
     "escopo": "mosaico",
     "id": "EQ093",
     "nome": "Sistemas de Transmissão de Áudio, Vídeo ou Outras Aplicações",
+    "categoria": "Cat. 2"
+  },
+   {
+    "escopo": "mosaico",
+    "id": "EQ093",
+    "nome": "Sistemas de Transmissão de Áudio, Vídeo",
     "categoria": "Cat. 2"
   },
   {

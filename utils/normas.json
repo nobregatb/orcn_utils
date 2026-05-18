@@ -283,6 +283,14 @@
     "status": "vigente"
   },
   {
+    "id": "ato3153",
+    "nome": "Norma (ato3153) citada no requerimento 26.03829",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.03829.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "ato3384",
     "nome": "Ato nº 3384, de 26 de junho de 2020",
     "descricao": "Designar a DEKRA CERTIFICATION B.V., CNPJ 26.600.714/0001-24, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD Nº 01/2020 (SEI nº 5694684), as funções de Organismo de Certificação Designado - OCD",
@@ -793,6 +801,14 @@
     "status": "acessorio"
   },
   {
+    "id": "resolucao662",
+    "nome": "Resolução nº 662, de 8 de março de 2016",
+    "descricao": "Altera o Anexo III e o art. 39 do Regulamento para Certificação e Homologação de Produtos para Telecomunicações, aprovado pela Resolução nº 242, de 30 de novembro de 2000",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2016/897-resolucao-662",
+    "entidade": "Anatel",
+    "status": "revogada"
+  },
+  {
     "id": "resolucao665",
     "nome": "Resolução nº 665, de 02 de Maio de 2016",
     "descricao": "Destina faixas de radiofrequência e aprova o Regulamento sobre Canalização e Condições de Uso da Faixa de Radiofrequências de 380 MHz a 400 MHz",
@@ -869,6 +885,14 @@
     "nome": "Resolução Anatel nº 742, de 01 de março de 2021",
     "descricao": "Altera a Resolução nº 711, de 28 de maio de 2019, publicada no Diário Oficial da União - DOU de 29 de maio de 2019, e o Regulamento sobre Condições de Uso da Faixa de Radiofrequências de 3,5 GHz a ela anexo, bem como aprova o Regulamento sobre Condições de Uso da Faixa de Radiofrequências de 24,25 GHz a 27,90 GHz",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2021/1512-resolucao-742",
+    "entidade": "Anatel",
+    "status": "revogada"
+  },
+    {
+    "id": "resolucao752",
+    "nome": "Resolução Anatel nº 752, de 22 de junho de 2022",
+    "descricao": "Revoga e altera Resoluções expedidas pela Agência (Guilhotina Regulatória)",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2022/1670-resolucao-752",
     "entidade": "Anatel",
     "status": "revogada"
   },

@@ -344,7 +344,7 @@ def baixar_pdfs(page, requerimento, tempo_primeiro_download):
         tempo_primeiro_download: Tempo do primeiro download bem-sucedido (None se ainda não houve)
     
     Returns:
-        tuple: (total_pdfs_baixados, tempo_primeiro_download_atualizado, requer_reautenticacao)
+        tuple: (total_pdfs_baixados, tempo_primeiro_download_atualizado, downloads_sem_erro)
     """
     num, ano = requerimento.split("/")
     
@@ -352,7 +352,7 @@ def baixar_pdfs(page, requerimento, tempo_primeiro_download):
     pasta_destino = criar_pasta_se_nao_existir(requerimento)
     
     total_pdfs_baixados = 0
-    requer_reautenticacao = False
+    houve_erro_processamento = False
     
     # Percorre cada botão para revelar PDFs
     for nome_botao in BOTOES_PDF:
@@ -643,13 +643,17 @@ def baixar_pdfs(page, requerimento, tempo_primeiro_download):
                 if tentativa_botao < MAX_TENTATIVAS_BOTAO:
                     log_info(f"🔄 Tentando botão novamente em 2 segundos...")
                     time.sleep(2)
+
+        if not sucesso_botao:
+            houve_erro_processamento = True
     
     if total_pdfs_baixados > 0:
         #log_info("⚠️ Nenhum PDF foi baixado")
     #else:
         log_info(f"💾 Total de {total_pdfs_baixados} PDF(s) salvos em: {pasta_destino}")
     
-    return total_pdfs_baixados, tempo_primeiro_download, requer_reautenticacao
+    downloads_sem_erro = not houve_erro_processamento
+    return total_pdfs_baixados, tempo_primeiro_download, downloads_sem_erro
 
 
 def abrir_caixa_de_entrada(page_obj, retorno_para_estudo=False):
@@ -1037,20 +1041,23 @@ def baixar_documentos(RETORNO_PARA_ESTUDO):
                             log_info("✅ Página de Anexos carregada")
                             
                             # BAIXA OS PDFs com retry inteligente
-                            pdfs_baixados, tempo_primeiro_download, requer_reautenticacao = baixar_pdfs(
+                            pdfs_baixados, tempo_primeiro_download, downloads_sem_erro = baixar_pdfs(
                                 page, 
                                 requerimento, 
                                 tempo_primeiro_download
                             )
                             
                             # Marca o requerimento como concluído no log
-                            if pdfs_baixados > 0:
+                            if downloads_sem_erro:
                                 marcar_requerimento_concluido(requerimento, pdfs_baixados)
                                 requerimentos_processados.append(requerimento)
-                                log_info(f"✅ Requerimento {requerimento} marcado como concluído ({pdfs_baixados} arquivos)")
+                                if pdfs_baixados > 0:
+                                    log_info(f"✅ Requerimento {requerimento} marcado como concluído ({pdfs_baixados} arquivos)")
+                                else:
+                                    log_info(f"✅ Requerimento {requerimento} marcado como concluído (0 novos arquivos; anexos já existiam)")
                             else:
-                                marcar_requerimento_com_erro(requerimento, "Nenhum arquivo foi baixado")
-                                log_info(f"⚠️ Requerimento {requerimento} marcado com erro (0 arquivos baixados)")
+                                marcar_requerimento_com_erro(requerimento, "Falhas durante o processamento dos anexos")
+                                log_info(f"⚠️ Requerimento {requerimento} marcado com erro por falhas no processamento dos anexos")
                             
                         except Exception as e:
                             erro_msg = f"Erro ao acessar anexos: {str(e)}"

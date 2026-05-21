@@ -888,7 +888,7 @@
     "entidade": "Anatel",
     "status": "revogada"
   },
-    {
+  {
     "id": "resolucao752",
     "nome": "Resolução Anatel nº 752, de 22 de junho de 2022",
     "descricao": "Revoga e altera Resoluções expedidas pela Agência (Guilhotina Regulatória)",
@@ -925,6 +925,14 @@
     "nome": "Resolução Anatel nº 773, de 16 de janeiro de 2025",
     "descricao": "Regulamento sobre Condições de Uso de Faixas de Radiofrequências no Brasil",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2025/2002-resolucao-773",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
+    "id": "resolucao777",
+    "nome": "Resolução Anatel nº 777, de 28 de abril de 2025",
+    "descricao": "Revoga e altera Resoluções expedidas pela Anatel e aprova o Regulamento Geral dos Serviços de Telecomunicações - RGST",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2025/2022-resolucao-777",
     "entidade": "Anatel",
     "status": "vigente"
   }

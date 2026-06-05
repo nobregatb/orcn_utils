@@ -2259,10 +2259,11 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 palavras_ordenadas = sorted(palavras_consolidadas.items(), key=lambda x: x[1], reverse=True)
                 for palavra, contador in palavras_ordenadas:
                     palavra_escapada = escapar_latex(palavra)
-                    palavras_formatadas.append(f"\\textcolor{{blue}}{{{palavra_escapada} (x{contador})}}")
+                    palavras_formatadas.append(f"    \\item \\textcolor{{blue}}{{{palavra_escapada} (x{contador})}}")
                 
-                latex_content += " ".join(palavras_formatadas)
-                latex_content += "\n\n"
+                latex_content += "\\begin{itemize}\n"
+                latex_content += "\n".join(palavras_formatadas)
+                latex_content += "\n\\end{itemize}\n\n"
             else:
                 latex_content += "\\textit{Nenhuma palavra-chave específica foi encontrada neste requerimento.}\n\n"
                     

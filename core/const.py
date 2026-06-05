@@ -369,8 +369,8 @@ STATUS_PROCESSADO = "PROCESSADO"
 PALAVRAS_CHAVE_MANUAL = {
     #"declaração em conformidade com os Requisitos de Segurança Cibernética": {"normas": []},
     "e.i.r.p.": {"normas": [], "efeito": "aplica"},
-    "vinculada à vigência": {"normas": [], "efeito": "aplica"},
-    "vinculado à vigência": {"normas": [], "efeito": "aplica"},
+    "vinculada": {"normas": [], "efeito": "aplica"},
+    "vinculado": {"normas": [], "efeito": "aplica"},
     "módulo de RF": {"normas": [], "efeito": "aplica"},
     "produto não acabado": {"normas": [], "efeito": "aplica"},
     "uso profissional": {"normas": [], "efeito": "aplica"},

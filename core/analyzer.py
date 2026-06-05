@@ -717,6 +717,8 @@ class AnalisadorRequerimentos:
             #nome_ocd = dados_cct.get('nome_ocd', 'N/A')
             tipo_equipamento = dados_cct.get('tipo_equipamento', [])
             normas_verificadas = dados_cct.get('normas_verificadas', [])
+            # Detecta frase de vínculo da validade do certificado diretamente no texto do CCT.
+            contem_vinculo_homologacao = ("vinculado" in texto_normalizado) or ("vinculada" in texto_normalizado)
             
             # Adicionar informações detalhadas ao resultado
             resultado["dados_extraidos"] = {
@@ -728,7 +730,8 @@ class AnalisadorRequerimentos:
                 "palavras_encontradas": palavras_encontradas,
                 "palavras_nao_encontradas": palavras_nao_encontradas,
                 "palavras_encontradas_com_normas": palavras_encontradas_com_normas,
-                "palavras_evidencias": palavras_evidencias
+                "palavras_evidencias": palavras_evidencias,
+                "contem_vinculo_homologacao": contem_vinculo_homologacao
             }
             
             # Observações detalhadas
@@ -2271,7 +2274,9 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
             cct_contem_eirp = False
             cct_contem_ipv6 = False
             cct_contem_produto_nao_acabado = False
+            cct_contem_vinculo_homologacao = False
             cct_strings_desobrigam_ato17865 = set()
+
             for doc in documentos:
                 if doc.get("tipo") != TIPO_CCT:
                     continue
@@ -2284,6 +2289,11 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                     cct_contem_ipv6 = True
                 if "produto nao acabado" in palavras_encontradas_cct:
                     cct_contem_produto_nao_acabado = True
+
+                if dados_extraidos_cct.get("contem_vinculo_homologacao"):
+                    cct_contem_vinculo_homologacao = True
+                elif "vinculado" in palavras_encontradas_cct or "vinculada" in palavras_encontradas_cct:
+                    cct_contem_vinculo_homologacao = True
 
                 # Captura as strings encontradas no CCT que desobrigam especificamente o ato17865.
                 for palavra, info_palavra in palavras_com_normas_cct.items():
@@ -2400,6 +2410,12 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                     if nome_tipo == "CCT" and cct_contem_ipv6:
                         latex_content += "<br>Suporta protocolo IPv6.\n\n"
 
+                    if nome_tipo == "CCT" and cct_contem_vinculo_homologacao:
+                        latex_content += (
+                            "<br>A validade deste certificado está vinculada à vigência da homologação ANATEL "
+                            "HHHH-AA-FFFF, relativa ao módulo de RF modelo XXXX "
+                            "incorporado ao produto.\n\n"
+                        )
                     
             else:
                 latex_content += f"\\textit{{Nenhuma norma específica identificada como requisito identificado para: {equipamentos_resumo}}}\n\n"

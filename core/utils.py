@@ -630,7 +630,14 @@ def extrair_normas_por_padrao(content: str) -> List[str]:
     normas = []
     custom_patterns = ['ATO', 'RESOLUÇÃO']
     
-    normas_section = limpar_texto(content, palavras=["contato","Contato","Nº","N°","NO","nº","n°","n.","N.","no","de","do", "da", "anatel"], simbolos=["."])
+    # Preserva conteúdo entre parênteses para não perder referências válidas,
+    # como "(Ato nº 77, 2021)", antes da aplicação da regex de normas.
+    normas_section = limpar_texto(
+        content,
+        palavras=["contato", "Contato", "Nº", "N°", "NO", "nº", "n°", "n.", "N.", "no", "de", "do", "da", "anatel"],
+        simbolos=["."],
+        remover_parenteses=False
+    )
 
     lines = [
         subcampo.strip()

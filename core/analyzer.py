@@ -34,8 +34,19 @@ TIPO_CONTRATO_SOCIAL = 'contrato_social'
 TIPO_OUTROS = 'outros'
 from core.utils import (
     formatar_cnpj, desformatar_cnpj, latex_escape_path, escapar_latex, buscar_valor,
-    normalizar, normalizar_dados, obter_versao_git, carregar_json, salvar_json, validar_cnpj, fullpath_para_req
+    normalizar, normalizar_dados, obter_versao_git, carregar_json, salvar_json, validar_cnpj, fullpath_para_req,
+    contar_ocorrencias_palavra_chave, extrair_contextos_palavra_chave
 )
+
+
+PALAVRAS_CHAVE_MANUAL_NORMALIZADAS = {
+    normalizar(palavra): regra for palavra, regra in PALAVRAS_CHAVE_MANUAL.items()
+}
+
+# Preserva a forma original cadastrada para exibição em relatórios e PDF.
+PALAVRAS_CHAVE_MANUAL_ORIGINAIS = {
+    normalizar(palavra): palavra for palavra in PALAVRAS_CHAVE_MANUAL.keys()
+}
 
 
 PYMUPDF_DISPONIVEL = True
@@ -674,6 +685,33 @@ class AnalisadorRequerimentos:
             # Validar dados extraídos
             validacao = cct_analyzer.validate_data(dados_cct)
             sucesso_validacao, normas_nao_verificadas = validacao
+
+            # Extrair e contar palavras-chave no conteúdo do CCT para manter a contagem consolidada por documento.
+            texto_normalizado = normalizar(conteudo).replace("\n", " ")
+            texto_normalizado = re.sub(r'\s+', ' ', texto_normalizado).strip()
+            palavras_chave_manual = list(PALAVRAS_CHAVE_MANUAL_NORMALIZADAS.keys())
+            palavras_chave_manual = sorted(palavras_chave_manual)
+            palavras_encontradas = {}
+            palavras_nao_encontradas = []
+            palavras_encontradas_com_normas = {}
+            palavras_evidencias = {}
+
+            for palavra in palavras_chave_manual:
+                contador = contar_ocorrencias_palavra_chave(texto_normalizado, palavra)
+                if contador > 0:
+                    palavras_encontradas[palavra] = contador
+                    palavras_evidencias[palavra] = extrair_contextos_palavra_chave(texto_normalizado, palavra)
+                    regra_palavra = PALAVRAS_CHAVE_MANUAL_NORMALIZADAS.get(palavra, {})
+                    normas_associadas = regra_palavra.get("normas", [])
+                    efeito_regra = str(regra_palavra.get("efeito", "aplica")).lower()
+                    if normas_associadas:
+                        palavras_encontradas_com_normas[palavra] = {
+                            "contador": contador,
+                            "normas": normas_associadas,
+                            "efeito": efeito_regra
+                        }
+                else:
+                    palavras_nao_encontradas.append(palavra)
             
             # Processar resultados da análise
             #nome_ocd = dados_cct.get('nome_ocd', 'N/A')
@@ -686,7 +724,11 @@ class AnalisadorRequerimentos:
                 "quantidade_equipamentos": len(tipo_equipamento),
                 "equipamentos": [eq.get('nome', 'N/A') for eq in tipo_equipamento] if tipo_equipamento else [],
                 "quantidade_normas": len(normas_verificadas),
-                "normas_verificadas": normas_verificadas
+                "normas_verificadas": normas_verificadas,
+                "palavras_encontradas": palavras_encontradas,
+                "palavras_nao_encontradas": palavras_nao_encontradas,
+                "palavras_encontradas_com_normas": palavras_encontradas_com_normas,
+                "palavras_evidencias": palavras_evidencias
             }
             
             # Observações detalhadas
@@ -730,6 +772,16 @@ class AnalisadorRequerimentos:
                     resultado["observacoes"].append(f"... e mais {len(normas_verificadas) - 5} norma(s)")
             else:
                 nao_conformidades.append("Nenhuma norma verificada encontrada")
+
+            # Registrar palavras-chave identificadas no CCT para manter a rastreabilidade da contagem.
+            if palavras_encontradas:
+                palavras_ordenadas = sorted(palavras_encontradas.items(), key=lambda x: x[1], reverse=True)
+                for i, (palavra, contador) in enumerate(palavras_ordenadas[:5], 1):
+                    resultado["observacoes"].append(f"Palavra {i}: {palavra} (x{contador})")
+                if len(palavras_encontradas) > 5:
+                    resultado["observacoes"].append(f"... e mais {len(palavras_encontradas) - 5} palavra(s)")
+            else:
+                resultado["observacoes"].append("⚠️ Nenhuma palavra-chave específica foi identificada no CCT")
             
             # Validação de requisitos (normas necessárias vs verificadas)
             if sucesso_validacao:
@@ -841,24 +893,29 @@ class AnalisadorRequerimentos:
                                 texto_completo = texto_ocr.lower()
 
                         # Usar palavras-chave definidas em const.py
-                        palavras_chave_manual = [palavra.lower() for palavra in PALAVRAS_CHAVE_MANUAL.keys()]
+                        palavras_chave_manual = list(PALAVRAS_CHAVE_MANUAL_NORMALIZADAS.keys())
                         palavras_chave_manual = sorted(palavras_chave_manual)                           
                         
                         # Contar ocorrências de cada palavra-chave
                         palavras_encontradas = {}
                         palavras_nao_encontradas = []
                         palavras_encontradas_com_normas = {}  # Nova estrutura para palavras com normas
+                        palavras_evidencias = {}
                         
                         for palavra in palavras_chave_manual:
-                            contador = texto_completo.count(palavra)
+                            contador = contar_ocorrencias_palavra_chave(texto_completo, palavra)
                             if contador > 0:
                                 palavras_encontradas[palavra] = contador
+                                palavras_evidencias[palavra] = extrair_contextos_palavra_chave(texto_completo, palavra)
                                 # Buscar normas associadas à palavra
-                                normas_associadas = PALAVRAS_CHAVE_MANUAL.get(palavra, {}).get("normas", [])
+                                regra_palavra = PALAVRAS_CHAVE_MANUAL_NORMALIZADAS.get(palavra, {})
+                                normas_associadas = regra_palavra.get("normas", [])
+                                efeito_regra = str(regra_palavra.get("efeito", "aplica")).lower()
                                 if normas_associadas:
                                     palavras_encontradas_com_normas[palavra] = {
                                         "contador": contador,
-                                        "normas": normas_associadas
+                                        "normas": normas_associadas,
+                                        "efeito": efeito_regra
                                     }
                             else:
                                 palavras_nao_encontradas.append(palavra)
@@ -873,7 +930,8 @@ class AnalisadorRequerimentos:
                             "quantidade_normas": len(normas_verificadas),
                             "palavras_encontradas": palavras_encontradas,
                             "palavras_nao_encontradas": palavras_nao_encontradas,
-                            "palavras_encontradas_com_normas": palavras_encontradas_com_normas
+                            "palavras_encontradas_com_normas": palavras_encontradas_com_normas,
+                            "palavras_evidencias": palavras_evidencias
                         }
                         
                         if normas_verificadas:
@@ -954,24 +1012,29 @@ class AnalisadorRequerimentos:
                         texto_completo += str(doc[pagina_num].get_text()).lower() + "\n"
                     
                     # Usar palavras-chave definidas em const.py
-                    palavras_chave_manual = [palavra.lower() for palavra in PALAVRAS_CHAVE_MANUAL.keys()]
+                    palavras_chave_manual = list(PALAVRAS_CHAVE_MANUAL_NORMALIZADAS.keys())
                     palavras_chave_manual = sorted(palavras_chave_manual)                    
                     
                     # Contar ocorrências de cada palavra-chave
                     palavras_encontradas = {}
                     palavras_nao_encontradas = []
                     palavras_encontradas_com_normas = {}  # Nova estrutura para palavras com normas
+                    palavras_evidencias = {}
                     
                     for palavra in palavras_chave_manual:
-                        contador = texto_completo.count(palavra)
+                        contador = contar_ocorrencias_palavra_chave(texto_completo, palavra)
                         if contador > 0:
                             palavras_encontradas[palavra] = contador
+                            palavras_evidencias[palavra] = extrair_contextos_palavra_chave(texto_completo, palavra)
                             # Buscar normas associadas à palavra
-                            normas_associadas = PALAVRAS_CHAVE_MANUAL.get(palavra, {}).get("normas", [])
+                            regra_palavra = PALAVRAS_CHAVE_MANUAL_NORMALIZADAS.get(palavra, {})
+                            normas_associadas = regra_palavra.get("normas", [])
+                            efeito_regra = str(regra_palavra.get("efeito", "aplica")).lower()
                             if normas_associadas:
                                 palavras_encontradas_com_normas[palavra] = {
                                     "contador": contador,
-                                    "normas": normas_associadas
+                                    "normas": normas_associadas,
+                                    "efeito": efeito_regra
                                 }
                         else:
                             palavras_nao_encontradas.append(palavra)
@@ -980,7 +1043,8 @@ class AnalisadorRequerimentos:
                     resultado["dados_extraidos"] = {
                         "palavras_encontradas": palavras_encontradas,
                         "palavras_nao_encontradas": palavras_nao_encontradas,
-                        "palavras_encontradas_com_normas": palavras_encontradas_com_normas
+                        "palavras_encontradas_com_normas": palavras_encontradas_com_normas,
+                        "palavras_evidencias": palavras_evidencias
                     }
                         
             except ImportError:
@@ -1410,7 +1474,7 @@ class AnalisadorRequerimentos:
             tipo_doc, data_doc = self._determinar_tipo_documento(arquivo.name)
 
             # Processar apenas os tipos contemplados no fluxo de análise atual
-            if tipo_doc not in [TIPO_CCT, TIPO_MANUAL, TIPO_RACT, TIPO_RELATORIO_ENSAIO]:
+            if tipo_doc not in [TIPO_CCT,TIPO_RACT]:
                 continue
 
             if tipo_doc in [TIPO_CCT, TIPO_RACT]:
@@ -1612,9 +1676,10 @@ class AnalisadorRequerimentos:
         
         return requisitos
 
-    def _coletar_normas_aplicaveis_requerimento(self, req_dados: Dict) -> Dict[str, List[str]]:
+    def _coletar_normas_aplicaveis_requerimento(self, req_dados: Dict, tipo_documento: Optional[str] = None) -> Dict[str, List[str]]:
         """
-        Coleta todas as normas aplicáveis a um requerimento, mapeando suas origens (palavras-chave e equipamentos).
+        Coleta normas aplicáveis a um requerimento, mapeando origens (palavras-chave e equipamentos).
+        Quando tipo_documento é informado, consolida apenas documentos daquele tipo.
         
         Returns:
             Dict[norma_id, List[motivadores]]
@@ -1627,37 +1692,51 @@ class AnalisadorRequerimentos:
             # 1. Consolidar palavras-chave de todos os documentos (sem duplicatas)
             palavras_consolidadas = {}
             for doc in documentos:
+                # Permite segregar os contadores por tipo de arquivo (ex.: RACT x CCT).
+                if tipo_documento and doc.get("tipo") != tipo_documento:
+                    continue
+
                 dados_extraidos = doc.get("dados_extraidos", {})
                 palavras_com_normas = dados_extraidos.get("palavras_encontradas_com_normas", {})
                 
                 for palavra, info in palavras_com_normas.items():
                     contador = info.get("contador", 0)
                     normas = info.get("normas", [])
+                    efeito = str(info.get("efeito", "aplica")).lower()
                     
                     if palavra not in palavras_consolidadas:
-                        palavras_consolidadas[palavra] = {"contador": 0, "normas": set()}
+                        palavras_consolidadas[palavra] = {"contador": 0, "normas": set(), "efeito": "aplica"}
                     
                     # Somar contadores de todos os documentos
                     palavras_consolidadas[palavra]["contador"] += contador
                     # Adicionar normas (set evita duplicatas)
                     palavras_consolidadas[palavra]["normas"].update(normas)
+                    # Se qualquer ocorrência marcar desobrigação, a palavra consolida como desobriga.
+                    if efeito == "desobriga":
+                        palavras_consolidadas[palavra]["efeito"] = "desobriga"
             
             # Gerar motivadores para palavras-chave consolidadas
+            normas_desobrigadas = {}
             for palavra, info in palavras_consolidadas.items():
                 contador_total = info["contador"]
                 normas = info["normas"]
+                efeito = info.get("efeito", "aplica")
                 
                 for norma_id in normas:
-                    if norma_id not in normas_aplicaveis:
-                        normas_aplicaveis[norma_id] = []
-                    
-                    # Formato simplificado: apenas a palavra (removendo prefixo e contador desnecessário)
-                    if contador_total > 1:
-                        normas_aplicaveis[norma_id].append(f"{palavra} (x{contador_total})")
+                    motivador = f"{palavra} (x{contador_total})"
+                    if efeito == "desobriga":
+                        if norma_id not in normas_desobrigadas:
+                            normas_desobrigadas[norma_id] = []
+                        normas_desobrigadas[norma_id].append(motivador)
                     else:
-                        normas_aplicaveis[norma_id].append(palavra)
+                        if norma_id not in normas_aplicaveis:
+                            normas_aplicaveis[norma_id] = []
+                        # Exibir multiplicidade em todos os casos para manter rastreabilidade por tipo (x1, x2, ...).
+                        normas_aplicaveis[norma_id].append(motivador)
             
             # 2. Coletar normas de tipos de equipamentos (sem duplicatas)
+            # Regras de equipamento devem permanecer no escopo do requerimento,
+            # independentemente do tipo (RACT/CCT), para manter consistência entre tabelas.
             equipamentos_encontrados = set()
             for doc in documentos:
                 dados_extraidos = doc.get("dados_extraidos", {})
@@ -1678,6 +1757,11 @@ class AnalisadorRequerimentos:
                         # Evitar duplicatas de equipamentos
                         if eq_nome not in normas_aplicaveis[norma_id]:
                             normas_aplicaveis[norma_id].append(eq_nome)
+
+            # Remove normas desobrigadas por palavras-chave, mesmo quando vieram de equipamento.
+            for norma_id in normas_desobrigadas.keys():
+                if norma_id in normas_aplicaveis:
+                    normas_aplicaveis.pop(norma_id, None)
             
         except Exception as e:
             log_erro(f"Erro ao coletar normas aplicáveis: {str(e)}")
@@ -1734,6 +1818,36 @@ class AnalisadorRequerimentos:
         
         return normas_verificadas
 
+    def _coletar_normas_verificadas_por_tipo(self, req_dados: Dict, tipo_documento: str) -> Set[str]:
+        """
+        Coleta as normas verificadas apenas para um tipo de documento (ex.: CCT, RACT).
+
+        Returns:
+            Set[norma_id] das normas verificadas para o tipo informado
+        """
+        normas_verificadas_tipo = set()
+
+        try:
+            documentos = req_dados.get("documentos_analisados", [])
+
+            for doc in documentos:
+                if doc.get("tipo") != tipo_documento:
+                    continue
+
+                dados_extraidos = doc.get("dados_extraidos", {})
+                normas_doc = dados_extraidos.get("normas_verificadas", [])
+
+                for norma_original in normas_doc:
+                    if isinstance(norma_original, str) and norma_original.strip():
+                        norma_id = self._normalizar_id_norma(norma_original.strip())
+                        if norma_id:
+                            normas_verificadas_tipo.add(norma_id)
+
+        except Exception as e:
+            log_erro(f"Erro ao coletar normas verificadas por tipo ({tipo_documento}): {str(e)}")
+
+        return normas_verificadas_tipo
+
     def _coletar_palavras_chave_consolidadas(self, req_dados: Dict) -> Tuple[Dict[str, int], List[str]]:
         """
         Coleta e consolida todas as palavras-chave encontradas e não encontradas nos documentos do requerimento.
@@ -1750,6 +1864,7 @@ class AnalisadorRequerimentos:
             for doc in documentos:
                 dados_extraidos = doc.get("dados_extraidos", {})
                 palavras_encontradas = dados_extraidos.get("palavras_encontradas", {})
+                palavras_com_normas = dados_extraidos.get("palavras_encontradas_com_normas", {})
                 palavras_nao_encontradas = dados_extraidos.get("palavras_nao_encontradas", [])
                 
                 # Somar ocorrências de cada palavra encontrada
@@ -1758,6 +1873,17 @@ class AnalisadorRequerimentos:
                         palavras_consolidadas[palavra] += contador
                     else:
                         palavras_consolidadas[palavra] = contador
+
+                # Garante contabilização de palavras com efeito "desobriga" mesmo em dados legados
+                # onde "palavras_encontradas" pode não ter sido preenchido corretamente.
+                for palavra, info in palavras_com_normas.items():
+                    efeito = str(info.get("efeito", "aplica")).lower()
+                    contador = int(info.get("contador", 0) or 0)
+                    if efeito == "desobriga" and contador > 0 and palavra not in palavras_encontradas:
+                        if palavra in palavras_consolidadas:
+                            palavras_consolidadas[palavra] += contador
+                        else:
+                            palavras_consolidadas[palavra] = contador
                 
                 # Coletar palavras não encontradas (usar set para evitar duplicatas)
                 for palavra in palavras_nao_encontradas:
@@ -2080,25 +2206,38 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
             
             nome_ocd_escapado = escapar_latex(nome_ocd_completo)
             
-            # Formatar lista de equipamentos
+            # Formatar lista de equipamentos como subitens numerados por ordem de ocorrência distinta.
             if equipamentos_encontrados:
                 # Remover duplicatas mantendo a ordem
                 equipamentos_unicos = []
                 for eq in equipamentos_encontrados:
                     if eq not in equipamentos_unicos:
                         equipamentos_unicos.append(eq)
-                equipamentos_texto = escapar_latex(", ".join(equipamentos_unicos))
+                # Criar mapa estável para reutilizar os mesmos rótulos [E1], [E2], ... na seção e nas tabelas.
+                equipamentos_rotulos = {
+                    equipamento: f"[E{indice}]"
+                    for indice, equipamento in enumerate(equipamentos_unicos, 1)
+                }
+                equipamentos_resumo = escapar_latex(", ".join(equipamentos_unicos))
+                equipamentos_itens_latex = "\\begin{itemize}\n"
+                for indice, equipamento in enumerate(equipamentos_unicos, 1):
+                    equipamento_escapado = escapar_latex(equipamento)
+                    # Os colchetes precisam ser impressos como texto literal, não como argumento opcional do \item.
+                    equipamentos_itens_latex += f"    \\item[] \\texttt{{[E{indice}]}} - {equipamento_escapado}\n"
+                equipamentos_itens_latex += "\\end{itemize}"
             else:
-                equipamentos_texto =  "\\textcolor{red}{\\textbf{Equipamento NÃO identificado}} na lista de requisitos ou nos nomes usados no Mosaico"
+                equipamentos_resumo = "\\textcolor{red}{\\textbf{Equipamento NÃO identificado}} na lista de requisitos ou nos nomes usados no Mosaico"
+                equipamentos_itens_latex = "\\textit{Nenhum equipamento identificado.}"
+                equipamentos_rotulos = {}
                 
             
             latex_content += f"""
             \\newpage            
-            \\section{{Requerimento {numero_req}}}
-            A seguir, os detalhes da análise dos documentos associados a este requerimento, cujo tempo de processamento foi: {tempo_analise_req}.
+            \\section{{Requerimento {numero_req}}}            
             \\begin{{itemize}}
             \\item OCD: {nome_ocd_escapado}
-            \\item Equipamento(s): {equipamentos_texto}
+            \\item Equipamento(s):
+            {equipamentos_itens_latex}
             \\end{{itemize}}
             """
             
@@ -2123,178 +2262,154 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 latex_content += "\n\n"
             else:
                 latex_content += "\\textit{Nenhuma palavra-chave específica foi encontrada neste requerimento.}\n\n"
-            
-            latex_content += """\\subsection{{Dispositivos Normativos}}
-            Abaixo estão listados os dispositivos normativos aplicáveis ao requerimento - dado(s) o(s) tipo(s) de equipamento(s) listado(s) nesse requerimento -, assim como normativos citados que estão revogados, ou que são apenas acessórios (apenas modificam itens de dispositivos aplicáveis) ou que estão obsoletos.
-            """           
+                    
             # Coletar normas aplicáveis para este requerimento
             normas_aplicaveis = self._coletar_normas_aplicaveis_requerimento(req)
             normas_verificadas = self._coletar_normas_verificadas_requerimento(req)
+
+            # Verifica se o CCT deste requerimento contém a palavra-chave e.i.r.p.
+            cct_contem_eirp = False
+            cct_contem_ipv6 = False
+            cct_contem_produto_nao_acabado = False
+            cct_strings_desobrigam_ato17865 = set()
+            for doc in documentos:
+                if doc.get("tipo") != TIPO_CCT:
+                    continue
+                dados_extraidos_cct = doc.get("dados_extraidos", {})
+                palavras_encontradas_cct = dados_extraidos_cct.get("palavras_encontradas", {})
+                palavras_com_normas_cct = dados_extraidos_cct.get("palavras_encontradas_com_normas", {})
+                if "e.i.r.p." in palavras_encontradas_cct:
+                    cct_contem_eirp = True
+                if "ipv6" in palavras_encontradas_cct:
+                    cct_contem_ipv6 = True
+                if "produto nao acabado" in palavras_encontradas_cct:
+                    cct_contem_produto_nao_acabado = True
+
+                # Captura as strings encontradas no CCT que desobrigam especificamente o ato17865.
+                for palavra, info_palavra in palavras_com_normas_cct.items():
+                    efeito_palavra = str(info_palavra.get("efeito", "aplica")).lower()
+                    normas_palavra = [str(n).lower() for n in info_palavra.get("normas", [])]
+                    if efeito_palavra == "desobriga" and "ato17865" in normas_palavra:
+                        cct_strings_desobrigam_ato17865.add(palavra)
             
             # Debug: Adicionar log para verificar se normas foram encontradas
             #log_info(f"Normas aplicáveis encontradas para {numero_req}: {len(normas_aplicaveis)} normas")
             #if normas_aplicaveis:
                 #log_info(f"Normas: {list(normas_aplicaveis.keys())}")
-            
-            # Subsubsection de dispositivos aplicáveis
-            latex_content += """\\subsubsection{{Normas aplicáveis}}
-"""
-            
-            if normas_aplicaveis:
-                latex_content += """\\begin{longtable}{p{0.15\\textwidth}p{0.45\\textwidth}p{0.3\\textwidth}}
+                        
+            # Extratificar a análise em duas tabelas: RACT e CCT.
+            normas_aplicaveis_por_tipo = {
+                "RACT": self._coletar_normas_aplicaveis_requerimento(req, TIPO_RACT),
+                "CCT": self._coletar_normas_aplicaveis_requerimento(req, TIPO_CCT)
+            }
+            normas_verificadas_por_tipo = {
+                "RACT": self._coletar_normas_verificadas_por_tipo(req, TIPO_RACT),
+                "CCT": self._coletar_normas_verificadas_por_tipo(req, TIPO_CCT)
+            }
+
+            if normas_aplicaveis or any(normas_verificadas_por_tipo.values()):
+                for nome_tipo, normas_verificadas_tipo in normas_verificadas_por_tipo.items():
+                    normas_aplicaveis_tipo = normas_aplicaveis_por_tipo.get(nome_tipo, {})
+
+                    latex_content += f"""\\paragraph{{{nome_tipo}}}
+\\begin{{longtable}}{{p{{0.15\\textwidth}}p{{0.45\\textwidth}}p{{0.3\\textwidth}}}}
 \\hline
-\\textbf{Status} & \\textbf{Norma} & \\textbf{Motivador(es)} \\\\
+\\textbf{{Status}} & \\textbf{{Norma}} & \\textbf{{Observação}} \\\\
 \\hline
 \\endhead
 """
-                
-                # Ordenar normas alfabeticamente
-                for norma_id in sorted(normas_aplicaveis.keys()):
-                    detalhes_norma = self._obter_detalhes_norma(norma_id)
-                    nome_norma = escapar_latex(detalhes_norma['nome'])
-                    url_norma = detalhes_norma['url']
-                    
-                    # Verificar se a norma foi verificada
-                    if norma_id in normas_verificadas:
-                        #status_norma = "\\textcolor{green}{OK}"
-                        status_norma = "\\textbf{\\textcolor{green}{$\\checkmark$}}"
-                    else:
-                        #status_norma = "\\textcolor{red}{Erro}"
-                        status_norma = "\\textcolor{red}{$\\times$}"
-                    
-                    motivadores = normas_aplicaveis[norma_id]
-                    motivadores_texto = escapar_latex("; ".join(motivadores))
-                    
-                    if url_norma:
-                        # Criar hyperlink para a norma
-                        latex_content += f"{status_norma} & \\href{{{url_norma}}}{{{nome_norma}}} & {motivadores_texto} \\\\ \\hline"
-                    else:
-                        # Sem hyperlink se não há URL
-                        latex_content += f"{status_norma} & {nome_norma} & {motivadores_texto} \\\\ \\hline"
-                
-                latex_content += """\\end{longtable}
+
+                    # Base da tabela por tipo: normas aplicáveis do requerimento.
+                    normas_para_tabela_tipo = set(normas_aplicaveis_tipo.keys())
+
+                    # Acrescentar normas revogadas/revogados verificadas no tipo, mesmo fora das aplicáveis.
+                    for norma_id in normas_verificadas_tipo:
+                        detalhes_norma = self._obter_detalhes_norma(norma_id)
+                        status_norma_raw = (detalhes_norma.get('status') or '').strip().lower()
+                        if status_norma_raw in ['revogada', 'revogado']:
+                            normas_para_tabela_tipo.add(norma_id)
+
+                    # Ordenar por status: primeiro erro, depois OK; dentro de cada grupo, ordem alfabética.
+                    normas_ordenadas = sorted(
+                        normas_para_tabela_tipo,
+                        key=lambda norma_id: (
+                            1 if (
+                                (self._obter_detalhes_norma(norma_id).get('status') or '').strip().lower() not in ['revogada', 'revogado']
+                                and norma_id in normas_verificadas_tipo
+                            ) else 0,
+                            (self._obter_detalhes_norma(norma_id).get('nome') or norma_id).lower()
+                        )
+                    )
+
+                    for norma_id in normas_ordenadas:
+                        detalhes_norma = self._obter_detalhes_norma(norma_id)
+                        nome_norma = escapar_latex(detalhes_norma['nome'])
+                        url_norma = detalhes_norma['url']
+                        status_norma_raw = (detalhes_norma.get('status') or '').strip().lower()
+
+                        # Revogada/revogado sempre entra com ícone de erro; demais seguem regra por tipo.
+                        if status_norma_raw in ['revogada', 'revogado']:
+                            status_norma = "\\textcolor{red}{$\\times$}"
+                        elif norma_id in normas_verificadas_tipo:
+                            status_norma = "\\textbf{\\textcolor{green}{$\\checkmark$}}"
+                        else:
+                            status_norma = "\\textcolor{red}{$\\times$}"
+
+                        motivadores = list(normas_aplicaveis_tipo.get(norma_id, []))
+
+                        # Se for norma revogada adicionada por verificação e sem motivador, preencher contexto mínimo.
+                        if not motivadores and status_norma_raw in ['revogada', 'revogado']:
+                            motivadores = [f"{status_norma_raw}"]
+
+                        # Substituir nomes de equipamentos por rótulos [E#] na tabela, preservando o restante do texto.
+                        motivadores_formatados = []
+                        for motivador in motivadores:
+                            motivador_formatado = motivador
+                            for nome_equipamento, rotulo_equipamento in equipamentos_rotulos.items():
+                                motivador_formatado = motivador_formatado.replace(nome_equipamento, rotulo_equipamento)
+                            motivadores_formatados.append(motivador_formatado)
+
+                        motivadores_texto = escapar_latex("; ".join(motivadores_formatados))
+
+                        if url_norma:
+                            # Criar hyperlink para a norma
+                            latex_content += f"{status_norma} & \\href{{{url_norma}}}{{{nome_norma}}} & {motivadores_texto} \\\\ \\hline"
+                        else:
+                            # Sem hyperlink se não há URL
+                            latex_content += f"{status_norma} & {nome_norma} & {motivadores_texto} \\\\ \\hline"
+
+                    latex_content += """\\end{longtable}
 """
+
+                    if nome_tipo == "CCT" and cct_strings_desobrigam_ato17865:
+                        strings_desobrigacao = sorted(cct_strings_desobrigam_ato17865)
+                        # Converte de volta para a string original cadastrada antes de renderizar no PDF.
+                        strings_desobrigacao_originais = [
+                            PALAVRAS_CHAVE_MANUAL_ORIGINAIS.get(s, s) for s in strings_desobrigacao
+                        ]
+                        strings_desobrigacao_escapadas = [escapar_latex(s) for s in strings_desobrigacao_originais]
+                        texto_strings = "; ".join(strings_desobrigacao_escapadas)
+                        latex_content += f"<br>{texto_strings}.\n\n"
+                    
+                    if nome_tipo == "CCT" and cct_contem_eirp:
+                        latex_content += "<br>Os valores de potência indicados na(s) faixa(s) de 5150 a 5350 MHz, 5470 a 5725 MHz e 5925 a 7125 MHz referem-se à potência média E.I.R.P.\n\n"
+
+                    if nome_tipo == "CCT" and cct_contem_produto_nao_acabado:
+                        latex_content += "<br>Produto não acabado, de uso interno, cuja integração em outros equipamentos passíveis de homologação pode requerer nova avaliação.\n\n"
+
+                    if nome_tipo == "CCT" and cct_contem_ipv6:
+                        latex_content += "<br>Suporta protocolo IPv6.\n\n"
+
+                    
             else:
-                latex_content += f"\\textit{{Nenhuma norma específica identificada como requisito identificado para: {equipamentos_texto}}}\n\n"
+                latex_content += f"\\textit{{Nenhuma norma específica identificada como requisito identificado para: {equipamentos_resumo}}}\n\n"
 
-            # Verificar se há normativos revogados e gerar subsubsection específica
-            normativos_revogados = []
-            for norma_id in normas_verificadas:
-                detalhes_norma = self._obter_detalhes_norma(norma_id)
-                status_norma = detalhes_norma.get('status', '').lower()
-                if status_norma and (status_norma in ['revogada', 'revogado', 'acessório', 'acessorio', 'acessoria', 'acessória', 'obsoleta', 'obsoleto']):
-                    normativos_revogados.append({
-                        'id': norma_id,
-                        'nome': detalhes_norma['nome'],
-                        'url': detalhes_norma['url'],
-                        'status': detalhes_norma['status']
-                    })
-            
-            if normativos_revogados:
-                latex_content += """\\subsubsection{Normas Problemáticas}
-Lista de normativos revogados, ou que apenas modificam um normativo vigente, identificados na análise deste requerimento:
-\\begin{itemize}
-"""
-                for normativo in sorted(normativos_revogados, key=lambda x: x['nome']):
-                    nome_normativo = escapar_latex(normativo['nome'])
-                    status_normativo = escapar_latex(normativo['status'])
-                    url_normativo = normativo['url']
-
-                    if status_normativo in ['revogada', 'revogado', 'obsoleta', 'obsoleto']:
-                        latex_content += f"    \\item \\textcolor{{red}}{{\\href{{{url_normativo}}}{{{nome_normativo}}} - {status_normativo}}}\n"
-                    else:
-                        latex_content += f"    \\item \\href{{{url_normativo}}}{{{nome_normativo}}} - {status_normativo}\n"
-                latex_content += """\\end{itemize}
-"""
-
-            latex_content += f"""
-\\subsection{{Documentos Processados}}
-Apresenta-se a seguir a lista dos documentos processados neste requerimento, com os respectivos resultados da análise automatizada.
-"""
-            
-            # Separar relatórios de ensaio dos outros documentos
-            relatorios_ensaio = []
-            outros_documentos = []
-            
-            for doc in documentos:
-                if doc.get("tipo") == TIPO_RELATORIO_ENSAIO:
-                    relatorios_ensaio.append(doc)
-                else:
-                    outros_documentos.append(doc)
-            
-            # Seção específica para Relatórios de Ensaio (APENAS relatórios de ensaio)
-            if relatorios_ensaio:
-                latex_content += """\\subsubsection{Relatórios de Ensaios}
-Identificação do laboratório, solicitante, fabricante e modelo nos relatórios de ensaio processados:
-\\begin{longtable}{p{0.5\\textwidth}p{0.1\\textwidth}p{0.1\\textwidth}p{0.1\\textwidth}p{0.1\\textwidth}}
-\\hline
-\\textbf{Documento} & \\textbf{Lab} & \\textbf{Sol} & \\textbf{Fab} & \\textbf{Mod} \\\\
-\\hline
-\\endhead
-"""
-                
-                # Processar APENAS relatórios de ensaio na tabela
-                for doc in relatorios_ensaio:
-                    nome_completo = escapar_latex(doc.get("nome_arquivo", "N/A"))
-                    ocorrencias = re.findall(r'\[([^\]]+)\]', nome_completo)
-                    nome_item = nome_completo
-                    if len(ocorrencias) >= 2:
-                        nome_item = f"{ocorrencias[0]} ({ocorrencias[1]})"
-                    
-                    caminho = doc.get("caminho", "N/A")
-                    caminho_normalizado = latex_escape_path(caminho)
-                    nome_item_link = f"\\href{{file:{caminho_normalizado}}}{{{nome_item}}}"
-                    
-                    # Extrair status das avaliações
-                    dados_extraidos = doc.get("dados_extraidos", {})
-                    laboratorio_identificado = dados_extraidos.get("laboratorio_identificado", False)
-                    solicitante_identificado = dados_extraidos.get("solicitante_identificado", False)
-                    fabricante_identificado = dados_extraidos.get("fabricante_identificado", False)
-                    modelo_identificado = dados_extraidos.get("modelo_identificado", False)
-                    
-                    # Formatar status com símbolos coloridos
-                    status_lab = "\\textbf{\\textcolor{green}{$\\checkmark$}}" if laboratorio_identificado else "\\textcolor{red}{$\\times$}"
-                    status_sol = "\\textbf{\\textcolor{green}{$\\checkmark$}}" if solicitante_identificado else "\\textcolor{red}{$\\times$}"
-                    status_fab = "\\textbf{\\textcolor{green}{$\\checkmark$}}" if fabricante_identificado else "\\textcolor{red}{$\\times$}"
-                    status_mod = "\\textbf{\\textcolor{green}{$\\checkmark$}}" if modelo_identificado else "\\textcolor{red}{$\\times$}"
-                    
-                    latex_content += f"{nome_item_link} & {status_lab} & {status_sol} & {status_fab} & {status_mod} \\\\ \\hline\n"
-                
-                latex_content += """\\end{longtable}
-
-"""
-            
-            # Seção para outros documentos (NÃO relatórios de ensaio)
-            if outros_documentos:
-                latex_content += """\\subsubsection{Outros Documentos Processados}
-
-\\begin{longtable}{p{0.9\\textwidth}}
-\\hline
-\\textbf{Documento} \\\\
-\\hline
-\\endhead
-"""
-                for doc in outros_documentos:
-                    nome_completo = escapar_latex(doc.get("nome_arquivo", "N/A"))
-                    ocorrencias = re.findall(r'\[([^\]]+)\]', nome_completo)
-                    nome_item = nome_completo
-                    if len(ocorrencias) >= 2:
-                        nome_item = f"{ocorrencias[0]} ({ocorrencias[1]})"
-                    
-                    caminho = doc.get("caminho", "N/A")
-                    caminho_normalizado = latex_escape_path(caminho)
-                    
-                    latex_content += f"\\href{{file:{caminho_normalizado}}}{{{nome_item}}} \\\\ \\hline\n"
-                
-                latex_content += """\\end{longtable}
-
-"""
-        
         # Coletar todas as palavras-chave globais
         todas_palavras_encontradas, todas_palavras_nao_encontradas = self._coletar_todas_palavras_chave_globais()
         
         # Adicionar seção global de palavras-chave
         latex_content += f"""
+\\newpage
 \\section{{Palavras-chave}}
 Lista completa de todas as palavras-chave identificadas durante a análise dos requerimentos processados.
 

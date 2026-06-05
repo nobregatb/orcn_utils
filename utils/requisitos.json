@@ -1,7 +1,7 @@
 [
   {
     "equipamento": "EQ093",
-    "norma": ["ato1120", "resolucao680", "ato17087", "ato14448", "ato77"]
+    "norma": ["ato17865","ato1120", "resolucao680", "ato17087", "ato14448", "ato77"]
   },
    {
     "equipamento": "EQ088",
@@ -9,27 +9,27 @@
   },  
   {
     "equipamento": "EQ078",
-    "norma": ["ato1120", "resolucao680", "ato17087", "ato14448", "ato77"]
+    "norma": ["ato17865","ato1120", "resolucao680", "ato17087", "ato14448", "ato77"]
   },
   {
     "equipamento": "EQ029",
-    "norma": ["ato3151", "ato1120", "ato17087", "ato16539", "resolucao773", "ato77"]
+    "norma": ["ato17865","ato3151", "ato1120", "ato17087", "ato16539", "resolucao773", "ato77"]
   },
   {
     "equipamento": "EQ053",
-    "norma": ["resolucao680", "ato14448", "ato1120", "ato17087"]
+    "norma": ["ato17865","resolucao680", "ato14448", "ato1120", "ato17087"]
   },
   {
     "equipamento": "EQ094",
-    "norma": ["ato1120", "ato8385", "ato943", "ato946", "ato915"]
+    "norma": ["ato17865","ato1120", "ato8385", "ato943", "ato946", "ato915"]
   },
   {
     "equipamento": "EQ069",
-    "norma": ["ato17087", "ato1120", "ato10029", "resolucao700", "ato943", "ato915", "resolucao773"]
+    "norma": ["ato17865","ato17087", "ato1120", "ato10029", "resolucao700", "ato943", "ato915", "resolucao773"]
   },
   {
     "equipamento": "EQ054",
-    "norma": ["ato17087", "ato77", "ato4776", "ato1120", "ato10029", "ato9281"]
+    "norma": ["ato17865", "ato17087", "ato77", "ato4776", "ato1120", "ato10029", "ato9281"]
   }   
 
 ]

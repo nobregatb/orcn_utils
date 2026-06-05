@@ -65,6 +65,14 @@
     "status": "revogado"
   },
   {
+    "id": "ato1214",
+    "nome": "Norma (ato1214) citada no requerimento 24.06120",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 24.06120.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "ato1306",
     "nome": "Ato nº 1306, de 26 de fevereiro de 2021",
     "descricao": "Alterar os seguintes itens do Anexo I ao Ato nº 14.448",
@@ -201,7 +209,15 @@
     "entidade": "Anatel",
     "status": "vigente"
   },
-    {
+  {
+    "id": "ato17856",
+    "nome": "Norma (ato17856) citada no requerimento 24.04353",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 24.04353.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "ato17865",
     "nome": "Ato nº 17865, de 30 de dezembro de 2023",
     "descricao": "Requisitos Técnicos quanto à exposição humana a campos elétricos, magnéticos e eletromagnéticos na faixa de radiofrequências entre 8,3 kHz e 300 GHz, na forma do Anexo a este Ato",
@@ -488,6 +504,14 @@
     "status": "vigente"
   },
   {
+    "id": "ato8200",
+    "nome": "Norma (ato8200) citada no requerimento 24.03439",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 24.03439.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "ato8385",
     "nome": "Ato nº 8385, de 03 de maio de 2017",
     "descricao": "Alterar os requisitos técnicos relativos ao produto Transmissor e transceptor digital ponto a ponto",
@@ -623,6 +647,14 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1959-ato-9960",
     "entidade": "Anatel",
     "status": "acessorio"
+  },
+  {
+    "id": "resolucao1",
+    "nome": "Norma (resolucao1) citada no requerimento 26.02898",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.02898.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
   },
   {
     "id": "resolucao105",

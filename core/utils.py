@@ -246,6 +246,80 @@ def normalizar(s: Union[str, Any]) -> Union[str, Any]:
     return s
 
 
+def _gerar_regex_palavra_chave(palavra_chave: str) -> Optional[str]:
+    """Gera regex flexivel para busca de palavra-chave normalizada."""
+    palavra_norm = normalizar(palavra_chave)
+    if not isinstance(palavra_norm, str) or not palavra_norm:
+        return None
+
+    separador_flex = r'[^a-z0-9]*'
+    partes = []
+    tamanho = len(palavra_norm)
+
+    for i, caractere in enumerate(palavra_norm):
+        proximo = palavra_norm[i + 1] if i + 1 < tamanho else ''
+
+        if caractere.isalnum():
+            partes.append(re.escape(caractere))
+        else:
+            if not partes or partes[-1] != separador_flex:
+                partes.append(separador_flex)
+            continue
+
+        if proximo and ((caractere.isalpha() and proximo.isdigit()) or (caractere.isdigit() and proximo.isalpha())):
+            partes.append(separador_flex)
+
+    padrao = ''.join(partes)
+    return rf'(?<![a-z0-9]){padrao}(?![a-z0-9])'
+
+
+def contar_ocorrencias_palavra_chave(texto: str, palavra_chave: str) -> int:
+    """
+    Conta ocorrencias de palavra-chave com padrao flexivel para separadores.
+
+    Exemplo: "ipv6" casa com "ipv6", "ipv-6" e "ipv 6".
+    """
+    if not texto or not palavra_chave:
+        return 0
+
+    texto_norm = normalizar(texto)
+    if not isinstance(texto_norm, str):
+        return 0
+
+    regex = _gerar_regex_palavra_chave(palavra_chave)
+    if not regex:
+        return 0
+
+    return len(re.findall(regex, texto_norm, flags=re.IGNORECASE))
+
+
+def extrair_contextos_palavra_chave(texto: str, palavra_chave: str, limite: int = 3, janela: int = 45) -> List[str]:
+    """Extrai pequenos trechos onde a palavra-chave foi identificada."""
+    if not texto or not palavra_chave:
+        return []
+
+    texto_norm = normalizar(texto)
+    if not isinstance(texto_norm, str):
+        return []
+
+    regex = _gerar_regex_palavra_chave(palavra_chave)
+    if not regex:
+        return []
+
+    contextos = []
+    for match in re.finditer(regex, texto_norm, flags=re.IGNORECASE):
+        ini = max(0, match.start() - janela)
+        fim = min(len(texto_norm), match.end() + janela)
+        trecho = texto_norm[ini:fim].replace('\n', ' ')
+        trecho = re.sub(r'\s+', ' ', trecho).strip()
+        if trecho:
+            contextos.append(trecho)
+        if len(contextos) >= limite:
+            break
+
+    return contextos
+
+
 def normalizar_dados(dados: Dict[str, Any]) -> Dict[str, Any]:
     """Normaliza todos os dados string em um dicionário."""
     for k, v in dados.items():

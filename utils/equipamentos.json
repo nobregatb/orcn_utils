@@ -1258,7 +1258,13 @@
     "id": "EQ069",
     "nome": "Transceptor portátil",
     "categoria": 1
-  },   
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ069",
+    "nome": "Transceptor Móvel",
+    "categoria": 1
+  },     
   {
     "escopo": "tab_requisitos",
     "id": "EQ069",

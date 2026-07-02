@@ -234,6 +234,14 @@
     "status": "vigente"
   },
   {
+    "id": "ato2091",
+    "nome": "Norma (ato2091) citada no requerimento 26.04753",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.04753.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "ato2105",
     "nome": "Ato nº 2105, de 14 de fevereiro de 2025",
     "descricao": "Atualizar o Anexo ao Ato nº 3151, de 12 de junho de 2020, que aprova os requisitos técnicos para avaliação da conformidade de Estação Terminal de Acesso",
@@ -560,6 +568,14 @@
     "status": "vigente"
   },
   {
+    "id": "ato932",
+    "nome": "Norma (ato932) citada no requerimento 24.06943",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 24.06943.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "ato933",
     "nome": "Ato nº 933, de 08 de fevereiro de 2018",
     "descricao": "Requisitos técnicos para avaliação da conformidade da interface analógica de adaptadores para terminal de assinante",
@@ -876,7 +892,7 @@
     "id": "resolucao680",
     "nome": "Resolução nº 680, de 27 de junho de 2017",
     "descricao": "Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2017/1057-resolucao-680",
+    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2017/936-resolucao-6800",
     "entidade": "Anatel",
     "status": "vigente"
   },

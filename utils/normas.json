@@ -234,6 +234,14 @@
     "status": "vigente"
   },
   {
+    "id": "ato2091",
+    "nome": "Norma (ato2091) citada no requerimento 26.04753",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.04753.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "ato2105",
     "nome": "Ato nº 2105, de 14 de fevereiro de 2025",
     "descricao": "Atualizar o Anexo ao Ato nº 3151, de 12 de junho de 2020, que aprova os requisitos técnicos para avaliação da conformidade de Estação Terminal de Acesso",
@@ -582,6 +590,14 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1227-ato-934",
     "entidade": "Anatel",
     "status": "vigente"
+  },
+  {
+    "id": "ato938",
+    "nome": "Norma (ato938) citada no requerimento 26.05140",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.05140.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
   },
   {
     "id": "ato943",

@@ -1112,6 +1112,12 @@
   {
     "escopo": "mosaico",
     "id": "EQ093",
+    "nome": "Emissor - sensor de variação de campo eletromagnético",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
     "nome": "Emissor-sensor de Detecção de Nível",
     "categoria": "Cat. 2"
   },

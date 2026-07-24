@@ -65,14 +65,6 @@
     "status": "revogado"
   },
   {
-    "id": "ato1214",
-    "nome": "Norma (ato1214) citada no requerimento 24.06120",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 24.06120.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
     "id": "ato1306",
     "nome": "Ato nº 1306, de 26 de fevereiro de 2021",
     "descricao": "Alterar os seguintes itens do Anexo I ao Ato nº 14.448",
@@ -210,14 +202,6 @@
     "status": "vigente"
   },
   {
-    "id": "ato17856",
-    "nome": "Norma (ato17856) citada no requerimento 24.04353",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 24.04353.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
     "id": "ato17865",
     "nome": "Ato nº 17865, de 30 de dezembro de 2023",
     "descricao": "Requisitos Técnicos quanto à exposição humana a campos elétricos, magnéticos e eletromagnéticos na faixa de radiofrequências entre 8,3 kHz e 300 GHz, na forma do Anexo a este Ato",
@@ -235,11 +219,11 @@
   },
   {
     "id": "ato2091",
-    "nome": "Norma (ato2091) citada no requerimento 26.04753",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.04753.",
-    "url": "a definir",
+    "nome": "Ato nº 2091, de 14 de fevereiro de 2025",
+    "descricao": "Requisitos Técnicos e Operacionais para uso das faixas de radiofrequências associadas ao serviço limitado privado, prestado por sistemas terrestres, aprovados pelo Ato nº 915, de 1º de fevereiro de 2024",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2025/2008-ato-2091",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "vigente"
   },
   {
     "id": "ato2105",
@@ -308,11 +292,11 @@
   },
   {
     "id": "ato3153",
-    "nome": "Norma (ato3153) citada no requerimento 26.03829",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.03829.",
-    "url": "a definir",
+    "nome": "Ato nº 3153, de 12 de junho de 2020",
+    "descricao": "Requisitos técnicos para avaliação da conformidade de Transceptor para Estação Rádio Base",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1431-ato-3153",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "acessorio"
   },
   {
     "id": "ato3384",
@@ -512,14 +496,6 @@
     "status": "vigente"
   },
   {
-    "id": "ato8200",
-    "nome": "Norma (ato8200) citada no requerimento 24.03439",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 24.03439.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
     "id": "ato8385",
     "nome": "Ato nº 8385, de 03 de maio de 2017",
     "descricao": "Alterar os requisitos técnicos relativos ao produto Transmissor e transceptor digital ponto a ponto",
@@ -569,11 +545,11 @@
   },
   {
     "id": "ato932",
-    "nome": "Norma (ato932) citada no requerimento 24.06943",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 24.06943.",
-    "url": "a definir",
+    "nome": "Ato nº 932, de 08 de fevereiro de 2018",
+    "descricao": "Requisitos técnicos para avaliação da conformidade de Antena Ponto a Ponto",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1203-ato-932",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "vigente"
   },
   {
     "id": "ato933",
@@ -593,11 +569,11 @@
   },
   {
     "id": "ato938",
-    "nome": "Norma (ato938) citada no requerimento 26.05140",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.05140.",
-    "url": "a definir",
+    "nome": "Ato nº 938, de 08 de fevereiro de 2018",
+    "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores monocanais analógicos AM",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1172-ato-938",
     "entidade": "Anatel",
-    "status": "revogado"
+    "status": "vigente"
   },
   {
     "id": "ato943",
@@ -671,14 +647,6 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1959-ato-9960",
     "entidade": "Anatel",
     "status": "acessorio"
-  },
-  {
-    "id": "resolucao1",
-    "nome": "Norma (resolucao1) citada no requerimento 26.02898",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.02898.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
   },
   {
     "id": "resolucao105",

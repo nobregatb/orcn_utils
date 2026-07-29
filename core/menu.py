@@ -12,18 +12,19 @@ def exibir_menu():
     log_info("Opções: \n")
     log_info(f"  {OPCOES_MENU['download']}. {DESCRICOES_MENU['D']}\n")
     log_info(f"  {OPCOES_MENU['analise']}. {DESCRICOES_MENU['A']}\n")
+    log_info(f"  {OPCOES_MENU['pgd']}. {DESCRICOES_MENU['P']}\n")
     log_info(f"  {OPCOES_MENU['sair']}. {DESCRICOES_MENU['S']}\n")
     
     while True:
         try:
-            #console.print("[bold cyan]Escolha uma opção (D, A, S): ", end="", highlight=False)
-            resposta = input("\nEscolha uma opção (D, A, S):  ").strip().upper()
+            #console.print("[bold cyan]Escolha uma opção (D, A, P, S): ", end="", highlight=False)
+            resposta = input("\nEscolha uma opção (D, A, P, S):  ").strip().upper()
             
             # Validar entrada
-            if resposta in [OPCOES_MENU['download'], OPCOES_MENU['analise'], OPCOES_MENU['sair']]:
+            if resposta in [OPCOES_MENU['download'], OPCOES_MENU['analise'], OPCOES_MENU['pgd'], OPCOES_MENU['sair']]:
                 return resposta
             else:
-                log_info("ERRO - Opcao invalida! Digite D, A ou S.")
+                log_info("ERRO - Opcao invalida! Digite D, A, P ou S.")
                 
         except KeyboardInterrupt:
             log_info("\nERRO - Operacao cancelada pelo usuario.")

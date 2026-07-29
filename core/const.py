@@ -240,12 +240,14 @@ TITULO_AUTOMACAO = "BOT AUTOMAÇÃO ORCN - DOWNLOAD DE ANEXOS"
 OPCOES_MENU = {
     'download': 'D',
     'analise': 'A',
+    'pgd': 'P',
     'sair': 'S'
 }
 
 DESCRICOES_MENU = {
     'D': "Baixar documentos (SCH ANATEL)",
     'A': "Analisar requerimento(s) (Análise automatizada)",
+    'P': "Relatório para PGD (Desempenho)",
     'S': "Sair"
 }
 

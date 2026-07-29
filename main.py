@@ -1,5 +1,6 @@
 from core.downloader import baixar_documentos
 from core.analyzer import analisar_requerimento
+from core.reporter import gerar_relatorio_pgd
 from core.menu import exibir_menu
 from core.log_print import log_info, log_erro, log_erro_critico
 from core.const import OPCOES_MENU, SEPARADOR_MENOR
@@ -64,7 +65,14 @@ def main():
                 print("\n" + SEPARADOR_MENOR)
                 print("Pressione ENTER para voltar ao menu...")
                 input()
-                
+
+            elif opcao == OPCOES_MENU['pgd']:
+                log_info("Iniciando relatório para PGD...")                
+                gerar_relatorio_pgd() 
+                print("\n" + SEPARADOR_MENOR)
+                print("Pressione ENTER para voltar ao menu...")
+                input()
+
             elif opcao == OPCOES_MENU['sair']:
                 log_info("Encerrando aplicação...")
                 print("Ate logo!")

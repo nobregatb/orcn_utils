@@ -218,6 +218,14 @@
     "status": "vigente"
   },
   {
+    "id": "ato209",
+    "nome": "[NÃO USAR]Ato nº 209, de 14 de janeiro de 2019",
+    "descricao": "Requisitos Técnicos e Procedimentos de Ensaio Aplicáveis à Certificação de Produtos para Telecomunicação de Categoria I, publicada na página da Anatel na Internet, alterando os requisitos para Telefone Móvel Celular e para Estação Terminal de Acesso - ETA",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1225-ato-209",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
     "id": "ato2091",
     "nome": "Ato nº 2091, de 14 de fevereiro de 2025",
     "descricao": "Requisitos Técnicos e Operacionais para uso das faixas de radiofrequências associadas ao serviço limitado privado, prestado por sistemas terrestres, aprovados pelo Ato nº 915, de 1º de fevereiro de 2024",
@@ -232,6 +240,14 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2025/2010-ato-2105",
     "entidade": "Anatel",
     "status": "acessorio"
+  },
+  {
+    "id": "ato2222",
+    "nome": "Ato nº 2222, de 20 de abril de 2020",
+    "descricao": "Lista de Referência de Produtos para Telecomunicações na forma do Anexo a este Ato, em cumprimento às disposições do Regulamento de Avaliação da Conformidade e Homologação de Produtos para Telecomunicações",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1403-ato-2222",
+    "entidade": "Anatel",
+    "status": "revogado"  
   },
   {
     "id": "ato237",

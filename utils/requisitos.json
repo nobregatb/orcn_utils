@@ -21,11 +21,11 @@
   },
   {
     "equipamento": "EQ094",
-    "norma": ["ato17865","ato1120", "ato8385", "ato943", "ato946", "ato915"]
+    "norma": ["ato17865","ato1120", "ato8385", "ato943", "ato946", "ato915", "ato77"]
   },
   {
     "equipamento": "EQ069",
-    "norma": ["ato17865","ato17087", "ato1120", "ato10029", "resolucao700", "ato943", "ato915", "resolucao773"]
+    "norma": ["ato17865","ato17087", "ato1120", "ato10029", "resolucao700", "ato943", "ato915", "resolucao773", "ato77"]
   },
   {
     "equipamento": "EQ054",

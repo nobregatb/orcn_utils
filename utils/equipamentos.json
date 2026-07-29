@@ -1226,6 +1226,12 @@
   {
     "escopo": "mosaico",
     "id": "EQ093",
+    "nome": "Sistema Operando nas Faixas de RF Ultra Larga",
+    "categoria": "Cat. 2"
+  },
+  {
+    "escopo": "mosaico",
+    "id": "EQ093",
     "nome": "Sistemas de Transmissão de Áudio, Vídeo ou Outras Aplicações",
     "categoria": "Cat. 2"
   },

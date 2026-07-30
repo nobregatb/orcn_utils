@@ -25,7 +25,15 @@
   },
   {
     "equipamento": "EQ069",
-    "norma": ["ato17865","ato17087", "ato1120", "ato10029", "resolucao700", "ato943", "ato915", "resolucao773", "ato77"]
+    "norma": ["ato17865","ato17087", "ato1120", "ato10029", "resolucao700", "ato943", "ato915", "resolucao773", "ato77", "ato883"]
+  },
+    {
+    "equipamento": "EQ068",
+    "norma": ["ato17865","ato17087", "ato1120",  "resolucao700", "ato943", "resolucao773", "ato77", "ato883"]
+  },
+  {
+    "equipamento": "EQ174",
+    "norma": ["ato17865","ato17087", "ato1120", "ato10029", "resolucao700", "ato943", "ato915", "resolucao773", "ato77", "ato17207", "ato883"]
   },
   {
     "equipamento": "EQ054",

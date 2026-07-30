@@ -419,6 +419,7 @@
     "nome": "Transceptor digital troncalizado - móvel e portátil",
     "categoria": 1
   },
+
   {
     "escopo": "tab_requisitos",
     "id": "EQ070",
@@ -1072,6 +1073,12 @@
     "id": "EQ173",
     "nome": "Unidade supervisão CC",
     "categoria": 3
+  },
+    {
+    "escopo": "tab_requisitos",
+    "id": "EQ174",
+    "nome": "Transceptor troncalizado – portátil",
+    "categoria": 1
   },
   {
     "escopo": "mosaico",

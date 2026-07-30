@@ -178,6 +178,14 @@
     "status": "vigente"
   },
   {
+    "id": "ato17207",
+    "nome": "Ato nº 17207, de 12 de dezembro de 2023",
+    "descricao": "Requisitos técnicos e operacionais para uso do espectro de radiofrequências por estações associadas ao Serviço Limitado Móvel Aeronáutico (SLMA)",
+    "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/161-atos-de-requisitos-tecnicos-de-gestao-do-espectro/2023/1908-ato-17207",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
     "id": "ato17394",
     "nome": "Ato nº 17.394, de 5 de julho de 2001",
     "descricao": "Designar a FUNDAÇÃO CPqD – CENTRO DE PESQUISA E DESENVOLVIMENTO EM TELECOMUNICAÇÕES para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade n° 003/RFGCT/RFCE/SRF, as funções de Organismo de Certificação Designado – OCD",
@@ -247,7 +255,7 @@
     "descricao": "Lista de Referência de Produtos para Telecomunicações na forma do Anexo a este Ato, em cumprimento às disposições do Regulamento de Avaliação da Conformidade e Homologação de Produtos para Telecomunicações",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1403-ato-2222",
     "entidade": "Anatel",
-    "status": "revogado"  
+    "status": "revogado"
   },
   {
     "id": "ato237",
@@ -534,6 +542,14 @@
     "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=1054630&id_documento=1738552",
     "entidade": "Anatel",
     "status": "vigente"
+  },
+  {
+    "id": "ato883",
+    "nome": "Norma (ato883) citada no requerimento 26.05922",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.05922.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
   },
   {
     "id": "ato915",

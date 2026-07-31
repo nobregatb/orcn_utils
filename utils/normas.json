@@ -415,6 +415,14 @@
     "status": "acessorio"
   },
   {
+    "id": "ato4470",
+    "nome": "Ato nº 4470, de 20 de agosto de 2020",
+    "descricao": "Designar a ASSOCIAÇÃO LMP CERTIFICAÇÕES, CNPJ 34.827.924/0001-88, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados nos Termos de Responsabilidade de OCD Nº 3/2020 (SEI nº 5721995) e Nº 4/2020 (SEI nº 5888705), as funções de Organismo de Certificação Designado - OCD",
+    "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=5877359&id_documento=6651984",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
     "id": "ato458",
     "nome": "Ato nº 458, de 24 de janeiro de 2019",
     "descricao": "Detalhar os limites de exposição ocupacional e da população em geral a campos elétricos, magnéticos e eletromagnéticos na faixa de radiofrequências entre 8,3 kHz e 300 GHz (CEMRF) gerados por estações transmissoras de radiocomunicação e por terminais de usuários, propostos pela Comissão Internacional de Proteção Contra Radiação Não Ionizante (ICNIRP)",
@@ -534,6 +542,14 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1212-ato-8416",
     "entidade": "Anatel",
     "status": "vigente"
+  },
+  {
+    "id": "ato8767",
+    "nome": "Norma (ato8767) citada no requerimento 26.05954",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.05954.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
   },
   {
     "id": "ato8769",
@@ -679,6 +695,14 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1959-ato-9960",
     "entidade": "Anatel",
     "status": "acessorio"
+  },
+  {
+    "id": "resolucao1",
+    "nome": "Norma (resolucao1) citada no requerimento 26.05981",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.05981.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
   },
   {
     "id": "resolucao105",

@@ -2391,7 +2391,7 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
 
                     latex_content += """\\end{longtable}
 """
-
+                    incluir_br = False
                     if nome_tipo == "CCT" and cct_strings_desobrigam_ato17865:
                         strings_desobrigacao = sorted(cct_strings_desobrigam_ato17865)
                         # Converte de volta para a string original cadastrada antes de renderizar no PDF.
@@ -2400,23 +2400,36 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                         ]
                         strings_desobrigacao_escapadas = [escapar_latex(s) for s in strings_desobrigacao_originais]
                         texto_strings = "; ".join(strings_desobrigacao_escapadas)
-                        latex_content += f"<br>{texto_strings}.\n\n"
+                        latex_content += f"{texto_strings}.\n\n" 
+                        # incluir_br = True
                     
                     if nome_tipo == "CCT" and cct_contem_eirp:
-                        latex_content += "<br>Os valores de potência indicados na(s) faixa(s) de 5150 a 5350 MHz, 5470 a 5725 MHz e 5925 a 7125 MHz referem-se à potência média E.I.R.P.\n\n"
+                        if incluir_br:
+                            latex_content += "<br>"
+                        latex_content += "Os valores de potência indicados na(s) faixa(s) de 5150 a 5350 MHz, 5470 a 5725 MHz e 5925 a 7125 MHz referem-se à potência média E.I.R.P."
+                        incluir_br = True
 
                     if nome_tipo == "CCT" and cct_contem_produto_nao_acabado:
-                        latex_content += "<br>Produto não acabado, de uso interno, cuja integração em outros equipamentos passíveis de homologação pode requerer nova avaliação.\n\n"
+                        if incluir_br:
+                            latex_content += "<br>"
+                        latex_content += "Produto não acabado, de uso interno, cuja integração em outros equipamentos passíveis de homologação pode requerer nova avaliação."
+                        incluir_br = True
 
                     if nome_tipo == "CCT" and cct_contem_ipv6:
-                        latex_content += "<br>Suporta protocolo IPv6.\n\n"
+                        if incluir_br:
+                            latex_content += "<br>"
+                        latex_content += "Suporta protocolo IPv6."
+                        incluir_br = True
 
                     if nome_tipo == "CCT" and cct_contem_vinculo_homologacao:
+                        if incluir_br:
+                            latex_content += "<br>"
                         latex_content += (
-                            "<br>A validade deste certificado está vinculada à vigência da homologação ANATEL "
+                            "A validade deste certificado está vinculada à vigência da homologação ANATEL "
                             "HHHH-AA-FFFF, relativa ao módulo de RF modelo XXXX "
-                            "incorporado ao produto.\n\n"
+                            "incorporado ao produto."
                         )
+                        incluir_br = True
                     
             else:
                 latex_content += f"\\textit{{Nenhuma norma específica identificada como requisito identificado para: {equipamentos_resumo}}}\n\n"

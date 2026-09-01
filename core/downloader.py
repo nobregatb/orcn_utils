@@ -535,13 +535,22 @@ def baixar_pdfs(page, requerimento, tempo_primeiro_download):
                                     break
                                 
                                 # Se não existe, faz o download
-                                with page.expect_download() as download_info:
-                                    link.click()
-                                
-                                download = download_info.value
+                                url_download = page.evaluate("link => link.href", link)
+                                if not url_download or url_download.startswith("javascript:"):
+                                    raise RuntimeError("Link de anexo não possui uma URL direta para download")
+
+                                resposta_download = page.context.request.get(url_download)
+                                if not resposta_download.ok:
+                                    raise RuntimeError(
+                                        f"Falha ao baixar anexo: HTTP {resposta_download.status}"
+                                    )
                                 
                                 # Pega o nome real do arquivo baixado
-                                nome_arquivo_real = download.suggested_filename
+                                cabecalho_disposicao = resposta_download.headers.get("content-disposition", "")
+                                nome_enviado = re.search(
+                                    r'filename="?([^";]+)', cabecalho_disposicao, re.IGNORECASE
+                                )
+                                nome_arquivo_real = nome_enviado.group(1) if nome_enviado else ""
                                 if not nome_arquivo_real or nome_arquivo_real == "":
                                     nome_arquivo_real = f"anexo_{idx + 1}.pdf"
                                 
@@ -585,7 +594,8 @@ def baixar_pdfs(page, requerimento, tempo_primeiro_download):
                                 
                                 # Salva o arquivo com o nome final
                                 caminho_completo = os.path.join(pasta_destino, nome_arquivo_final)
-                                download.save_as(caminho_completo)
+                                with open(caminho_completo, "wb") as arquivo_download:
+                                    arquivo_download.write(resposta_download.body())
                                 
                                 log_info(f"✅ Baixado: {nome_arquivo_final}")
                                 total_pdfs_baixados += 1

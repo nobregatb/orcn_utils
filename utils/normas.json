@@ -1039,5 +1039,13 @@
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2025/2022-resolucao-777",
     "entidade": "Anatel",
     "status": "vigente"
+  },
+  {
+    "id": "resolucao789",
+    "nome": "Resolução Anatel nº 789, de 06 de julho de 2026",
+    "descricao": "Aprova o Plano de Atribuição, Destinação e Distribuição de Faixas de Frequências no Brasil - PDFF e altera o Regulamento sobre Canalização e Condições de Uso de Radiofrequências para os Serviços de Radiodifusão e seus Ancilares - RCC-SRA",
+    "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/175-resolucoes/2026/2157-resolucao-789",
+    "entidade": "Anatel",
+    "status": "acessoria"
   }
 ]

@@ -24,6 +24,14 @@
     "status": "vigente"
   },
   {
+    "id": "ato10400",
+    "nome": "Ato nº 10400, de 12 de agosto de 2026",
+    "descricao": "Alterar os seguintes itens do Anexo I do Ato nº 14.448, de 4 de dezembro de 2017",
+    "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=6404438&id_documento=18054723",
+    "entidade": "Anatel",
+    "status": "acessorio"
+  },
+  {
     "id": "ato10988",
     "nome": "Ato nº 10988, de 26 de julho de 2024",
     "descricao": "Requisitos Técnicos e Operacionais para uso de Bloqueador de Sinais de Radiocomunicações (BSR), definindo as faixas de frequência para bloqueio",

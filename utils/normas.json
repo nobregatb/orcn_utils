@@ -258,6 +258,22 @@
     "status": "acessorio"
   },
   {
+    "id": "ato2220",
+    "nome": "Ato nº 2220, de 20 de abril de 2020",
+    "descricao": "Procedimento Operacional para Avaliação da Conformidade de Produtos para Telecomunicações por Certificação",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1401-ato-2220",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
+    "id": "ato2221",
+    "nome": "Ato nº 2221, de 20 de abril de 2020",
+    "descricao": "Procedimento Operacional para Marcação da Identificação da Homologação Anatel em Produtos para Telecomunicações",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1404-ato-2221",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "ato2222",
     "nome": "Ato nº 2222, de 20 de abril de 2020",
     "descricao": "Lista de Referência de Produtos para Telecomunicações na forma do Anexo a este Ato, em cumprimento às disposições do Regulamento de Avaliação da Conformidade e Homologação de Produtos para Telecomunicações",

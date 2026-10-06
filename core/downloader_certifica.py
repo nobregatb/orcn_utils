@@ -1,3 +1,4 @@
+import os
 import re
 import time
 from playwright.sync_api import sync_playwright
@@ -7,9 +8,14 @@ from core.const import (
     CERTIFICA_INTERVALO_MONITORAMENTO, CERTIFICA_DIV_POR_TIPO,
     CERTIFICA_SELETOR_CONTADOR, CERTIFICA_TIMEOUT_CONTADOR,
     CERTIFICA_ID_DIV_LISTA, CERTIFICA_CAMPOS_REQUERIMENTO,
-    CERTIFICA_INDICE_PRIMEIRA_COLUNA
+    CERTIFICA_INDICE_PRIMEIRA_COLUNA, CERTIFICA_TIMEOUT_PAGINA,
+    CERTIFICA_ABA_FABRICANTE, CERTIFICA_ABA_SOLICITANTE, CERTIFICA_ABA_PRODUTO,
+    CERTIFICA_ABA_ESPECIFICACOES, CERTIFICA_ABA_LABORATORIO, CERTIFICA_ABA_CERTIFICADO,
+    CERTIFICA_ROTULO_INICIO_OCD, CERTIFICA_CABECALHO_MODELOS,
+    CERTIFICA_CABECALHO_FREQUENCIAS, CERTIFICA_CAMPOS_LABORATORIO,
+    CERTIFICA_JS_LER_ABA
 )
-from core.utils import get_profile_dir, criar_pasta_se_nao_existir
+from core.utils import get_profile_dir, criar_pasta_se_nao_existir, carregar_json, salvar_json
 
 
 def pagina_contem_texto(page, texto):
@@ -92,6 +98,100 @@ def ler_requerimentos_do_tipo(page, tipo):
     return requerimentos
 
 
+def pares_para_dict(pares):
+    """Converte pares [rótulo, valor] em dict, removendo ':' final e ignorando rótulos vazios/repetidos."""
+    dados = {}
+    for rotulo, valor in pares:
+        rotulo = rotulo.rstrip(":").strip()
+        if rotulo and rotulo not in dados:
+            dados[rotulo] = valor
+    return dados
+
+
+def tabela_por_cabecalho(aba, texto_cabecalho):
+    """Retorna a primeira tabela da aba cujo cabeçalho contém o texto, convertida em lista de dicts."""
+    for linhas in aba["tabelas"]:
+        if not linhas or not any(texto_cabecalho in celula for celula in linhas[0]):
+            continue
+        cabecalho = linhas[0]
+        registros = [dict(zip(cabecalho, linha)) for linha in linhas[1:] if len(linha) == len(cabecalho)]
+        # Descarta linhas totalmente vazias (modelos de linha da página)
+        return [r for r in registros if any(v for v in r.values())]
+    return []
+
+
+def ler_aba_certifica(page, sufixo):
+    """Lê uma aba da página de análise; retorna {"pares": [...], "tabelas": [...]} (vazio se ausente)."""
+    aba = page.evaluate(CERTIFICA_JS_LER_ABA, sufixo)
+    if aba is None:
+        log_erro(f"Aba '{sufixo}' não encontrada na página do requerimento.")
+        return {"pares": [], "tabelas": [], "registros": []}
+    return aba
+
+
+def extrair_dados_requerimento_certifica(page):
+    """
+    Lê a página de análise do requerimento e retorna os blocos do JSON:
+    ocd, lab, fabricante, solicitante, produto, modelos, frequencias e certificado.
+    """
+    aba_solicitante = ler_aba_certifica(page, CERTIFICA_ABA_SOLICITANTE)
+    pares = aba_solicitante["pares"]
+    rotulos = [rotulo for rotulo, _ in pares]
+    # Antes do marcador: solicitante; depois: OCD
+    corte = rotulos.index(CERTIFICA_ROTULO_INICIO_OCD) if CERTIFICA_ROTULO_INICIO_OCD in rotulos else len(pares)
+
+    aba_produto = ler_aba_certifica(page, CERTIFICA_ABA_PRODUTO)
+    aba_especificacoes = ler_aba_certifica(page, CERTIFICA_ABA_ESPECIFICACOES)
+    aba_laboratorio = ler_aba_certifica(page, CERTIFICA_ABA_LABORATORIO)
+
+    # Mesmo padrão do SCH: o nome do laboratório fica na chave "Nome" (primeiro registro da lista)
+    lab = {}
+    if aba_laboratorio["registros"]:
+        lab = dict(zip(CERTIFICA_CAMPOS_LABORATORIO, aba_laboratorio["registros"][0]))
+
+    return {
+        "fabricante": pares_para_dict(ler_aba_certifica(page, CERTIFICA_ABA_FABRICANTE)["pares"]),
+        "solicitante": pares_para_dict(pares[:corte]),
+        "ocd": pares_para_dict(pares[corte + 1:]),
+        "lab": lab,
+        "produto": pares_para_dict(aba_produto["pares"]),
+        "modelos": tabela_por_cabecalho(aba_produto, CERTIFICA_CABECALHO_MODELOS),
+        "frequencias": tabela_por_cabecalho(aba_especificacoes, CERTIFICA_CABECALHO_FREQUENCIAS),
+        "certificado": pares_para_dict(ler_aba_certifica(page, CERTIFICA_ABA_CERTIFICADO)["pares"]),
+    }
+
+
+def gravar_json_requerimento_certifica(requerimento, dados, pasta):
+    """Grava (mesclando com o existente) o JSON do requerimento em <pasta>\\<nome sem '_'>.json."""
+    caminho_json = os.path.join(pasta, f"{os.path.basename(pasta)[1:]}.json")
+    conteudo = carregar_json(caminho_json) or {}
+    conteudo["requerimento"] = {**conteudo.get("requerimento", {}), **requerimento}
+    conteudo.update(dados)
+    if not salvar_json(conteudo, caminho_json, indent=4):
+        raise OSError(f"Não foi possível gravar {caminho_json}")
+    log_info(f"JSON salvo: {caminho_json}")
+
+
+def processar_requerimento_certifica(page, requerimento):
+    """Cria a pasta do requerimento, abre seu link, lê os dados da página e grava o JSON."""
+    num_req = requerimento["num_req"]
+    if num_req.count("/") != 1:
+        log_erro(f"Número de requerimento inválido (esperado 'num/ano'): '{num_req}'")
+        return
+    pasta = criar_pasta_se_nao_existir(num_req)
+    if not requerimento.get("link"):
+        log_erro(f"Requerimento {num_req} sem link para a página de análise.")
+        return
+    log_info(f"Lendo dados do requerimento {num_req}...")
+    page.goto(requerimento["link"], timeout=CERTIFICA_TIMEOUT_PAGINA)
+    page.wait_for_load_state("networkidle")
+    gravar_json_requerimento_certifica(
+        requerimento,
+        extrair_dados_requerimento_certifica(page),
+        pasta,
+    )
+
+
 def baixar_documentos_certifica(obter_tipo):
     """
     Abre o Certifica, aguarda o login do usuário e pergunta o tipo de download.
@@ -123,13 +223,12 @@ def baixar_documentos_certifica(obter_tipo):
                 requerimentos.extend(ler_requerimentos_do_tipo(page, tipo_atual))
             log_info(f"Total de requerimentos lidos: {len(requerimentos)}.")
 
-            # Cria (ou renomeia, se já existir sem "_") a pasta de cada requerimento, como no SCH
+            # Para cada requerimento: cria a pasta (ou renomeia, como no SCH), lê a página e grava o JSON
             for requerimento in requerimentos:
-                num_req = requerimento["num_req"]
-                if num_req.count("/") != 1:
-                    log_erro(f"Número de requerimento inválido (esperado 'num/ano'): '{num_req}'")
-                    continue
-                criar_pasta_se_nao_existir(num_req)
+                try:
+                    processar_requerimento_certifica(page, requerimento)
+                except Exception as e:
+                    log_erro(f"Erro ao processar requerimento {requerimento.get('num_req')}: {str(e)[:100]}")
 
             # Mantém o navegador aberto até o usuário confirmar
             log_info("Pressione ENTER para encerrar o navegador...")

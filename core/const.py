@@ -76,9 +76,48 @@ CERTIFICA_TIMEOUT_CONTADOR = 30000
 CERTIFICA_ID_DIV_LISTA = "wt43_OutSystemsUIWeb_wt2_block_wtContent_wtMainContent_wt96_wtCntLista"
 CERTIFICA_INDICE_PRIMEIRA_COLUNA = 2  # índice (a partir de 0) da coluna "Nº do Requerimento"
 CERTIFICA_CAMPOS_REQUERIMENTO = [
-    "num_req", "num_homologacao", "cct", "tipo_do_produto",
-    "modelo", "solicitante", "fabricante", "data_da_inclusao",
+    "num_req", "cod_homologacao", "num_cct", "tipo_equipamento",
+    "modelo_certificacao", "solicitante", "fabricante", "data",
 ]
+
+# Página de análise do requerimento (AnaliseRequerimentosCCT): sufixo dos ids das abas
+CERTIFICA_TIMEOUT_PAGINA = 30000
+CERTIFICA_ABA_FABRICANTE = "Fabricante"
+CERTIFICA_ABA_SOLICITANTE = "solicitante"
+CERTIFICA_ABA_PRODUTO = "produto"
+CERTIFICA_ABA_ESPECIFICACOES = "EspecTecnica"
+CERTIFICA_ABA_LABORATORIO = "Laboratorio"
+CERTIFICA_ABA_CERTIFICADO = "Certificado"
+# Rótulo que separa, na aba Solicitante, os dados do solicitante dos do OCD
+CERTIFICA_ROTULO_INICIO_OCD = "INFORMAÇÕES DO OCD"
+# Texto do cabeçalho de cada tabela, usado para identificá-la dentro da aba
+CERTIFICA_CABECALHO_MODELOS = "Modelo Produto"
+CERTIFICA_CABECALHO_FREQUENCIAS = "Faixa de Frequências"
+# Colunas de cada registro da lista de laboratórios (a lista não tem cabeçalho no DOM)
+CERTIFICA_CAMPOS_LABORATORIO = ["Nome", "Email", "Contato"]
+
+# Lê uma aba: pares rótulo->valor (<label> + texto solto) e tabelas (lista de linhas de células)
+CERTIFICA_JS_LER_ABA = """(sufixo) => {
+    const aba = [...document.querySelectorAll('[id]')]
+        .find(e => e.id.endsWith('wttab_' + sufixo + '_block_wtContent'));
+    if (!aba) return null;
+    const limpo = (el) => {
+        const c = el.cloneNode(true);
+        c.querySelectorAll('script, style').forEach(s => s.remove());
+        return c.textContent.replace(/\\s+/g, ' ').trim();
+    };
+    const pares = [];
+    aba.querySelectorAll('label').forEach(l => {
+        const rotulo = limpo(l);
+        const valor = limpo(l.parentElement).replace(rotulo, '').trim();
+        pares.push([rotulo, valor]);
+    });
+    const tabelas = [...aba.querySelectorAll('table')].map(t =>
+        [...t.querySelectorAll('tr')].map(r => [...r.children].map(limpo)));
+    const registros = [...aba.querySelectorAll('.ListRecords > div')]
+        .map(r => [...r.children].map(limpo));
+    return {pares, tabelas, registros};
+}"""
 
 # Seletores CSS
 CSS_SELECTORS = {

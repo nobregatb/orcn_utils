@@ -19,7 +19,7 @@ As funcionalidades da aplicação são:
 ### Download de arquivos
 
 - Ao escolher **Download**, selecione o sistema **SCH (S)** ou **Certifica(C)**.
-- A opção **SCH (S)** mantém o fluxo de download atual. A opção **Certifica(C)** abre https://appsnet/Acesso/, aguarda o login do usuário (até a página exibir "Caixa de Entrada Analista") e pergunta o tipo de download (1. Retornos para estudo, 2. Requerimentos em análise, 3. Todos); as etapas seguintes ainda não estão implementadas.
+- A opção **SCH (S)** mantém o fluxo de download atual. A opção **Certifica(C)** abre https://appsnet/Acesso/, aguarda o login do usuário (até a página exibir "Caixa de Entrada Analista") e pergunta o tipo de download (1. Retornos para estudo, 2. Requerimentos em análise, 3. Todos). Em seguida lê a lista de requerimentos do(s) tipo(s), cria/renomeia a pasta de cada um em `req_inbox` (como no SCH), abre o link do requerimento e grava `<AA.NNNNN>.json` com os blocos `requerimento`, `fabricante`, `solicitante`, `ocd`, `lab`, `produto`, `modelos`, `frequencias` e `certificado`; o download dos anexos ainda não está implementado.
 - ✅ Download automático de PDFs por categoria
 - ✅ Nomenclatura padronizada dos arquivos
 - ✅ Controle de timeout preventivo (28 minutos)

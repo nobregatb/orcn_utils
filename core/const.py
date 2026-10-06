@@ -56,6 +56,11 @@ FRASES = {
 
 # URLs do sistema
 MOSAICO_BASE_URL = "https://sistemasnet.anatel.gov.br/mosaico/sch/worklist/"
+CERTIFICA_URL = "https://appsnet/Certifica/"
+
+# Texto que indica login concluído no Certifica e intervalo de monitoramento (segundos)
+CERTIFICA_TEXTO_LOGIN_OK = "Caixa de Entrada Analista"
+CERTIFICA_INTERVALO_MONITORAMENTO = 1
 
 # Seletores CSS
 CSS_SELECTORS = {

@@ -1,4 +1,5 @@
 from core.downloader import baixar_documentos
+from core.downloader_certifica import baixar_documentos_certifica
 from core.analyzer import analisar_requerimento
 from core.reporter import gerar_relatorio_pgd
 from core.menu import exibir_menu
@@ -65,6 +66,41 @@ def obter_tipo_download():
             log_erro(f"Erro inesperado na seleção de tipo: {str(e)}")
             log_info("Erro inesperado. Tente novamente.")
 
+def obter_tipo_download_certifica():
+    """
+    Pergunta ao usuário o tipo de download no Certifica.
+
+    Returns:
+        str | None: "1" (retornos para estudo), "2" (em análise), "3" (todos) ou None se cancelado
+    """
+    opcoes = {
+        "1": "Retornos para estudo",
+        "2": "Requerimentos em análise",
+        "3": "Todos",
+    }
+    log_info("\n" + SEPARADOR_MENOR)
+    log_info("TIPO DE DOWNLOAD")
+    log_info(SEPARADOR_MENOR)
+    log_info("\nEscolha o tipo de download:")
+    for chave, descricao in opcoes.items():
+        log_info(f"{chave}. {descricao}")
+
+    while True:
+        try:
+            opcao = input("\nDigite sua opção (1/2/3): ").strip()
+
+            if opcao in opcoes:
+                log_info(f"Selecionado: {opcoes[opcao]}")
+                return opcao
+            log_info("Opção inválida. Digite 1, 2 ou 3.")
+
+        except KeyboardInterrupt:
+            log_info("\nOperação cancelada pelo usuário.")
+            return None
+        except Exception as e:
+            log_erro(f"Erro inesperado na seleção de tipo: {str(e)}")
+            log_info("Erro inesperado. Tente novamente.")
+
 def main():
     while True:
         try:
@@ -79,7 +115,7 @@ def main():
                     continue
 
                 if sistema_download == "C":
-                    log_info("O download para Certifica ainda não está implementado.")
+                    baixar_documentos_certifica(obter_tipo_download_certifica)
                     log_info("Pressione ENTER para voltar ao menu...")
                     input()
                     continue

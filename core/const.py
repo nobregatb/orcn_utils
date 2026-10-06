@@ -96,6 +96,48 @@ CERTIFICA_CABECALHO_FREQUENCIAS = "Faixa de Frequências"
 # Colunas de cada registro da lista de laboratórios (a lista não tem cabeçalho no DOM)
 CERTIFICA_CAMPOS_LABORATORIO = ["Nome", "Email", "Contato"]
 
+# Anexos: tipos baixados (os do SCH + Registro de Ocorrências), como exibidos na aba Anexos
+CERTIFICA_TIPOS_ANEXO_BAIXAR = [
+    "Manual do Usuário",
+    "Fotos Externas do Produto",
+    "Fotos Internas do Produto",
+    "RACT - Relatório de Avaliação da Conformidade Técnica",
+    "CCT - Certificado de Conformidade Técnica",
+    "Selo ANATEL",
+    "Relatório de Ensaio",
+    "Registro de Ocorrências",
+]
+CERTIFICA_ABA_ANEXOS = "Anexos"
+CERTIFICA_TEXTO_ANEXO_DESATIVADO = "(DESATIVADO)"
+CERTIFICA_TIMEOUT_DOWNLOAD = 60000
+
+# Lista os anexos da aba: tipo (texto em negrito do bloco), dados da linha e id do link de download.
+CERTIFICA_JS_LER_ANEXOS = """([sufixo, textoDesativado]) => {
+    const aba = [...document.querySelectorAll('[id]')]
+        .find(e => e.id.endsWith('wttab_' + sufixo + '_block_wtContent'));
+    if (!aba) return null;
+    const txt = (e) => e.innerText.replace(/\\s+/g, ' ').trim();
+    // O aviso existe sempre no HTML e fica oculto por style inline; innerText não serve se a aba estiver oculta
+    const avisoVisivel = (celula, texto) => [...celula.querySelectorAll('div')]
+        .some(d => d.textContent.includes(texto) && d.style.display !== 'none');
+    const anexos = [];
+    aba.querySelectorAll('table[id$="wtTableDocumentos"]').forEach(tabela => {
+        const bloco = tabela.closest('.ThemeGrid_Width9').previousElementSibling;
+        const tipo = txt(bloco.querySelector('span'));
+        tabela.querySelectorAll('tbody tr').forEach(tr => {
+            const link = tr.querySelector('a[title="Download"]');
+            if (!link) return;
+            const c = tr.children;
+            const arquivo = txt(c[0].firstElementChild);
+            anexos.push({
+                tipo, arquivo, desativado: avisoVisivel(c[0], textoDesativado),
+                data_hora: txt(c[1]), descricao: txt(c[2]), link_id: link.id
+            });
+        });
+    });
+    return anexos;
+}"""
+
 # Lê uma aba: pares rótulo->valor (<label> + texto solto) e tabelas (lista de linhas de células)
 CERTIFICA_JS_LER_ABA = """(sufixo) => {
     const aba = [...document.querySelectorAll('[id]')]

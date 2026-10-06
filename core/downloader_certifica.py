@@ -13,9 +13,16 @@ from core.const import (
     CERTIFICA_ABA_ESPECIFICACOES, CERTIFICA_ABA_LABORATORIO, CERTIFICA_ABA_CERTIFICADO,
     CERTIFICA_ROTULO_INICIO_OCD, CERTIFICA_CABECALHO_MODELOS,
     CERTIFICA_CABECALHO_FREQUENCIAS, CERTIFICA_CAMPOS_LABORATORIO,
-    CERTIFICA_JS_LER_ABA
+    CERTIFICA_JS_LER_ABA, CERTIFICA_TIPOS_ANEXO_BAIXAR, CERTIFICA_ABA_ANEXOS,
+    CERTIFICA_TEXTO_ANEXO_DESATIVADO, CERTIFICA_TIMEOUT_DOWNLOAD,
+    CERTIFICA_JS_LER_ANEXOS, CARACTERES_INVALIDOS
 )
-from core.utils import get_profile_dir, criar_pasta_se_nao_existir, carregar_json, salvar_json
+from core.utils import (
+    get_profile_dir, criar_pasta_se_nao_existir, carregar_json, salvar_json,
+    requerimento_ja_baixado, marcar_requerimento_em_progresso,
+    obter_requerimentos_pendentes,
+    marcar_requerimento_concluido, marcar_requerimento_com_erro,
+)
 
 
 def pagina_contem_texto(page, texto):
@@ -172,12 +179,110 @@ def gravar_json_requerimento_certifica(requerimento, dados, pasta):
     log_info(f"JSON salvo: {caminho_json}")
 
 
+def formatar_data_anexo(data_hora):
+    """Converte 'dd/mm/aaaa hh:mm:ss' para 'aaaa.mm.dd HHhMMmSSs'; '0000.00.00' se a data for inválida."""
+    match = re.search(r"(\d{2})/(\d{2})/(\d{4})(?:\s+(\d{2}):(\d{2}):(\d{2}))?", data_hora)
+    if not match:
+        return "0000.00.00"
+    dia, mes, ano, hora, minuto, segundo = match.groups()
+    data = f"{ano}.{mes}.{dia}"
+    # Sem hora na página, mantém só a data
+    return f"{data} {hora}h{minuto}m{segundo}s" if hora else data
+
+
+def nome_arquivo_anexo(anexo):
+    """Monta '[tipo][data][arquivo - descrição].pdf' com caracteres inválidos substituídos por '_'."""
+    arquivo = os.path.splitext(anexo["arquivo"])[0]
+    corpo = f"{arquivo} - {anexo['descricao']}" if anexo["descricao"] else arquivo
+    nome = f"[{anexo['tipo']}][{formatar_data_anexo(anexo['data_hora'])}][{corpo}].pdf"
+    return re.sub(CARACTERES_INVALIDOS, "_", nome)
+
+
+def baixar_anexo_por_requisicao(page, link_id, destino):
+    """
+    Reproduz o __doPostBack do link via requisição HTTP com os cookies da sessão,
+    sem acionar o download do navegador (que fechava o contexto). Retorna False se não aplicável.
+    """
+    alvo = page.evaluate(
+        """id => {
+            const link = document.getElementById(id);
+            const m = link && (link.getAttribute('href') || '').match(/__doPostBack\\('([^']*)','([^']*)'\\)/);
+            if (!m) return null;
+            const form = link.closest('form') || document.forms[0];
+            const campos = {};
+            new FormData(form).forEach((v, k) => { if (typeof v === 'string') campos[k] = v; });
+            campos['__EVENTTARGET'] = m[1];
+            campos['__EVENTARGUMENT'] = m[2];
+            return { acao: form.action || location.href, campos };
+        }""",
+        link_id,
+    )
+    if not alvo:
+        return False
+    resposta = page.context.request.post(
+        alvo["acao"], form=alvo["campos"],         headers={"Referer": page.url},
+                timeout=CERTIFICA_TIMEOUT_DOWNLOAD, ignore_https_errors=True,
+            )
+    conteudo = resposta.body()
+    if not resposta.ok or "text/html" in resposta.headers.get("content-type", "") or not conteudo:
+        return False
+    with open(destino, "wb") as arquivo:
+        arquivo.write(conteudo)
+    return True
+
+
+def baixar_anexo_por_clique(page, link_id, destino):
+    """Alternativa: dispara o clique do link e salva o download do navegador."""
+    with page.expect_download(timeout=CERTIFICA_TIMEOUT_DOWNLOAD) as download_info:
+        page.evaluate("id => document.getElementById(id).click()", link_id)
+    download_info.value.save_as(destino)
+
+
+def baixar_anexos_certifica(page, pasta):
+    """Baixa anexos para a pasta do requerimento, ignorando arquivos desativados."""
+    anexos = page.evaluate(CERTIFICA_JS_LER_ANEXOS, [CERTIFICA_ABA_ANEXOS, CERTIFICA_TEXTO_ANEXO_DESATIVADO])
+    if anexos is None:
+        log_erro(f"Aba '{CERTIFICA_ABA_ANEXOS}' não encontrada na página do requerimento.")
+        return 0, 1
+    log_info(f"📎 {len(anexos)} anexo(s) listado(s) na aba Anexos")
+    baixados = 0
+    falhas = 0
+    for anexo in anexos:
+        if anexo["tipo"] not in CERTIFICA_TIPOS_ANEXO_BAIXAR:
+            continue
+        if anexo["desativado"]:
+            continue
+        destino = os.path.join(pasta, nome_arquivo_anexo(anexo))
+        if os.path.exists(destino):
+            log_info(f"⏭️ Arquivo já existe, pulando: {os.path.basename(destino)}")
+            baixados += 1
+            continue
+        if page.is_closed():
+            log_erro("A página do Certifica foi fechada; interrompendo download dos anexos.")
+            return baixados, falhas + 1
+        try:
+            if not baixar_anexo_por_requisicao(page, anexo["link_id"], destino):
+                baixar_anexo_por_clique(page, anexo["link_id"], destino)
+
+            baixados += 1
+            log_info(f"✅ Baixado: {os.path.basename(destino)}")
+        except Exception as e:
+            falhas += 1
+            log_erro(f"Erro ao baixar anexo '{anexo['arquivo']}': {str(e)}")
+    log_info(f"💾 Total de {baixados} PDF(s) salvos em: {pasta}")
+    return baixados, falhas
+
+
 def processar_requerimento_certifica(page, requerimento):
-    """Cria a pasta do requerimento, abre seu link, lê os dados da página e grava o JSON."""
+    """Cria a pasta do requerimento, abre seu link, lê os dados, grava o JSON e baixa os anexos."""
     num_req = requerimento["num_req"]
     if num_req.count("/") != 1:
         log_erro(f"Número de requerimento inválido (esperado 'num/ano'): '{num_req}'")
         return
+    if requerimento_ja_baixado(num_req):
+        log_info(f"✅ Requerimento {num_req} já baixado, pulando.")
+        return
+    marcar_requerimento_em_progresso(num_req)
     pasta = criar_pasta_se_nao_existir(num_req)
     if not requerimento.get("link"):
         log_erro(f"Requerimento {num_req} sem link para a página de análise.")
@@ -190,6 +295,11 @@ def processar_requerimento_certifica(page, requerimento):
         extrair_dados_requerimento_certifica(page),
         pasta,
     )
+    baixados, falhas = baixar_anexos_certifica(page, pasta)
+    if falhas:
+        marcar_requerimento_com_erro(num_req, f"Falha ao baixar {falhas} anexo(s)")
+    else:
+        marcar_requerimento_concluido(num_req, baixados)
 
 
 def baixar_documentos_certifica(obter_tipo):
@@ -204,7 +314,7 @@ def baixar_documentos_certifica(obter_tipo):
                 headless=False,
                 executable_path=CHROME_PATH,
                 args=CHROME_ARGS,
-                accept_downloads=True
+                accept_downloads=True,
             )
             page = browser.new_page()
             page.goto(CERTIFICA_URL)
@@ -223,16 +333,22 @@ def baixar_documentos_certifica(obter_tipo):
                 requerimentos.extend(ler_requerimentos_do_tipo(page, tipo_atual))
             log_info(f"Total de requerimentos lidos: {len(requerimentos)}.")
 
+            # Como no SCH, requerimentos já concluídos no download_status.json são pulados
+            pendentes = set(obter_requerimentos_pendentes([r["num_req"] for r in requerimentos]))
+            requerimentos = [r for r in requerimentos if r["num_req"] in pendentes]
+
             # Para cada requerimento: cria a pasta (ou renomeia, como no SCH), lê a página e grava o JSON
             for requerimento in requerimentos:
                 try:
                     processar_requerimento_certifica(page, requerimento)
                 except Exception as e:
                     log_erro(f"Erro ao processar requerimento {requerimento.get('num_req')}: {str(e)[:100]}")
+                    marcar_requerimento_com_erro(requerimento.get("num_req"), str(e)[:200])
 
             # Mantém o navegador aberto até o usuário confirmar
             log_info("Pressione ENTER para encerrar o navegador...")
             input()
-            browser.close()
+            if not browser.is_closed():
+                browser.close()
     except Exception as e:
         log_erro(f"Erro no download do Certifica: {str(e)}")

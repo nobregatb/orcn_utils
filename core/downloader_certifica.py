@@ -9,7 +9,7 @@ from core.const import (
     CERTIFICA_ID_DIV_LISTA, CERTIFICA_CAMPOS_REQUERIMENTO,
     CERTIFICA_INDICE_PRIMEIRA_COLUNA
 )
-from core.utils import get_profile_dir
+from core.utils import get_profile_dir, criar_pasta_se_nao_existir
 
 
 def pagina_contem_texto(page, texto):
@@ -122,6 +122,14 @@ def baixar_documentos_certifica(obter_tipo):
             for tipo_atual in tipos_a_ler:
                 requerimentos.extend(ler_requerimentos_do_tipo(page, tipo_atual))
             log_info(f"Total de requerimentos lidos: {len(requerimentos)}.")
+
+            # Cria (ou renomeia, se já existir sem "_") a pasta de cada requerimento, como no SCH
+            for requerimento in requerimentos:
+                num_req = requerimento["num_req"]
+                if num_req.count("/") != 1:
+                    log_erro(f"Número de requerimento inválido (esperado 'num/ano'): '{num_req}'")
+                    continue
+                criar_pasta_se_nao_existir(num_req)
 
             # Mantém o navegador aberto até o usuário confirmar
             log_info("Pressione ENTER para encerrar o navegador...")

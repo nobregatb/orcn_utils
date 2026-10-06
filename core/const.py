@@ -76,7 +76,7 @@ CERTIFICA_TIMEOUT_CONTADOR = 30000
 CERTIFICA_ID_DIV_LISTA = "wt43_OutSystemsUIWeb_wt2_block_wtContent_wtMainContent_wt96_wtCntLista"
 CERTIFICA_INDICE_PRIMEIRA_COLUNA = 2  # índice (a partir de 0) da coluna "Nº do Requerimento"
 CERTIFICA_CAMPOS_REQUERIMENTO = [
-    "num_requerimento", "num_homologacao", "cct", "tipo_do_produto",
+    "num_req", "num_homologacao", "cct", "tipo_do_produto",
     "modelo", "solicitante", "fabricante", "data_da_inclusao",
 ]
 

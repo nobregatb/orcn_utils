@@ -5,6 +5,32 @@ from core.menu import exibir_menu
 from core.log_print import log_info, log_erro, log_erro_critico
 from core.const import OPCOES_MENU, SEPARADOR_MENOR
 
+def obter_sistema_download():
+    """Pergunta em qual sistema o download será realizado."""
+    log_info("\nEm qual sistema?")
+    log_info("SCH (S)")
+    log_info("Certifica(C)")
+
+    while True:
+        try:
+            opcao = input("\nDigite sua opção (S/C): ").strip().upper()
+
+            if opcao == "S":
+                log_info("Selecionado: SCH")
+                return "S"
+            elif opcao == "C":
+                log_info("Selecionado: Certifica")
+                return "C"
+            else:
+                log_info("Opção inválida. Digite S ou C.")
+
+        except KeyboardInterrupt:
+            log_info("\nOperação cancelada pelo usuário.")
+            return None
+        except Exception as e:
+            log_erro(f"Erro inesperado na seleção de sistema: {str(e)}")
+            log_info("Erro inesperado. Tente novamente.")
+
 def obter_tipo_download():
     """
     Pergunta ao usuário o tipo de download a ser realizado.
@@ -46,6 +72,17 @@ def main():
             
             if opcao == OPCOES_MENU['download']:
                 log_info("Iniciando download de documentos...")
+
+                sistema_download = obter_sistema_download()
+
+                if sistema_download is None:
+                    continue
+
+                if sistema_download == "C":
+                    log_info("O download para Certifica ainda não está implementado.")
+                    log_info("Pressione ENTER para voltar ao menu...")
+                    input()
+                    continue
                 
                 # Obter tipo de download do usuário
                 retorno_para_estudo = obter_tipo_download()

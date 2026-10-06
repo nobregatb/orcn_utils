@@ -18,6 +18,8 @@ As funcionalidades da aplicação são:
 
 ### Download de arquivos
 
+- Ao escolher **Download**, selecione o sistema **SCH (S)** ou **Certifica(C)**.
+- A opção **SCH (S)** mantém o fluxo de download atual. A opção **Certifica(C)** ainda não está implementada e retorna ao menu após a confirmação.
 - ✅ Download automático de PDFs por categoria
 - ✅ Nomenclatura padronizada dos arquivos
 - ✅ Controle de timeout preventivo (28 minutos)

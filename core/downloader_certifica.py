@@ -1,10 +1,12 @@
+import re
 import time
 from playwright.sync_api import sync_playwright
 from core.log_print import log_info, log_erro
 from core.const import (
     CHROME_PATH, CHROME_ARGS, CERTIFICA_URL, CERTIFICA_TEXTO_LOGIN_OK,
-    CERTIFICA_INTERVALO_MONITORAMENTO, CERTIFICA_DIV_POR_TIPO
-)
+    CERTIFICA_INTERVALO_MONITORAMENTO, CERTIFICA_DIV_POR_TIPO,
+    CERTIFICA_SELETOR_CONTADOR, CERTIFICA_TIMEOUT_CONTADOR
+    )
 from core.utils import get_profile_dir
 
 
@@ -38,6 +40,16 @@ def abrir_lista_certifica(page, tipo):
     log_info("Página carregada.")
 
 
+def obter_total_registros(page):
+    """Lê o contador de registros ("NNNN registros") da página e retorna NNNN como inteiro."""
+    contador = page.wait_for_selector(CERTIFICA_SELETOR_CONTADOR, timeout=CERTIFICA_TIMEOUT_CONTADOR)
+    texto = contador.inner_text()
+    correspondencia = re.search(r"\d+", texto)
+    if not correspondencia:
+        raise ValueError(f"Contador de registros em formato inesperado: '{texto}'")
+    return int(correspondencia.group())
+
+
 def baixar_documentos_certifica(obter_tipo):
     """
     Abre o Certifica, aguarda o login do usuário e pergunta o tipo de download.
@@ -66,6 +78,10 @@ def baixar_documentos_certifica(obter_tipo):
                 log_info("Download de 'Todos' ainda não implementado.")
             else:
                 abrir_lista_certifica(page, tipo)
+                total = obter_total_registros(page)
+                log_info(f"{total} registros encontrados.")
+                if total == 0:
+                    log_info("Não há requerimentos a analisar.")
 
             # Mantém o navegador aberto até o usuário confirmar
             log_info("Pressione ENTER para encerrar o navegador...")

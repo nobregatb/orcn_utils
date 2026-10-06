@@ -68,6 +68,10 @@ CERTIFICA_DIV_POR_TIPO = {
     "1": "wt43_OutSystemsUIWeb_wt2_block_wtContent_wtMainContent_wtCntRetEstudo",
 }
 
+# Contador de registros da lista ("NNNN registros") e tempo máximo de espera (ms)
+CERTIFICA_SELETOR_CONTADOR = ".Counter_Message"
+CERTIFICA_TIMEOUT_CONTADOR = 30000
+
 # Seletores CSS
 CSS_SELECTORS = {
     'menu_todos': "#menuForm\\:todos",

@@ -116,8 +116,6 @@ def main():
 
                 if sistema_download == "C":
                     baixar_documentos_certifica(obter_tipo_download_certifica)
-                    log_info("Pressione ENTER para voltar ao menu...")
-                    input()
                     continue
                 
                 # Obter tipo de download do usuário

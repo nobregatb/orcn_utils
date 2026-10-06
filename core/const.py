@@ -62,6 +62,12 @@ CERTIFICA_URL = "https://appsnet/Certifica/"
 CERTIFICA_TEXTO_LOGIN_OK = "Caixa de Entrada Analista"
 CERTIFICA_INTERVALO_MONITORAMENTO = 1
 
+# Div a clicar por tipo de download escolhido ("3" - Todos - ainda sem especificação)
+CERTIFICA_DIV_POR_TIPO = {
+    "2": "wt43_OutSystemsUIWeb_wt2_block_wtContent_wtMainContent_wtCntAnalise",
+    "1": "wt43_OutSystemsUIWeb_wt2_block_wtContent_wtMainContent_wtCntRetEstudo",
+}
+
 # Seletores CSS
 CSS_SELECTORS = {
     'menu_todos': "#menuForm\\:todos",

@@ -3,7 +3,7 @@ from playwright.sync_api import sync_playwright
 from core.log_print import log_info, log_erro
 from core.const import (
     CHROME_PATH, CHROME_ARGS, CERTIFICA_URL, CERTIFICA_TEXTO_LOGIN_OK,
-    CERTIFICA_INTERVALO_MONITORAMENTO
+    CERTIFICA_INTERVALO_MONITORAMENTO, CERTIFICA_DIV_POR_TIPO
 )
 from core.utils import get_profile_dir
 
@@ -26,6 +26,16 @@ def aguardar_login_certifica(page):
     while not pagina_contem_texto(page, CERTIFICA_TEXTO_LOGIN_OK):
         time.sleep(CERTIFICA_INTERVALO_MONITORAMENTO)
     log_info("Login identificado.")
+
+
+def abrir_lista_certifica(page, tipo):
+    """Clica na div correspondente ao tipo escolhido e aguarda a página carregar."""
+    div_id = CERTIFICA_DIV_POR_TIPO[tipo]
+    log_info(f"Abrindo lista do tipo {tipo}...")
+    page.click(f"#{div_id}")
+    page.wait_for_load_state("load")
+    page.wait_for_load_state("networkidle")
+    log_info("Página carregada.")
 
 
 def baixar_documentos_certifica(obter_tipo):
@@ -52,7 +62,14 @@ def baixar_documentos_certifica(obter_tipo):
                 browser.close()
                 return
 
-            # Próximas etapas do download no Certifica serão implementadas.
+            if tipo == "3":
+                log_info("Download de 'Todos' ainda não implementado.")
+            else:
+                abrir_lista_certifica(page, tipo)
+
+            # Mantém o navegador aberto até o usuário confirmar
+            log_info("Pressione ENTER para encerrar o navegador...")
+            input()
             browser.close()
     except Exception as e:
         log_erro(f"Erro no download do Certifica: {str(e)}")

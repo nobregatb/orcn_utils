@@ -1356,6 +1356,31 @@ class AnalisadorRequerimentos:
             log_erro(f"Erro ao processar arquivo JSON do requerimento {arquivo_json_req.name}: {str(e)}")
             return None
 
+    def _completar_ocd_certifica(self, dados_req: Optional[Dict]) -> None:
+        """
+        O Certifica não informa Nome/CNPJ do OCD no JSON. Quando ausentes, identifica o OCD em
+        ocds.json: a "sigla" deve constar em requerimento["num_cct"] ou o "email" em
+        ocd["E-mail do Contato"] (texto normalizado; basta um dos dois).
+        """
+        if not dados_req or not isinstance(dados_req, dict) or not isinstance(self.ocds, list):
+            return
+        dados_ocd = dados_req.get("ocd")
+        if not isinstance(dados_ocd, dict) or dados_ocd.get("CNPJ"):
+            return
+
+        num_cct = normalizar(str((dados_req.get("requerimento") or {}).get("num_cct", "")))
+        email_contato = normalizar(str(dados_ocd.get("E-mail do Contato", "")))
+
+        for ocd in self.ocds:
+            sigla = normalizar(str(ocd.get("sigla", "")).strip())
+            email = normalizar(str(ocd.get("email", "")).strip())
+            achou_sigla = bool(sigla) and sigla in num_cct
+            achou_email = bool(email) and email in email_contato
+            if (achou_sigla or achou_email) and ocd.get("cnpj"):
+                dados_ocd["CNPJ"] = ocd["cnpj"]
+                dados_ocd["Nome"] = ocd.get("nome", "")
+                return
+
     def _atualizar_ocds_json(self, dados_ocd: Dict) -> None:
         """
         Atualiza o arquivo utils/ocds.json com informações do OCD se a data for mais recente.
@@ -1421,6 +1446,8 @@ class AnalisadorRequerimentos:
                 novo_registro = {
                     "cnpj": cnpj_ocd,
                     "nome": nome_ocd,
+                    "sigla": "",
+                    "email": "",
                     "data_atualizacao": data_certificado
                 }
                 dados_ocds.append(novo_registro)
@@ -1452,6 +1479,7 @@ class AnalisadorRequerimentos:
         
         # Processar arquivo JSON do requerimento e atualizar OCDS se necessário
         dados_req_json = self._processar_dados_requerimento_json(nome_requerimento, pasta_requerimento)
+        self._completar_ocd_certifica(dados_req_json)
 
         #if dados_req_json is not None:
         #    log_info(f"OCD: {dados_req_json['ocd']}")

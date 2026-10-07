@@ -2,111 +2,155 @@
   {
     "cnpj": "04.192.889/0001-07",
     "nome": "Associação NCC Certificações do Brasil",
+    "sigla": "NCC",
+    "email": "bureauveritas.com",
     "data_atualizacao": "02/06/2026"
   },
   {
     "cnpj": "44.458.010/0001-40",
     "nome": "Moderna Tecnologia LTDA",
+    "sigla": "MODERNA",
+    "email": "",
     "data_atualizacao": "30/10/2025"
   },
   {
     "cnpj": "16.884.899/0001-92",
     "nome": "Brics Certificacoes de Sistemas de Gestao e Produtos Ltda",
+    "sigla": "BRICS",
+    "email": "",
     "data_atualizacao": "01/10/2025"
   },
   {
     "cnpj": "07.832.680/0001-59",
     "nome": "MASTER ASSOCIACAO DE AVALIACAO DE CONFORMIDADE TELECOM",
+    "sigla": "MASTER",
+    "email": "",
     "data_atualizacao": "28/10/2025"
   },
   {
     "cnpj": "26.352.661/0001-70",
     "nome": "Associação Versys de Tecnologia",
+    "sigla": "VERSYS",
+    "email": "",
     "data_atualizacao": "28/10/2025"
   },
   {
     "cnpj": "04.830.102/0001-95",
     "nome": "UL do Brasil Certificações",
+    "sigla": "UL",
+    "email": "",
     "data_atualizacao": "09/10/2025"
   },
   {
     "cnpj": "32.193.729/0001-18",
     "nome": "PCN DO BRASIL TELECOMUNICAÇÕES",
+    "sigla": "PCN",
+    "email": "",
     "data_atualizacao": "24/10/2025"
   },
   {
     "cnpj": "02.641.663/0001-10",
     "nome": "FUNDACAO CENTRO DE PESQUISA E DESENVOLVIMENTO DE TELECOMUNICACOES- CPQD.",
+    "sigla": "CPQD",
+    "email": "",
     "data_atualizacao": "29/10/2025"
   },
   {
     "cnpj": "02.839.483/0001-48",
     "nome": "UL do Brasil Ltda",
+    "sigla": "",
+    "email": "",
     "data_atualizacao": "28/10/2025"
   },
   {
     "cnpj": "26.600.714/0001-24",
     "nome": "DEKRA CERTIFICATION B.V.",
+    "sigla": "DEKRA",
+    "email": "",
     "data_atualizacao": "23/10/2025"
   },
   {
     "cnpj": "04.538.402/0001-03",
     "nome": "OCP-TELI - ORGANIZAÇÃO CERTIFICADORA DE PRODUTOS DE TELECOMUNICAÇÕES E INFORMÁTICA",
+    "sigla": "OCP-TELI",
+    "email": "",
     "data_atualizacao": "20/10/2025"
   },
   {
     "cnpj": "43.297.697/0001-17",
     "nome": "ICC Instituto de Certificações e Conformidades Ltda",
+    "sigla": "ICC",
+    "email": "icc-ocd.com.br",
     "data_atualizacao": "29/10/2025"
   },
   {
     "cnpj": "34.827.924/0001-88",
     "nome": "Associação LMP Certificações",
+    "sigla": "LMP",
+    "email": "",
     "data_atualizacao": "30/10/2025"
   },
   {
     "cnpj": "21.546.034/0001-56",
     "nome": "QC Certificacoes Ltda",
+    "sigla": "QC",
+    "email": "",
     "data_atualizacao": "26/09/2025"
   },
   {
     "cnpj": "04.848.581/0001-77",
     "nome": "ASSOCIAÇÃO DE CERTIFICAÇÃO DE PRODUTO PARA TELECOMUNICAÇÕES, RADIODIFUSÃO,CINEMA, VÍDEO, E AUDIO-VISUAL",
+    "sigla": "",
+    "email": "",
     "data_atualizacao": "10/10/2025"
   },
   {
     "cnpj": "32.215.918/0001-44",
     "nome": "Acert Organismo de Certificacao de Produtos em Sistemas Ltda",
+    "sigla": "ACERT",
+    "email": "",
     "data_atualizacao": "10/10/2025"
   },
   {
     "cnpj": "02.437.460/0003-79",
     "nome": "Instituto de Pesquisas Eldorado",
+    "sigla": "ELDORADO",
+    "email": "",
     "data_atualizacao": "13/10/2025"
   },
   {
     "cnpj": "46.054.470/0001-39",
     "nome": "Brasil Certificacoes Ltda",
+    "sigla": "BRACERT",
+    "email": "",
     "data_atualizacao": "28/10/2025"
   },
   {
     "cnpj": "35.983.502/0001-64",
     "nome": "ABCP CERTIFICADORA DE PRODUTOS LTDA",
+    "sigla": "ABCP",
+    "email": "",
     "data_atualizacao": "24/10/2025"
   },
   {
     "cnpj": "03.962.911/0001-98",
     "nome": "TÜV Rheinland Brasil",
+    "sigla": "TUV",
+    "email": "",
     "data_atualizacao": "31/01/2026"
   },
   {
     "cnpj": "33.182.809/0083-87",
     "nome": "Sgs do Brasil Ltda",
+    "sigla": "SGS",
+    "email": "",
     "data_atualizacao": "27/10/2025"
   },
   {
     "cnpj": "48.333.960/0001-08",
     "nome": "CCPE CENTRO DE CERTIFICACAO DE PRODUTOS ELETRONICOS LTDA",
+    "sigla": "CCPE",
+    "email": "",
     "data_atualizacao": "29/10/2025"
   }
 ]

@@ -623,19 +623,28 @@ class AnalisadorRequerimentos:
         return resultado
     
     def _determinar_tipo_documento(self, nome_arquivo: str) -> Tuple[str, datetime]:
-        """Determina o tipo de documento e extrai a data do segundo bloco entre colchetes."""
+        """Determina o tipo e a data dos nomes SCH e Certifica."""
         data_padrao = datetime(1900, 1, 1)
         
         # Extrair o primeiro termo entre colchetes
         match = re.search(r'\[([^\]]+)\]', nome_arquivo)
 
-        # Extrair data do segundo bloco: [YYYY.MM.DD - ...]
-        match_data = re.search(r'^\[[^\]]+\]\[(\d{4}\.\d{2}\.\d{2})\s*-\s*[^\]]+\]', nome_arquivo)
+        # SCH inclui texto após a data; Certifica acrescenta hora no formato HHhMMmSSs.
+        match_data = re.search(
+            r'^\[[^\]]+\]\[(\d{4}\.\d{2}\.\d{2})(?:\s+(\d{2})h(\d{2})m(\d{2})s)?(?:\s*-\s*[^\]]+)?\]',
+            nome_arquivo
+        )
         if not match_data:
             data_documento = data_padrao
         else:
             try:
-                data_documento = datetime.strptime(match_data.group(1), "%Y.%m.%d")
+                data_formatada = match_data.group(1)
+                if match_data.group(2):
+                    data_formatada += f" {match_data.group(2)}h{match_data.group(3)}m{match_data.group(4)}s"
+                    formato_data = "%Y.%m.%d %Hh%Mm%Ss"
+                else:
+                    formato_data = "%Y.%m.%d"
+                data_documento = datetime.strptime(data_formatada, formato_data)
             except ValueError:
                 data_documento = data_padrao
 
@@ -644,11 +653,18 @@ class AnalisadorRequerimentos:
             
             # Primeira passada: verificar correspondências exatas com 'nome' ou 'nome_curto'
             for tipo_chave, tipo_info in TIPOS_DOCUMENTOS.items():
-                #nome = tipo_info.get('nome', '').lower()
                 nome_completo = tipo_info.get('botao_pdf', '').lower()
+                nome_curto = tipo_info.get('nome_curto', '').lower().strip()
                 
-                # Verificar correspondência exata
-                if tipo_extraido == nome_completo:
+                # Certifica prefixa os nomes de CCT/RACT com a sigla e não usa o rótulo SCH.
+                if (
+                    tipo_extraido == nome_completo
+                    or tipo_extraido == nome_curto
+                    or (
+                        tipo_chave in (TIPO_CCT, TIPO_RACT)
+                        and tipo_extraido.startswith(f"{nome_curto} - ")
+                    )
+                ):
                     return tipo_chave, data_documento
         
         # Fallback final para "outros" se não encontrar correspondência

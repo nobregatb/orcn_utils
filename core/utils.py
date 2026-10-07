@@ -71,8 +71,8 @@ def validar_dados_criticos(requerimento_json=None, dados_ocd=None, dados_lab=Non
             erros_criticos.append("dados_ocd não é um dicionário válido")
         elif not dados_ocd:
             erros_criticos.append("dados_ocd está vazio - dados do OCD são obrigatórios")
-        elif not dados_ocd.get('CNPJ') and not dados_ocd.get('Nome'):
-            erros_criticos.append("dados_ocd não contém CNPJ nem Nome do OCD")
+        #elif not dados_ocd.get('CNPJ') and not dados_ocd.get('Nome'):
+        #    erros_criticos.append("dados_ocd não contém CNPJ nem Nome do OCD")
     
     # Validar dados_lab  
     if dados_lab is not None:
@@ -80,8 +80,8 @@ def validar_dados_criticos(requerimento_json=None, dados_ocd=None, dados_lab=Non
             erros_criticos.append("dados_lab não é um dicionário válido")
         elif not dados_lab:
             erros_criticos.append("dados_lab está vazio - dados do laboratório são obrigatórios")
-        elif not dados_lab.get('Nome') and not dados_lab.get('CNPJ'):
-            erros_criticos.append("dados_lab não contém Nome nem CNPJ do laboratório")
+        #elif not dados_lab.get('Nome') and not dados_lab.get('CNPJ'):
+        #    erros_criticos.append("dados_lab não contém Nome nem CNPJ do laboratório")
     
     # Validar dados_fabricante
     if dados_fabricante is not None:
@@ -89,8 +89,8 @@ def validar_dados_criticos(requerimento_json=None, dados_ocd=None, dados_lab=Non
             erros_criticos.append("dados_fabricante não é um dicionário válido")
         elif not dados_fabricante:
             erros_criticos.append("dados_fabricante está vazio - dados do fabricante são obrigatórios")
-        elif not dados_fabricante.get('Nome') and not dados_fabricante.get('CNPJ'):
-            erros_criticos.append("dados_fabricante não contém Nome nem CNPJ do fabricante")
+        #elif not dados_fabricante.get('Nome') and not dados_fabricante.get('CNPJ'):
+        #    erros_criticos.append("dados_fabricante não contém Nome nem CNPJ do fabricante")
     
     # Validar dados_solicitante
     if dados_solicitante is not None:
@@ -98,8 +98,8 @@ def validar_dados_criticos(requerimento_json=None, dados_ocd=None, dados_lab=Non
             erros_criticos.append("dados_solicitante não é um dicionário válido")
         elif not dados_solicitante:
             erros_criticos.append("dados_solicitante está vazio - dados do solicitante são obrigatórios")
-        elif not dados_solicitante.get('Nome') and not dados_solicitante.get('CNPJ'):
-            erros_criticos.append("dados_solicitante não contém Nome nem CNPJ do solicitante")
+        #elif not dados_solicitante.get('Nome') and not dados_solicitante.get('CNPJ'):
+        #    erros_criticos.append("dados_solicitante não contém Nome nem CNPJ do solicitante")
     
     # Se há erros críticos, parar a aplicação
     if erros_criticos:

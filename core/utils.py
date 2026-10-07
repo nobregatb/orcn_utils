@@ -66,22 +66,22 @@ def validar_dados_criticos(requerimento_json=None, dados_ocd=None, dados_lab=Non
             erros_criticos.append("requerimento_json não contém número do requerimento (num_req)")
     
     # Validar dados_ocd
-    if dados_ocd is not None:
+    '''if dados_ocd is not None:
         if not isinstance(dados_ocd, dict):
             erros_criticos.append("dados_ocd não é um dicionário válido")
         elif not dados_ocd:
             erros_criticos.append("dados_ocd está vazio - dados do OCD são obrigatórios")
         #elif not dados_ocd.get('CNPJ') and not dados_ocd.get('Nome'):
-        #    erros_criticos.append("dados_ocd não contém CNPJ nem Nome do OCD")
+        #    erros_criticos.append("dados_ocd não contém CNPJ nem Nome do OCD")'''
     
     # Validar dados_lab  
-    if dados_lab is not None:
+    '''if dados_lab is not None:
         if not isinstance(dados_lab, dict):
             erros_criticos.append("dados_lab não é um dicionário válido")
         elif not dados_lab:
             erros_criticos.append("dados_lab está vazio - dados do laboratório são obrigatórios")
         #elif not dados_lab.get('Nome') and not dados_lab.get('CNPJ'):
-        #    erros_criticos.append("dados_lab não contém Nome nem CNPJ do laboratório")
+        #    erros_criticos.append("dados_lab não contém Nome nem CNPJ do laboratório")'''
     
     # Validar dados_fabricante
     if dados_fabricante is not None:

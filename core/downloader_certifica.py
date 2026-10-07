@@ -289,7 +289,10 @@ def processar_requerimento_certifica(page, requerimento):
         return
     log_info(f"Lendo dados do requerimento {num_req}...")
     page.goto(requerimento["link"], timeout=CERTIFICA_TIMEOUT_PAGINA)
-    page.wait_for_load_state("networkidle")
+    page.get_by_text("N° do Processo SEI:").wait_for(
+        state="visible",
+        timeout=CERTIFICA_TIMEOUT_PAGINA,
+    )
     gravar_json_requerimento_certifica(
         requerimento,
         extrair_dados_requerimento_certifica(page),

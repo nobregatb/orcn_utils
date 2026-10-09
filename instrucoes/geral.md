@@ -19,7 +19,7 @@ As funcionalidades da aplicação são:
 ### Download de arquivos
 
 - Ao escolher **Download**, selecione o sistema **SCH (S)** ou **Certifica(C)**.
-- A opção **SCH (S)** mantém o fluxo de download atual. A opção **Certifica(C)** abre https://appsnet/Acesso/, aguarda o login do usuário (até a página exibir "Caixa de Entrada Analista") e pergunta o tipo de download (1. Retornos para estudo, 2. Requerimentos em análise, 3. Todos). Em seguida lê a lista de requerimentos do(s) tipo(s), cria/renomeia a pasta de cada um em `req_inbox` (como no SCH), abre o link do requerimento e grava `<AA.NNNNN>.json` com os blocos `requerimento`, `fabricante`, `solicitante`, `ocd`, `lab`, `produto`, `modelos`, `frequencias` e `certificado`. Por fim baixa, na mesma pasta, os anexos dos tipos do SCH mais "Registro de Ocorrências" (`CERTIFICA_TIPOS_ANEXO_BAIXAR`), nomeados `[tipo][aaaa.mm.dd HHhMMmSSs][arquivo - descrição].pdf`, ignorando os marcados "(DESATIVADO)".
+- A opção **SCH (S)** mantém o fluxo de download atual. A opção **Certifica(C)** abre https://appsnet/Acesso/, aguarda o login do usuário (até a página exibir "Caixa de Entrada Analista") e pergunta o tipo de download (1. Retornos para estudo, 2. Requerimentos em análise, 3. Todos). Em seguida lê a lista de requerimentos do(s) tipo(s), cria/renomeia a pasta de cada um em `req_inbox` (como no SCH), abre o link do requerimento e grava `<AA.NNNNN>.json` com os blocos `requerimento`, `fabricante`, `solicitante`, `ocd`, `lab`, `produto`, `modelos`, `frequencias` e `certificado`. Por fim baixa, na mesma pasta, os anexos dos tipos do SCH mais "Registro de Ocorrências" e "Reaproveitamento de Número de Homologação SCH" (`CERTIFICA_TIPOS_ANEXO_BAIXAR`), nomeados `[tipo][aaaa.mm.dd HHhMMmSSs][arquivo - descrição].pdf`, ignorando os marcados "(DESATIVADO)".
 - ✅ Download automático de PDFs por categoria
 - ✅ Nomenclatura padronizada dos arquivos
 - ✅ Controle de timeout preventivo (28 minutos)
@@ -40,6 +40,7 @@ O sistema busca PDFs nas seguintes categorias:
 - Fotos internas
 - Relatório de Ensaio
 - Fotos do produto
+- Reaproveitamento de Número de Homologação SCH (Certifica)
 
 ### Análise de requerimentos
 
@@ -61,6 +62,7 @@ O sistema de análise automatizada avalia todos os documentos de um requerimento
 - **ART (Anotação de Responsabilidade Técnica)**: Verificação de responsáveis técnicos
 - **Fotos do Produto**: Análise visual e conformidade
 - **Contrato Social**: Validação de dados da empresa
+- As palavras-chave `reaproveitar`, `reaproveitando`, `reutilizar` e `reutilizando` também são buscadas e exibidas no relatório. Quando uma delas for encontrada, ou quando houver um anexo do tipo **Reaproveitamento de Número de Homologação SCH**, o relatório inclui **Alterar homologação** em vermelho e negrito logo após o item **OCD** do requerimento.
 
 #### 📊 Saídas do Sistema
 

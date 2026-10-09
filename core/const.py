@@ -81,7 +81,7 @@ CERTIFICA_CAMPOS_REQUERIMENTO = [
 ]
 
 # Página de análise do requerimento (AnaliseRequerimentosCCT): sufixo dos ids das abas
-CERTIFICA_TIMEOUT_PAGINA = 30000
+CERTIFICA_TIMEOUT_PAGINA = 3000000
 CERTIFICA_ABA_FABRICANTE = "Fabricante"
 CERTIFICA_ABA_SOLICITANTE = "solicitante"
 CERTIFICA_ABA_PRODUTO = "produto"
@@ -97,6 +97,7 @@ CERTIFICA_CABECALHO_FREQUENCIAS = "Faixa de Frequências"
 CERTIFICA_CAMPOS_LABORATORIO = ["Nome", "Email", "Contato"]
 
 # Anexos: tipos baixados (os do SCH + Registro de Ocorrências), como exibidos na aba Anexos
+CERTIFICA_TIPO_ANEXO_REAPROVEITAMENTO = "Reaproveitamento de Número de Homologação SCH"
 CERTIFICA_TIPOS_ANEXO_BAIXAR = [
     "Manual do Usuário",
     "Fotos Externas do Produto",
@@ -106,6 +107,7 @@ CERTIFICA_TIPOS_ANEXO_BAIXAR = [
     "Selo ANATEL",
     "Relatório de Ensaio",
     "Registro de Ocorrências",
+    CERTIFICA_TIPO_ANEXO_REAPROVEITAMENTO,
 ]
 CERTIFICA_ABA_ANEXOS = "Anexos"
 CERTIFICA_TEXTO_ANEXO_DESATIVADO = "(DESATIVADO)"
@@ -485,6 +487,10 @@ PALAVRAS_CHAVE_MANUAL = {
     "cpe": {"normas": ["ato2436"], "efeito": "aplica"},
     "customer-premises equipment": {"normas": ["ato2436"], "efeito": "aplica"},
     "customer-provided equipment": {"normas": ["ato2436"], "efeito": "aplica"},
+    "reaproveitar": {"normas": [], "efeito": "aplica"},
+    "reaproveitando": {"normas": [], "efeito": "aplica"},
+    "reutilizar": {"normas": [], "efeito": "aplica"},
+    "reutilizando": {"normas": [], "efeito": "aplica"},
     #"bluetooth": {"normas": []},
     #"e1": {"normas": []},
     #"e3": {"normas": []},

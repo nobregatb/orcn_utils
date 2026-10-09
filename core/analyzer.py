@@ -20,6 +20,7 @@ from core.const import (
     UTILS_DIR, EXT_PDF, EXT_JSON, EXT_TEX, GLOB_PDF,
     STATUS_CONFORME, STATUS_NAO_CONFORME, STATUS_INCONCLUSIVO, STATUS_ERRO, STATUS_PROCESSADO,
     VALOR_NAO_DISPONIVEL, ENCODING_UTF8, PALAVRAS_CHAVE_MANUAL,
+    CERTIFICA_TIPO_ANEXO_REAPROVEITAMENTO,
     TIPOS_DOCUMENTOS, MIN_FILE_SIZE
 )
 
@@ -1502,10 +1503,16 @@ class AnalisadorRequerimentos:
         
         # Buscar todos os arquivos PDF na pasta
         arquivos_pdf = list(pasta_requerimento.glob(GLOB_PDF))
-        
+        tipo_reaproveitamento = normalizar(CERTIFICA_TIPO_ANEXO_REAPROVEITAMENTO)
+
         if not arquivos_pdf:
             resultado_requerimento["observacoes_gerais"].append("Nenhum arquivo PDF encontrado")
             return resultado_requerimento
+
+        resultado_requerimento["possui_anexo_reaproveitamento"] = any(
+            tipo_reaproveitamento in normalizar(arquivo.name)
+            for arquivo in arquivos_pdf
+        )
         
         log_info(f"Encontrados {len(arquivos_pdf)} arquivos PDF passíveis de análise")
 
@@ -1941,6 +1948,23 @@ class AnalisadorRequerimentos:
         
         return palavras_consolidadas, sorted(list(palavras_nao_encontradas_set))
 
+    def _indica_alteracao_homologacao(
+        self,
+        req_dados: Dict,
+        palavras_consolidadas: Dict[str, int],
+    ) -> bool:
+        """Identifica indicação de alteração de homologação por palavra-chave ou anexo."""
+        palavras_reaproveitamento = {
+            normalizar("reaproveitar"),
+            normalizar("reaproveitando"),
+            normalizar("reutilizar"),
+            normalizar("reutilizando"),
+        }
+        if palavras_reaproveitamento.intersection(palavras_consolidadas):
+            return True
+
+        return bool(req_dados.get("possui_anexo_reaproveitamento", False))
+
     def _normalizar_id_norma(self, norma_original: str) -> Optional[str]:
         """
         Converte uma norma encontrada para o formato de ID usado no normas.json
@@ -2276,20 +2300,25 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
                 equipamentos_resumo = "\\textcolor{red}{\\textbf{Equipamento NÃO identificado}} na lista de requisitos ou nos nomes usados no Mosaico"
                 equipamentos_itens_latex = "\\textit{Nenhum equipamento identificado.}"
                 equipamentos_rotulos = {}
-                
+
+            # Coletar palavras antes do cabeçalho para posicionar o alerta após o OCD.
+            palavras_consolidadas, palavras_nao_encontradas = self._coletar_palavras_chave_consolidadas(req)
+            alerta_alteracao_homologacao = (
+                "\\item \\textcolor{red}{\\textbf{Alterar homologação}}"
+                if self._indica_alteracao_homologacao(req, palavras_consolidadas)
+                else ""
+            )
             
             latex_content += f"""
             \\newpage            
             \\section{{Requerimento {numero_req}}}            
             \\begin{{itemize}}
             \\item OCD: {nome_ocd_escapado}
+            {alerta_alteracao_homologacao}
             \\item Equipamento(s):
             {equipamentos_itens_latex}
             \\end{{itemize}}
             """
-            
-            # Coletar palavras-chave consolidadas
-            palavras_consolidadas, palavras_nao_encontradas = self._coletar_palavras_chave_consolidadas(req)
             
             latex_content += """
 Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste requerimento: 

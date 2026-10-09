@@ -23,9 +23,9 @@
   {
     "cnpj": "07.832.680/0001-59",
     "nome": "MASTER ASSOCIACAO DE AVALIACAO DE CONFORMIDADE TELECOM",
-    "sigla": "MASTER",
-    "email": "",
-    "data_atualizacao": "28/10/2025"
+    "sigla": "MT-",
+    "email": "master.org.br",
+    "data_atualizacao": "08/10/2026"
   },
   {
     "cnpj": "26.352.661/0001-70",
@@ -114,14 +114,14 @@
   {
     "cnpj": "02.437.460/0003-79",
     "nome": "Instituto de Pesquisas Eldorado",
-    "sigla": "ELDORADO",
-    "email": "",
-    "data_atualizacao": "13/10/2025"
+    "sigla": "AC-ELD",
+    "email": "eldorado.org.br",
+    "data_atualizacao": "08/10/2026"
   },
   {
     "cnpj": "46.054.470/0001-39",
     "nome": "Brasil Certificacoes Ltda",
-    "sigla": "BRACERT",
+    "sigla": "BRC-",
     "email": "",
     "data_atualizacao": "28/10/2025"
   },
@@ -152,5 +152,12 @@
     "sigla": "CCPE",
     "email": "",
     "data_atualizacao": "29/10/2025"
+  },
+  {
+    "cnpj": "16.884.899/0001-92",
+    "nome": "BRICS Certificações ",
+    "sigla": "-OCD",
+    "email": "",
+    "data_atualizacao": "08/10/2026"
   }
 ]

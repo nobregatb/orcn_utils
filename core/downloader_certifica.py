@@ -15,7 +15,8 @@ from core.const import (
     CERTIFICA_CABECALHO_FREQUENCIAS, CERTIFICA_CAMPOS_LABORATORIO,
     CERTIFICA_JS_LER_ABA, CERTIFICA_TIPOS_ANEXO_BAIXAR, CERTIFICA_ABA_ANEXOS,
     CERTIFICA_TEXTO_ANEXO_DESATIVADO, CERTIFICA_TIMEOUT_DOWNLOAD,
-    CERTIFICA_JS_LER_ANEXOS, CARACTERES_INVALIDOS, SEPARADOR_LINHA
+    CERTIFICA_JS_LER_ANEXOS, CARACTERES_INVALIDOS, SEPARADOR_LINHA,
+    CERTIFICA_ABA_INFO_ADICIONAIS, FRASES
 )
 from core.utils import (
     get_profile_dir, criar_pasta_se_nao_existir, carregar_json, salvar_json,
@@ -273,6 +274,105 @@ def baixar_anexos_certifica(page, pasta):
     return baixados, falhas
 
 
+def painel_aba_certifica(page, sufixo, rotulo):
+    """Ativa a aba pelo rótulo e retorna o locator do seu painel."""
+    page.locator("[role=tab]", has_text=rotulo).first.click()
+    painel = page.locator(f'[id$="wttab_{sufixo}_block_wtContent"]')
+    painel.locator('input[value="Editar"]').wait_for(state="visible", timeout=CERTIFICA_TIMEOUT_PAGINA)
+    return painel
+
+
+def editar_aba_certifica(painel):
+    """Entra no modo de edição da aba e aguarda o postback terminar."""
+    painel.locator('input[value="Editar"]').click()
+    painel.locator('input[value="Salvar"]').wait_for(state="visible", timeout=CERTIFICA_TIMEOUT_PAGINA)
+
+
+def salvar_aba_certifica(painel):
+    """Clica em Salvar e aguarda a aba voltar ao modo leitura."""
+    painel.locator('input[value="Salvar"]').click()
+    painel.locator('input[value="Editar"]').wait_for(state="visible", timeout=CERTIFICA_TIMEOUT_PAGINA)
+
+
+def cancelar_edicao_certifica(painel):
+    """Sai do modo de edição sem salvar, se estiver nele."""
+    try:
+        cancelar = painel.locator('input[value="Cancelar Edição"]')
+        if cancelar.count() and cancelar.first.is_visible():
+            cancelar.first.click()
+            painel.locator('input[value="Editar"]').wait_for(state="visible", timeout=CERTIFICA_TIMEOUT_PAGINA)
+    except Exception:
+        pass
+
+
+def limpar_campo_aba_certifica(page, sufixo, rotulo_aba, seletor_campo, nome_campo):
+    """Clica em Editar, limpa o campo se estiver preenchido e salva. Retorna False em caso de erro."""
+    painel = None
+    try:
+        painel = painel_aba_certifica(page, sufixo, rotulo_aba)
+        # O valor só é carregado no campo após entrar no modo de edição
+        editar_aba_certifica(painel)
+        campo = painel.locator(seletor_campo)
+        campo.wait_for(state="visible", timeout=CERTIFICA_TIMEOUT_PAGINA)
+        if not campo.input_value().strip():
+            log_info(f"ℹ️ '{nome_campo}' já está vazio.")
+            cancelar_edicao_certifica(painel)
+            return True
+        campo.fill("")
+        salvar_aba_certifica(painel)
+        log_info(f"✅ '{nome_campo}' limpo e salvo na aba '{rotulo_aba}'.")
+        return True
+    except Exception as e:
+        log_erro(f"Falha ao limpar '{nome_campo}': {e}")
+        if painel is not None:
+            cancelar_edicao_certifica(painel)
+        return False
+
+
+def preencher_info_adicionais_certifica(page):
+    """Marca 'Acompanhar o processo', preenche a justificativa, limpa a data de previsão e salva."""
+    painel = None
+    try:
+        painel = painel_aba_certifica(page, CERTIFICA_ABA_INFO_ADICIONAIS, "Informações Adicionais")
+        editar_aba_certifica(painel)
+        painel.locator('input[type="checkbox"]').check()
+        justificativa = painel.locator('textarea[id$="wtTextJustificativa"]')
+        justificativa.wait_for(state="visible", timeout=CERTIFICA_TIMEOUT_PAGINA)
+        page.wait_for_function(
+            "el => !el.readOnly && !el.disabled",
+            arg=justificativa.element_handle(),
+            timeout=CERTIFICA_TIMEOUT_PAGINA,
+        )
+        justificativa.fill(FRASES["analise_simplificada"])
+        data = painel.locator('input[id$="wtDataValidadeModelo2"]')
+        if data.input_value().strip():
+            data.fill("")
+        salvar_aba_certifica(painel)
+        log_info("✅ Aba 'Informações Adicionais' preenchida e salva.")
+        return True
+    except Exception as e:
+        log_erro(f"Falha ao preencher 'Informações Adicionais': {e}")
+        if painel is not None:
+            cancelar_edicao_certifica(painel)
+        return False
+
+
+def ajustar_campos_certifica(page):
+    """Limpa/preenche os campos exigidos nas abas. Retorna o número de falhas."""
+    resultados = [
+        limpar_campo_aba_certifica(
+            page, CERTIFICA_ABA_ESPECIFICACOES, "Especificações",
+            'textarea[id$="wtObsProduto"]', "Observações do Produto",
+        ),
+        preencher_info_adicionais_certifica(page),
+        limpar_campo_aba_certifica(
+            page, CERTIFICA_ABA_CERTIFICADO, "Certificado",
+            'textarea[id$="AnaliseCertificadoCCT_wt45"]', "Especificações Complementares",
+        ),
+    ]
+    return resultados.count(False)
+
+
 def processar_requerimento_certifica(page, requerimento):
     """Cria a pasta do requerimento, abre seu link, lê os dados, grava o JSON e baixa os anexos."""
     num_req = requerimento["num_req"]
@@ -299,9 +399,13 @@ def processar_requerimento_certifica(page, requerimento):
         pasta,
     )
     baixados, falhas = baixar_anexos_certifica(page, pasta)
+    falhas_campos = ajustar_campos_certifica(page)
     if falhas:
         marcar_requerimento_com_erro(num_req, f"Falha ao baixar {falhas} anexo(s)")
         log_info(f"⚠️ Requerimento {num_req} marcado com erro por falhas no processamento dos anexos")
+    elif falhas_campos:
+        marcar_requerimento_com_erro(num_req, f"Falha ao ajustar {falhas_campos} aba(s) do Certifica")
+        log_info(f"⚠️ Requerimento {num_req} marcado com erro por falhas no preenchimento das abas")
     else:
         marcar_requerimento_concluido(num_req, baixados)
         if baixados:

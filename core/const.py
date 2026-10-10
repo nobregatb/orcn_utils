@@ -88,6 +88,7 @@ CERTIFICA_ABA_PRODUTO = "produto"
 CERTIFICA_ABA_ESPECIFICACOES = "EspecTecnica"
 CERTIFICA_ABA_LABORATORIO = "Laboratorio"
 CERTIFICA_ABA_CERTIFICADO = "Certificado"
+CERTIFICA_ABA_INFO_ADICIONAIS = "InformacoesAdicionais"
 # Rótulo que separa, na aba Solicitante, os dados do solicitante dos do OCD
 CERTIFICA_ROTULO_INICIO_OCD = "INFORMAÇÕES DO OCD"
 # Texto do cabeçalho de cada tabela, usado para identificá-la dentro da aba

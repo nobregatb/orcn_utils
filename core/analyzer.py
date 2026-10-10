@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Set#, Any 
 import subprocess
+from pydantic import ValidationError
 
 from core.utils import (
     extrair_normas_por_padrao, processar_requerimentos_excel, extract_pdf_content_from_ocr,
@@ -21,8 +22,10 @@ from core.const import (
     STATUS_CONFORME, STATUS_NAO_CONFORME, STATUS_INCONCLUSIVO, STATUS_ERRO, STATUS_PROCESSADO,
     VALOR_NAO_DISPONIVEL, ENCODING_UTF8, PALAVRAS_CHAVE_MANUAL,
     CERTIFICA_TIPO_ANEXO_REAPROVEITAMENTO,
-    TIPOS_DOCUMENTOS, MIN_FILE_SIZE
+    TIPOS_DOCUMENTOS, MIN_FILE_SIZE, CERTIFICA_CABECALHO_MODELOS,
+    CERTIFICA_CABECALHO_FREQUENCIAS
 )
+from core.regras_uso_faixa import HomologacaoProduto
 
 # Constantes para tipos de documento (chaves da estrutura TIPOS_DOCUMENTOS)
 TIPO_CCT = 'cct'
@@ -577,7 +580,13 @@ class AnalisadorRequerimentos:
         
         return sorted(requerimentos)
 
-    def _analisar_documento(self, caminho_documento: Path, tipo_documento: str, dados_ocd: Dict) -> Dict:
+    def _analisar_documento(
+        self,
+        caminho_documento: Path,
+        tipo_documento: str,
+        dados_ocd: Dict,
+        dados_requerimento: Optional[Dict] = None
+    ) -> Dict:
         """
         Analisa um documento específico baseado no seu tipo.
         """
@@ -598,7 +607,9 @@ class AnalisadorRequerimentos:
         try:
             # Análise baseada no tipo de documento usando constantes unificadas
             if tipo_documento == TIPO_CCT:
-                resultado = self._analisar_cct(caminho_documento, resultado, dados_ocd)
+                resultado = self._analisar_cct(
+                    caminho_documento, resultado, dados_ocd, dados_requerimento
+                )
             elif tipo_documento == TIPO_RACT:
                 resultado = self._analisar_ract(caminho_documento, resultado)
             elif tipo_documento == TIPO_MANUAL:
@@ -671,7 +682,13 @@ class AnalisadorRequerimentos:
         # Fallback final para "outros" se não encontrar correspondência
         return TIPO_OUTROS, data_documento
     
-    def _analisar_cct(self, caminho: Path, resultado: Dict, dados_ocd: Dict) -> Dict:
+    def _analisar_cct(
+        self,
+        caminho: Path,
+        resultado: Dict,
+        dados_ocd: Dict,
+        dados_requerimento: Optional[Dict] = None
+    ) -> Dict:
         """Análise específica para Certificado de Conformidade Técnica."""
         try:
             #log_info(f"Iniciando análise detalhada de CCT: {caminho.name}")
@@ -688,6 +705,15 @@ class AnalisadorRequerimentos:
                 resultado["nao_conformidades"].append("Falha na extração do conteúdo do PDF")
                 resultado["observacoes"].append("PDF pode estar corrompido ou protegido")
                 return resultado
+
+            modelos_json = self._extrair_modelos_json(dados_requerimento)
+            modelos_encontrados = [
+                modelo for modelo in modelos_json
+                if re.search(rf"(?<!\w){re.escape(modelo)}(?!\w)", conteudo)
+            ]
+            modelos_nao_encontrados = [
+                modelo for modelo in modelos_json if modelo not in modelos_encontrados
+            ]
             
             # Extrair dados do CCT usando a lógica especializada
             cnpj_ocd = dados_ocd.get('CNPJ', '') if dados_ocd else ''
@@ -748,7 +774,10 @@ class AnalisadorRequerimentos:
                 "palavras_nao_encontradas": palavras_nao_encontradas,
                 "palavras_encontradas_com_normas": palavras_encontradas_com_normas,
                 "palavras_evidencias": palavras_evidencias,
-                "contem_vinculo_homologacao": contem_vinculo_homologacao
+                "contem_vinculo_homologacao": contem_vinculo_homologacao,
+                "modelos_json": modelos_json,
+                "modelos_encontrados_no_cct": modelos_encontrados,
+                "modelos_nao_encontrados_no_cct": modelos_nao_encontrados
             }
             
             # Observações detalhadas
@@ -1301,6 +1330,95 @@ class AnalisadorRequerimentos:
         resultado["status"] = "CONFORME"  # Temporário
         return resultado
 
+    def _extrair_modelos_json(self, dados_requerimento: Optional[Dict]) -> List[str]:
+        """Extrai modelos declarados no JSON do requerimento, preservando a grafia."""
+        if not isinstance(dados_requerimento, dict):
+            return []
+
+        modelos = dados_requerimento.get("modelos")
+        if modelos is None:
+            requerimento = dados_requerimento.get("requerimento", {})
+            modelos = requerimento.get("modelos") if isinstance(requerimento, dict) else None
+
+        if isinstance(modelos, str):
+            valores = re.split(r"[,;/|]", modelos)
+        elif isinstance(modelos, list):
+            valores = []
+            for modelo in modelos:
+                if isinstance(modelo, dict):
+                    valor = modelo.get(CERTIFICA_CABECALHO_MODELOS)
+                    if valor is None:
+                        valor = modelo.get("Modelo")
+                    if valor is not None:
+                        valores.append(valor)
+                else:
+                    valores.append(modelo)
+        else:
+            valores = []
+
+        modelos_unicos = []
+        for valor in valores:
+            modelo = str(valor).strip() if valor is not None else ""
+            if modelo and modelo not in modelos_unicos:
+                modelos_unicos.append(modelo)
+        return modelos_unicos
+
+    def _validar_frequencias_json(
+        self,
+        dados_requerimento: Optional[Dict],
+        normas_referencia: Set[str]
+    ) -> List[Dict[str, str]]:
+        """Aplica as regras de uso de faixa aos registros de frequência do JSON."""
+        frequencias = dados_requerimento.get("frequencias") if isinstance(dados_requerimento, dict) else None
+        if not isinstance(frequencias, list) or not frequencias:
+            return [{
+                "faixa": "Frequências",
+                "valida": "inconclusiva",
+                "mensagem": "Nenhuma frequência válida foi encontrada no JSON do requerimento."
+            }]
+
+        resultado = []
+        for indice, frequencia in enumerate(frequencias, 1):
+            if not isinstance(frequencia, dict):
+                resultado.append({
+                    "faixa": f"Frequência {indice}",
+                    "valida": "não",
+                    "mensagem": "Registro de frequência inválido no JSON."
+                })
+                continue
+
+            frequencia_validacao = dict(frequencia)
+            faixa = frequencia.get("Faixa de Frequências Tx (MHz)")
+            if faixa is None:
+                faixa = frequencia.get(CERTIFICA_CABECALHO_FREQUENCIAS)
+                if faixa is not None:
+                    frequencia_validacao["Faixa de Frequências Tx (MHz)"] = faixa
+            faixa_exibicao = str(faixa).strip() if faixa is not None else f"Frequência {indice}"
+
+            try:
+                HomologacaoProduto.model_validate({
+                    "normas_referencia": sorted(normas_referencia),
+                    "frequencias": [frequencia_validacao]
+                })
+            except ValidationError as erro:
+                mensagens = [
+                    item["msg"].removeprefix("Value error, ")
+                    for item in erro.errors()
+                ]
+                resultado.append({
+                    "faixa": faixa_exibicao,
+                    "valida": "não",
+                    "mensagem": "; ".join(mensagens)
+                })
+            else:
+                resultado.append({
+                    "faixa": faixa_exibicao,
+                    "valida": "sim",
+                    "mensagem": "Frequência validada pelas regras de uso de faixa."
+                })
+
+        return resultado
+
     def _processar_dados_requerimento_json(self, nome_requerimento: str, pasta_requerimento: Path) -> Optional[Dict]:
         """
         Busca e processa o arquivo JSON do requerimento para extrair informações
@@ -1549,7 +1667,9 @@ class AnalisadorRequerimentos:
 
             # Extrair dados do OCD do JSON do requerimento
             dados_ocd = dados_req_json.get('ocd', {}) if dados_req_json else {}
-            resultado_doc = self._analisar_documento(arquivo, tipo_doc, dados_ocd)
+            resultado_doc = self._analisar_documento(
+                arquivo, tipo_doc, dados_ocd, dados_req_json
+            )
             resultado_requerimento["documentos_analisados"].append(resultado_doc)
 
             # Atualizar contadores de status
@@ -2390,6 +2510,63 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 "RACT": self._coletar_normas_verificadas_por_tipo(req, TIPO_RACT),
                 "CCT": self._coletar_normas_verificadas_por_tipo(req, TIPO_CCT)
             }
+
+            latex_content += "\\subsection*{Validação dos dados do CH}\n"
+            latex_content += "\\paragraph{Frequências} "
+            frequencias_validadas = self._validar_frequencias_json(
+                req.get("dados_requerimento"),
+                set(normas_aplicaveis.keys())
+            )
+            frequencias_nao_conformes = [
+                frequencia for frequencia in frequencias_validadas
+                if frequencia["valida"] != "sim"
+            ]
+            if frequencias_nao_conformes:
+                latex_content += "\n\\begin{itemize}\n"
+                for frequencia in frequencias_nao_conformes:
+                    faixa = escapar_latex(frequencia["faixa"])
+                    mensagem = escapar_latex(frequencia["mensagem"])
+                    latex_content += f"    \\item {faixa}: \\textcolor{{red}}{{Não conforme}} -- {mensagem}\n"
+                latex_content += "\\end{itemize}\n"
+            else:
+                latex_content += "\\textcolor{green}{OK}\n"
+
+            documento_cct = next(
+                (doc for doc in documentos if doc.get("tipo") == TIPO_CCT),
+                None
+            )
+            dados_cct = documento_cct.get("dados_extraidos", {}) if documento_cct else {}
+            if documento_cct is None:
+                latex_content += "\\paragraph{Modelos}\n"
+                latex_content += (
+                    "\\textcolor{red}{Não foi possível validar: CCT não encontrado para comparação.}\n"
+                )
+            elif "modelos_json" not in dados_cct:
+                latex_content += "\\paragraph{Modelos}\n"
+                latex_content += (
+                    "\\textcolor{red}{Não foi possível validar: texto do CCT indisponível.}\n"
+                )
+            elif not dados_cct["modelos_json"]:
+                latex_content += "\\paragraph{Modelos}\n"
+                latex_content += (
+                    "\\textcolor{red}{Nenhum modelo informado no JSON do requerimento.}\n"
+                )
+            else:
+                modelos_encontrados = set(dados_cct["modelos_encontrados_no_cct"])
+                modelos_nao_encontrados = [
+                    modelo for modelo in dados_cct["modelos_json"]
+                    if modelo not in modelos_encontrados
+                ]
+                if modelos_nao_encontrados:
+                    latex_content += "\\paragraph{Modelos}\n\\begin{itemize}\n"
+                else:
+                    latex_content += "\\paragraph{Modelos}\n\\textcolor{green}{OK}\n"
+                for modelo in modelos_nao_encontrados:
+                    modelo_escapado = escapar_latex(modelo)
+                    latex_content += f"    \\item {modelo_escapado}: \\textcolor{{red}}{{Não encontrado no CCT}}\n"
+                if modelos_nao_encontrados:
+                    latex_content += "\\end{itemize}\n"
+            latex_content += "\n"
 
             if normas_aplicaveis or any(normas_verificadas_por_tipo.values()):
                 for nome_tipo, normas_verificadas_tipo in normas_verificadas_por_tipo.items():

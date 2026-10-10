@@ -1,0 +1,199 @@
+[
+  {
+    "faixa": [26.96, 27.28],
+    "atos_validos": ["ato14448"],
+    "descricao": "Baixa Frequência / Faixa Cidadão"
+  },
+  {
+    "faixa": [49.82, 49.9],
+    "atos_validos": ["ato14448"],
+    "descricao": "Controles e Brinquedos"
+  },
+  {
+    "faixa": [40.66, 40.7],
+    "atos_validos": ["ato14448"],
+    "descricao": "Faixa 40.66-40.70 MHz"
+  },
+  {
+    "faixa": [43.7, 47.0],
+    "atos_validos": ["ato14448"],
+    "descricao": "Microfones e Sistemas Específicos"
+  },
+  {
+    "faixa": [48.7, 50.0],
+    "atos_validos": ["ato14448"],
+    "descricao": "Microfones e Sistemas Específicos"
+  },
+  {
+    "faixa": [54.0, 72.0],
+    "atos_validos": ["ato14448"],
+    "limite_eirp_mw": 50.0,
+    "descricao": "Microfones sem fio"
+  },
+  {
+    "faixa": [72.0, 73.0],
+    "atos_validos": ["ato14448"],
+    "descricao": "Controle / Telecomando / Microfones"
+  },
+  {
+    "faixa": [74.6, 74.8],
+    "atos_validos": ["ato14448"],
+    "descricao": "Controle / Telecomando"
+  },
+  {
+    "faixa": [75.2, 76.0],
+    "atos_validos": ["ato14448"],
+    "descricao": "Controle / Telecomando"
+  },
+  {
+    "faixa": [76.0, 88.0],
+    "atos_validos": ["ato14448"],
+    "descricao": "Microfones sem fio"
+  },
+  {
+    "faixa": [88.0, 108.0],
+    "atos_validos": ["ato14448"],
+    "descricao": "Sistemas de Radiodifusão / Restritos"
+  },
+  {
+    "faixa": [174.0, 216.0],
+    "atos_validos": ["ato14448"],
+    "descricao": "Microfones sem fio"
+  },
+  {
+    "faixa": [225.0, 270.0],
+    "atos_validos": ["ato14448"],
+    "ambiente_exigido": "indoor",
+    "descricao": "Uso restrito em ambientes internos"
+  },
+  {
+    "faixa": [470.0, 608.0],
+    "atos_validos": ["ato14448"],
+    "descricao": "Microfones sem fio UHF"
+  },
+  {
+    "faixa": [614.0, 806.0],
+    "atos_validos": ["ato14448"],
+    "descricao": "Microfones sem fio (Faixa ampliada)"
+  },
+  {
+    "faixa": [864.0, 868.0],
+    "atos_validos": ["ato14448"],
+    "descricao": "Sistemas de Curta Distância"
+  },
+  {
+    "faixa": [890.0, 907.5],
+    "atos_validos": ["ato14448"],
+    "vedacoes": ["voz", "mensagem"],
+    "descricao": "Telemedição de material (Veda voz e mensagens)[cite: 1]"
+  },
+  {
+    "faixa": [915.0, 940.0],
+    "atos_validos": ["ato14448"],
+    "vedacoes": ["voz", "mensagem"],
+    "descricao": "Telemedição de material (Veda voz e mensagens)[cite: 1]"
+  },
+  {
+    "faixa": [902.0, 907.5],
+    "atos_validos": ["ato14448"],
+    "potencia_conduzida_max_dbm": 30.0,
+    "descricao": "Espalhamento Espectral / ISM 902-907.5 MHz"
+  },
+  {
+    "faixa": [915.0, 928.0],
+    "atos_validos": ["ato14448"],
+    "potencia_conduzida_max_dbm": 30.0,
+    "descricao": "Espalhamento Espectral / ISM 915-928 MHz"
+  },
+  {
+    "faixa": [2400.0, 2483.5],
+    "atos_validos": ["ato14448"],
+    "potencia_conduzida_max_dbm": 30.0,
+    "descricao": "Industrial, Científica e Médica - 2.4 GHz"
+  },
+  {
+    "faixa": [5725.0, 5875.0],
+    "atos_validos": ["ato14448"],
+    "potencia_conduzida_max_dbm": 30.0,
+    "descricao": "Industrial, Científica e Médica - 5.8 GHz"
+  },
+  {
+    "faixa": [24000.0, 24250.0],
+    "atos_validos": ["ato14448"],
+    "descricao": "Radiação Restrita - 24 GHz"
+  },
+  {
+    "faixa": [5150.0, 5250.0],
+    "atos_validos": ["ato14448", "ato423", "ato4776"],
+    "ambiente_exigido": "indoor",
+    "potencia_conduzida_max_dbm": 24.0,
+    "descricao": "WLAN / Wi-Fi 5 GHz (Exclusivo Indoor)"
+  },
+  {
+    "faixa": [5250.0, 5350.0],
+    "atos_validos": ["ato14448", "ato14158"],
+    "potencia_conduzida_max_dbm": 24.0,
+    "descricao": "WLAN 5.25-5.35 GHz (Ato 14158)"
+  },
+  {
+    "faixa": [5470.0, 5725.0],
+    "atos_validos": ["ato14448", "ato4776"],
+    "descricao": "WLAN com DFS (Ato 4776)"
+  },
+  {
+    "faixa": [5855.0, 5925.0],
+    "atos_validos": ["ato14448", "ato4776", "ato2506"],
+    "eirp_max_dbm": 23.0,
+    "descricao": "Comunicação Veicular ITS (Ato 4776)"
+  },
+  {
+    "faixa": [5925.0, 7125.0],
+    "atos_validos": ["ato14448", "ato423"],
+    "descricao": "Faixa de 6 GHz Não Licenciada / Wi-Fi 6E-7 (Ato 423)"
+  },
+  {
+    "faixa": [3100.0, 3300.0],
+    "atos_validos": ["ato14448", "ato423"],
+    "eirp_pico_max_dbm": 0.0,
+    "descricao": "UWB / Imagens Médicas (Ato 423)[cite: 1]"
+  },
+  {
+    "faixa": [3700.0, 10600.0],
+    "atos_validos": ["ato14448", "ato423"],
+    "eirp_pico_max_dbm": 0.0,
+    "descricao": "UWB / Imagens Médicas (Ato 423)[cite: 1]"
+  },
+  {
+    "faixa": [57000.0, 71000.0],
+    "atos_validos": ["ato14448", "ato4776"],
+    "vedacoes": ["satelite"],
+    "eirp_media_max_dbm": 40.0,
+    "eirp_pico_max_dbm": 43.0,
+    "descricao": "Sistema Multigigabit sem Fio 57-71 GHz (Vedado em satélites)[cite: 1]"
+  },
+  {
+    "faixa": [76000.0, 81000.0],
+    "atos_validos": ["ato14448", "ato423", "ato14158"],
+    "descricao": "Radares / LPR / Radar Veicular (76-81 GHz)"
+  },
+  {
+    "faixa": [116000.0, 123000.0],
+    "atos_validos": ["ato14448", "ato14158"],
+    "descricao": "Sistemas de Alta Frequência 116-123 GHz"
+  },
+  {
+    "faixa": [174800.0, 182000.0],
+    "atos_validos": ["ato14448", "ato14158"],
+    "descricao": "Sistemas de Alta Frequência 174.8-182 GHz"
+  },
+  {
+    "faixa": [185000.0, 190000.0],
+    "atos_validos": ["ato14448", "ato14158"],
+    "descricao": "Sistemas de Alta Frequência 185-190 GHz"
+  },
+  {
+    "faixa": [244000.0, 246000.0],
+    "atos_validos": ["ato14448", "ato14158"],
+    "descricao": "Sistemas de Alta Frequência 244-246 GHz"
+  }
+]

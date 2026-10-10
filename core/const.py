@@ -473,7 +473,8 @@ STATUS_PROCESSADO = "PROCESSADO"
 # ================================
 
 # Palavras-chave essenciais para análise de manuais
-# Estrutura: {"palavra_chave": {"normas": ["norma1", "norma2"], "efeito": "aplica|desobriga"}}
+# Estrutura: {"palavra_chave": {"normas": ["norma1", "norma2"], "efeito": "aplica|desobriga", "ignorar_espacos": opcional}}
+# ignorar_espacos=True: a busca desconsidera espacos (ex.: "20 mW" casa com "20mW")
 PALAVRAS_CHAVE_MANUAL = {
     #"declaração em conformidade com os Requisitos de Segurança Cibernética": {"normas": []},
     "e.i.r.p.": {"normas": [], "efeito": "aplica"},
@@ -523,11 +524,11 @@ PALAVRAS_CHAVE_MANUAL = {
     #"xpon": {"normas": []},
     #"satélite": {"normas": []},
     #"satellite": {"normas": []} 
-    "Ensaio de SAR não aplicável: o equipamento não é terminal portátil": {"normas": ["ato17865"], "efeito": "desobriga"},
-    "Ensaio de SAR não aplicável: o equipamento possui potência média emitida em um tempo médio de 6 (seis) minutos igual ou inferior a 20 mW e o pico de potência emitida é menor que 20 W": {"normas": ["ato17865"], "efeito": "desobriga"},
-    "Ensaio de SAR não aplicável: equipamento utilizado a mais de 20 cm do corpo do usuário": {"normas": ["ato17865"], "efeito": "desobriga"},
-    "Ensaio de SAR não aplicável: O equipamento opera com frequência inferior a 300 MHz ou superior a 6 GHz": {"normas": ["ato17865"], "efeito": "desobriga"},
-    "Ensaio de SAR não aplicável: Produto não acabado, de uso interno, cuja integração em outros equipamentos pode requerer nova avaliação": {"normas": ["ato17865"], "efeito": "desobriga"}
+    "Ensaio de SAR não aplicável: o equipamento não é terminal portátil": {"normas": ["ato17865"], "efeito": "desobriga", "ignorar_espacos": True},
+    "Ensaio de SAR não aplicável: o equipamento possui potência média emitida em um tempo médio de 6 (seis) minutos igual ou inferior a 20 mW e o pico de potência emitida é menor que 20 W": {"normas": ["ato17865"], "efeito": "desobriga", "ignorar_espacos": True},
+    "Ensaio de SAR não aplicável: equipamento utilizado a mais de 20 cm do corpo do usuário": {"normas": ["ato17865"], "efeito": "desobriga", "ignorar_espacos": True},
+    "Ensaio de SAR não aplicável: O equipamento opera com frequência inferior a 300 MHz ou superior a 6 GHz": {"normas": ["ato17865"], "efeito": "desobriga", "ignorar_espacos": True},
+    "Ensaio de SAR não aplicável: Produto não acabado, de uso interno, cuja integração em outros equipamentos pode requerer nova avaliação": {"normas": ["ato17865"], "efeito": "desobriga", "ignorar_espacos": True}
 }
 
 # ================================

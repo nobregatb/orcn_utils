@@ -53,6 +53,10 @@ PALAVRAS_CHAVE_MANUAL_ORIGINAIS = {
 }
 
 
+def _ignora_espacos(palavra: str) -> bool:
+    return bool(PALAVRAS_CHAVE_MANUAL_NORMALIZADAS.get(palavra, {}).get("ignorar_espacos", False))
+
+
 PYMUPDF_DISPONIVEL = True
 
 try:    
@@ -740,10 +744,12 @@ class AnalisadorRequerimentos:
             palavras_evidencias = {}
 
             for palavra in palavras_chave_manual:
-                contador = contar_ocorrencias_palavra_chave(texto_normalizado, palavra)
+                ignorar_espacos = _ignora_espacos(palavra)
+                contador = contar_ocorrencias_palavra_chave(texto_normalizado, palavra, ignorar_espacos)
                 if contador > 0:
                     palavras_encontradas[palavra] = contador
-                    palavras_evidencias[palavra] = extrair_contextos_palavra_chave(texto_normalizado, palavra)
+                    palavras_evidencias[palavra] = extrair_contextos_palavra_chave(
+                        texto_normalizado, palavra, ignorar_espacos=ignorar_espacos)
                     regra_palavra = PALAVRAS_CHAVE_MANUAL_NORMALIZADAS.get(palavra, {})
                     normas_associadas = regra_palavra.get("normas", [])
                     efeito_regra = str(regra_palavra.get("efeito", "aplica")).lower()
@@ -952,10 +958,12 @@ class AnalisadorRequerimentos:
                         palavras_evidencias = {}
                         
                         for palavra in palavras_chave_manual:
-                            contador = contar_ocorrencias_palavra_chave(texto_completo, palavra)
+                            ignorar_espacos = _ignora_espacos(palavra)
+                            contador = contar_ocorrencias_palavra_chave(texto_completo, palavra, ignorar_espacos)
                             if contador > 0:
                                 palavras_encontradas[palavra] = contador
-                                palavras_evidencias[palavra] = extrair_contextos_palavra_chave(texto_completo, palavra)
+                                palavras_evidencias[palavra] = extrair_contextos_palavra_chave(
+                                    texto_completo, palavra, ignorar_espacos=ignorar_espacos)
                                 # Buscar normas associadas à palavra
                                 regra_palavra = PALAVRAS_CHAVE_MANUAL_NORMALIZADAS.get(palavra, {})
                                 normas_associadas = regra_palavra.get("normas", [])
@@ -1071,10 +1079,12 @@ class AnalisadorRequerimentos:
                     palavras_evidencias = {}
                     
                     for palavra in palavras_chave_manual:
-                        contador = contar_ocorrencias_palavra_chave(texto_completo, palavra)
+                        ignorar_espacos = _ignora_espacos(palavra)
+                        contador = contar_ocorrencias_palavra_chave(texto_completo, palavra, ignorar_espacos)
                         if contador > 0:
                             palavras_encontradas[palavra] = contador
-                            palavras_evidencias[palavra] = extrair_contextos_palavra_chave(texto_completo, palavra)
+                            palavras_evidencias[palavra] = extrair_contextos_palavra_chave(
+                                texto_completo, palavra, ignorar_espacos=ignorar_espacos)
                             # Buscar normas associadas à palavra
                             regra_palavra = PALAVRAS_CHAVE_MANUAL_NORMALIZADAS.get(palavra, {})
                             normas_associadas = regra_palavra.get("normas", [])

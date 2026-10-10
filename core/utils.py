@@ -246,13 +246,30 @@ def normalizar(s: Union[str, Any]) -> Union[str, Any]:
     return s
 
 
-def _gerar_regex_palavra_chave(palavra_chave: str) -> Optional[str]:
-    """Gera regex flexivel para busca de palavra-chave normalizada."""
+def _gerar_regex_palavra_chave(palavra_chave: str, ignorar_espacos: bool = False) -> Optional[str]:
+    """
+    Gera regex flexivel para busca de palavra-chave normalizada.
+
+    Com ignorar_espacos, os espacos da frase sao descartados e o texto pode ter
+    qualquer quantidade de espacos entre quaisquer caracteres (ex.: "20 mW" casa com "20mW").
+    """
     palavra_norm = normalizar(palavra_chave)
     if not isinstance(palavra_norm, str) or not palavra_norm:
         return None
 
     separador_flex = r'[^a-z0-9]*'
+
+    if ignorar_espacos:
+        caracteres = [c for c in palavra_norm if not c.isspace()]
+        if not caracteres:
+            return None
+        partes = [
+            re.escape(c) if c.isalnum() else separador_flex
+            for c in caracteres
+        ]
+        padrao = r'\s*'.join(partes)
+        return rf'(?<![a-z0-9]){padrao}(?![a-z0-9])'
+
     partes = []
     tamanho = len(palavra_norm)
 
@@ -273,7 +290,7 @@ def _gerar_regex_palavra_chave(palavra_chave: str) -> Optional[str]:
     return rf'(?<![a-z0-9]){padrao}(?![a-z0-9])'
 
 
-def contar_ocorrencias_palavra_chave(texto: str, palavra_chave: str) -> int:
+def contar_ocorrencias_palavra_chave(texto: str, palavra_chave: str, ignorar_espacos: bool = False) -> int:
     """
     Conta ocorrencias de palavra-chave com padrao flexivel para separadores.
 
@@ -286,14 +303,15 @@ def contar_ocorrencias_palavra_chave(texto: str, palavra_chave: str) -> int:
     if not isinstance(texto_norm, str):
         return 0
 
-    regex = _gerar_regex_palavra_chave(palavra_chave)
+    regex = _gerar_regex_palavra_chave(palavra_chave, ignorar_espacos)
     if not regex:
         return 0
 
     return len(re.findall(regex, texto_norm, flags=re.IGNORECASE))
 
 
-def extrair_contextos_palavra_chave(texto: str, palavra_chave: str, limite: int = 3, janela: int = 45) -> List[str]:
+def extrair_contextos_palavra_chave(texto: str, palavra_chave: str, limite: int = 3, janela: int = 45,
+                                    ignorar_espacos: bool = False) -> List[str]:
     """Extrai pequenos trechos onde a palavra-chave foi identificada."""
     if not texto or not palavra_chave:
         return []
@@ -302,7 +320,7 @@ def extrair_contextos_palavra_chave(texto: str, palavra_chave: str, limite: int 
     if not isinstance(texto_norm, str):
         return []
 
-    regex = _gerar_regex_palavra_chave(palavra_chave)
+    regex = _gerar_regex_palavra_chave(palavra_chave, ignorar_espacos)
     if not regex:
         return []
 

@@ -15,7 +15,7 @@ from core.const import (
     CERTIFICA_CABECALHO_FREQUENCIAS, CERTIFICA_CAMPOS_LABORATORIO,
     CERTIFICA_JS_LER_ABA, CERTIFICA_TIPOS_ANEXO_BAIXAR, CERTIFICA_ABA_ANEXOS,
     CERTIFICA_TEXTO_ANEXO_DESATIVADO, CERTIFICA_TIMEOUT_DOWNLOAD,
-    CERTIFICA_JS_LER_ANEXOS, CARACTERES_INVALIDOS
+    CERTIFICA_JS_LER_ANEXOS, CARACTERES_INVALIDOS, SEPARADOR_LINHA
 )
 from core.utils import (
     get_profile_dir, criar_pasta_se_nao_existir, carregar_json, salvar_json,
@@ -301,8 +301,13 @@ def processar_requerimento_certifica(page, requerimento):
     baixados, falhas = baixar_anexos_certifica(page, pasta)
     if falhas:
         marcar_requerimento_com_erro(num_req, f"Falha ao baixar {falhas} anexo(s)")
+        log_info(f"⚠️ Requerimento {num_req} marcado com erro por falhas no processamento dos anexos")
     else:
         marcar_requerimento_concluido(num_req, baixados)
+        if baixados:
+            log_info(f"✅ Requerimento {num_req} marcado como concluído ({baixados} arquivos)")
+        else:
+            log_info(f"✅ Requerimento {num_req} marcado como concluído (0 novos arquivos; anexos já existiam)")
 
 
 def baixar_documentos_certifica(obter_tipo):
@@ -336,20 +341,35 @@ def baixar_documentos_certifica(obter_tipo):
                 requerimentos.extend(ler_requerimentos_do_tipo(page, tipo_atual))
             log_info(f"Total de requerimentos lidos: {len(requerimentos)}.")
 
+            log_info(SEPARADOR_LINHA)
+            log_info("🤖 DOWNLOAD CERTIFICA - ANEXOS")
+            log_info(SEPARADOR_LINHA)
+            log_info(f"🔎 {len(requerimentos)} requerimentos encontrados nas listas")
+
             # Como no SCH, requerimentos já concluídos no download_status.json são pulados
             pendentes = set(obter_requerimentos_pendentes([r["num_req"] for r in requerimentos]))
             requerimentos = [r for r in requerimentos if r["num_req"] in pendentes]
 
+            if requerimentos:
+                log_info(f"⏳ {len(requerimentos)} requerimento(s) serão processados")
+
             # Para cada requerimento: cria a pasta (ou renomeia, como no SCH), lê a página e grava o JSON
-            for requerimento in requerimentos:
+            for indice, requerimento in enumerate(requerimentos, start=1):
+                log_info(SEPARADOR_LINHA)
+                log_info(f"▶️  Requerimento {indice}: {requerimento['num_req']}")
+                log_info(SEPARADOR_LINHA)
                 try:
                     processar_requerimento_certifica(page, requerimento)
                 except Exception as e:
                     log_erro(f"Erro ao processar requerimento {requerimento.get('num_req')}: {str(e)[:100]}")
                     marcar_requerimento_com_erro(requerimento.get("num_req"), str(e)[:200])
 
+            log_info(SEPARADOR_LINHA)
+            log_info("✅ PROCESSAMENTO CONCLUÍDO!")
+            log_info(SEPARADOR_LINHA)
+
             # Mantém o navegador aberto até o usuário confirmar
-            log_info("Pressione ENTER para encerrar o navegador...")
+            log_info("Pressione ENTER para encerrar...")
             input()
             if not browser.is_closed():
                 browser.close()

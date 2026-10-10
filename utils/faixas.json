@@ -5,11 +5,6 @@
     "descricao": "Baixa Frequência / Faixa Cidadão"
   },
   {
-    "faixa": [49.82, 49.9],
-    "atos_validos": ["ato14448"],
-    "descricao": "Controles e Brinquedos"
-  },
-  {
     "faixa": [40.66, 40.7],
     "atos_validos": ["ato14448"],
     "descricao": "Faixa 40.66-40.70 MHz"
@@ -23,6 +18,11 @@
     "faixa": [48.7, 50.0],
     "atos_validos": ["ato14448"],
     "descricao": "Microfones e Sistemas Específicos"
+  },
+  {
+    "faixa": [49.82, 49.9],
+    "atos_validos": ["ato14448"],
+    "descricao": "Controles e Brinquedos"
   },
   {
     "faixa": [54.0, 72.0],
@@ -67,6 +67,11 @@
     "descricao": "Uso restrito em ambientes internos"
   },
   {
+    "faixa": [451.0, 468.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Arranjo da faixa de frequências de 451 MHz a 468 MHz[cite: 2]"
+  },
+  {
     "faixa": [470.0, 608.0],
     "atos_validos": ["ato14448"],
     "descricao": "Microfones sem fio UHF"
@@ -75,6 +80,21 @@
     "faixa": [614.0, 806.0],
     "atos_validos": ["ato14448"],
     "descricao": "Microfones sem fio (Faixa ampliada)"
+  },
+  {
+    "faixa": [703.0, 763.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 700 MHz - Blocos 1 a 5 (Estação Móvel: 703-728 MHz / Estação Base: 758-783 MHz)[cite: 2]"
+  },
+  {
+    "faixa": [728.0, 803.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 700 MHz - Blocos 6 a 9 (Estação Móvel: 728-748 MHz / Estação Base: 783-803 MHz)[cite: 2]"
+  },
+  {
+    "faixa": [819.0, 894.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 850 MHz - Serviços de Interesse Coletivo Terrestres (FDD)[cite: 2]"
   },
   {
     "faixa": [864.0, 868.0],
@@ -88,10 +108,9 @@
     "descricao": "Telemedição de material (Veda voz e mensagens)[cite: 1]"
   },
   {
-    "faixa": [915.0, 940.0],
-    "atos_validos": ["ato14448"],
-    "vedacoes": ["voz", "mensagem"],
-    "descricao": "Telemedição de material (Veda voz e mensagens)[cite: 1]"
+    "faixa": [898.5, 960.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 900 MHz - Serviços de Interesse Coletivo Terrestres (FDD)[cite: 2]"
   },
   {
     "faixa": [902.0, 907.5],
@@ -106,21 +125,63 @@
     "descricao": "Espalhamento Espectral / ISM 915-928 MHz"
   },
   {
+    "faixa": [915.0, 940.0],
+    "atos_validos": ["ato14448"],
+    "vedacoes": ["voz", "mensagem"],
+    "descricao": "Telemedição de material (Veda voz e mensagens)[cite: 1]"
+  },
+  {
+    "faixa": [1427.0, 1518.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 1.500 MHz - Serviços de Interesse Coletivo Terrestres (TDD)[cite: 2]"
+  },
+  {
+    "faixa": [1710.0, 1880.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 1.800 MHz - Serviços de Interesse Coletivo Terrestres (FDD)[cite: 2]"
+  },
+  {
+    "faixa": [1920.0, 2170.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 2 GHz - Blocos de Transmissão Móvel e Base (FDD/TDD)[cite: 2]"
+  },
+  {
+    "faixa": [2300.0, 2400.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 2.300 MHz - Serviços de Interesse Coletivo Terrestres (TDD)[cite: 2]"
+  },
+  {
     "faixa": [2400.0, 2483.5],
     "atos_validos": ["ato14448"],
     "potencia_conduzida_max_dbm": 30.0,
     "descricao": "Industrial, Científica e Médica - 2.4 GHz"
   },
   {
-    "faixa": [5725.0, 5875.0],
-    "atos_validos": ["ato14448"],
-    "potencia_conduzida_max_dbm": 30.0,
-    "descricao": "Industrial, Científica e Médica - 5.8 GHz"
+    "faixa": [2500.0, 2690.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 2.500 MHz / 2.6 GHz - Serviços Terrestres e MMDS[cite: 2]"
   },
   {
-    "faixa": [24000.0, 24250.0],
-    "atos_validos": ["ato14448"],
-    "descricao": "Radiação Restrita - 24 GHz"
+    "faixa": [3100.0, 3300.0],
+    "atos_validos": ["ato14448", "ato423"],
+    "eirp_pico_max_dbm": 0.0,
+    "descricao": "UWB / Imagens Médicas (Ato 423)[cite: 1]"
+  },
+  {
+    "faixa": [3300.0, 3800.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 3.500 MHz - Serviços de Interesse Coletivo Terrestres (TDD)[cite: 2]"
+  },
+  {
+    "faixa": [3700.0, 10600.0],
+    "atos_validos": ["ato14448", "ato423"],
+    "eirp_pico_max_dbm": 0.0,
+    "descricao": "UWB / Imagens Médicas (Ato 423)[cite: 1]"
+  },
+  {
+    "faixa": [4830.0, 4950.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 4.9 GHz - Blocos de Transmissão[cite: 2]"
   },
   {
     "faixa": [5150.0, 5250.0],
@@ -141,6 +202,12 @@
     "descricao": "WLAN com DFS (Ato 4776)"
   },
   {
+    "faixa": [5725.0, 5875.0],
+    "atos_validos": ["ato14448"],
+    "potencia_conduzida_max_dbm": 30.0,
+    "descricao": "Industrial, Científica e Médica - 5.8 GHz"
+  },
+  {
     "faixa": [5855.0, 5925.0],
     "atos_validos": ["ato14448", "ato4776", "ato2506"],
     "eirp_max_dbm": 23.0,
@@ -152,16 +219,14 @@
     "descricao": "Faixa de 6 GHz Não Licenciada / Wi-Fi 6E-7 (Ato 423)"
   },
   {
-    "faixa": [3100.0, 3300.0],
-    "atos_validos": ["ato14448", "ato423"],
-    "eirp_pico_max_dbm": 0.0,
-    "descricao": "UWB / Imagens Médicas (Ato 423)[cite: 1]"
+    "faixa": [24250.0, 27900.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 26 GHz - Serviços de Interesse Coletivo Terrestres (TDD)[cite: 2]"
   },
   {
-    "faixa": [3700.0, 10600.0],
-    "atos_validos": ["ato14448", "ato423"],
-    "eirp_pico_max_dbm": 0.0,
-    "descricao": "UWB / Imagens Médicas (Ato 423)[cite: 1]"
+    "faixa": [24000.0, 24250.0],
+    "atos_validos": ["ato14448"],
+    "descricao": "Radiação Restrita - 24 GHz"
   },
   {
     "faixa": [57000.0, 71000.0],

@@ -62,6 +62,22 @@ for _regra in BASE_REGRAS_UNIFICADAS:
     _regra["atos_validos"] = set(_regra["atos_validos"])
 
 
+def obter_regras_frequencia(frequencia: float) -> List[dict]:
+    """Retorna todas as regras que contêm a frequência, incluindo sobreposições."""
+    return [
+        regra for regra in BASE_REGRAS_UNIFICADAS
+        if regra["faixa"][0] <= frequencia <= regra["faixa"][1]
+    ]
+
+
+def obter_regra_frequencia(frequencia: float) -> Optional[dict]:
+    """Retorna a regra mais específica para validar restrições da frequência."""
+    regras_aplicaveis = obter_regras_frequencia(frequencia)
+    if not regras_aplicaveis:
+        return None
+    return min(regras_aplicaveis, key=lambda regra: regra["faixa"][1] - regra["faixa"][0])
+
+
 # --- MODELO DE VALIDAÇÃO PYDANTIC ---
 
 class FrequenciaItem(BaseModel):
@@ -83,11 +99,7 @@ class FrequenciaItem(BaseModel):
 
         # Todos os valores declarados precisam estar em faixas previstas no ato.
         regras_encontradas = [
-            next(
-                (r for r in BASE_REGRAS_UNIFICADAS if r["faixa"][0] <= freq <= r["faixa"][1]),
-                None
-            )
-            for freq in frequencias
+            obter_regra_frequencia(freq) for freq in frequencias
         ]
 
         for freq, regra in zip(frequencias, regras_encontradas):
@@ -153,17 +165,14 @@ class HomologacaoProduto(BaseModel):
 
         for item in self.frequencias:
             for frequencia in parse_frequencias_mhz(item.faixa_frequencias_tx):
-                regra_encontrada = next(
-                    (
-                        r for r in BASE_REGRAS_UNIFICADAS
-                        if r["faixa"][0] <= frequencia <= r["faixa"][1]
-                    ),
-                    None
+                regras_aplicaveis = obter_regras_frequencia(frequencia)
+                atos_validos = set().union(
+                    *(regra["atos_validos"] for regra in regras_aplicaveis)
                 )
-                if regra_encontrada and not normas_ativas.intersection(regra_encontrada["atos_validos"]):
+                if regras_aplicaveis and not normas_ativas.intersection(atos_validos):
                     raise ValueError(
                         f"VIOLAÇÃO DE ESCOPO: A frequência informada exige referência aos atos "
-                        f"{regra_encontrada['atos_validos']}, mas o contexto fornecido continha: "
+                        f"{atos_validos}, mas o contexto fornecido continha: "
                         f"{normas_ativas} (frequência: {frequencia} MHz)."
                     )
         return self

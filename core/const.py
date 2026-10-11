@@ -85,7 +85,7 @@ CERTIFICA_CAMPOS_REQUERIMENTO = [
 ]
 
 # Página de análise do requerimento (AnaliseRequerimentosCCT): sufixo dos ids das abas
-CERTIFICA_TIMEOUT_PAGINA = 300000
+CERTIFICA_TIMEOUT_PAGINA = 3000000
 CERTIFICA_ABA_FABRICANTE = "Fabricante"
 CERTIFICA_ABA_SOLICITANTE = "solicitante"
 CERTIFICA_ABA_PRODUTO = "produto"
@@ -118,6 +118,8 @@ CERTIFICA_TIPOS_ANEXO_BAIXAR = [
 CERTIFICA_ABA_ANEXOS = "Anexos"
 CERTIFICA_TEXTO_ANEXO_DESATIVADO = "(DESATIVADO)"
 CERTIFICA_TIMEOUT_DOWNLOAD = 60000
+# Geração do PDF do Resumo é lenta: espera de até 10 minutos após clicar em "Gerar PDF" (ms)
+CERTIFICA_TIMEOUT_GERAR_PDF = 600000
 
 # Lista os anexos da aba: tipo (texto em negrito do bloco), dados da linha e id do link de download.
 CERTIFICA_JS_LER_ANEXOS = """([sufixo, textoDesativado]) => {

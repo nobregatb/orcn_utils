@@ -15,7 +15,7 @@ from core.const import (
     CERTIFICA_ROTULO_INICIO_OCD, CERTIFICA_CABECALHO_MODELOS,
     CERTIFICA_CABECALHO_FREQUENCIAS, CERTIFICA_CAMPOS_LABORATORIO,
     CERTIFICA_JS_LER_ABA, CERTIFICA_TIPOS_ANEXO_BAIXAR, CERTIFICA_ABA_ANEXOS,
-    CERTIFICA_TEXTO_ANEXO_DESATIVADO, CERTIFICA_TIMEOUT_DOWNLOAD,
+    CERTIFICA_TEXTO_ANEXO_DESATIVADO, CERTIFICA_TIMEOUT_DOWNLOAD, CERTIFICA_TIMEOUT_GERAR_PDF,
     CERTIFICA_JS_LER_ANEXOS, CARACTERES_INVALIDOS, SEPARADOR_LINHA,
     CERTIFICA_ABA_INFO_ADICIONAIS, CERTIFICA_ESPERA_POSTBACK_MS, FRASES
 )
@@ -223,16 +223,43 @@ def baixar_anexo_por_requisicao(page, link_id, destino):
     )
     if not alvo:
         return False
+    return postar_e_salvar_arquivo(page, alvo, destino, CERTIFICA_TIMEOUT_DOWNLOAD)
+
+
+def postar_e_salvar_arquivo(page, alvo, destino, timeout_ms):
+    """Envia o formulário via requisição HTTP com os cookies da sessão e grava o arquivo retornado (não HTML)."""
     resposta = page.context.request.post(
-        alvo["acao"], form=alvo["campos"],         headers={"Referer": page.url},
-                timeout=CERTIFICA_TIMEOUT_DOWNLOAD, ignore_https_errors=True,
-            )
+        alvo["acao"], form=alvo["campos"], headers={"Referer": page.url},
+        timeout=timeout_ms, ignore_https_errors=True,
+    )
     conteudo = resposta.body()
     if not resposta.ok or "text/html" in resposta.headers.get("content-type", "") or not conteudo:
         return False
     with open(destino, "wb") as arquivo:
         arquivo.write(conteudo)
     return True
+
+
+def baixar_resumo_por_requisicao(page, botao_id, destino):
+    """
+    Reproduz o envio do formulário pelo botão 'Gerar PDF' via requisição HTTP, sem acionar o
+    download do navegador (que fecha o contexto). Retorna False se a resposta não for um arquivo.
+    """
+    alvo = page.evaluate(
+        """id => {
+            const botao = document.getElementById(id);
+            const form = botao && (botao.form || botao.closest('form'));
+            if (!form) return null;
+            const campos = {};
+            new FormData(form).forEach((v, k) => { if (typeof v === 'string') campos[k] = v; });
+            campos[botao.name] = botao.value;
+            return { acao: form.action || location.href, campos };
+        }""",
+        botao_id,
+    )
+    if not alvo:
+        return False
+    return postar_e_salvar_arquivo(page, alvo, destino, CERTIFICA_TIMEOUT_GERAR_PDF)
 
 
 def baixar_anexo_por_clique(page, link_id, destino):
@@ -434,9 +461,9 @@ def gerar_pdf_resumo_certifica(page, pasta):
         destino = os.path.join(pasta, f"{nome_base}({indice}){extensao}")
         indice += 1
 
-    with page.expect_download(timeout=CERTIFICA_TIMEOUT_DOWNLOAD) as download_info:
-        botao_gerar_pdf.click()
-    download_info.value.save_as(destino)
+    # Espera de até 10 min pela geração; o clique do navegador fecharia o contexto ao baixar
+    if not baixar_resumo_por_requisicao(page, botao_gerar_pdf.get_attribute("id"), destino):
+        raise RuntimeError("O Certifica não retornou um PDF ao acionar 'Gerar PDF'.")
     log_info(f"✅ Resumo PDF salvo: {os.path.basename(destino)}")
 
 
@@ -465,8 +492,8 @@ def processar_requerimento_certifica(page, requerimento):
         extrair_dados_requerimento_certifica(page),
         pasta,
     )
-    baixados, falhas = baixar_anexos_certifica(page, pasta)
     falhas_campos = ajustar_campos_certifica(page)
+    baixados, falhas = baixar_anexos_certifica(page, pasta)
     falha_resumo = False
     try:
         gerar_pdf_resumo_certifica(page, pasta)

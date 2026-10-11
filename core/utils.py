@@ -966,9 +966,9 @@ def _mapear_dados_json_para_excel(
                     nome_comercial = str(modelo.get("Nome Comercial") or "").strip()
                     if nome_modelo or nome_comercial:
                         modelos_formatados.append(
-                            f'{nome_modelo} ("{nome_comercial}")'
+                            f'{nome_modelo} ({nome_comercial})'
                             if nome_modelo and nome_comercial
-                            else nome_modelo or f'"{nome_comercial}"'
+                            else nome_modelo or f'{nome_comercial}'
                         )
                 elif modelo is not None and str(modelo).strip():
                     modelos_formatados.append(str(modelo).strip())

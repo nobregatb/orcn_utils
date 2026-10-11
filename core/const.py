@@ -46,8 +46,12 @@ JSON_FILES = {
 BOTOES = {
     'anexos': "Anexos",
     'caracteristicas': "Características Técnicas",
-    'infos_adicionais': "Informações Adicionais"
+    'infos_adicionais': "Informações Adicionais",
+    'resumo': "Resumo"
 }
+
+TEXTO_PORTARIA_RESUMO = "Portaria n° 2257"
+NOME_ARQUIVO_RESUMO_CCT = "ResumoCCT.pdf"
 
 FRASES = {
     'radiacao_Restrita_ct': "Na instalação do produto, devem ser observadas as condições de uso conforme estabelecido no Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita.",

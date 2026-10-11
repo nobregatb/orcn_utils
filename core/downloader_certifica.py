@@ -4,7 +4,8 @@ import time
 from playwright.sync_api import sync_playwright
 from core.log_print import log_info, log_erro
 from core.const import (
-    CHROME_PATH, CHROME_ARGS, CERTIFICA_URL, CERTIFICA_TEXTO_LOGIN_OK,
+    CHROME_PATH, CHROME_ARGS, CERTIFICA_URL, CERTIFICA_TEXTO_LOGIN_OK, BOTOES,
+    TEXTO_PORTARIA_RESUMO, NOME_ARQUIVO_RESUMO_CCT,
     CERTIFICA_INTERVALO_MONITORAMENTO, CERTIFICA_DIV_POR_TIPO,
     CERTIFICA_SELETOR_CONTADOR, CERTIFICA_TIMEOUT_CONTADOR,
     CERTIFICA_ID_DIV_LISTA, CERTIFICA_CAMPOS_REQUERIMENTO,
@@ -28,9 +29,11 @@ from core.utils import (
 
 def pagina_contem_texto(page, texto):
     """Verifica se o texto aparece na página ou em algum de seus frames."""
+    # Normaliza espaços (inclusive não separáveis) para a comparação não depender da formatação
+    texto = " ".join(texto.split())
     for frame in page.frames:
         try:
-            if texto in frame.inner_text("body", timeout=2000):
+            if texto in " ".join(frame.inner_text("body", timeout=2000).split()):
                 return True
         except Exception:
             # Frame em navegação/recarga: tenta novamente no próximo ciclo
@@ -384,6 +387,59 @@ def ajustar_campos_certifica(page):
     return resultados.count(False)
 
 
+def gerar_pdf_resumo_certifica(page, pasta):
+    """Abre o Resumo, aguarda o texto da Portaria e salva o PDF sem sobrescrever arquivos."""
+    prazo = time.monotonic() + CERTIFICA_TIMEOUT_PAGINA / 1000
+    padrao_aba = re.compile(r"\s*".join(map(re.escape, BOTOES["resumo"].split())))
+    sufixo_painel = BOTOES["resumo"]
+    painel = page.locator(f'[id$="wttab_{sufixo_painel}_block_wtContent"]')
+
+    while True:
+        restante_ms = int((prazo - time.monotonic()) * 1000)
+        if restante_ms <= 0:
+            raise TimeoutError(
+                f"'{TEXTO_PORTARIA_RESUMO}' não ficou visível na aba '{BOTOES['resumo']}'."
+            )
+
+        page.locator("[role=tab]", has_text=padrao_aba).first.click(timeout=restante_ms)
+        painel.wait_for(state="visible", timeout=restante_ms)
+        page.wait_for_timeout(min(CERTIFICA_ESPERA_POSTBACK_MS, restante_ms))
+
+        # inner_text só considera conteúdo visível, então abas ocultas não geram falso positivo
+        if pagina_contem_texto(page, TEXTO_PORTARIA_RESUMO):
+            break
+
+        restante_ms = int((prazo - time.monotonic()) * 1000)
+        if restante_ms <= 0:
+            continue
+        log_info(
+            f"'{TEXTO_PORTARIA_RESUMO}' não está visível no Resumo; "
+            "recarregando a página com Ctrl+F5."
+        )
+        with page.expect_navigation(wait_until="domcontentloaded", timeout=restante_ms):
+            page.keyboard.press("Control+F5")
+
+    botao_gerar_pdf = page.locator(
+        'input[value="Gerar PDF"]:visible, button:has-text("Gerar PDF"):visible, '
+        'a:has-text("Gerar PDF"):visible'
+    ).first
+    restante_ms = int((prazo - time.monotonic()) * 1000)
+    if restante_ms <= 0:
+        raise TimeoutError("Tempo limite excedido antes de gerar o PDF do Resumo.")
+    botao_gerar_pdf.wait_for(state="visible", timeout=restante_ms)
+    nome_base, extensao = os.path.splitext(NOME_ARQUIVO_RESUMO_CCT)
+    destino = os.path.join(pasta, NOME_ARQUIVO_RESUMO_CCT)
+    indice = 1
+    while os.path.exists(destino):
+        destino = os.path.join(pasta, f"{nome_base}({indice}){extensao}")
+        indice += 1
+
+    with page.expect_download(timeout=CERTIFICA_TIMEOUT_DOWNLOAD) as download_info:
+        botao_gerar_pdf.click()
+    download_info.value.save_as(destino)
+    log_info(f"✅ Resumo PDF salvo: {os.path.basename(destino)}")
+
+
 def processar_requerimento_certifica(page, requerimento):
     """Cria a pasta do requerimento, abre seu link, lê os dados, grava o JSON e baixa os anexos."""
     num_req = requerimento["num_req"]
@@ -411,12 +467,22 @@ def processar_requerimento_certifica(page, requerimento):
     )
     baixados, falhas = baixar_anexos_certifica(page, pasta)
     falhas_campos = ajustar_campos_certifica(page)
+    falha_resumo = False
+    try:
+        gerar_pdf_resumo_certifica(page, pasta)
+        baixados += 1
+    except Exception as e:
+        falha_resumo = True
+        log_erro(f"Falha ao gerar o PDF do Resumo do requerimento {num_req}: {e}")
     if falhas:
         marcar_requerimento_com_erro(num_req, f"Falha ao baixar {falhas} anexo(s)")
         log_info(f"⚠️ Requerimento {num_req} marcado com erro por falhas no processamento dos anexos")
     elif falhas_campos:
         marcar_requerimento_com_erro(num_req, f"Falha ao ajustar {falhas_campos} aba(s) do Certifica")
         log_info(f"⚠️ Requerimento {num_req} marcado com erro por falhas no preenchimento das abas")
+    elif falha_resumo:
+        marcar_requerimento_com_erro(num_req, "Falha ao gerar o PDF do Resumo")
+        log_info(f"⚠️ Requerimento {num_req} marcado com erro por falha na geração do Resumo")
     else:
         marcar_requerimento_concluido(num_req, baixados)
         if baixados:

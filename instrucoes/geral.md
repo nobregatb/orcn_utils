@@ -1,4 +1,4 @@
-﻿# ORCN - Automação de Download/Análise de codumentos do SCH
+# ORCN - Automação de Download/Análise de codumentos do SCH
 Este projeto automatiza o download de anexos de requerimentos do sistema SCH da ANATEL. Uma automação básica da análise também é esperada.
 
 ## Orientações gerais
@@ -19,7 +19,7 @@ As funcionalidades da aplicação são:
 ### Download de arquivos
 
 - Ao escolher **Download**, selecione o sistema **SCH (S)** ou **Certifica(C)**.
-- A opção **SCH (S)** mantém o fluxo de download atual. A opção **Certifica(C)** abre https://appsnet/Acesso/, aguarda o login do usuário (até a página exibir "Caixa de Entrada Analista") e pergunta o tipo de download (1. Retornos para estudo, 2. Requerimentos em análise, 3. Todos). Em seguida lê a lista de requerimentos do(s) tipo(s), cria/renomeia a pasta de cada um em `req_inbox` (como no SCH), abre o link do requerimento e grava `<AA.NNNNN>.json` com os blocos `requerimento`, `fabricante`, `solicitante`, `ocd`, `lab`, `produto`, `modelos`, `frequencias` e `certificado`. Por fim baixa, na mesma pasta, os anexos dos tipos do SCH mais "Registro de Ocorrências" e "Reaproveitamento de Número de Homologação SCH" (`CERTIFICA_TIPOS_ANEXO_BAIXAR`), nomeados `[tipo][aaaa.mm.dd HHhMMmSSs][arquivo - descrição].pdf`, ignorando os marcados "(DESATIVADO)".
+- A opção **SCH (S)** mantém o fluxo de download atual. A opção **Certifica(C)** abre https://appsnet/Acesso/, aguarda o login do usuário (até a página exibir "Caixa de Entrada Analista") e pergunta o tipo de download (1. Retornos para estudo, 2. Requerimentos em análise, 3. Todos). Em seguida lê a lista de requerimentos do(s) tipo(s), cria/renomeia a pasta de cada um em `req_inbox` (como no SCH), abre o link do requerimento e grava `<AA.NNNNN>.json` com os blocos `requerimento`, `fabricante`, `solicitante`, `ocd`, `lab`, `produto`, `modelos`, `frequencias` e `certificado`. Na mesma pasta, baixa os anexos dos tipos do SCH mais "Registro de Ocorrências" e "Reaproveitamento de Número de Homologação SCH" (`CERTIFICA_TIPOS_ANEXO_BAIXAR`), nomeados `[tipo][aaaa.mm.dd HHhMMmSSs][arquivo - descrição].pdf`, ignorando os marcados "(DESATIVADO)". Depois ajusta os campos previstos nas abas e abre **Resumo**. Se `Portaria n° 2257` ainda não estiver visível no Resumo, recarrega a página sem usar o cache (equivalente a **Ctrl+F5**) e repete a verificação até o texto aparecer. Então clica em **Gerar PDF** e salva o arquivo na pasta do requerimento como `ResumoCCT.pdf`; se o nome já existir, usa `ResumoCCT(1).pdf`, `ResumoCCT(2).pdf` e assim por diante, sem sobrescrever arquivos existentes.
 - ✅ Download automático de PDFs por categoria
 - ✅ Nomenclatura padronizada dos arquivos
 - ✅ Controle de timeout preventivo (28 minutos)

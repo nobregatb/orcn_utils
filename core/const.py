@@ -70,7 +70,7 @@ CERTIFICA_DIV_POR_TIPO = {
 
 # Contador de registros da lista ("NNNN registros") e tempo máximo de espera (ms)
 CERTIFICA_SELETOR_CONTADOR = ".Counter_Message:visible"
-CERTIFICA_TIMEOUT_CONTADOR = 30000
+CERTIFICA_TIMEOUT_CONTADOR = 300000
 
 # Div que contém a tabela de requerimentos e campos das colunas 2 a 9 (em ordem)
 CERTIFICA_ID_DIV_LISTA = "wt43_OutSystemsUIWeb_wt2_block_wtContent_wtMainContent_wt96_wtCntLista"
@@ -81,7 +81,7 @@ CERTIFICA_CAMPOS_REQUERIMENTO = [
 ]
 
 # Página de análise do requerimento (AnaliseRequerimentosCCT): sufixo dos ids das abas
-CERTIFICA_TIMEOUT_PAGINA = 3000000
+CERTIFICA_TIMEOUT_PAGINA = 300000
 CERTIFICA_ABA_FABRICANTE = "Fabricante"
 CERTIFICA_ABA_SOLICITANTE = "solicitante"
 CERTIFICA_ABA_PRODUTO = "produto"
@@ -89,6 +89,7 @@ CERTIFICA_ABA_ESPECIFICACOES = "EspecTecnica"
 CERTIFICA_ABA_LABORATORIO = "Laboratorio"
 CERTIFICA_ABA_CERTIFICADO = "Certificado"
 CERTIFICA_ABA_INFO_ADICIONAIS = "InformacoesAdicionais"
+CERTIFICA_ESPERA_POSTBACK_MS = 3000
 # Rótulo que separa, na aba Solicitante, os dados do solicitante dos do OCD
 CERTIFICA_ROTULO_INICIO_OCD = "INFORMAÇÕES DO OCD"
 # Texto do cabeçalho de cada tabela, usado para identificá-la dentro da aba

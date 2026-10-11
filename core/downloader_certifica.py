@@ -16,7 +16,7 @@ from core.const import (
     CERTIFICA_JS_LER_ABA, CERTIFICA_TIPOS_ANEXO_BAIXAR, CERTIFICA_ABA_ANEXOS,
     CERTIFICA_TEXTO_ANEXO_DESATIVADO, CERTIFICA_TIMEOUT_DOWNLOAD,
     CERTIFICA_JS_LER_ANEXOS, CARACTERES_INVALIDOS, SEPARADOR_LINHA,
-    CERTIFICA_ABA_INFO_ADICIONAIS, FRASES
+    CERTIFICA_ABA_INFO_ADICIONAIS, CERTIFICA_ESPERA_POSTBACK_MS, FRASES
 )
 from core.utils import (
     get_profile_dir, criar_pasta_se_nao_existir, carregar_json, salvar_json,
@@ -276,7 +276,9 @@ def baixar_anexos_certifica(page, pasta):
 
 def painel_aba_certifica(page, sufixo, rotulo):
     """Ativa a aba pelo rótulo e retorna o locator do seu painel."""
-    page.locator("[role=tab]", has_text=rotulo).first.click()
+    # O rótulo pode vir em spans separados, sem espaço entre as palavras
+    padrao = re.compile(r"\s*".join(map(re.escape, rotulo.split())))
+    page.locator("[role=tab]", has_text=padrao).first.click()
     painel = page.locator(f'[id$="wttab_{sufixo}_block_wtContent"]')
     painel.locator('input[value="Editar"]').wait_for(state="visible", timeout=CERTIFICA_TIMEOUT_PAGINA)
     return painel
@@ -336,17 +338,26 @@ def preencher_info_adicionais_certifica(page):
         painel = painel_aba_certifica(page, CERTIFICA_ABA_INFO_ADICIONAIS, "Informações Adicionais")
         editar_aba_certifica(painel)
         painel.locator('input[type="checkbox"]').check()
+        # O checkbox dispara um postback; a justificativa só fica editável depois dele
+        page.wait_for_timeout(CERTIFICA_ESPERA_POSTBACK_MS)
         justificativa = painel.locator('textarea[id$="wtTextJustificativa"]')
         justificativa.wait_for(state="visible", timeout=CERTIFICA_TIMEOUT_PAGINA)
-        page.wait_for_function(
-            "el => !el.readOnly && !el.disabled",
-            arg=justificativa.element_handle(),
-            timeout=CERTIFICA_TIMEOUT_PAGINA,
-        )
+        deadline = time.time() + CERTIFICA_TIMEOUT_PAGINA / 1000
+        while not justificativa.is_editable():
+            if time.time() > deadline:
+                raise TimeoutError("Campo 'Justificativa' não ficou disponível para edição.")
+            page.wait_for_timeout(500)
         justificativa.fill(FRASES["analise_simplificada"])
         data = painel.locator('input[id$="wtDataValidadeModelo2"]')
         if data.input_value().strip():
-            data.fill("")
+            # O datepicker restaura o valor após fill(""); é preciso apagar via teclado
+            data.click()
+            page.keyboard.press("Control+A")
+            page.keyboard.press("Backspace")
+            data.blur()
+            page.wait_for_timeout(500)
+            if data.input_value().strip():
+                raise RuntimeError("Não foi possível limpar a data de previsão de emissão.")
         salvar_aba_certifica(painel)
         log_info("✅ Aba 'Informações Adicionais' preenchida e salva.")
         return True

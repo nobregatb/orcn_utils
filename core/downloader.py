@@ -766,7 +766,6 @@ def baixar_documentos(RETORNO_PARA_ESTUDO):
             
             # Se não há requerimentos pendentes, finaliza
             if not requerimentos_pendentes:
-                log_info("🎉 Todos os requerimentos já foram baixados com sucesso!")
                 limpar_log_downloads_se_completo(todos_requerimentos)
                 log_info("Pressione ENTER para encerrar...")
                 input()

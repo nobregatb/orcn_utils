@@ -174,17 +174,19 @@ processar_requerimentos_excel("*")
 #### Funcionalidades
 
 - **Leitura de JSONs**: Lê arquivos `xx.xxxxx.json` do diretório de requerimentos
-- **Verificação de Duplicatas**: Verifica se o requerimento já existe na coluna B da planilha
-- **Mapeamento Automático**: Mapeia dados do JSON para colunas da planilha (B-J):
+- **Verificação de Duplicatas**: Não adiciona uma linha se já houver uma linha com os mesmos dados em B-H e a data de hoje em I
+- **Mapeamento Automático**: Mapeia dados do JSON para colunas da planilha (A-K):
+  - **A**: `Simplificada`
   - **B**: Nº do Requerimento
   - **C**: Nº de Homologação  
   - **D**: Nº do Certificado
   - **E**: Tipo do Produto
-  - **F**: Modelo
+  - **F**: Modelo Produto e Nome Comercial, um par por linha na mesma célula
   - **G**: Solicitante
   - **H**: Fabricante
-  - **I**: Data da Conclusão
-  - **J**: Situação
+  - **I**: Data do processamento, como data Excel exibida em `dd/mm/aaaa`
+  - **J**: Em branco
+  - **K**: Em branco
 - **Processamento em Lote**: Suporte ao caractere "*" para processar todos os requerimentos
 - **Relatório Detalhado**: Gera relatório de processamento com estatísticas
 
@@ -199,7 +201,7 @@ processar_requerimentos_excel("*")
 1. **Validação**: Verifica existência de arquivos e diretórios necessários
 2. **Carregamento**: Lê planilha Excel e identifica requerimentos existentes
 3. **Processamento**: Para cada requerimento:
-   - Verifica se já existe na planilha
+   - Verifica se já existe na planilha uma linha com os mesmos dados em B-H e a data atual em I
    - Lê arquivo JSON correspondente
    - Mapeia dados para formato da planilha
    - Adiciona nova linha se necessário

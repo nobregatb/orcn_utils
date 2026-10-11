@@ -10,7 +10,7 @@ import re
 import json
 import subprocess
 import unicodedata
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from typing import Dict, List, Optional, Any, Union
 import pandas as pd
@@ -744,10 +744,9 @@ def processar_requerimentos_excel(num_req: str) -> None:
         df = pd.read_excel(EXCEL_PATH, sheet_name=EXCEL_SHEET_NAME)
         #log_info(f"Planilha carregada com {len(df)} linhas")
         
-        # Obter lista de requerimentos já existentes na coluna B
-        coluna_req = df.columns[TAB_REQUERIMENTOS['num_req']]  # Coluna B (índice 1)
-        requerimentos_existentes = set(df[coluna_req].dropna().astype(str))
-        #log_info(f"Requerimentos existentes na planilha: {len(requerimentos_existentes)}")
+        # Comparar os dados de B a I para permitir novo registro em outra data
+        linhas_existentes = list(df.iloc[:, 1:9].itertuples(index=False, name=None))
+        data_processamento = datetime.now().date()
         
         # Determinar quais requerimentos processar
         if num_req == "*":
@@ -778,20 +777,6 @@ def processar_requerimentos_excel(num_req: str) -> None:
         
         for req in requerimentos_para_processar:
             try:
-                # Verificar se já existe na planilha (formato pode variar)
-                formatos_possíveis = [
-                    req,  # formato 25.06969
-                    req.replace('.', '/'),  # formato 25/06969 (como aparece no JSON)
-                    f"{req.split('.')[1]}/{req.split('.')[0]}"  # formato 06969/25
-                ]
-                
-                req_existe = any(fmt in requerimentos_existentes for fmt in formatos_possíveis)
-                
-                if req_existe:
-                    log_info(f"Requerimento {req} já existe na planilha")
-                    requerimentos_ja_existentes.append(req)
-                    continue
-                
                 # Ler arquivo JSON do requerimento
                 pasta_req = "_" + req
                 arquivo_json = os.path.join(REQUERIMENTOS_PATH, pasta_req, f"{req}.json")
@@ -807,11 +792,33 @@ def processar_requerimentos_excel(num_req: str) -> None:
                 
                 # Extrair informações do JSON conforme estrutura esperada
                 req_data = dados_req.get('requerimento', {})
+                modelos = dados_req.get('modelos', req_data.get('modelos', []))
                 
                 # Mapear dados do JSON para colunas da planilha
-                nova_linha = _mapear_dados_json_para_excel(req_data)
+                nova_linha = _mapear_dados_json_para_excel(
+                    req_data,
+                    modelos=modelos,
+                    data_processamento=data_processamento,
+                )
                 
                 if nova_linha:
+                    linha_duplicada = any(
+                        all(
+                            _normalizar_valor_excel(valor_existente)
+                            == _normalizar_valor_excel(nova_linha[indice + 1])
+                            for indice, valor_existente in enumerate(linha_existente[:7])
+                        )
+                        and _normalizar_data_excel(linha_existente[7]) == data_processamento
+                        for linha_existente in linhas_existentes
+                    )
+                    if linha_duplicada:
+                        log_info(
+                            f"Requerimento {req} já existe na planilha com os mesmos dados "
+                            "e a data de hoje"
+                        )
+                        requerimentos_ja_existentes.append(req)
+                        continue
+
                     # Armazenar linha para adicionar no Excel
                     novas_linhas_para_excel.append(nova_linha)
                     requerimentos_adicionados.append(req)
@@ -837,6 +844,7 @@ def processar_requerimentos_excel(num_req: str) -> None:
             for nova_linha in novas_linhas_para_excel:
                 for col_idx, valor in enumerate(nova_linha):
                     ws.cell(row=proxima_linha, column=col_idx + 1, value=valor)
+                ws.cell(row=proxima_linha, column=9).number_format = "dd/mm/yyyy"
                 proxima_linha += 1
             
             # Salvar preservando todas as abas
@@ -886,13 +894,43 @@ def _converter_para_excel(valor: Any) -> Any:
         return str(valor)
 
 
-def _mapear_dados_json_para_excel(req_data: Dict[str, Any]) -> Optional[List[Any]]:
+def _normalizar_valor_excel(valor: Any) -> str:
+    """Normaliza valores de células para comparar os campos B a H."""
+    if valor is None:
+        return ""
+    try:
+        if pd.isna(valor):
+            return ""
+    except (TypeError, ValueError):
+        pass
+    return str(valor).strip()
+
+
+def _normalizar_data_excel(valor: Any) -> Optional[date]:
+    """Converte datas da planilha para date, aceitando células com data ou texto dd/mm/aaaa."""
+    if isinstance(valor, datetime):
+        return valor.date()
+    if isinstance(valor, str):
+        try:
+            return datetime.strptime(valor.strip(), "%d/%m/%Y").date()
+        except ValueError:
+            return None
+    return valor if isinstance(valor, date) else None
+
+
+def _mapear_dados_json_para_excel(
+    req_data: Dict[str, Any],
+    modelos: Any = None,
+    data_processamento: Optional[date] = None,
+) -> Optional[List[Any]]:
     """
     Mapeia dados do JSON do requerimento para formato da planilha Excel.
     
     Args:
         req_data: Dados do requerimento extraídos do JSON
-    
+        modelos: Lista de modelos com os campos "Modelo Produto" e "Nome Comercial"
+        data_processamento: Data aplicada à coluna I e usada na verificação de duplicatas
+
     Returns:
         Lista com dados mapeados para colunas da planilha ou None se erro
     """
@@ -903,8 +941,8 @@ def _mapear_dados_json_para_excel(req_data: Dict[str, Any]) -> Optional[List[Any
         nova_linha = [None] * 11
         
         # Mapear campos do JSON para posições da planilha
-        # Coluna A (índice 0): 'Análise' - deixar vazio ou colocar valor padrão
-        #nova_linha[0] = 'AUTOMATICO'
+        # Coluna A (índice 0): classificação da análise
+        nova_linha[0] = "Simplificada"
         
         # Coluna B (índice 1): 'Nº do Requerimento'
         nova_linha[TAB_REQUERIMENTOS['num_req']] = _converter_para_excel(req_data.get('num_req', ''))
@@ -918,8 +956,26 @@ def _mapear_dados_json_para_excel(req_data: Dict[str, Any]) -> Optional[List[Any
         # Coluna E (índice 4): 'Tipo do Produto'
         nova_linha[TAB_REQUERIMENTOS['tipo_equipamento']] = _converter_para_excel(req_data.get('tipo_equipamento', ''))
         
-        # Coluna F (índice 5): 'Modelo'
-        nova_linha[TAB_REQUERIMENTOS['modelos']] = _converter_para_excel(req_data.get('modelos', ''))
+        # Coluna F (índice 5): um par modelo/nome comercial por linha na mesma célula
+        modelos = req_data.get("modelos", []) if modelos is None else modelos
+        if isinstance(modelos, list):
+            modelos_formatados = []
+            for modelo in modelos:
+                if isinstance(modelo, dict):
+                    nome_modelo = str(modelo.get("Modelo Produto") or "").strip()
+                    nome_comercial = str(modelo.get("Nome Comercial") or "").strip()
+                    if nome_modelo or nome_comercial:
+                        modelos_formatados.append(
+                            f'{nome_modelo} ("{nome_comercial}")'
+                            if nome_modelo and nome_comercial
+                            else nome_modelo or f'"{nome_comercial}"'
+                        )
+                elif modelo is not None and str(modelo).strip():
+                    modelos_formatados.append(str(modelo).strip())
+            valor_modelos = "\n".join(modelos_formatados)
+        else:
+            valor_modelos = modelos or ""
+        nova_linha[TAB_REQUERIMENTOS['modelos']] = _converter_para_excel(valor_modelos)
         
         # Coluna G (índice 6): 'Solicitante'
         nova_linha[TAB_REQUERIMENTOS['solicitante']] = _converter_para_excel(req_data.get('solicitante', ''))
@@ -927,20 +983,11 @@ def _mapear_dados_json_para_excel(req_data: Dict[str, Any]) -> Optional[List[Any
         # Coluna H (índice 7): 'Fabricante'
         nova_linha[TAB_REQUERIMENTOS['fabricante']] = _converter_para_excel(req_data.get('fabricante', ''))
         
-        # Coluna I (índice 8): 'Data da Conclusão'
-        data = req_data.get('data', '')
-        if data:
-            # Converter formato de data se necessário
-            try:
-                # Assumindo formato DD/MM/YYYY do JSON
-                data_obj = datetime.strptime(data, '%d/%m/%Y')
-                nova_linha[TAB_REQUERIMENTOS['data']] = _converter_para_excel(data_obj)
-            except ValueError:
-                # Manter string original se conversão falhar
-                nova_linha[TAB_REQUERIMENTOS['data']] = _converter_para_excel(data)
+        # Coluna I (índice 8): data em que o processamento foi executado
+        nova_linha[TAB_REQUERIMENTOS['data']] = data_processamento or datetime.now().date()
         
-        # Coluna J (índice 9): 'Situação'
-        nova_linha[TAB_REQUERIMENTOS['status']] = _converter_para_excel(req_data.get('status', 'Em Análise'))
+        # Coluna J (índice 9): permanece em branco
+        nova_linha[TAB_REQUERIMENTOS['status']] = None
         
         # Coluna K (índice 10): 'Tempo' - deixar vazio
         nova_linha[10] = None
@@ -1142,8 +1189,10 @@ def obter_requerimentos_pendentes(todos_requerimentos: List[str]) -> List[str]:
     
     if requerimentos_pendentes:
         log_info(f"⏳ {len(requerimentos_pendentes)} requerimento(s) pendente(s): {', '.join(requerimentos_pendentes)}")
+    elif todos_requerimentos:
+        log_info("✅ Todos os requerimentos já foram baixados em ciclo anterior; não há arquivos novos para baixar.")
     else:
-        log_info("✅ Todos os requerimentos já foram baixados!")
+        log_info("ℹ️ Nenhum requerimento encontrado; não há arquivos para baixar.")
     
     return requerimentos_pendentes
 

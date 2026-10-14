@@ -1051,10 +1051,10 @@
   {
     "id": "resolucao772",
     "nome": "Resolução nº 772, de 16 de janeiro de 2025",
-    "descricao": "Plano de Atribuição, Destinação e Distribuição de Faixas de Frequências no Brasil - PDFF, promovendo as atribuições, destinações e condições específicas de uso de faixas de frequências nele dispostas",
+    "descricao": "Revogada pela Resolução n° 789, de 06 de julho de 2026",
     "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2025/2001-resolucao-772",
     "entidade": "Anatel",
-    "status": "vigente"
+    "status": "revogada"
   },
   {
     "id": "resolucao773",
@@ -1086,6 +1086,6 @@
     "descricao": "Aprova o Plano de Atribuição, Destinação e Distribuição de Faixas de Frequências no Brasil - PDFF e altera o Regulamento sobre Canalização e Condições de Uso de Radiofrequências para os Serviços de Radiodifusão e seus Ancilares - RCC-SRA",
     "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/175-resolucoes/2026/2157-resolucao-789",
     "entidade": "Anatel",
-    "status": "acessoria"
+    "status": "vigente"
   }
 ]

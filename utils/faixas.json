@@ -67,6 +67,12 @@
     "descricao": "Uso restrito em ambientes internos"
   },
   {
+    "faixa": [433.0, 435.0],
+    "atos_validos": ["ato14448"],
+    "eirp_pico_max_dbm": 10.0,
+    "descricao": "4.1.5. Faixa de 433-435 MHz"
+  },
+  {
     "faixa": [451.0, 468.0],
     "atos_validos": ["resolucao773"],
     "descricao": "Arranjo da faixa de frequências de 451 MHz a 468 MHz[cite: 2]"

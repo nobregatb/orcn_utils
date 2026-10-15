@@ -664,6 +664,14 @@
     "status": "vigente"
   },
   {
+    "id": "ato940",
+    "nome": "Ato nº 940, de 08 de fevereiro de 2018",
+    "descricao": "Requisitos técnicos para avaliação da conformidade de terminais móveis de acesso dos serviços de telecomunicações por satélite",
+    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1180-ato-940",
+    "entidade": "Anatel",
+    "status": "vigente"
+  },
+  {
     "id": "ato943",
     "nome": "Ato nº 943, de 8 de Fevereiro de 2018",
     "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores monocanais analógicos FM e PM operando em faixas de frequências abaixo de 1 GHz",

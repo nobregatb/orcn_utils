@@ -2270,6 +2270,61 @@ class AnalisadorRequerimentos:
         
         return secao_latex
 
+    @staticmethod
+    def _construir_secao_exigencias(
+        dados_requerimento: Optional[Dict],
+        cct_contem_ipv6: bool,
+        cct_contem_produto_nao_acabado: bool,
+        cct_contem_palavra_vinculado: bool
+    ) -> str:
+        """Monta as exigências quando as declarações do CCT faltam no JSON do produto."""
+        if not isinstance(dados_requerimento, dict):
+            dados_requerimento = {}
+        produto_requerimento = dados_requerimento.get("produto", {})
+        if not isinstance(produto_requerimento, dict):
+            produto_requerimento = {}
+        especificacoes_adicionais = produto_requerimento.get("Especificações Adicionais", "")
+        if not isinstance(especificacoes_adicionais, str):
+            especificacoes_adicionais = ""
+        especificacoes_adicionais_normalizadas = re.sub(
+            r"\s+", " ", especificacoes_adicionais
+        ).casefold()
+
+        regras_exigencias = [
+            (
+                cct_contem_ipv6,
+                "Implementa protocolo IPv6",
+                "Que o produto Implementa protocolo IPv6;",
+            ),
+            (
+                cct_contem_produto_nao_acabado,
+                "Produto não acabado cuja integração em outros equipamentos pode requerer nova avaliação",
+                "Que se trada de Produto não acabado cuja integração em outros equipamentos pode requerer nova avaliação;",
+            ),
+            (
+                cct_contem_palavra_vinculado,
+                "A validade deste certificado está vinculada à vigência da homologação ANATEL do módulo de RF incorporado ao produto",
+                "Que a validade deste certificado está vinculada à vigência da homologação ANATEL do módulo de RF incorporado ao produto",
+            ),
+        ]
+        exigencias = [
+            sugestao
+            for condicao_cct, frase_obrigatoria, sugestao in regras_exigencias
+            if condicao_cct and frase_obrigatoria.casefold() not in especificacoes_adicionais_normalizadas
+        ]
+
+        secao_latex = "\\subsection*{\\textcolor{red}{Exigência(s)}}\n{\\color{red}\n"
+        if exigencias:
+            secao_latex += "1. Incluir no campo Produto | Especificações Adicionais a informação:\n"
+            secao_latex += "\\begin{itemize}\n"
+            for exigencia in exigencias:
+                secao_latex += f"    \\item {escapar_latex(exigencia)}\n"
+            secao_latex += "\\end{itemize}\n\n"
+        else:
+            secao_latex += "\\textit{Nenhuma exigência identificada.}\n\n"
+        secao_latex += "}\n"
+        return secao_latex
+
     def _gerar_relatorio_latex(self) -> str:
         """Gera relatório em LaTeX com todos os resultados da análise."""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -2479,6 +2534,7 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
             cct_contem_ipv6 = False
             cct_contem_produto_nao_acabado = False
             cct_contem_vinculo_homologacao = False
+            cct_contem_palavra_vinculado = False
             cct_strings_desobrigam_ato17865 = set()
 
             for doc in documentos:
@@ -2493,6 +2549,9 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                     cct_contem_ipv6 = True
                 if "produto nao acabado" in palavras_encontradas_cct:
                     cct_contem_produto_nao_acabado = True
+
+                if "vinculado" in palavras_encontradas_cct or "vinculada" in palavras_encontradas_cct:
+                    cct_contem_palavra_vinculado = True
 
                 if dados_extraidos_cct.get("contem_vinculo_homologacao"):
                     cct_contem_vinculo_homologacao = True
@@ -2520,6 +2579,13 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 "RACT": self._coletar_normas_verificadas_por_tipo(req, TIPO_RACT),
                 "CCT": self._coletar_normas_verificadas_por_tipo(req, TIPO_CCT)
             }
+
+            latex_content += self._construir_secao_exigencias(
+                req.get("dados_requerimento"),
+                cct_contem_ipv6,
+                cct_contem_produto_nao_acabado,
+                cct_contem_palavra_vinculado
+            )
 
             latex_content += "\\subsection*{Validação dos dados do CH}\n"
             latex_content += "\\paragraph{Frequências} "

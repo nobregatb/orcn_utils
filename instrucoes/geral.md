@@ -63,6 +63,7 @@ O sistema de análise automatizada avalia todos os documentos de um requerimento
 - **Fotos do Produto**: Análise visual e conformidade
 - **Contrato Social**: Validação de dados da empresa
 - As palavras-chave `reaproveitar`, `reaproveitando`, `reutilizar` e `reutilizando` também são buscadas e exibidas no relatório. Quando uma delas for encontrada, ou quando houver um anexo do tipo **Reaproveitamento de Número de Homologação SCH**, o relatório inclui **Alterar homologação** em vermelho e negrito logo após o item **OCD** do requerimento.
+- A seção **Exigência(s)** aparece imediatamente antes de **Validação dos dados do CH**, em vermelho. Quando há pendências, o relatório apresenta o item numerado **1. Incluir no campo Produto | Especificações Adicionais a informação:** e lista abaixo cada informação ausente. Para cada ocorrência no CCT de `ipv6`, `produto não acabado`, `vinculado` ou `vinculada`, verifica se a frase correspondente está em `produto` → `Especificações Adicionais` do JSON do requerimento.
 
 #### 📊 Saídas do Sistema
 

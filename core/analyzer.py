@@ -1409,7 +1409,7 @@ class AnalisadorRequerimentos:
                 HomologacaoProduto.model_validate({
                     "normas_referencia": sorted(normas_referencia),
                     "frequencias": [frequencia_validacao]
-                })
+                }, context={"normas_referencia": sorted(normas_referencia)})
             except ValidationError as erro:
                 mensagens = [
                     item["msg"].removeprefix("Value error, ")

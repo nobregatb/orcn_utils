@@ -3,7 +3,7 @@ import json
 import re
 from pathlib import Path
 from typing import List, Optional
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, ValidationInfo, model_validator
 
 # --- FUNÇÕES DE CONVERSÃO E PARSING DE POTÊNCIA ---
 
@@ -16,6 +16,12 @@ def parse_valor_numerico(val_str: Optional[str]) -> Optional[float]:
         return float(limpo)
     except ValueError:
         return None
+
+
+def fmt_num(valor: float, casas: Optional[int] = None) -> str:
+    """Formata número com vírgula como separador decimal."""
+    texto = f"{valor:.{casas}f}" if casas is not None else f"{valor:g}"
+    return texto.replace(".", ",")
 
 
 def parse_frequencias_mhz(faixa: str) -> List[float]:
@@ -70,12 +76,39 @@ def obter_regras_frequencia(frequencia: float) -> List[dict]:
     ]
 
 
-def obter_regra_frequencia(frequencia: float) -> Optional[dict]:
-    """Retorna a regra mais específica para validar restrições da frequência."""
+def normalizar_normas(normas) -> set:
+    return {str(n).lower().replace(" ", "").replace("_", "").replace("º", "") for n in (normas or [])}
+
+
+def obter_regra_frequencia(frequencia: float, normas=None) -> Optional[dict]:
+    """Retorna a regra mais específica para validar restrições da frequência.
+
+    Se `normas` for informado, regras de atos não referenciados pelo requerimento
+    são desconsideradas (quando houver ao menos uma regra aplicável às normas).
+    """
     regras_aplicaveis = obter_regras_frequencia(frequencia)
+    normas_ativas = normalizar_normas(normas)
+    if normas_ativas:
+        regras_das_normas = [
+            r for r in regras_aplicaveis if normas_ativas.intersection(r["atos_validos"])
+        ]
+        if regras_das_normas:
+            regras_aplicaveis = regras_das_normas
     if not regras_aplicaveis:
         return None
-    return min(regras_aplicaveis, key=lambda regra: regra["faixa"][1] - regra["faixa"][0])
+    return max(regras_aplicaveis, key=_permissividade_regra)
+
+
+def _permissividade_regra(regra: dict) -> tuple:
+    """Quanto maior a tupla, menos restritiva a regra (ausência de limite = sem limite)."""
+    inf = float("inf")
+    return (
+        "vedacoes" not in regra,
+        "ambiente_exigido" not in regra,
+        regra.get("potencia_conduzida_max_dbm", inf),
+        regra.get("eirp_media_max_dbm", inf),
+        regra.get("eirp_pico_max_dbm", inf),
+    )
 
 
 # --- MODELO DE VALIDAÇÃO PYDANTIC ---
@@ -91,7 +124,8 @@ class FrequenciaItem(BaseModel):
     potencia_pico_eirp_dbm: Optional[str] = Field(None, alias="Potência de Pico E.I.R.P. (dBm)")
 
     @model_validator(mode="after")
-    def validar_regras_e_potencias(self) -> "FrequenciaItem":
+    def validar_regras_e_potencias(self, info: ValidationInfo) -> "FrequenciaItem":
+        normas_contexto = (info.context or {}).get("normas_referencia")
         try:
             frequencias = parse_frequencias_mhz(self.faixa_frequencias_tx)
         except ValueError:
@@ -99,13 +133,13 @@ class FrequenciaItem(BaseModel):
 
         # Todos os valores declarados precisam estar em faixas previstas no ato.
         regras_encontradas = [
-            obter_regra_frequencia(freq) for freq in frequencias
+            obter_regra_frequencia(freq, normas_contexto) for freq in frequencias
         ]
 
         for freq, regra in zip(frequencias, regras_encontradas):
             if regra is None:
                 raise ValueError(
-                    f"VIOLAÇÃO CRÍTICA: A frequência '{freq} MHz' não está "
+                    f"VIOLAÇÃO CRÍTICA: A frequência '{fmt_num(freq)} MHz' não está "
                     "contemplada nas regras do Ato 14.448."
                 )
 
@@ -128,8 +162,8 @@ class FrequenciaItem(BaseModel):
             limite_dbm = regra_encontrada["potencia_conduzida_max_dbm"]
             if pot_calc_dbm > limite_dbm + 0.01:
                 raise ValueError(
-                    f"Violação de Potência Conduzida: Calculado {pot_calc_dbm:.2f} dBm ({val_pot_w} W), "
-                    f"excede o limite regulatório de {limite_dbm} dBm[cite: 1]."
+                    f"Violação de Potência Conduzida: Calculado {fmt_num(pot_calc_dbm, 2)} dBm ({fmt_num(val_pot_w)} W), "
+                    f"excede o limite regulatório de {fmt_num(limite_dbm)} dBm[cite: 1]."
                 )
 
         # 4. Validação de Potência Média E.I.R.P. (dBm)
@@ -138,8 +172,8 @@ class FrequenciaItem(BaseModel):
             limite_media_dbm = regra_encontrada["eirp_media_max_dbm"]
             if val_media_dbm > limite_media_dbm:
                 raise ValueError(
-                    f"Violação de EIRP Média: Informado {val_media_dbm} dBm, "
-                    f"excede o limite regulatório de {limite_media_dbm} dBm[cite: 1]."
+                    f"Violação de EIRP Média: Informado {fmt_num(val_media_dbm)} dBm, "
+                    f"excede o limite regulatório de {fmt_num(limite_media_dbm)} dBm[cite: 1]."
                 )
 
         # 5. Validação de Potência de Pico E.I.R.P. (dBm)
@@ -148,8 +182,8 @@ class FrequenciaItem(BaseModel):
             limite_pico_dbm = regra_encontrada["eirp_pico_max_dbm"]
             if val_pico_dbm > limite_pico_dbm:
                 raise ValueError(
-                    f"Violação de EIRP de Pico: Informado {val_pico_dbm} dBm, "
-                    f"excede o limite regulatório de {limite_pico_dbm} dBm[cite: 1]."
+                    f"Violação de EIRP de Pico: Informado {fmt_num(val_pico_dbm)} dBm, "
+                    f"excede o limite regulatório de {fmt_num(limite_pico_dbm)} dBm[cite: 1]."
                 )
 
         return self
@@ -173,6 +207,6 @@ class HomologacaoProduto(BaseModel):
                     raise ValueError(
                         f"VIOLAÇÃO DE ESCOPO: A frequência informada exige referência aos atos "
                         f"{atos_validos}, mas o contexto fornecido continha: "
-                        f"{normas_ativas} (frequência: {frequencia} MHz)."
+                        f"{normas_ativas} (frequência: {fmt_num(frequencia)} MHz)."
                     )
         return self

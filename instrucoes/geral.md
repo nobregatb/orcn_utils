@@ -62,8 +62,9 @@ O sistema de análise automatizada avalia todos os documentos de um requerimento
 - **ART (Anotação de Responsabilidade Técnica)**: Verificação de responsáveis técnicos
 - **Fotos do Produto**: Análise visual e conformidade
 - **Contrato Social**: Validação de dados da empresa
+- Na lista de equipamentos do relatório de cada requerimento, os equipamentos são relacionados às famílias em `familias_equipamentos.json` pelo ID. Equipamentos com o mesmo ID são agrupados e exibidos uma única vez com o nome da família; quando não há família correspondente, o nome é obtido em `equipamentos.json`.
 - As palavras-chave `reaproveitar`, `reaproveitando`, `reutilizar` e `reutilizando` também são buscadas e exibidas no relatório. Quando uma delas for encontrada, ou quando houver um anexo do tipo **Reaproveitamento de Número de Homologação SCH**, o relatório inclui **Alterar homologação** em vermelho e negrito logo após o item **OCD** do requerimento.
-- A seção **Exigência(s)** aparece imediatamente antes de **Validação dos dados do CH**, em vermelho. Quando há pendências, o relatório apresenta o item numerado **1. Incluir no campo Produto | Especificações Adicionais a informação:** e lista abaixo cada informação ausente. Para cada ocorrência no CCT de `ipv6`, `produto não acabado`, `vinculado` ou `vinculada`, verifica se a frase correspondente está em `produto` → `Especificações Adicionais` do JSON do requerimento.
+- O item **Exigência** aparece imediatamente antes de **Validação dos dados do CH**, alinhado como item de lista. Quando há pendências, aparece em vermelho com uma lista numerada para a instrução e subitens com marcadores para cada informação ausente; sem pendências, o item aparece em azul. Para cada ocorrência no CCT de `ipv6`, `produto não acabado`, `vinculado` ou `vinculada`, verifica se a frase correspondente está em `produto` → `Especificações Adicionais` do JSON do requerimento.
 
 #### 📊 Saídas do Sistema
 
@@ -84,6 +85,7 @@ O sistema de análise automatizada avalia todos os documentos de um requerimento
 O sistema utiliza arquivos de configuração JSON para definir:
 - **`regras.json`**: Regras de negócio e validações
 - **`equipamentos.json`**: Catálogo de equipamentos homologados
+- **`familias_equipamentos.json`**: Famílias de equipamentos identificadas por ID para agrupamento na lista do relatório
 - **`requisitos.json`**: Mapeamento equipamento-norma
 - **`normas.json`**: Especificações técnicas por norma
 - **`ocds.json`**: Códigos OCDS para classificação

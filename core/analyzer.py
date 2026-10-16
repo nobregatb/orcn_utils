@@ -2450,16 +2450,23 @@ class AnalisadorRequerimentos:
             if condicao_cct and frase_obrigatoria.casefold() not in especificacoes_adicionais_normalizadas
         ]
 
-        secao_latex = "\\subsection*{\\textcolor{red}{Exigência(s)}}\n{\\color{red}\n"
+        cor_exigencia = "red" if exigencias else "blue"
+        secao_latex = (
+            "\\begin{itemize}\n"
+            f"\\item \\textcolor{{{cor_exigencia}}}{{\\textbf{{Exigência:}}}}\n"
+            f"{{\\color{{{cor_exigencia}}}\n"
+        )
         if exigencias:
-            secao_latex += "1. Incluir no campo Produto | Especificações Adicionais a informação:\n"
-            secao_latex += "\\begin{itemize}\n"
+            secao_latex += "\\begin{enumerate}\n"
+            secao_latex += "    \\item Incluir no campo Produto | Especificações Adicionais a informação:\n"
+            secao_latex += "    \\begin{itemize}\n"
             for exigencia in exigencias:
-                secao_latex += f"    \\item {escapar_latex(exigencia)}\n"
-            secao_latex += "\\end{itemize}\n\n"
+                secao_latex += f"        \\item {escapar_latex(exigencia)}\n"
+            secao_latex += "    \\end{itemize}\n"
+            secao_latex += "\\end{enumerate}\n"
         else:
-            secao_latex += "\\textit{Nenhuma exigência identificada.}\n\n"
-        secao_latex += "}\n"
+            secao_latex += "\\textit{Nenhuma identificada.}\n"
+        secao_latex += "}\n\\end{itemize}\n\n"
         return secao_latex
 
     def _gerar_relatorio_latex(self) -> str:

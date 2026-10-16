@@ -533,9 +533,19 @@
     "descricao": "Faixa de 1.800 MHz - Serviços de Interesse Coletivo Terrestres (FDD)[cite: 2]"
   },
   {
+    "faixa": [1880.0, 1885.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 1.880-1.885 MHz - STFC (Tabela VIII-B)"
+  },
+  {
     "faixa": [1890.0, 1910.0],
-    "atos_validos": ["ato915"],
-    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+    "atos_validos": ["ato915", "resolucao773"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915) / Serviços de Interesse Coletivo Terrestres (Resolução 773, Tabela VIII-A, TDD)"
+  },
+  {
+    "faixa": [1910.0, 1920.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 1.910-1.920 MHz - STFC (Tabela VIII-B)"
   },
   {
     "faixa": [1920.0, 2170.0],

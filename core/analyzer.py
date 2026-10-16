@@ -482,6 +482,7 @@ class AnalisadorRequerimentos:
         # Carregar configurações
         self.regras = carregar_json_com_fallback(JSON_FILES['regras'])
         self.equipamentos = carregar_json_com_fallback(JSON_FILES['equipamentos'])
+        self.familias_equipamentos = carregar_json_com_fallback(JSON_FILES['familias_equipamentos'])
         self.requisitos = carregar_json_com_fallback(JSON_FILES['requisitos'])
         self.normas = carregar_json_com_fallback(JSON_FILES['normas'])
         self.ocds = carregar_json_com_fallback(JSON_FILES['ocds'])
@@ -1875,6 +1876,66 @@ class AnalisadorRequerimentos:
         
         return equipamentos_unicos
 
+    def _preparar_equipamentos_lista_relatorio(
+        self, equipamentos_encontrados: List[str]
+    ) -> Tuple[List[str], Dict[str, str]]:
+        familias_por_nome = {
+            equipamento.get("nome", "").strip().casefold(): equipamento
+            for equipamento in self.familias_equipamentos
+            if isinstance(equipamento, dict) and equipamento.get("nome")
+        }
+        familias_por_id = {
+            equipamento.get("id"): equipamento
+            for equipamento in self.familias_equipamentos
+            if isinstance(equipamento, dict) and equipamento.get("id")
+        }
+        equipamentos_por_id = {
+            equipamento.get("id"): equipamento
+            for equipamento in self.equipamentos
+            if isinstance(equipamento, dict) and equipamento.get("id")
+        }
+
+        equipamentos_unicos = {}
+        for equipamento in equipamentos_encontrados:
+            if not isinstance(equipamento, str) or not equipamento.strip():
+                continue
+
+            nome_equipamento = equipamento.strip()
+            nome_normalizado = nome_equipamento.casefold()
+            familia = familias_por_nome.get(nome_normalizado)
+            equipamento_id = None
+
+            if familia is None:
+                equipamento_id = self._buscar_id_equipamento_por_nome(nome_equipamento)
+                familia = familias_por_id.get(equipamento_id)
+
+            equipamento_catalogado = equipamentos_por_id.get(equipamento_id)
+            if familia:
+                chave = ("familia", familia["id"])
+                nome_exibicao = familia["nome"]
+            elif equipamento_catalogado:
+                chave = ("equipamento", equipamento_catalogado["nome"].strip().casefold())
+                nome_exibicao = equipamento_catalogado["nome"]
+            else:
+                chave = ("nao_catalogado", nome_normalizado)
+                nome_exibicao = nome_equipamento
+
+            if chave not in equipamentos_unicos:
+                equipamentos_unicos[chave] = {
+                    "nome": nome_exibicao,
+                    "aliases": set()
+                }
+            equipamentos_unicos[chave]["aliases"].add(nome_equipamento)
+
+        nomes_equipamentos = []
+        equipamentos_rotulos = {}
+        for indice, equipamento in enumerate(equipamentos_unicos.values(), 1):
+            nomes_equipamentos.append(equipamento["nome"])
+            for alias in equipamento["aliases"]:
+                equipamentos_rotulos[alias] = f"[E{indice}]"
+
+        return nomes_equipamentos, equipamentos_rotulos
+
     def _buscar_id_equipamento_por_nome(self, nome_equipamento: str) -> Optional[str]:
         """Busca o ID de um equipamento pelo seu nome no arquivo equipamentos.json."""
         try:
@@ -2539,20 +2600,15 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
             nome_ocd_escapado = escapar_latex(nome_ocd_completo)
             
             # Formatar lista de equipamentos como subitens numerados por ordem de ocorrência distinta.
-            if equipamentos_encontrados:
-                # Remover duplicatas mantendo a ordem
-                equipamentos_unicos = []
-                for eq in equipamentos_encontrados:
-                    if eq not in equipamentos_unicos:
-                        equipamentos_unicos.append(eq)
-                # Criar mapa estável para reutilizar os mesmos rótulos [E1], [E2], ... na seção e nas tabelas.
-                equipamentos_rotulos = {
-                    equipamento: f"[E{indice}]"
-                    for indice, equipamento in enumerate(equipamentos_unicos, 1)
-                }
-                equipamentos_resumo = escapar_latex(", ".join(equipamentos_unicos))
+            nomes_equipamentos, equipamentos_rotulos = (
+                self._preparar_equipamentos_lista_relatorio(equipamentos_encontrados)
+            )
+            if nomes_equipamentos:
+                equipamentos_resumo = escapar_latex(
+                    ", ".join(nomes_equipamentos)
+                )
                 equipamentos_itens_latex = "\\begin{itemize}\n"
-                for indice, equipamento in enumerate(equipamentos_unicos, 1):
+                for indice, equipamento in enumerate(nomes_equipamentos, 1):
                     equipamento_escapado = escapar_latex(equipamento)
                     # Os colchetes precisam ser impressos como texto literal, não como argumento opcional do \item.
                     equipamentos_itens_latex += f"    \\item[] \\texttt{{[E{indice}]}} - {equipamento_escapado}\n"

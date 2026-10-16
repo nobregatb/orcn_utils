@@ -33,6 +33,7 @@ REQUERIMENTOS_PATH = rf"{TBN_FILES_FOLDER}\{REQUERIMENTOS_DIR_INBOX}"
 JSON_FILES = {
     'regras': f"{UTILS_DIR}/regras.json",
     'equipamentos': f"{UTILS_DIR}/equipamentos.json",
+    'familias_equipamentos': f"{UTILS_DIR}/familias_equipamentos.json",
     'requisitos': f"{UTILS_DIR}/requisitos.json",
     'normas': f"{UTILS_DIR}/normas.json",
     'ocds': f"{UTILS_DIR}/ocds.json"

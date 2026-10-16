@@ -2412,9 +2412,12 @@ class AnalisadorRequerimentos:
         dados_requerimento: Optional[Dict],
         cct_contem_ipv6: bool,
         cct_contem_produto_nao_acabado: bool,
-        cct_contem_palavra_vinculado: bool
+        cct_contem_palavra_vinculado: bool,
+        modelos_nao_encontrados: Optional[List[str]] = None
     ) -> str:
         """Monta as exigências quando as declarações do CCT faltam no JSON do produto."""
+        if modelos_nao_encontrados is None:
+            modelos_nao_encontrados = []
         if not isinstance(dados_requerimento, dict):
             dados_requerimento = {}
         produto_requerimento = dados_requerimento.get("produto", {})
@@ -2450,19 +2453,25 @@ class AnalisadorRequerimentos:
             if condicao_cct and frase_obrigatoria.casefold() not in especificacoes_adicionais_normalizadas
         ]
 
-        cor_exigencia = "red" if exigencias else "blue"
+        tem_exigencias = bool(exigencias or modelos_nao_encontrados)
+        cor_exigencia = "red" if tem_exigencias else "blue"
         secao_latex = (
             "\\begin{itemize}\n"
             f"\\item \\textcolor{{{cor_exigencia}}}{{\\textbf{{Exigência:}}}}\n"
             f"{{\\color{{{cor_exigencia}}}\n"
         )
-        if exigencias:
+        if tem_exigencias:
             secao_latex += "\\begin{enumerate}\n"
-            secao_latex += "    \\item Incluir no campo Produto | Especificações Adicionais a informação:\n"
-            secao_latex += "    \\begin{itemize}\n"
-            for exigencia in exigencias:
-                secao_latex += f"        \\item {escapar_latex(exigencia)}\n"
-            secao_latex += "    \\end{itemize}\n"
+            if exigencias:
+                secao_latex += "    \\item Incluir no campo Produto | Especificações Adicionais a informação:\n"
+                secao_latex += "    \\begin{itemize}\n"
+                for exigencia in exigencias:
+                    secao_latex += f"        \\item {escapar_latex(exigencia)}\n"
+                secao_latex += "    \\end{itemize}\n"
+            if modelos_nao_encontrados:
+                secao_latex += (
+                    "    \\item Informar nome(s) do(s) modelo(s) conforme CCT.\n"
+                )
             secao_latex += "\\end{enumerate}\n"
         else:
             secao_latex += "\\textit{Nenhuma identificada.}\n"
@@ -2720,11 +2729,47 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 "CCT": self._coletar_normas_verificadas_por_tipo(req, TIPO_CCT)
             }
 
+            documento_cct = next(
+                (doc for doc in documentos if doc.get("tipo") == TIPO_CCT),
+                None
+            )
+            dados_cct = documento_cct.get("dados_extraidos", {}) if documento_cct else {}
+            modelos_nao_encontrados = []
+            status_modelos = None
+            if documento_cct is None:
+                status_modelos = (
+                    "\\textcolor{red}{Não foi possível validar: CCT não encontrado para comparação.}"
+                )
+            elif "modelos_json" not in dados_cct:
+                status_modelos = (
+                    "\\textcolor{red}{Não foi possível validar: texto do CCT indisponível.}"
+                )
+            elif not dados_cct["modelos_json"]:
+                status_modelos = (
+                    "\\textcolor{red}{Nenhum modelo informado no JSON do requerimento.}"
+                )
+            else:
+                modelos_encontrados = set(dados_cct.get("modelos_encontrados_no_cct", []))
+                modelos_nao_encontrados = [
+                    modelo for modelo in dados_cct["modelos_json"]
+                    if modelo not in modelos_encontrados
+                ]
+                if not modelos_nao_encontrados:
+                    status_modelos = "\\textcolor{blue}{OK}"
+
+            if status_modelos:
+                latex_content += (
+                    "\\begin{itemize}\n"
+                    f"    \\item Modelos: {status_modelos}\n"
+                    "\\end{itemize}\n\n"
+                )
+
             latex_content += self._construir_secao_exigencias(
                 req.get("dados_requerimento"),
                 cct_contem_ipv6,
                 cct_contem_produto_nao_acabado,
-                cct_contem_palavra_vinculado
+                cct_contem_palavra_vinculado,
+                modelos_nao_encontrados
             )
 
             latex_content += "\\subsection*{Validação dos dados do CH}\n"
@@ -2741,43 +2786,6 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 set(normas_aplicaveis.keys())
             )
             latex_content += self._formatar_validacao_frequencias_latex(caracteristicas_validadas)
-
-            documento_cct = next(
-                (doc for doc in documentos if doc.get("tipo") == TIPO_CCT),
-                None
-            )
-            dados_cct = documento_cct.get("dados_extraidos", {}) if documento_cct else {}
-            if documento_cct is None:
-                latex_content += "\\paragraph{Modelos}\n"
-                latex_content += (
-                    "\\textcolor{red}{Não foi possível validar: CCT não encontrado para comparação.}\n"
-                )
-            elif "modelos_json" not in dados_cct:
-                latex_content += "\\paragraph{Modelos}\n"
-                latex_content += (
-                    "\\textcolor{red}{Não foi possível validar: texto do CCT indisponível.}\n"
-                )
-            elif not dados_cct["modelos_json"]:
-                latex_content += "\\paragraph{Modelos}\n"
-                latex_content += (
-                    "\\textcolor{red}{Nenhum modelo informado no JSON do requerimento.}\n"
-                )
-            else:
-                modelos_encontrados = set(dados_cct["modelos_encontrados_no_cct"])
-                modelos_nao_encontrados = [
-                    modelo for modelo in dados_cct["modelos_json"]
-                    if modelo not in modelos_encontrados
-                ]
-                if modelos_nao_encontrados:
-                    latex_content += "\\paragraph{Modelos}\n\\begin{itemize}\n"
-                else:
-                    latex_content += "\\paragraph{Modelos}\n\\textcolor{green}{OK}\n"
-                for modelo in modelos_nao_encontrados:
-                    modelo_escapado = escapar_latex(modelo)
-                    latex_content += f"    \\item {modelo_escapado}: \\textcolor{{red}}{{Não encontrado no CCT}}\n"
-                if modelos_nao_encontrados:
-                    latex_content += "\\end{itemize}\n"
-            latex_content += "\n"
 
             if normas_aplicaveis or any(normas_verificadas_por_tipo.values()):
                 for nome_tipo, normas_verificadas_tipo in normas_verificadas_por_tipo.items():

@@ -1,13 +1,158 @@
 [
   {
+    "faixa": [2.194, 2.254],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [2.505, 2.85],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [3.2, 3.4],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [3.8, 4.063],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [4.438, 4.558],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [5.772, 5.9],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [6.765, 6.99],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [7.35, 8.195],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [9.04, 9.385],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [9.921, 9.995],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [10.1, 11.159],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [11.4, 11.6],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [12.1, 12.23],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [13.36, 13.567],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [13.87, 13.972],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [14.35, 14.99],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [15.8, 16.328],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [18.03, 18.068],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [18.249, 18.78],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [19.02, 19.674],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [19.8, 19.99],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [20.01, 21.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [22.87, 23.2],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [23.35, 24.89],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [25.016, 25.07],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [25.237, 25.55],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [26.48, 26.96],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
     "faixa": [26.96, 27.28],
     "atos_validos": ["ato14448"],
     "descricao": "Baixa Frequência / Faixa Cidadão"
   },
   {
+    "faixa": [29.7, 42.54],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
     "faixa": [40.66, 40.7],
     "atos_validos": ["ato14448"],
     "descricao": "Faixa 40.66-40.70 MHz"
+  },
+  {
+    "faixa": [43.0, 50.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
     "faixa": [43.7, 47.0],
@@ -32,7 +177,7 @@
   },
   {
     "faixa": [72.0, 73.0],
-    "atos_validos": ["ato14448"],
+    "atos_validos": ["ato14448", "ato915"],
     "descricao": "Controle / Telecomando / Microfones"
   },
   {
@@ -46,6 +191,11 @@
     "descricao": "Controle / Telecomando"
   },
   {
+    "faixa": [75.4, 76.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
     "faixa": [76.0, 88.0],
     "atos_validos": ["ato14448"],
     "descricao": "Microfones sem fio"
@@ -56,9 +206,69 @@
     "descricao": "Sistemas de Radiodifusão / Restritos"
   },
   {
+    "faixa": [148.0, 149.9],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [152.0, 153.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [153.6, 154.5],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [156.025, 156.275],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [156.6, 156.7],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [156.9, 156.95],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [157.45, 160.6],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [160.625, 160.875],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [160.98, 161.46],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [162.05, 164.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [164.6, 174.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
     "faixa": [174.0, 216.0],
     "atos_validos": ["ato14448"],
     "descricao": "Microfones sem fio"
+  },
+  {
+    "faixa": [217.00625, 218.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
     "faixa": [225.0, 270.0],
@@ -67,15 +277,136 @@
     "descricao": "Uso restrito em ambientes internos"
   },
   {
+    "faixa": [225.625, 233.125],
+    "atos_validos": ["ato915"],
+    "ambiente_exigido": "indoor",
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [234.375, 241.875],
+    "atos_validos": ["ato915"],
+    "ambiente_exigido": "indoor",
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [242.5125, 247.4875],
+    "atos_validos": ["ato915"],
+    "ambiente_exigido": "indoor",
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [248.125, 255.625],
+    "atos_validos": ["ato915"],
+    "ambiente_exigido": "indoor",
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [256.2625, 261.2375],
+    "atos_validos": ["ato915"],
+    "ambiente_exigido": "indoor",
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [261.875, 269.375],
+    "atos_validos": ["ato915"],
+    "ambiente_exigido": "indoor",
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [270.0, 296.75],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [301.8, 328.55],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [361.65, 362.9],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [363.525, 368.525],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [368.55, 368.85],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [368.875, 370.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [371.65, 372.9],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [372.95, 373.5],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [373.525, 378.525],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [378.875, 380.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [380.0375, 389.8875],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [390.0375, 399.8875],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [406.2, 425.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [426.2, 430.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
     "faixa": [433.0, 435.0],
     "atos_validos": ["ato14448"],
     "eirp_pico_max_dbm": 10.0,
     "descricao": "4.1.5. Faixa de 433-435 MHz"
   },
   {
+    "faixa": [440.0, 450.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [451.0, 460.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
     "faixa": [451.0, 468.0],
     "atos_validos": ["resolucao773"],
     "descricao": "Arranjo da faixa de frequências de 451 MHz a 468 MHz[cite: 2]"
+  },
+  {
+    "faixa": [461.0, 470.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
     "faixa": [470.0, 608.0],
@@ -98,9 +429,19 @@
     "descricao": "Faixa de 700 MHz - Blocos 6 a 9 (Estação Móvel: 728-748 MHz / Estação Base: 783-803 MHz)[cite: 2]"
   },
   {
+    "faixa": [806.0, 819.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
     "faixa": [819.0, 894.0],
     "atos_validos": ["resolucao773"],
     "descricao": "Faixa de 850 MHz - Serviços de Interesse Coletivo Terrestres (FDD)[cite: 2]"
+  },
+  {
+    "faixa": [851.0, 866.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
     "faixa": [864.0, 868.0],
@@ -112,6 +453,11 @@
     "atos_validos": ["ato14448"],
     "vedacoes": ["voz", "mensagem"],
     "descricao": "Telemedição de material (Veda voz e mensagens)[cite: 1]"
+  },
+  {
+    "faixa": [896.0, 898.5],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
     "faixa": [898.5, 960.0],
@@ -137,9 +483,49 @@
     "descricao": "Telemedição de material (Veda voz e mensagens)[cite: 1]"
   },
   {
+    "faixa": [929.0, 930.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [931.0, 933.05],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [933.075, 933.975],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [935.0, 937.5],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [941.0, 942.05],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [942.075, 942.975],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
     "faixa": [1427.0, 1518.0],
     "atos_validos": ["resolucao773"],
     "descricao": "Faixa de 1.500 MHz - Serviços de Interesse Coletivo Terrestres (TDD)[cite: 2]"
+  },
+  {
+    "faixa": [1437.75, 1452.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [1503.25, 1517.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
     "faixa": [1710.0, 1880.0],
@@ -147,9 +533,24 @@
     "descricao": "Faixa de 1.800 MHz - Serviços de Interesse Coletivo Terrestres (FDD)[cite: 2]"
   },
   {
+    "faixa": [1890.0, 1910.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
     "faixa": [1920.0, 2170.0],
     "atos_validos": ["resolucao773"],
     "descricao": "Faixa de 2 GHz - Blocos de Transmissão Móvel e Base (FDD/TDD)[cite: 2]"
+  },
+  {
+    "faixa": [2025.0, 2110.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [2200.0, 2300.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
     "faixa": [2300.0, 2400.0],
@@ -157,10 +558,20 @@
     "descricao": "Faixa de 2.300 MHz - Serviços de Interesse Coletivo Terrestres (TDD)[cite: 2]"
   },
   {
+    "faixa": [2390.0, 2400.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
     "faixa": [2400.0, 2483.5],
     "atos_validos": ["ato14448"],
     "potencia_conduzida_max_dbm": 30.0,
     "descricao": "Industrial, Científica e Médica - 2.4 GHz"
+  },
+  {
+    "faixa": [2485.0, 2495.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
     "faixa": [2500.0, 2690.0],
@@ -179,15 +590,35 @@
     "descricao": "Faixa de 3.500 MHz - Serviços de Interesse Coletivo Terrestres (TDD)[cite: 2]"
   },
   {
+    "faixa": [3700.0, 4200.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
     "faixa": [3700.0, 10600.0],
     "atos_validos": ["ato14448", "ato423"],
     "eirp_pico_max_dbm": 0.0,
     "descricao": "UWB / Imagens Médicas (Ato 423)[cite: 1]"
   },
   {
+    "faixa": [4410.0, 4600.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [4700.0, 4910.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
     "faixa": [4830.0, 4950.0],
     "atos_validos": ["resolucao773"],
     "descricao": "Faixa de 4.9 GHz - Blocos de Transmissão[cite: 2]"
+  },
+  {
+    "faixa": [4950.0, 4990.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
     "faixa": [5150.0, 5250.0],
@@ -220,9 +651,109 @@
     "descricao": "Comunicação Veicular ITS (Ato 4776)"
   },
   {
+    "faixa": [5925.0, 6760.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
     "faixa": [5925.0, 7125.0],
     "atos_validos": ["ato14448", "ato423"],
     "descricao": "Faixa de 6 GHz Não Licenciada / Wi-Fi 6E-7 (Ato 423)"
+  },
+  {
+    "faixa": [6770.0, 7100.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [7428.0, 7568.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [7582.0, 7722.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [7725.0, 7975.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [8025.0, 8282.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [8282.5, 8370.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [8405.0, 8492.5],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [10150.0, 10300.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [10500.0, 10650.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [10700.0, 11700.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [12700.0, 12975.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [13000.0, 13250.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [14500.0, 15350.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [17700.0, 18140.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [18600.0, 18820.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [18920.0, 19160.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [19260.0, 19700.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [21200.0, 23600.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [24000.0, 24250.0],
+    "atos_validos": ["ato14448"],
+    "descricao": "Radiação Restrita - 24 GHz"
   },
   {
     "faixa": [24250.0, 27900.0],
@@ -230,9 +761,24 @@
     "descricao": "Faixa de 26 GHz - Serviços de Interesse Coletivo Terrestres (TDD)[cite: 2]"
   },
   {
-    "faixa": [24000.0, 24250.0],
-    "atos_validos": ["ato14448"],
-    "descricao": "Radiação Restrita - 24 GHz"
+    "faixa": [27500.0, 27900.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [31000.0, 31300.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [31800.0, 33400.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [37000.0, 39500.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
     "faixa": [57000.0, 71000.0],
@@ -243,9 +789,39 @@
     "descricao": "Sistema Multigigabit sem Fio 57-71 GHz (Vedado em satélites)[cite: 1]"
   },
   {
+    "faixa": [71000.0, 76000.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
     "faixa": [76000.0, 81000.0],
     "atos_validos": ["ato14448", "ato423", "ato14158"],
     "descricao": "Radares / LPR / Radar Veicular (76-81 GHz)"
+  },
+  {
+    "faixa": [81000.0, 86000.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [92050.0, 92500.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [92600.0, 93450.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [93550.0, 94000.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [94100.0, 94950.0],
+    "atos_validos": ["ato915"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
     "faixa": [116000.0, 123000.0],

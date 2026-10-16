@@ -122,7 +122,7 @@ def pares_para_dict(pares):
 def tabela_por_cabecalho(aba, texto_cabecalho):
     """Retorna a primeira tabela da aba cujo cabeçalho contém o texto, convertida em lista de dicts."""
     for linhas in aba["tabelas"]:
-        if not linhas or not any(texto_cabecalho in celula for celula in linhas[0]):
+        if not linhas or not any(texto_cabecalho.casefold() in celula.casefold() for celula in linhas[0]):
             continue
         cabecalho = linhas[0]
         registros = [dict(zip(cabecalho, linha)) for linha in linhas[1:] if len(linha) == len(cabecalho)]
@@ -131,19 +131,55 @@ def tabela_por_cabecalho(aba, texto_cabecalho):
     return []
 
 
+def ativar_aba_certifica(page, sufixo):
+    """Ativa a aba e espera seu painel terminar de carregar antes da leitura."""
+    rotulos = {
+        CERTIFICA_ABA_FABRICANTE: "Fabricante",
+        CERTIFICA_ABA_SOLICITANTE: "Solicitante",
+        CERTIFICA_ABA_PRODUTO: "Produto",
+        CERTIFICA_ABA_ESPECIFICACOES: "Especificações",
+        CERTIFICA_ABA_LABORATORIO: "Laboratório",
+        CERTIFICA_ABA_ANEXOS: "Anexos",
+        CERTIFICA_ABA_CERTIFICADO: "Certificado",
+    }
+    rotulo = rotulos.get(sufixo)
+    if rotulo is None:
+        raise ValueError(f"Aba do Certifica não mapeada: {sufixo}")
+
+    padrao = re.compile(r"\s*".join(map(re.escape, rotulo.split())))
+    aba = page.locator("[role=tab]", has_text=padrao)
+    if not aba.count():
+        raise RuntimeError(f"Aba '{rotulo}' não encontrada na página do requerimento.")
+    aba.first.click()
+
+    seletor_painel = f'[id$="wttab_{sufixo}_block_wtContent"]'
+    painel = page.locator(seletor_painel)
+    painel.wait_for(state="visible", timeout=CERTIFICA_TIMEOUT_PAGINA)
+    page.wait_for_function(
+        """seletor => {
+            const painel = document.querySelector(seletor);
+            return painel && painel.innerText.trim().length > 0;
+        }""",
+        arg=seletor_painel,
+        timeout=CERTIFICA_TIMEOUT_PAGINA,
+    )
+
+
 def ler_aba_certifica(page, sufixo):
     """Lê uma aba da página de análise; retorna {"pares": [...], "tabelas": [...]} (vazio se ausente)."""
+    ativar_aba_certifica(page, sufixo)
     aba = page.evaluate(CERTIFICA_JS_LER_ABA, sufixo)
     if aba is None:
         log_erro(f"Aba '{sufixo}' não encontrada na página do requerimento.")
-        return {"pares": [], "tabelas": [], "registros": []}
+        return {"pares": [], "tabelas": [], "registros": [], "subprodutos": []}
     return aba
 
 
 def extrair_dados_requerimento_certifica(page):
     """
     Lê a página de análise do requerimento e retorna os blocos do JSON:
-    ocd, lab, fabricante, solicitante, produto, modelos, frequencias e certificado.
+    ocd, lab, fabricante, solicitante, produto, modelos, frequencias,
+    caracteristicas_tecnicas e certificado.
     """
     aba_solicitante = ler_aba_certifica(page, CERTIFICA_ABA_SOLICITANTE)
     pares = aba_solicitante["pares"]
@@ -168,6 +204,9 @@ def extrair_dados_requerimento_certifica(page):
         "produto": pares_para_dict(aba_produto["pares"]),
         "modelos": tabela_por_cabecalho(aba_produto, CERTIFICA_CABECALHO_MODELOS),
         "frequencias": tabela_por_cabecalho(aba_especificacoes, CERTIFICA_CABECALHO_FREQUENCIAS),
+        "caracteristicas_tecnicas": {
+            "subprodutos": aba_especificacoes["subprodutos"],
+        },
         "certificado": pares_para_dict(ler_aba_certifica(page, CERTIFICA_ABA_CERTIFICADO)["pares"]),
     }
 
@@ -271,18 +310,25 @@ def baixar_anexo_por_clique(page, link_id, destino):
 
 def baixar_anexos_certifica(page, pasta):
     """Baixa anexos para a pasta do requerimento, ignorando arquivos desativados."""
+    ativar_aba_certifica(page, CERTIFICA_ABA_ANEXOS)
     anexos = page.evaluate(CERTIFICA_JS_LER_ANEXOS, [CERTIFICA_ABA_ANEXOS, CERTIFICA_TEXTO_ANEXO_DESATIVADO])
     if anexos is None:
         log_erro(f"Aba '{CERTIFICA_ABA_ANEXOS}' não encontrada na página do requerimento.")
         return 0, 1
     log_info(f"📎 {len(anexos)} anexo(s) listado(s) na aba Anexos")
+    if not anexos:
+        log_erro("A aba Anexos não retornou documentos; o requerimento não será marcado como concluído.")
+        return 0, 1
+    anexos_baixaveis = [
+        anexo for anexo in anexos
+        if anexo["tipo"] in CERTIFICA_TIPOS_ANEXO_BAIXAR and not anexo["desativado"]
+    ]
+    if not anexos_baixaveis:
+        log_erro("Nenhum anexo ativo dos tipos configurados foi encontrado.")
+        return 0, 1
     baixados = 0
     falhas = 0
-    for anexo in anexos:
-        if anexo["tipo"] not in CERTIFICA_TIPOS_ANEXO_BAIXAR:
-            continue
-        if anexo["desativado"]:
-            continue
+    for anexo in anexos_baixaveis:
         destino = os.path.join(pasta, nome_arquivo_anexo(anexo))
         if os.path.exists(destino):
             log_info(f"⏭️ Arquivo já existe, pulando: {os.path.basename(destino)}")

@@ -92,6 +92,7 @@ CERTIFICA_ABA_PRODUTO = "produto"
 CERTIFICA_ABA_ESPECIFICACOES = "EspecTecnica"
 CERTIFICA_ABA_LABORATORIO = "Laboratorio"
 CERTIFICA_ABA_CERTIFICADO = "Certificado"
+CERTIFICA_ABA_ANEXOS = "Anexos"
 CERTIFICA_ABA_INFO_ADICIONAIS = "InformacoesAdicionais"
 CERTIFICA_ESPERA_POSTBACK_MS = 3000
 # Rótulo que separa, na aba Solicitante, os dados do solicitante dos do OCD
@@ -115,7 +116,6 @@ CERTIFICA_TIPOS_ANEXO_BAIXAR = [
     "Registro de Ocorrências",
     CERTIFICA_TIPO_ANEXO_REAPROVEITAMENTO,
 ]
-CERTIFICA_ABA_ANEXOS = "Anexos"
 CERTIFICA_TEXTO_ANEXO_DESATIVADO = "(DESATIVADO)"
 CERTIFICA_TIMEOUT_DOWNLOAD = 60000
 # Geração do PDF do Resumo é lenta: espera de até 10 minutos após clicar em "Gerar PDF" (ms)
@@ -127,21 +127,33 @@ CERTIFICA_JS_LER_ANEXOS = """([sufixo, textoDesativado]) => {
         .find(e => e.id.endsWith('wttab_' + sufixo + '_block_wtContent'));
     if (!aba) return null;
     const txt = (e) => e.innerText.replace(/\\s+/g, ' ').trim();
+    const valorCelula = (celula) => {
+        const clone = celula.cloneNode(true);
+        clone.querySelectorAll('.TableRecords_Label, script, style').forEach(e => e.remove());
+        [...clone.querySelectorAll('div')].forEach(e => {
+            if (e.textContent.includes(textoDesativado)) e.remove();
+        });
+        return clone.textContent.replace(/\\s+/g, ' ').trim();
+    };
     // O aviso existe sempre no HTML e fica oculto por style inline; innerText não serve se a aba estiver oculta
     const avisoVisivel = (celula, texto) => [...celula.querySelectorAll('div')]
         .some(d => d.textContent.includes(texto) && d.style.display !== 'none');
     const anexos = [];
     aba.querySelectorAll('table[id$="wtTableDocumentos"]').forEach(tabela => {
-        const bloco = tabela.closest('.ThemeGrid_Width9').previousElementSibling;
-        const tipo = txt(bloco.querySelector('span'));
+        const container = tabela.closest('.ThemeGrid_Width9');
+        const bloco = container && container.previousElementSibling;
+        const tipo = bloco && bloco.querySelector('span');
+        if (!tipo) {
+            throw new Error('Não foi possível identificar o tipo de anexo na página.');
+        }
         tabela.querySelectorAll('tbody tr').forEach(tr => {
             const link = tr.querySelector('a[title="Download"]');
             if (!link) return;
             const c = tr.children;
-            const arquivo = txt(c[0].firstElementChild);
+            const arquivo = valorCelula(c[0]);
             anexos.push({
-                tipo, arquivo, desativado: avisoVisivel(c[0], textoDesativado),
-                data_hora: txt(c[1]), descricao: txt(c[2]), link_id: link.id
+                tipo: txt(tipo), arquivo, desativado: avisoVisivel(c[0], textoDesativado),
+                data_hora: valorCelula(c[1]), descricao: valorCelula(c[2]), link_id: link.id
             });
         });
     });
@@ -158,6 +170,11 @@ CERTIFICA_JS_LER_ABA = """(sufixo) => {
         c.querySelectorAll('script, style').forEach(s => s.remove());
         return c.textContent.replace(/\\s+/g, ' ').trim();
     };
+    const valorCelula = (el) => {
+        const rotulo = el.querySelector('.TableRecords_Label, label');
+        const texto = limpo(el);
+        return rotulo ? texto.replace(limpo(rotulo), '').trim() : texto;
+    };
     const pares = [];
     aba.querySelectorAll('label').forEach(l => {
         const rotulo = limpo(l);
@@ -165,10 +182,26 @@ CERTIFICA_JS_LER_ABA = """(sufixo) => {
         pares.push([rotulo, valor]);
     });
     const tabelas = [...aba.querySelectorAll('table')].map(t =>
-        [...t.querySelectorAll('tr')].map(r => [...r.children].map(limpo)));
+        [...t.rows].map(r => [...r.cells].map(valorCelula)));
     const registros = [...aba.querySelectorAll('.ListRecords > div')]
         .map(r => [...r.children].map(limpo));
-    return {pares, tabelas, registros};
+    const subprodutos = [...aba.querySelectorAll('.ListRecords')].flatMap(lista => {
+        let nome = '';
+        return [...lista.children].flatMap(item => {
+            const tabelasSubproduto = [...item.querySelectorAll('table')]
+                .filter(t => !t.id && t.rows.length > 1);
+            if (!tabelasSubproduto.length) {
+                const texto = limpo(item);
+                if (texto) nome = texto;
+                return [];
+            }
+            return tabelasSubproduto.map(t => ({
+                nome,
+                caracteristicas: [...t.rows].map(r => [...r.cells].map(valorCelula))
+            }));
+        }).filter(subproduto => subproduto.nome);
+    });
+    return {pares, tabelas, registros, subprodutos};
 }"""
 
 # Seletores CSS

@@ -171,14 +171,15 @@ def ler_aba_certifica(page, sufixo):
     aba = page.evaluate(CERTIFICA_JS_LER_ABA, sufixo)
     if aba is None:
         log_erro(f"Aba '{sufixo}' não encontrada na página do requerimento.")
-        return {"pares": [], "tabelas": [], "registros": []}
+        return {"pares": [], "tabelas": [], "registros": [], "subprodutos": []}
     return aba
 
 
 def extrair_dados_requerimento_certifica(page):
     """
     Lê a página de análise do requerimento e retorna os blocos do JSON:
-    ocd, lab, fabricante, solicitante, produto, modelos, frequencias e certificado.
+    ocd, lab, fabricante, solicitante, produto, modelos, frequencias,
+    caracteristicas_tecnicas e certificado.
     """
     aba_solicitante = ler_aba_certifica(page, CERTIFICA_ABA_SOLICITANTE)
     pares = aba_solicitante["pares"]
@@ -203,6 +204,9 @@ def extrair_dados_requerimento_certifica(page):
         "produto": pares_para_dict(aba_produto["pares"]),
         "modelos": tabela_por_cabecalho(aba_produto, CERTIFICA_CABECALHO_MODELOS),
         "frequencias": tabela_por_cabecalho(aba_especificacoes, CERTIFICA_CABECALHO_FREQUENCIAS),
+        "caracteristicas_tecnicas": {
+            "subprodutos": aba_especificacoes["subprodutos"],
+        },
         "certificado": pares_para_dict(ler_aba_certifica(page, CERTIFICA_ABA_CERTIFICADO)["pares"]),
     }
 

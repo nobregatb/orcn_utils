@@ -1386,7 +1386,83 @@ class AnalisadorRequerimentos:
                 "valida": "inconclusiva",
                 "mensagem": "Nenhuma frequência válida foi encontrada no JSON do requerimento."
             }]
+        return self._validar_registros_frequencia(frequencias, normas_referencia)
 
+    @staticmethod
+    def _tabela_para_registros(tabela: Any) -> List[Any]:
+        """Converte uma tabela [cabeçalho, linha, ...] em lista de dicts; aceita lista de dicts já pronta."""
+        if not isinstance(tabela, list) or not tabela:
+            return []
+        if all(isinstance(linha, dict) for linha in tabela):
+            return tabela
+        cabecalho = tabela[0]
+        if not isinstance(cabecalho, list):
+            return []
+        # Nos subprodutos a coluna se chama "Tecnologias"; o modelo de validação usa "Tecnologia"
+        cabecalho = ["Tecnologia" if coluna == "Tecnologias" else coluna for coluna in cabecalho]
+        return [
+            dict(zip(cabecalho, linha)) if isinstance(linha, list) and len(linha) == len(cabecalho) else linha
+            for linha in tabela[1:]
+            if linha and (not isinstance(linha, list) or any(linha))
+        ]
+
+    def _validar_caracteristicas_tecnicas_json(
+        self,
+        dados_requerimento: Optional[Dict],
+        normas_referencia: Set[str]
+    ) -> List[Dict[str, str]]:
+        """Aplica as regras de uso de faixa às características técnicas de cada subproduto do JSON."""
+        caracteristicas = (
+            dados_requerimento.get("caracteristicas_tecnicas")
+            if isinstance(dados_requerimento, dict) else None
+        )
+        subprodutos = caracteristicas.get("subprodutos") if isinstance(caracteristicas, dict) else None
+        if not isinstance(subprodutos, list) or not subprodutos:
+            return [{
+                "faixa": "Características técnicas",
+                "valida": "inconclusiva",
+                "mensagem": "Nenhuma característica técnica de subproduto foi encontrada no JSON do requerimento."
+            }]
+
+        resultado = []
+        for indice, subproduto in enumerate(subprodutos, 1):
+            nome = str(subproduto.get("nome", "")).strip() if isinstance(subproduto, dict) else ""
+            nome = nome or f"Subproduto {indice}"
+            registros = (
+                self._tabela_para_registros(subproduto.get("caracteristicas"))
+                if isinstance(subproduto, dict) else []
+            )
+            if not registros:
+                resultado.append({
+                    "faixa": nome,
+                    "valida": "inconclusiva",
+                    "mensagem": "Nenhuma característica técnica válida foi encontrada para o subproduto."
+                })
+                continue
+            for validacao in self._validar_registros_frequencia(registros, normas_referencia):
+                validacao["faixa"] = f"{nome} ({validacao['faixa']})"
+                resultado.append(validacao)
+        return resultado
+
+    @staticmethod
+    def _formatar_validacao_frequencias_latex(validacoes: List[Dict[str, str]]) -> str:
+        """Lista em LaTeX as validações não conformes; 'OK' quando todas foram validadas."""
+        nao_conformes = [validacao for validacao in validacoes if validacao["valida"] != "sim"]
+        if not nao_conformes:
+            return "\\textcolor{green}{OK}\n"
+        latex = "\n\\begin{itemize}\n"
+        for validacao in nao_conformes:
+            faixa = escapar_latex(validacao["faixa"])
+            mensagem = escapar_latex(validacao["mensagem"])
+            latex += f"    \\item {faixa}: \\textcolor{{red}}{{Não conforme}} -- {mensagem}\n"
+        return latex + "\\end{itemize}\n"
+
+    def _validar_registros_frequencia(
+        self,
+        frequencias: List[Any],
+        normas_referencia: Set[str]
+    ) -> List[Dict[str, str]]:
+        """Valida cada registro de frequência pelas regras de uso de faixa."""
         resultado = []
         for indice, frequencia in enumerate(frequencias, 1):
             if not isinstance(frequencia, dict):
@@ -2593,19 +2669,14 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 req.get("dados_requerimento"),
                 set(normas_aplicaveis.keys())
             )
-            frequencias_nao_conformes = [
-                frequencia for frequencia in frequencias_validadas
-                if frequencia["valida"] != "sim"
-            ]
-            if frequencias_nao_conformes:
-                latex_content += "\n\\begin{itemize}\n"
-                for frequencia in frequencias_nao_conformes:
-                    faixa = escapar_latex(frequencia["faixa"])
-                    mensagem = escapar_latex(frequencia["mensagem"])
-                    latex_content += f"    \\item {faixa}: \\textcolor{{red}}{{Não conforme}} -- {mensagem}\n"
-                latex_content += "\\end{itemize}\n"
-            else:
-                latex_content += "\\textcolor{green}{OK}\n"
+            latex_content += self._formatar_validacao_frequencias_latex(frequencias_validadas)
+
+            latex_content += "\\paragraph{Características técnicas} "
+            caracteristicas_validadas = self._validar_caracteristicas_tecnicas_json(
+                req.get("dados_requerimento"),
+                set(normas_aplicaveis.keys())
+            )
+            latex_content += self._formatar_validacao_frequencias_latex(caracteristicas_validadas)
 
             documento_cct = next(
                 (doc for doc in documentos if doc.get("tipo") == TIPO_CCT),

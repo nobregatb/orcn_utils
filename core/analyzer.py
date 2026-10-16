@@ -2504,7 +2504,7 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
             {equipamentos_itens_latex}
             \\end{{itemize}}
             """
-            
+            '''
             latex_content += """
 Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste requerimento: 
 
@@ -2524,7 +2524,8 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 latex_content += "\n\\end{itemize}\n\n"
             else:
                 latex_content += "\\textit{Nenhuma palavra-chave específica foi encontrada neste requerimento.}\n\n"
-                    
+
+            '''        
             # Coletar normas aplicáveis para este requerimento
             normas_aplicaveis = self._coletar_normas_aplicaveis_requerimento(req)
             normas_verificadas = self._coletar_normas_verificadas_requerimento(req)

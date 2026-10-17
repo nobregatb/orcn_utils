@@ -2494,6 +2494,106 @@ class AnalisadorRequerimentos:
         secao_latex += "}\n\\end{itemize}\n\n"
         return secao_latex
 
+    def _gerar_tabela_normativos_latex(
+        self,
+        normas_aplicaveis_por_tipo: Dict[str, Dict[str, List[str]]],
+        normas_verificadas_por_tipo: Dict[str, Set[str]],
+        equipamentos_rotulos: Dict[str, str]
+    ) -> str:
+        """Gera uma tabela única com observações e status RACT/CCT de cada norma."""
+        tipos_documento = ("RACT", "CCT")
+        normas_para_tabela = set()
+        for tipo in tipos_documento:
+            normas_aplicaveis_tipo = normas_aplicaveis_por_tipo.get(tipo, {})
+            normas_para_tabela.update(normas_aplicaveis_tipo)
+            normas_verificadas_tipo = normas_verificadas_por_tipo.get(tipo, set())
+            for norma_id in normas_verificadas_tipo:
+                detalhes_norma = self._obter_detalhes_norma(norma_id)
+                status_norma = (detalhes_norma.get("status") or "").strip().lower()
+                if status_norma in ["revogada", "revogado"]:
+                    normas_para_tabela.add(norma_id)
+
+        if not normas_para_tabela:
+            return ""
+
+        detalhes_normas = {
+            norma_id: self._obter_detalhes_norma(norma_id)
+            for norma_id in normas_para_tabela
+        }
+        normas_ordenadas = sorted(
+            normas_para_tabela,
+            key=lambda norma_id: (
+                1 if (
+                    (detalhes_normas[norma_id].get("status") or "").strip().lower()
+                    not in ["revogada", "revogado"]
+                    and any(
+                        norma_id in normas_verificadas_por_tipo.get(tipo, set())
+                        for tipo in tipos_documento
+                    )
+                ) else 0,
+                (detalhes_normas[norma_id].get("nome") or norma_id).lower()
+            )
+        )
+
+        latex = (
+            "\\begin{itemize}\n"
+            "\\item Normativos:\n"
+            "\\begin{longtable}{p{0.45\\textwidth}p{0.30\\textwidth}p{0.12\\textwidth}}\n"
+            "\\hline\n"
+            "\\textbf{Norma} & \\textbf{Observação} & \\textbf{Status} \\\\\n"
+            "\\hline\n"
+            "\\endhead\n"
+        )
+        for norma_id in normas_ordenadas:
+            detalhes_norma = detalhes_normas[norma_id]
+            nome_norma = escapar_latex(detalhes_norma["nome"])
+            url_norma = detalhes_norma["url"]
+            status_norma = (detalhes_norma.get("status") or "").strip().lower()
+            norma_revogada = status_norma in ["revogada", "revogado"]
+            status_ract = (
+                "red" if norma_revogada else
+                "blue" if norma_id in normas_verificadas_por_tipo.get("RACT", set()) else "red"
+            )
+            status_cct = (
+                "red" if norma_revogada else
+                "blue" if norma_id in normas_verificadas_por_tipo.get("CCT", set()) else "red"
+            )
+            status_texto = (
+                f"\\textcolor{{{status_ract}}}{{RACT}}"
+                "\\textcolor{black}{/}"
+                f"\\textcolor{{{status_cct}}}{{CCT}}"
+            )
+
+            motivadores = []
+            for tipo in tipos_documento:
+                for motivador in normas_aplicaveis_por_tipo.get(tipo, {}).get(norma_id, []):
+                    if motivador not in motivadores:
+                        motivadores.append(motivador)
+
+            if not motivadores and norma_revogada:
+                motivadores = [status_norma]
+
+            motivadores_formatados = []
+            for motivador in motivadores:
+                motivador_formatado = motivador
+                for nome_equipamento, rotulo_equipamento in equipamentos_rotulos.items():
+                    motivador_formatado = motivador_formatado.replace(
+                        nome_equipamento, rotulo_equipamento
+                    )
+                if motivador_formatado not in motivadores_formatados:
+                    motivadores_formatados.append(motivador_formatado)
+            motivadores_texto = escapar_latex("; ".join(motivadores_formatados))
+
+            nome_norma_formatado = (
+                f"\\href{{{url_norma}}}{{{nome_norma}}}" if url_norma else nome_norma
+            )
+            latex += (
+                f"{nome_norma_formatado} & {motivadores_texto} & {status_texto} "
+                "\\\\ \\hline\n"
+            )
+
+        return latex + "\\end{longtable}\n\\end{itemize}\n\n"
+
     def _gerar_relatorio_latex(self) -> str:
         """Gera relatório em LaTeX com todos os resultados da análise."""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -2735,7 +2835,7 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
             #if normas_aplicaveis:
                 #log_info(f"Normas: {list(normas_aplicaveis.keys())}")
                         
-            # Extratificar a análise em duas tabelas: RACT e CCT.
+            # Manter as normas aplicáveis e verificadas separadas por documento para avaliar os status.
             normas_aplicaveis_por_tipo = {
                 "RACT": self._coletar_normas_aplicaveis_requerimento(req, TIPO_RACT),
                 "CCT": self._coletar_normas_aplicaveis_requerimento(req, TIPO_CCT)
@@ -2804,119 +2904,60 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 modelos_nao_encontrados
             )
 
-            if normas_aplicaveis or any(normas_verificadas_por_tipo.values()):
-                for nome_tipo, normas_verificadas_tipo in normas_verificadas_por_tipo.items():
-                    normas_aplicaveis_tipo = normas_aplicaveis_por_tipo.get(nome_tipo, {})
+            tabela_normativos = self._gerar_tabela_normativos_latex(
+                normas_aplicaveis_por_tipo,
+                normas_verificadas_por_tipo,
+                equipamentos_rotulos
+            )
+            if tabela_normativos:
+                latex_content += tabela_normativos
 
-                    latex_content += f"""\\paragraph{{{nome_tipo}}}
-\\begin{{longtable}}{{p{{0.15\\textwidth}}p{{0.45\\textwidth}}p{{0.3\\textwidth}}}}
-\\hline
-\\textbf{{Status}} & \\textbf{{Norma}} & \\textbf{{Observação}} \\\\
-\\hline
-\\endhead
-"""
+                incluir_br = False
+                if cct_strings_desobrigam_ato17865:
+                    strings_desobrigacao = sorted(cct_strings_desobrigam_ato17865)
+                    strings_desobrigacao_originais = [
+                        PALAVRAS_CHAVE_MANUAL_ORIGINAIS.get(s, s)
+                        for s in strings_desobrigacao
+                    ]
+                    strings_desobrigacao_escapadas = [
+                        escapar_latex(s) for s in strings_desobrigacao_originais
+                    ]
+                    texto_strings = "; ".join(strings_desobrigacao_escapadas)
+                    latex_content += f"{texto_strings}.\n\n"
 
-                    # Base da tabela por tipo: normas aplicáveis do requerimento.
-                    normas_para_tabela_tipo = set(normas_aplicaveis_tipo.keys())
-
-                    # Acrescentar normas revogadas/revogados verificadas no tipo, mesmo fora das aplicáveis.
-                    for norma_id in normas_verificadas_tipo:
-                        detalhes_norma = self._obter_detalhes_norma(norma_id)
-                        status_norma_raw = (detalhes_norma.get('status') or '').strip().lower()
-                        if status_norma_raw in ['revogada', 'revogado']:
-                            normas_para_tabela_tipo.add(norma_id)
-
-                    # Ordenar por status: primeiro erro, depois OK; dentro de cada grupo, ordem alfabética.
-                    normas_ordenadas = sorted(
-                        normas_para_tabela_tipo,
-                        key=lambda norma_id: (
-                            1 if (
-                                (self._obter_detalhes_norma(norma_id).get('status') or '').strip().lower() not in ['revogada', 'revogado']
-                                and norma_id in normas_verificadas_tipo
-                            ) else 0,
-                            (self._obter_detalhes_norma(norma_id).get('nome') or norma_id).lower()
-                        )
+                if cct_contem_eirp:
+                    if incluir_br:
+                        latex_content += "<br>"
+                    latex_content += (
+                        "Os valores de potência indicados na(s) faixa(s) de 5150 a 5350 MHz, "
+                        "5470 a 5725 MHz e 5925 a 7125 MHz referem-se à potência média E.I.R.P."
                     )
+                    incluir_br = True
 
-                    for norma_id in normas_ordenadas:
-                        detalhes_norma = self._obter_detalhes_norma(norma_id)
-                        nome_norma = escapar_latex(detalhes_norma['nome'])
-                        url_norma = detalhes_norma['url']
-                        status_norma_raw = (detalhes_norma.get('status') or '').strip().lower()
+                if cct_contem_produto_nao_acabado:
+                    if incluir_br:
+                        latex_content += "<br>"
+                    latex_content += (
+                        "Produto não acabado, de uso interno, cuja integração em outros "
+                        "equipamentos passíveis de homologação pode requerer nova avaliação."
+                    )
+                    incluir_br = True
 
-                        # Revogada/revogado sempre entra com ícone de erro; demais seguem regra por tipo.
-                        if status_norma_raw in ['revogada', 'revogado']:
-                            status_norma = "\\textcolor{red}{$\\times$}"
-                        elif norma_id in normas_verificadas_tipo:
-                            status_norma = "\\textbf{\\textcolor{blue}{$\\checkmark$}}"
-                        else:
-                            status_norma = "\\textcolor{red}{$\\times$}"
+                if cct_contem_ipv6:
+                    if incluir_br:
+                        latex_content += "<br>"
+                    latex_content += "Suporta protocolo IPv6."
+                    incluir_br = True
 
-                        motivadores = list(normas_aplicaveis_tipo.get(norma_id, []))
-
-                        # Se for norma revogada adicionada por verificação e sem motivador, preencher contexto mínimo.
-                        if not motivadores and status_norma_raw in ['revogada', 'revogado']:
-                            motivadores = [f"{status_norma_raw}"]
-
-                        # Substituir nomes de equipamentos por rótulos [E#] na tabela, preservando o restante do texto.
-                        motivadores_formatados = []
-                        for motivador in motivadores:
-                            motivador_formatado = motivador
-                            for nome_equipamento, rotulo_equipamento in equipamentos_rotulos.items():
-                                motivador_formatado = motivador_formatado.replace(nome_equipamento, rotulo_equipamento)
-                            motivadores_formatados.append(motivador_formatado)
-
-                        motivadores_texto = escapar_latex("; ".join(motivadores_formatados))
-
-                        if url_norma:
-                            # Criar hyperlink para a norma
-                            latex_content += f"{status_norma} & \\href{{{url_norma}}}{{{nome_norma}}} & {motivadores_texto} \\\\ \\hline"
-                        else:
-                            # Sem hyperlink se não há URL
-                            latex_content += f"{status_norma} & {nome_norma} & {motivadores_texto} \\\\ \\hline"
-
-                    latex_content += """\\end{longtable}
-"""
-                    incluir_br = False
-                    if nome_tipo == "CCT" and cct_strings_desobrigam_ato17865:
-                        strings_desobrigacao = sorted(cct_strings_desobrigam_ato17865)
-                        # Converte de volta para a string original cadastrada antes de renderizar no PDF.
-                        strings_desobrigacao_originais = [
-                            PALAVRAS_CHAVE_MANUAL_ORIGINAIS.get(s, s) for s in strings_desobrigacao
-                        ]
-                        strings_desobrigacao_escapadas = [escapar_latex(s) for s in strings_desobrigacao_originais]
-                        texto_strings = "; ".join(strings_desobrigacao_escapadas)
-                        latex_content += f"{texto_strings}.\n\n" 
-                        # incluir_br = True
-                    
-                    if nome_tipo == "CCT" and cct_contem_eirp:
-                        if incluir_br:
-                            latex_content += "<br>"
-                        latex_content += "Os valores de potência indicados na(s) faixa(s) de 5150 a 5350 MHz, 5470 a 5725 MHz e 5925 a 7125 MHz referem-se à potência média E.I.R.P."
-                        incluir_br = True
-
-                    if nome_tipo == "CCT" and cct_contem_produto_nao_acabado:
-                        if incluir_br:
-                            latex_content += "<br>"
-                        latex_content += "Produto não acabado, de uso interno, cuja integração em outros equipamentos passíveis de homologação pode requerer nova avaliação."
-                        incluir_br = True
-
-                    if nome_tipo == "CCT" and cct_contem_ipv6:
-                        if incluir_br:
-                            latex_content += "<br>"
-                        latex_content += "Suporta protocolo IPv6."
-                        incluir_br = True
-
-                    if nome_tipo == "CCT" and cct_contem_vinculo_homologacao:
-                        if incluir_br:
-                            latex_content += "<br>"
-                        latex_content += (
-                            "A validade deste certificado está vinculada à vigência da homologação ANATEL "
-                            "HHHH-AA-FFFF, relativa ao módulo de RF modelo XXXX "
-                            "incorporado ao produto."
-                        )
-                        incluir_br = True
-                    
+                if cct_contem_vinculo_homologacao:
+                    if incluir_br:
+                        latex_content += "<br>"
+                    latex_content += (
+                        "A validade deste certificado está vinculada à vigência da homologação ANATEL "
+                        "HHHH-AA-FFFF, relativa ao módulo de RF modelo XXXX "
+                        "incorporado ao produto."
+                    )
+                    incluir_br = True
             else:
                 latex_content += f"\\textit{{Nenhuma norma específica identificada como requisito identificado para: {equipamentos_resumo}}}\n\n"
 

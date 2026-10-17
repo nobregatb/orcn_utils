@@ -1452,7 +1452,7 @@ class AnalisadorRequerimentos:
         """Lista em LaTeX as validações não conformes; 'OK' quando todas foram validadas."""
         nao_conformes = [validacao for validacao in validacoes if validacao["valida"] != "sim"]
         if not nao_conformes:
-            return "\\textcolor{green}{OK}\n"
+            return "\\textcolor{blue}{OK}\n"
         latex = "\n\\begin{itemize}\n"
         for validacao in nao_conformes:
             faixa = escapar_latex(validacao["faixa"])
@@ -2415,6 +2415,7 @@ class AnalisadorRequerimentos:
         cct_contem_ipv6: bool,
         cct_contem_produto_nao_acabado: bool,
         cct_contem_palavra_vinculado: bool,
+        caracteristicas_nao_conformes: List[Dict[str, str]],
         modelos_nao_encontrados: Optional[List[str]] = None
     ) -> str:
         """Monta as exigências quando as declarações do CCT faltam no JSON do produto."""
@@ -2455,11 +2456,13 @@ class AnalisadorRequerimentos:
             if condicao_cct and frase_obrigatoria.casefold() not in especificacoes_adicionais_normalizadas
         ]
 
-        tem_exigencias = bool(exigencias or modelos_nao_encontrados)
+        tem_exigencias = bool(
+            exigencias or modelos_nao_encontrados or caracteristicas_nao_conformes
+        )
         cor_exigencia = "red" if tem_exigencias else "blue"
         secao_latex = (
             "\\begin{itemize}\n"
-            f"\\item \\textcolor{{{cor_exigencia}}}{{\\textbf{{Exigência:}}}}\n"
+            "\\item Exigência:\n"
             f"{{\\color{{{cor_exigencia}}}\n"
         )
         if tem_exigencias:
@@ -2474,6 +2477,17 @@ class AnalisadorRequerimentos:
                 secao_latex += (
                     "    \\item Informar nome(s) do(s) modelo(s) conforme CCT.\n"
                 )
+            if caracteristicas_nao_conformes:
+                secao_latex += "    \\item Corrigir as características técnicas:\n"
+                secao_latex += "    \\begin{itemize}\n"
+                for validacao in caracteristicas_nao_conformes:
+                    faixa = escapar_latex(validacao["faixa"])
+                    mensagem = escapar_latex(validacao["mensagem"])
+                    secao_latex += (
+                        f"        \\item {faixa}: "
+                        f"\\textcolor{{red}}{{Não conforme}} -- {mensagem}\n"
+                    )
+                secao_latex += "    \\end{itemize}\n"
             secao_latex += "\\end{enumerate}\n"
         else:
             secao_latex += "\\textit{Nenhuma identificada.}\n"
@@ -2766,21 +2780,29 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                     "\\end{itemize}\n\n"
                 )
 
+            caracteristicas_validadas = self._validar_caracteristicas_tecnicas_json(
+                req.get("dados_requerimento"),
+                set(normas_aplicaveis.keys())
+            )
+            caracteristicas_nao_conformes = [
+                validacao for validacao in caracteristicas_validadas
+                if validacao["valida"] != "sim"
+            ]
+            if not caracteristicas_nao_conformes:
+                latex_content += (
+                    "\\begin{itemize}\n"
+                    "    \\item Características técnicas: "
+                    f"{self._formatar_validacao_frequencias_latex(caracteristicas_validadas)}"
+                    "\\end{itemize}\n\n"
+                )
             latex_content += self._construir_secao_exigencias(
                 req.get("dados_requerimento"),
                 cct_contem_ipv6,
                 cct_contem_produto_nao_acabado,
                 cct_contem_palavra_vinculado,
+                caracteristicas_nao_conformes,
                 modelos_nao_encontrados
             )
-
-            latex_content += "\\subsection*{Validação dos dados do CH}\n"
-            latex_content += "\\paragraph{Características técnicas} "
-            caracteristicas_validadas = self._validar_caracteristicas_tecnicas_json(
-                req.get("dados_requerimento"),
-                set(normas_aplicaveis.keys())
-            )
-            latex_content += self._formatar_validacao_frequencias_latex(caracteristicas_validadas)
 
             if normas_aplicaveis or any(normas_verificadas_por_tipo.values()):
                 for nome_tipo, normas_verificadas_tipo in normas_verificadas_por_tipo.items():
@@ -2826,7 +2848,7 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                         if status_norma_raw in ['revogada', 'revogado']:
                             status_norma = "\\textcolor{red}{$\\times$}"
                         elif norma_id in normas_verificadas_tipo:
-                            status_norma = "\\textbf{\\textcolor{green}{$\\checkmark$}}"
+                            status_norma = "\\textbf{\\textcolor{blue}{$\\checkmark$}}"
                         else:
                             status_norma = "\\textcolor{red}{$\\times$}"
 

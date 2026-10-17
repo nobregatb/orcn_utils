@@ -178,7 +178,7 @@ def ler_aba_certifica(page, sufixo):
 def extrair_dados_requerimento_certifica(page):
     """
     Lê a página de análise do requerimento e retorna os blocos do JSON:
-    ocd, lab, fabricante, solicitante, produto, modelos, frequencias,
+    ocd, lab, fabricante, solicitante, produto, modelos,
     caracteristicas_tecnicas e certificado.
     """
     aba_solicitante = ler_aba_certifica(page, CERTIFICA_ABA_SOLICITANTE)
@@ -196,16 +196,23 @@ def extrair_dados_requerimento_certifica(page):
     if aba_laboratorio["registros"]:
         lab = dict(zip(CERTIFICA_CAMPOS_LABORATORIO, aba_laboratorio["registros"][0]))
 
+    produto = pares_para_dict(aba_produto["pares"])
+    produtos = [{
+        "nome": str(produto.get("Produto") or "").strip(),
+        "caracteristicas": tabela_por_cabecalho(
+            aba_especificacoes, CERTIFICA_CABECALHO_FREQUENCIAS
+        ),
+    }, *aba_especificacoes["subprodutos"]]
+
     return {
         "fabricante": pares_para_dict(ler_aba_certifica(page, CERTIFICA_ABA_FABRICANTE)["pares"]),
         "solicitante": pares_para_dict(pares[:corte]),
         "ocd": pares_para_dict(pares[corte + 1:]),
         "lab": lab,
-        "produto": pares_para_dict(aba_produto["pares"]),
+        "produto": produto,
         "modelos": tabela_por_cabecalho(aba_produto, CERTIFICA_CABECALHO_MODELOS),
-        "frequencias": tabela_por_cabecalho(aba_especificacoes, CERTIFICA_CABECALHO_FREQUENCIAS),
         "caracteristicas_tecnicas": {
-            "subprodutos": aba_especificacoes["subprodutos"],
+            "produtos": produtos,
         },
         "certificado": pares_para_dict(ler_aba_certifica(page, CERTIFICA_ABA_CERTIFICADO)["pares"]),
     }
@@ -217,6 +224,7 @@ def gravar_json_requerimento_certifica(requerimento, dados, pasta):
     conteudo = carregar_json(caminho_json) or {}
     conteudo["requerimento"] = {**conteudo.get("requerimento", {}), **requerimento}
     conteudo.update(dados)
+    conteudo.pop("frequencias", None)
     if not salvar_json(conteudo, caminho_json, indent=4):
         raise OSError(f"Não foi possível gravar {caminho_json}")
     log_info(f"JSON salvo: {caminho_json}")

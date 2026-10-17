@@ -88,10 +88,10 @@ def atualizar_jsons_em_analise():
                     dados = extrair_dados_requerimento_certifica(page)
                     gravar_json_requerimento_certifica(requerimento, dados, pasta)
 
-                    subprodutos = dados["caracteristicas_tecnicas"]["subprodutos"]
+                    produtos = dados["caracteristicas_tecnicas"]["produtos"]
                     log_info(
                         f"✅ JSON atualizado: {pasta} "
-                        f"({len(subprodutos)} subproduto(s))."
+                        f"({len(produtos)} produto(s))."
                     )
                     atualizados += 1
                 except Exception as erro:

@@ -1374,21 +1374,6 @@ class AnalisadorRequerimentos:
                 modelos_unicos.append(modelo)
         return modelos_unicos
 
-    def _validar_frequencias_json(
-        self,
-        dados_requerimento: Optional[Dict],
-        normas_referencia: Set[str]
-    ) -> List[Dict[str, str]]:
-        """Aplica as regras de uso de faixa aos registros de frequência do JSON."""
-        frequencias = dados_requerimento.get("frequencias") if isinstance(dados_requerimento, dict) else None
-        if not isinstance(frequencias, list) or not frequencias:
-            return [{
-                "faixa": "Frequências",
-                "valida": "inconclusiva",
-                "mensagem": "Nenhuma frequência válida foi encontrada no JSON do requerimento."
-            }]
-        return self._validar_registros_frequencia(frequencias, normas_referencia)
-
     @staticmethod
     def _tabela_para_registros(tabela: Any) -> List[Any]:
         """Converte uma tabela [cabeçalho, linha, ...] em lista de dicts; aceita lista de dicts já pronta."""
@@ -1412,32 +1397,49 @@ class AnalisadorRequerimentos:
         dados_requerimento: Optional[Dict],
         normas_referencia: Set[str]
     ) -> List[Dict[str, str]]:
-        """Aplica as regras de uso de faixa às características técnicas de cada subproduto do JSON."""
+        """Aplica as regras de uso de faixa às características técnicas dos produtos do JSON."""
         caracteristicas = (
             dados_requerimento.get("caracteristicas_tecnicas")
             if isinstance(dados_requerimento, dict) else None
         )
-        subprodutos = caracteristicas.get("subprodutos") if isinstance(caracteristicas, dict) else None
-        if not isinstance(subprodutos, list) or not subprodutos:
+        produtos = caracteristicas.get("produtos") if isinstance(caracteristicas, dict) else None
+        if produtos is None and isinstance(dados_requerimento, dict):
+            # Mantém a análise de requerimentos gravados antes da mudança de estrutura.
+            subprodutos = caracteristicas.get("subprodutos") if isinstance(caracteristicas, dict) else None
+            frequencias = dados_requerimento.get("frequencias")
+            if isinstance(subprodutos, list) or isinstance(frequencias, list):
+                produto = dados_requerimento.get("produto")
+                nome_produto = (
+                    str(produto.get("Produto") or "").strip()
+                    if isinstance(produto, dict) else ""
+                )
+                produtos = [{
+                    "nome": nome_produto or "Produto principal",
+                    "caracteristicas": frequencias if isinstance(frequencias, list) else [],
+                }]
+                if isinstance(subprodutos, list):
+                    produtos.extend(subprodutos)
+
+        if not isinstance(produtos, list) or not produtos:
             return [{
                 "faixa": "Características técnicas",
                 "valida": "inconclusiva",
-                "mensagem": "Nenhuma característica técnica de subproduto foi encontrada no JSON do requerimento."
+                "mensagem": "Nenhuma característica técnica de produto foi encontrada no JSON do requerimento."
             }]
 
         resultado = []
-        for indice, subproduto in enumerate(subprodutos, 1):
-            nome = str(subproduto.get("nome", "")).strip() if isinstance(subproduto, dict) else ""
-            nome = nome or f"Subproduto {indice}"
+        for indice, produto in enumerate(produtos, 1):
+            nome = str(produto.get("nome", "")).strip() if isinstance(produto, dict) else ""
+            nome = nome or f"Produto {indice}"
             registros = (
-                self._tabela_para_registros(subproduto.get("caracteristicas"))
-                if isinstance(subproduto, dict) else []
+                self._tabela_para_registros(produto.get("caracteristicas"))
+                if isinstance(produto, dict) else []
             )
             if not registros:
                 resultado.append({
                     "faixa": nome,
                     "valida": "inconclusiva",
-                    "mensagem": "Nenhuma característica técnica válida foi encontrada para o subproduto."
+                    "mensagem": "Nenhuma característica técnica válida foi encontrada para o produto."
                 })
                 continue
             for validacao in self._validar_registros_frequencia(registros, normas_referencia):
@@ -2773,13 +2775,6 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
             )
 
             latex_content += "\\subsection*{Validação dos dados do CH}\n"
-            latex_content += "\\paragraph{Frequências} "
-            frequencias_validadas = self._validar_frequencias_json(
-                req.get("dados_requerimento"),
-                set(normas_aplicaveis.keys())
-            )
-            latex_content += self._formatar_validacao_frequencias_latex(frequencias_validadas)
-
             latex_content += "\\paragraph{Características técnicas} "
             caracteristicas_validadas = self._validar_caracteristicas_tecnicas_json(
                 req.get("dados_requerimento"),

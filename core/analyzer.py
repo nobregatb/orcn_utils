@@ -3056,7 +3056,7 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                     )
                     incluir_br = True
 
-                if cct_contem_produto_nao_acabado:
+                '''if cct_contem_produto_nao_acabado:
                     if incluir_br:
                         latex_content += "<br>"
                     latex_content += (
@@ -3080,6 +3080,7 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                         "incorporado ao produto."
                     )
                     incluir_br = True
+                '''
             else:
                 latex_content += f"\\textit{{Nenhuma norma específica identificada como requisito identificado para: {equipamentos_resumo}}}\n\n"
 

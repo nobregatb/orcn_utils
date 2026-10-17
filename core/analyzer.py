@@ -2416,11 +2416,14 @@ class AnalisadorRequerimentos:
         cct_contem_produto_nao_acabado: bool,
         cct_contem_palavra_vinculado: bool,
         caracteristicas_nao_conformes: List[Dict[str, str]],
-        modelos_nao_encontrados: Optional[List[str]] = None
+        modelos_nao_encontrados: Optional[List[str]] = None,
+        exigencias_assinatura: Optional[List[str]] = None
     ) -> str:
         """Monta as exigências quando as declarações do CCT faltam no JSON do produto."""
         if modelos_nao_encontrados is None:
             modelos_nao_encontrados = []
+        if exigencias_assinatura is None:
+            exigencias_assinatura = []
         if not isinstance(dados_requerimento, dict):
             dados_requerimento = {}
         produto_requerimento = dados_requerimento.get("produto", {})
@@ -2457,7 +2460,10 @@ class AnalisadorRequerimentos:
         ]
 
         tem_exigencias = bool(
-            exigencias or modelos_nao_encontrados or caracteristicas_nao_conformes
+            exigencias
+            or modelos_nao_encontrados
+            or caracteristicas_nao_conformes
+            or exigencias_assinatura
         )
         cor_exigencia = "red" if tem_exigencias else "blue"
         secao_latex = (
@@ -2488,11 +2494,90 @@ class AnalisadorRequerimentos:
                         f"\\textcolor{{red}}{{Não conforme}} -- {mensagem}\n"
                     )
                 secao_latex += "    \\end{itemize}\n"
+            for exigencia in exigencias_assinatura:
+                secao_latex += f"    \\item {escapar_latex(exigencia)}\n"
             secao_latex += "\\end{enumerate}\n"
         else:
             secao_latex += "\\textit{Nenhuma identificada.}\n"
         secao_latex += "}\n\\end{itemize}\n\n"
         return secao_latex
+
+    @staticmethod
+    def _pdf_tem_assinatura_digital(caminho_pdf: Path) -> Optional[bool]:
+        """Verifica se o PDF contém uma assinatura digital incorporada."""
+        try:
+            with fitz.open(caminho_pdf) as pdf:
+                for pagina in pdf:
+                    for campo in pagina.widgets() or ():
+                        if campo.field_type != fitz.PDF_WIDGET_TYPE_SIGNATURE:
+                            continue
+
+                        xref_campo = campo.xref
+                        xrefs_visitados: Set[int] = set()
+                        while xref_campo not in xrefs_visitados:
+                            xrefs_visitados.add(xref_campo)
+                            tipo_valor, valor = pdf.xref_get_key(xref_campo, "V")
+                            if tipo_valor == "xref":
+                                referencia = re.match(r"(\d+)\s+\d+\s+R$", valor)
+                                if referencia:
+                                    xref_assinatura = int(referencia.group(1))
+                                    tipo_intervalo, intervalo = pdf.xref_get_key(
+                                        xref_assinatura, "ByteRange"
+                                    )
+                                    tipo_conteudo, conteudo = pdf.xref_get_key(
+                                        xref_assinatura, "Contents"
+                                    )
+                                    valores_intervalo = re.findall(r"\d+", intervalo)
+                                    if (
+                                        tipo_intervalo == "array"
+                                        and len(valores_intervalo) >= 4
+                                        and len(valores_intervalo) % 2 == 0
+                                        and any(int(valor) > 0 for valor in valores_intervalo)
+                                        and tipo_conteudo in ("string", "hex string")
+                                        and any(caractere != "\x00" for caractere in conteudo)
+                                    ):
+                                        return True
+                                break
+                            if tipo_valor == "dict":
+                                intervalo = re.search(
+                                    r"/ByteRange\s*\[([^\]]+)\]", valor
+                                )
+                                conteudo = re.search(
+                                    r"/Contents\s*<([0-9A-Fa-f\s]+)>", valor
+                                )
+                                valores_intervalo = (
+                                    re.findall(r"\d+", intervalo.group(1))
+                                    if intervalo else []
+                                )
+                                if (
+                                    len(valores_intervalo) >= 4
+                                    and len(valores_intervalo) % 2 == 0
+                                    and any(int(valor) > 0 for valor in valores_intervalo)
+                                    and conteudo
+                                    and any(
+                                        caractere != "0"
+                                        for caractere in conteudo.group(1)
+                                        if not caractere.isspace()
+                                    )
+                                ):
+                                    return True
+                                break
+                            if tipo_valor != "null":
+                                break
+
+                            tipo_pai, pai = pdf.xref_get_key(xref_campo, "Parent")
+                            referencia_pai = (
+                                re.match(r"(\d+)\s+\d+\s+R$", pai)
+                                if tipo_pai == "xref" else None
+                            )
+                            if not referencia_pai:
+                                break
+                            xref_campo = int(referencia_pai.group(1))
+
+            return False
+        except Exception as e:
+            log_erro(f"Falha ao verificar assinatura digital em {caminho_pdf}: {e}")
+            return None
 
     def _gerar_tabela_normativos_latex(
         self,
@@ -2849,6 +2934,42 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 (doc for doc in documentos if doc.get("tipo") == TIPO_CCT),
                 None
             )
+            documentos_assinatura = {
+                "RACT": next(
+                    (doc for doc in documentos if doc.get("tipo") == TIPO_RACT),
+                    None
+                ),
+                "CCT": documento_cct
+            }
+            status_assinatura = {}
+            for tipo_documento, documento in documentos_assinatura.items():
+                status_assinatura[tipo_documento] = (
+                    self._pdf_tem_assinatura_digital(Path(documento["caminho"]))
+                    if documento else False
+                )
+            exigencias_assinatura = []
+            ract_sem_assinatura = status_assinatura["RACT"] is not True
+            cct_sem_assinatura = status_assinatura["CCT"] is not True
+            if ract_sem_assinatura and cct_sem_assinatura:
+                exigencias_assinatura.append(
+                    "RACT/CCT não contêm assinaturas válidas."
+                )
+            elif ract_sem_assinatura:
+                exigencias_assinatura.append(
+                    "O RACT não contém uma assinatura válida."
+                )
+            elif cct_sem_assinatura:
+                exigencias_assinatura.append(
+                    "O CCT não contém uma assinatura válida."
+                )
+            else:
+                latex_content += (
+                    "\\begin{itemize}\n"
+                    "    \\item Assinatura eletrônica (RACT/CCT): "
+                    "\\textcolor{blue}{OK}\n"
+                    "\\end{itemize}\n\n"
+                )
+
             dados_cct = documento_cct.get("dados_extraidos", {}) if documento_cct else {}
             modelos_nao_encontrados = []
             status_modelos = None
@@ -2901,7 +3022,8 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 cct_contem_produto_nao_acabado,
                 cct_contem_palavra_vinculado,
                 caracteristicas_nao_conformes,
-                modelos_nao_encontrados
+                modelos_nao_encontrados,
+                exigencias_assinatura
             )
 
             tabela_normativos = self._gerar_tabela_normativos_latex(

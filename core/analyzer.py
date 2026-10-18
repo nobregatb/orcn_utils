@@ -2441,7 +2441,8 @@ class AnalisadorRequerimentos:
         caracteristicas_nao_conformes: List[Dict[str, str]],
         modelos_nao_encontrados: Optional[List[str]] = None,
         exigencias_assinatura: Optional[List[str]] = None,
-        normas_revogadas: Optional[List[str]] = None
+        normas_revogadas: Optional[List[str]] = None,
+        cct_desobriga_sar: bool = False
     ) -> str:
         """Monta as exigências quando as declarações do CCT faltam no JSON do produto."""
         if modelos_nao_encontrados is None:
@@ -2452,6 +2453,32 @@ class AnalisadorRequerimentos:
             normas_revogadas = []
         if not isinstance(dados_requerimento, dict):
             dados_requerimento = {}
+        campos_sar = {
+            "SAR (W/kg) Cabeça",
+            "SAR (W/kg) Tronco",
+            "SAR (W/Kg) Membro",
+        }
+
+        def contem_valor_sar_numerico(valor: object) -> bool:
+            if isinstance(valor, dict):
+                return any(
+                    (
+                        chave in campos_sar
+                        and isinstance(conteudo, (int, float))
+                        and not isinstance(conteudo, bool)
+                    )
+                    or contem_valor_sar_numerico(conteudo)
+                    for chave, conteudo in valor.items()
+                )
+            if isinstance(valor, list):
+                return any(contem_valor_sar_numerico(item) for item in valor)
+            return False
+
+        exigir_avaliacao_sar = (
+            not contem_valor_sar_numerico(dados_requerimento)
+            and not cct_desobriga_sar
+        )
+
         produto_requerimento = dados_requerimento.get("produto", {})
         if not isinstance(produto_requerimento, dict):
             produto_requerimento = {}
@@ -2487,6 +2514,7 @@ class AnalisadorRequerimentos:
 
         tem_exigencias = bool(
             exigencias
+            or exigir_avaliacao_sar
             or modelos_nao_encontrados
             or caracteristicas_nao_conformes
             or exigencias_assinatura
@@ -2506,6 +2534,16 @@ class AnalisadorRequerimentos:
                 for exigencia in exigencias:
                     secao_latex += f"        \\item {escapar_latex(exigencia)}\n"
                 secao_latex += "    \\end{itemize}\n"
+            if exigir_avaliacao_sar:
+                secao_latex += (
+                    "    \\item "
+                    "Registrar a avaliação da conformidade, ou não aplicabilidade, "
+                    "dos seguintes requisitos transversais vigentes aplicáveis, "
+                    "hipoteticamente, a este tipo de produto: Ato nº 17865, de 30 de "
+                    "dezembro de 2023. No caso de dispensa de ensaios de SAR, observar "
+                    "Ato nº 4083, especificamente no item 6.6.8.3 (copiar e colar "
+                    "opções de texto).\n"
+                )
             if modelos_nao_encontrados:
                 secao_latex += (
                     "    \\item Informar nome(s) do(s) modelo(s) conforme CCT.\n"
@@ -3056,7 +3094,8 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 caracteristicas_nao_conformes,
                 modelos_nao_encontrados,
                 exigencias_assinatura,
-                normas_revogadas
+                normas_revogadas,
+                bool(cct_strings_desobrigam_ato17865)
             )
 
             tabela_normativos = self._gerar_tabela_normativos_latex(
@@ -3068,18 +3107,6 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 latex_content += tabela_normativos
 
                 incluir_br = False
-                if cct_strings_desobrigam_ato17865:
-                    strings_desobrigacao = sorted(cct_strings_desobrigam_ato17865)
-                    strings_desobrigacao_originais = [
-                        PALAVRAS_CHAVE_MANUAL_ORIGINAIS.get(s, s)
-                        for s in strings_desobrigacao
-                    ]
-                    strings_desobrigacao_escapadas = [
-                        escapar_latex(s) for s in strings_desobrigacao_originais
-                    ]
-                    texto_strings = "; ".join(strings_desobrigacao_escapadas)
-                    latex_content += f"{texto_strings}.\n\n"
-
                 if cct_contem_eirp:
                     if incluir_br:
                         latex_content += "<br>"

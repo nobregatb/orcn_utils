@@ -2171,6 +2171,29 @@ class AnalisadorRequerimentos:
 
         return normas_verificadas_tipo
 
+    def _coletar_normas_revogadas(
+        self,
+        normas_verificadas_por_tipo: Dict[str, Set[str]]
+    ) -> List[str]:
+        """Retorna nomes únicos de normas revogadas citadas no RACT ou no CCT."""
+        normas_revogadas = {}
+        for tipo_documento in (TIPO_RACT, TIPO_CCT):
+            normas_tipo = normas_verificadas_por_tipo.get(tipo_documento.upper(), set())
+            for norma_id in normas_tipo:
+                detalhes_norma = self._obter_detalhes_norma(norma_id)
+                status_norma = (detalhes_norma.get("status") or "").strip().casefold()
+                nome_norma = (detalhes_norma.get("nome") or "").strip()
+
+                # Cadastros provisórios não confirmam que a norma citada foi revogada.
+                if (
+                    status_norma in {"revogado", "revogada"}
+                    and nome_norma
+                    and not nome_norma.casefold().startswith("norma (")
+                ):
+                    normas_revogadas[norma_id] = nome_norma
+
+        return sorted(normas_revogadas.values(), key=str.casefold)
+
     def _coletar_palavras_chave_consolidadas(self, req_dados: Dict) -> Tuple[Dict[str, int], List[str]]:
         """
         Coleta e consolida todas as palavras-chave encontradas e não encontradas nos documentos do requerimento.
@@ -2417,13 +2440,16 @@ class AnalisadorRequerimentos:
         cct_contem_palavra_vinculado: bool,
         caracteristicas_nao_conformes: List[Dict[str, str]],
         modelos_nao_encontrados: Optional[List[str]] = None,
-        exigencias_assinatura: Optional[List[str]] = None
+        exigencias_assinatura: Optional[List[str]] = None,
+        normas_revogadas: Optional[List[str]] = None
     ) -> str:
         """Monta as exigências quando as declarações do CCT faltam no JSON do produto."""
         if modelos_nao_encontrados is None:
             modelos_nao_encontrados = []
         if exigencias_assinatura is None:
             exigencias_assinatura = []
+        if normas_revogadas is None:
+            normas_revogadas = []
         if not isinstance(dados_requerimento, dict):
             dados_requerimento = {}
         produto_requerimento = dados_requerimento.get("produto", {})
@@ -2464,6 +2490,7 @@ class AnalisadorRequerimentos:
             or modelos_nao_encontrados
             or caracteristicas_nao_conformes
             or exigencias_assinatura
+            or normas_revogadas
         )
         cor_exigencia = "red" if tem_exigencias else "blue"
         secao_latex = (
@@ -2483,6 +2510,8 @@ class AnalisadorRequerimentos:
                 secao_latex += (
                     "    \\item Informar nome(s) do(s) modelo(s) conforme CCT.\n"
                 )
+            for nome_norma in normas_revogadas:
+                secao_latex += f"    \\item {escapar_latex(nome_norma)}\n"
             if caracteristicas_nao_conformes:
                 secao_latex += "    \\item Corrigir as características técnicas:\n"
                 secao_latex += "    \\begin{itemize}\n"
@@ -2929,6 +2958,9 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 "RACT": self._coletar_normas_verificadas_por_tipo(req, TIPO_RACT),
                 "CCT": self._coletar_normas_verificadas_por_tipo(req, TIPO_CCT)
             }
+            normas_revogadas = self._coletar_normas_revogadas(
+                normas_verificadas_por_tipo
+            )
 
             documento_cct = next(
                 (doc for doc in documentos if doc.get("tipo") == TIPO_CCT),
@@ -3023,7 +3055,8 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 cct_contem_palavra_vinculado,
                 caracteristicas_nao_conformes,
                 modelos_nao_encontrados,
-                exigencias_assinatura
+                exigencias_assinatura,
+                normas_revogadas
             )
 
             tabela_normativos = self._gerar_tabela_normativos_latex(

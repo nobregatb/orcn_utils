@@ -2717,9 +2717,30 @@ class AnalisadorRequerimentos:
             )
 
             motivadores = []
+            indices_palavras_chave: Dict[str, Tuple[int, str, int]] = {}
             for tipo in tipos_documento:
                 for motivador in normas_aplicaveis_por_tipo.get(tipo, {}).get(norma_id, []):
-                    if motivador not in motivadores:
+                    correspondencia = re.fullmatch(r"(.+) \(x(\d+)\)", motivador)
+                    if correspondencia:
+                        palavra, contador = correspondencia.groups()
+                        chave = palavra.casefold()
+                        if chave in indices_palavras_chave:
+                            indice, palavra_existente, contador_existente = (
+                                indices_palavras_chave[chave]
+                            )
+                            contador_existente += int(contador)
+                            indices_palavras_chave[chave] = (
+                                indice, palavra_existente, contador_existente
+                            )
+                            motivadores[indice] = (
+                                f"{palavra_existente} (x{contador_existente})"
+                            )
+                        else:
+                            indices_palavras_chave[chave] = (
+                                len(motivadores), palavra, int(contador)
+                            )
+                            motivadores.append(motivador)
+                    elif motivador not in motivadores:
                         motivadores.append(motivador)
 
             if not motivadores and norma_revogada:

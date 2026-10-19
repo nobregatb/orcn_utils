@@ -34,8 +34,19 @@ TIPO_MANUAL = 'manual'
 TIPO_RELATORIO_ENSAIO = 'relatorio_ensaio'
 TIPO_ART = 'art'
 TIPO_FOTOS = 'fotos'
+TIPO_FOTOS_EXTERNAS = 'fotos_externas'
 TIPO_CONTRATO_SOCIAL = 'contrato_social'
 TIPO_OUTROS = 'outros'
+
+FRASE_PRODUTO_NAO_ACABADO_FOTOS_EXTERNAS = (
+    "Por se tratar de produto não acabado, o produto sob homologação é "
+    "integralmente identificado pelas fotos internas, cujo arquivo está "
+    "anexado no campo respectivo"
+)
+EXIGENCIA_CORRIGIR_FOTOS_EXTERNAS = (
+    "Corrigir  “Fotos Externas do Produto”, conforme orientação passada por "
+    "meio do item 6.6.3.2. I  do Ato nº 4083, de 31 de julho de 2020."
+)
 from core.utils import (
     formatar_cnpj, desformatar_cnpj, latex_escape_path, escapar_latex, buscar_valor,
     normalizar, normalizar_dados, obter_versao_git, carregar_json, salvar_json, validar_cnpj, fullpath_para_req,
@@ -638,7 +649,7 @@ class AnalisadorRequerimentos:
                 resultado = self._analisar_relatorio_ensaio(caminho_documento, resultado)
             elif tipo_documento == TIPO_ART:
                 resultado = self._analisar_art(caminho_documento, resultado)
-            elif tipo_documento == TIPO_FOTOS:
+            elif tipo_documento in (TIPO_FOTOS, TIPO_FOTOS_EXTERNAS):
                 resultado = self._analisar_fotos(caminho_documento, resultado)
             elif tipo_documento == TIPO_CONTRATO_SOCIAL:
                 resultado = self._analisar_contrato_social(caminho_documento, resultado)
@@ -682,6 +693,9 @@ class AnalisadorRequerimentos:
 
         if match:
             tipo_extraido = match.group(1).lower().strip()
+
+            if tipo_extraido == normalizar("Fotos Externas do Produto"):
+                return TIPO_FOTOS_EXTERNAS, data_documento
             
             # Primeira passada: verificar correspondências exatas com 'nome' ou 'nome_curto'
             for tipo_chave, tipo_info in TIPOS_DOCUMENTOS.items():
@@ -1347,6 +1361,23 @@ class AnalisadorRequerimentos:
     def _analisar_fotos(self, caminho: Path, resultado: Dict) -> Dict:
         """Análise específica para Fotos do Produto."""
         resultado["observacoes"].append("Análise de Fotos: Verificando conformidade visual")
+        with fitz.open(caminho) as pdf:
+            texto = "\n".join(str(pagina.get_text("text")) for pagina in pdf)
+            if _pdf_requer_ocr(pdf):
+                texto_ocr = extract_pdf_content_from_ocr(caminho)
+                if texto_ocr:
+                    texto = texto_ocr
+
+        texto_normalizado = re.sub(r"\s+", "", normalizar(texto))
+        frase_normalizada = re.sub(
+            r"\s+",
+            "",
+            normalizar(FRASE_PRODUTO_NAO_ACABADO_FOTOS_EXTERNAS)
+        )
+        resultado["dados_extraidos"] = {
+            "contem_frase_produto_nao_acabado_ato4083":
+                frase_normalizada in texto_normalizado
+        }
         resultado["status"] = "CONFORME"  # Temporário
         return resultado
     
@@ -1738,30 +1769,26 @@ class AnalisadorRequerimentos:
         
         log_info(f"Encontrados {len(arquivos_pdf)} arquivos PDF passíveis de análise")
 
-        # Selecionar apenas o documento mais recente para CCT e RACT;
-        # os demais tipos continuam sendo processados normalmente.
+        # Selecionar os documentos mais recentes para CCT, RACT e Fotos Externas.
         docs_mais_recentes: Dict[str, Optional[Tuple[Path, str, datetime]]] = {
             TIPO_CCT: None,
-            TIPO_RACT: None
+            TIPO_RACT: None,
+            TIPO_FOTOS_EXTERNAS: None
         }
         docs_demais_tipos: List[Tuple[Path, str, datetime]] = []
 
         for arquivo in arquivos_pdf:
             tipo_doc, data_doc = self._determinar_tipo_documento(arquivo.name)
 
-            # Processar apenas os tipos contemplados no fluxo de análise atual
-            if tipo_doc not in [TIPO_CCT,TIPO_RACT]:
+            if tipo_doc not in docs_mais_recentes:
                 continue
 
-            if tipo_doc in [TIPO_CCT, TIPO_RACT]:
-                atual = docs_mais_recentes[tipo_doc]
-                if atual is None or data_doc > atual[2]:
-                    docs_mais_recentes[tipo_doc] = (arquivo, tipo_doc, data_doc)
-            else:
-                docs_demais_tipos.append((arquivo, tipo_doc, data_doc))
+            atual = docs_mais_recentes[tipo_doc]
+            if atual is None or data_doc > atual[2]:
+                docs_mais_recentes[tipo_doc] = (arquivo, tipo_doc, data_doc)
 
         docs_para_processar = list(docs_demais_tipos)
-        for tipo_doc in [TIPO_CCT, TIPO_RACT]:
+        for tipo_doc in [TIPO_CCT, TIPO_RACT, TIPO_FOTOS_EXTERNAS]:
             doc_recente = docs_mais_recentes[tipo_doc]
             if doc_recente is not None:
                 docs_para_processar.append(doc_recente)
@@ -2457,7 +2484,8 @@ class AnalisadorRequerimentos:
         modelos_nao_encontrados: Optional[List[str]] = None,
         exigencias_assinatura: Optional[List[str]] = None,
         normas_revogadas: Optional[List[str]] = None,
-        cct_desobriga_sar: bool = False
+        cct_desobriga_sar: bool = False,
+        exigir_correcao_fotos_externas: bool = False
     ) -> str:
         """Monta as exigências quando as declarações do CCT faltam no JSON do produto."""
         if modelos_nao_encontrados is None:
@@ -2534,6 +2562,7 @@ class AnalisadorRequerimentos:
             or caracteristicas_nao_conformes
             or exigencias_assinatura
             or normas_revogadas
+            or exigir_correcao_fotos_externas
         )
         cor_exigencia = "red" if tem_exigencias else "blue"
         secao_latex = (
@@ -2549,6 +2578,11 @@ class AnalisadorRequerimentos:
                 for exigencia in exigencias:
                     secao_latex += f"        \\item {escapar_latex(exigencia)}\n"
                 secao_latex += "    \\end{itemize}\n"
+            if exigir_correcao_fotos_externas:
+                secao_latex += (
+                    "    \\item "
+                    f"{escapar_latex(EXIGENCIA_CORRIGIR_FOTOS_EXTERNAS)}\n"
+                )
             if exigir_avaliacao_sar:
                 secao_latex += (
                     "    \\item "
@@ -3017,6 +3051,22 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                     normas_palavra = [str(n).lower() for n in info_palavra.get("normas", [])]
                     if efeito_palavra == "desobriga" and "ato17865" in normas_palavra:
                         cct_strings_desobrigam_ato17865.add(palavra)
+
+            documento_fotos_externas = next(
+                (
+                    doc for doc in documentos
+                    if doc.get("tipo") == TIPO_FOTOS_EXTERNAS
+                ),
+                None
+            )
+            dados_fotos_externas = (
+                documento_fotos_externas.get("dados_extraidos", {})
+                if documento_fotos_externas else {}
+            )
+            fotos_externas_contem_frase = dados_fotos_externas.get(
+                "contem_frase_produto_nao_acabado_ato4083",
+                False
+            )
             
             # Debug: Adicionar log para verificar se normas foram encontradas
             #log_info(f"Normas aplicáveis encontradas para {numero_req}: {len(normas_aplicaveis)} normas")
@@ -3131,7 +3181,11 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 modelos_nao_encontrados,
                 exigencias_assinatura,
                 normas_revogadas,
-                bool(cct_strings_desobrigam_ato17865)
+                cct_desobriga_sar=bool(cct_strings_desobrigam_ato17865),
+                exigir_correcao_fotos_externas=(
+                    cct_contem_produto_nao_acabado
+                    and not fotos_externas_contem_frase
+                )
             )
 
             tabela_normativos = self._gerar_tabela_normativos_latex(

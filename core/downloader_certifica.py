@@ -20,7 +20,7 @@ from core.const import (
     CERTIFICA_ABA_INFO_ADICIONAIS, CERTIFICA_ESPERA_POSTBACK_MS, FRASES
 )
 from core.utils import (
-    get_profile_dir, criar_pasta_se_nao_existir, carregar_json, salvar_json,
+    get_profile_dir, criar_pasta_se_nao_existir, salvar_json,
     requerimento_ja_baixado, marcar_requerimento_em_progresso,
     obter_requerimentos_pendentes,
     marcar_requerimento_concluido, marcar_requerimento_com_erro,
@@ -219,12 +219,9 @@ def extrair_dados_requerimento_certifica(page):
 
 
 def gravar_json_requerimento_certifica(requerimento, dados, pasta):
-    """Grava (mesclando com o existente) o JSON do requerimento em <pasta>\\<nome sem '_'>.json."""
+    """Substitui o JSON do requerimento por dados recém-coletados."""
     caminho_json = os.path.join(pasta, f"{os.path.basename(pasta)[1:]}.json")
-    conteudo = carregar_json(caminho_json) or {}
-    conteudo["requerimento"] = {**conteudo.get("requerimento", {}), **requerimento}
-    conteudo.update(dados)
-    conteudo.pop("frequencias", None)
+    conteudo = {"requerimento": requerimento, **dados}
     if not salvar_json(conteudo, caminho_json, indent=4):
         raise OSError(f"Não foi possível gravar {caminho_json}")
     log_info(f"JSON salvo: {caminho_json}")

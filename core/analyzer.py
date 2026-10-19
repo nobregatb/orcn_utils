@@ -22,7 +22,7 @@ from core.const import (
     STATUS_CONFORME, STATUS_NAO_CONFORME, STATUS_INCONCLUSIVO, STATUS_ERRO, STATUS_PROCESSADO,
     VALOR_NAO_DISPONIVEL, ENCODING_UTF8, PALAVRAS_CHAVE_MANUAL,
     CERTIFICA_TIPO_ANEXO_REAPROVEITAMENTO,
-    TIPOS_DOCUMENTOS, MIN_FILE_SIZE, CERTIFICA_CABECALHO_MODELOS,
+    TIPOS_DOCUMENTOS, MIN_FILE_SIZE, MIN_CARACTERES_PAGINA_TEXTO, CERTIFICA_CABECALHO_MODELOS,
     CERTIFICA_CABECALHO_FREQUENCIAS
 )
 from core.regras_uso_faixa import HomologacaoProduto
@@ -51,6 +51,21 @@ PALAVRAS_CHAVE_MANUAL_NORMALIZADAS = {
 PALAVRAS_CHAVE_MANUAL_ORIGINAIS = {
     normalizar(palavra): palavra for palavra in PALAVRAS_CHAVE_MANUAL.keys()
 }
+
+
+def _pdf_requer_ocr(pdf) -> bool:
+    """Indica PDF sem texto útil: vazio ou majoritariamente digitalizado (páginas-imagem com pouco texto)."""
+    if len(pdf) == 0:
+        return True
+    textos = [str(pagina.get_text("text")).strip() for pagina in pdf]
+    if sum(len(texto) for texto in textos) < MIN_FILE_SIZE:
+        return True
+    # A assinatura digital adiciona texto a PDFs digitalizados, então o total de caracteres não basta.
+    paginas_digitalizadas = sum(
+        1 for pagina, texto in zip(pdf, textos)
+        if len(texto) < MIN_CARACTERES_PAGINA_TEXTO and pagina.get_images()
+    )
+    return paginas_digitalizadas * 2 >= len(pdf)
 
 
 def _ignora_espacos(palavra: str) -> bool:
@@ -98,7 +113,7 @@ class CCTAnalyzerIntegrado:
                 content = ""                              
                 for pagina in pdf:
                     content += str(pagina.get_text("text")) + "\n"
-                if len(content.strip()) < MIN_FILE_SIZE:
+                if _pdf_requer_ocr(pdf):
                     #log_info(f"PDF aparentemente vazio, tentando OCR: {pdf_path.name}")
                     content = extract_pdf_content_from_ocr(pdf_path)
                 
@@ -942,7 +957,7 @@ class AnalisadorRequerimentos:
                         for pagina_num in range(total_paginas):  # Analisar todas as páginas
                             texto_completo += str(doc[pagina_num].get_text()).lower() + "\n"
                         
-                        if len(texto_completo.strip()) < MIN_FILE_SIZE:
+                        if _pdf_requer_ocr(doc):
                             #log_info(f"PDF aparentemente vazio, tentando OCR: {pdf_path.name}")
                             texto_ocr = extract_pdf_content_from_ocr(caminho)
                             if texto_ocr:

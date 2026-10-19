@@ -211,22 +211,50 @@ class CCTAnalyzerIntegrado:
             with open(equipamentos_file, 'r', encoding='utf-8') as f:
                 equipamentos_data = json.load(f)
             
-            content_normalizado = normalizar(content)
-            content_normalizado = content_normalizado.replace("\n", " ")
-            content_normalizado = re.sub(r'\s+', ' ', content_normalizado).strip()
+            content_normalizado = re.sub(
+                r"\s+", " ", normalizar(content).replace("\n", " ")
+            ).strip()
+            correspondencias = []
             for equipamento in equipamentos_data:
                 if isinstance(equipamento, dict) and 'nome' in equipamento:
                     nome_equipamento = equipamento['nome']
-                    nome_normalizado = normalizar(nome_equipamento)
-                    
-                    if nome_normalizado in content_normalizado:
-                        ja_existe = any(
-                            eq.get('nome') == nome_equipamento 
-                            for eq in equipamentos_encontrados
+                    nome_normalizado = re.sub(
+                        r"\s+", " ", normalizar(nome_equipamento)
+                    ).strip()
+                    if not nome_normalizado:
+                        continue
+
+                    ocorrencias = list(re.finditer(
+                        rf"(?<!\w){re.escape(nome_normalizado)}(?!\w)",
+                        content_normalizado
+                    ))
+                    if ocorrencias:
+                        correspondencias.append(
+                            (equipamento, len(nome_normalizado), ocorrencias)
                         )
-                        
-                        if not ja_existe:
-                            equipamentos_encontrados.append(equipamento)
+
+            for equipamento, tamanho_nome, ocorrencias in correspondencias:
+                ocorrencias_independentes = [
+                    ocorrencia
+                    for ocorrencia in ocorrencias
+                    if not any(
+                        tamanho_outro_nome > tamanho_nome
+                        and any(
+                            outra.start() <= ocorrencia.start()
+                            and ocorrencia.end() <= outra.end()
+                            for outra in outras_ocorrencias
+                        )
+                        for outro_equipamento, tamanho_outro_nome, outras_ocorrencias
+                        in correspondencias
+                        if outro_equipamento is not equipamento
+                    )
+                ]
+                ja_existe = any(
+                    item.get("nome") == equipamento.get("nome")
+                    for item in equipamentos_encontrados
+                )
+                if ocorrencias_independentes and not ja_existe:
+                    equipamentos_encontrados.append(equipamento)
             
             return equipamentos_encontrados
             
@@ -1421,6 +1449,34 @@ class AnalisadorRequerimentos:
         return modelos_unicos
 
     @staticmethod
+    def _tem_nome_comercial_invalido(dados_requerimento: Optional[Dict]) -> bool:
+        if not isinstance(dados_requerimento, dict):
+            return False
+
+        modelos = dados_requerimento.get("modelos")
+        if modelos is None:
+            requerimento = dados_requerimento.get("requerimento", {})
+            modelos = requerimento.get("modelos") if isinstance(requerimento, dict) else None
+        if not isinstance(modelos, list):
+            return False
+
+        for modelo in modelos:
+            if not isinstance(modelo, dict):
+                continue
+            nome_comercial = modelo.get("Nome Comercial")
+            if nome_comercial is None:
+                continue
+            nome_normalizado = re.sub(r"\s+", " ", str(nome_comercial)).strip().casefold()
+            nome_sem_acentos = "".join(
+                caractere
+                for caractere in unicodedata.normalize("NFD", nome_normalizado)
+                if not unicodedata.combining(caractere)
+            )
+            if nome_sem_acentos in {"-", "n/a", "na", "nao aplicavel"}:
+                return True
+        return False
+
+    @staticmethod
     def _tabela_para_registros(tabela: Any) -> List[Any]:
         """Converte uma tabela [cabeçalho, linha, ...] em lista de dicts; aceita lista de dicts já pronta."""
         if not isinstance(tabela, list) or not tabela:
@@ -2521,6 +2577,9 @@ class AnalisadorRequerimentos:
             not contem_valor_sar_numerico(dados_requerimento)
             and not cct_desobriga_sar
         )
+        exigir_nome_comercial_valido = AnalisadorRequerimentos._tem_nome_comercial_invalido(
+            dados_requerimento
+        )
 
         produto_requerimento = dados_requerimento.get("produto", {})
         if not isinstance(produto_requerimento, dict):
@@ -2559,6 +2618,7 @@ class AnalisadorRequerimentos:
             exigencias
             or exigir_avaliacao_sar
             or modelos_nao_encontrados
+            or exigir_nome_comercial_valido
             or caracteristicas_nao_conformes
             or exigencias_assinatura
             or normas_revogadas
@@ -2596,6 +2656,10 @@ class AnalisadorRequerimentos:
             if modelos_nao_encontrados:
                 secao_latex += (
                     "    \\item Informar nome(s) do(s) modelo(s) conforme CCT.\n"
+                )
+            if exigir_nome_comercial_valido:
+                secao_latex += (
+                    "    \\item Informar nome comercial válido para o(s) modelo(s).\n"
                 )
             for nome_norma in normas_revogadas:
                 secao_latex += f"    \\item {escapar_latex(nome_norma)}\n"

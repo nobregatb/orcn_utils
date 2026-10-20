@@ -49,6 +49,11 @@ EXIGENCIA_CORRIGIR_FOTOS_EXTERNAS = (
     "meio do item 6.6.3.2. I  do Ato nº 4083, de 31 de julho de 2020."
 )
 ID_NORMA_SAR = "ato17865"
+FRASE_NAO_VAREJO = "Este certificado não se aplica para comercialização do produto no varejo"
+TEXTO_NAO_VAREJO = (
+    f"{FRASE_NAO_VAREJO}, sendo destinado exclusivamente para assistência "
+    "técnica ou cumprimento de garantias ao consumidor."
+)
 CAMPOS_SAR = {
     "SAR (W/kg) Cabeça",
     "SAR (W/kg) Tronco",
@@ -833,6 +838,10 @@ class AnalisadorRequerimentos:
             normas_verificadas = dados_cct.get('normas_verificadas', [])
             # Detecta frase de vínculo da validade do certificado diretamente no texto do CCT.
             contem_vinculo_homologacao = ("vinculado" in texto_normalizado) or ("vinculada" in texto_normalizado)
+            contem_frase_nao_varejo = (
+                re.sub(r"\s+", "", normalizar(FRASE_NAO_VAREJO))
+                in re.sub(r"\s+", "", texto_normalizado)
+            )
             
             # Adicionar informações detalhadas ao resultado
             resultado["dados_extraidos"] = {
@@ -846,6 +855,7 @@ class AnalisadorRequerimentos:
                 "palavras_encontradas_com_normas": palavras_encontradas_com_normas,
                 "palavras_evidencias": palavras_evidencias,
                 "contem_vinculo_homologacao": contem_vinculo_homologacao,
+                "contem_frase_nao_varejo": contem_frase_nao_varejo,
                 "modelos_json": modelos_json,
                 "modelos_encontrados_no_cct": modelos_encontrados,
                 "modelos_nao_encontrados_no_cct": modelos_nao_encontrados
@@ -2578,7 +2588,8 @@ class AnalisadorRequerimentos:
         exigencias_assinatura: Optional[List[str]] = None,
         normas_revogadas: Optional[List[str]] = None,
         cct_desobriga_sar: bool = False,
-        exigir_correcao_fotos_externas: bool = False
+        exigir_correcao_fotos_externas: bool = False,
+        cct_contem_frase_nao_varejo: bool = False
     ) -> str:
         """Monta as exigências quando as declarações do CCT faltam no JSON do produto."""
         if modelos_nao_encontrados is None:
@@ -2623,11 +2634,18 @@ class AnalisadorRequerimentos:
                 "A validade deste certificado está vinculada à vigência da homologação ANATEL do módulo de RF incorporado ao produto",
                 "Que a validade deste certificado está vinculada à vigência da homologação ANATEL do módulo de RF incorporado ao produto",
             ),
+            (
+                cct_contem_frase_nao_varejo,
+                TEXTO_NAO_VAREJO,
+                TEXTO_NAO_VAREJO,
+            ),
         ]
+        especificacoes_sem_espacos = re.sub(r"\s+", "", especificacoes_adicionais).casefold()
         exigencias = [
             sugestao
             for condicao_cct, frase_obrigatoria, sugestao in regras_exigencias
-            if condicao_cct and frase_obrigatoria.casefold() not in especificacoes_adicionais_normalizadas
+            if condicao_cct
+            and re.sub(r"\s+", "", frase_obrigatoria).casefold() not in especificacoes_sem_espacos
         ]
 
         tem_exigencias = bool(
@@ -3111,6 +3129,7 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
             cct_contem_produto_nao_acabado = False
             cct_contem_vinculo_homologacao = False
             cct_contem_palavra_vinculado = False
+            cct_contem_frase_nao_varejo = False
             cct_strings_desobrigam_ato17865 = set()
 
             for doc in documentos:
@@ -3128,6 +3147,9 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
 
                 if "vinculado" in palavras_encontradas_cct or "vinculada" in palavras_encontradas_cct:
                     cct_contem_palavra_vinculado = True
+
+                if dados_extraidos_cct.get("contem_frase_nao_varejo"):
+                    cct_contem_frase_nao_varejo = True
 
                 if dados_extraidos_cct.get("contem_vinculo_homologacao"):
                     cct_contem_vinculo_homologacao = True
@@ -3277,7 +3299,8 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 exigir_correcao_fotos_externas=(
                     cct_contem_produto_nao_acabado
                     and not fotos_externas_contem_frase
-                )
+                ),
+                cct_contem_frase_nao_varejo=cct_contem_frase_nao_varejo
             )
 
             tabela_normativos = self._gerar_tabela_normativos_latex(

@@ -2,6 +2,7 @@ from pdf2image import convert_from_path
 import pymupdf as fitz
 import pytesseract
 import json
+import math
 import re
 import unicodedata
 from datetime import datetime, timedelta
@@ -25,7 +26,7 @@ from core.const import (
     TIPOS_DOCUMENTOS, MIN_FILE_SIZE, MIN_CARACTERES_PAGINA_TEXTO, CERTIFICA_CABECALHO_MODELOS,
     CERTIFICA_CABECALHO_FREQUENCIAS
 )
-from core.regras_uso_faixa import HomologacaoProduto
+from core.regras_uso_faixa import HomologacaoProduto, parse_valor_numerico
 
 # Constantes para tipos de documento (chaves da estrutura TIPOS_DOCUMENTOS)
 TIPO_CCT = 'cct'
@@ -47,6 +48,12 @@ EXIGENCIA_CORRIGIR_FOTOS_EXTERNAS = (
     "Corrigir  “Fotos Externas do Produto”, conforme orientação passada por "
     "meio do item 6.6.3.2. I  do Ato nº 4083, de 31 de julho de 2020."
 )
+ID_NORMA_SAR = "ato17865"
+CAMPOS_SAR = {
+    "SAR (W/kg) Cabeça",
+    "SAR (W/kg) Tronco",
+    "SAR (W/Kg) Membro",
+}
 from core.utils import (
     formatar_cnpj, desformatar_cnpj, latex_escape_path, escapar_latex, buscar_valor,
     normalizar, normalizar_dados, obter_versao_git, carregar_json, salvar_json, validar_cnpj, fullpath_para_req,
@@ -1477,6 +1484,36 @@ class AnalisadorRequerimentos:
         return False
 
     @staticmethod
+    def _contem_medicao_sar(valor: object) -> bool:
+        def valor_numerico(conteudo: object) -> bool:
+            if isinstance(conteudo, bool):
+                return False
+            if isinstance(conteudo, int):
+                return True
+            if isinstance(conteudo, float):
+                return math.isfinite(conteudo)
+            if isinstance(conteudo, str):
+                valor_convertido = parse_valor_numerico(conteudo)
+                return valor_convertido is not None and math.isfinite(valor_convertido)
+            return False
+
+        if isinstance(valor, dict):
+            return any(
+                (
+                    chave in CAMPOS_SAR
+                    and valor_numerico(conteudo)
+                )
+                or AnalisadorRequerimentos._contem_medicao_sar(conteudo)
+                for chave, conteudo in valor.items()
+            )
+        if isinstance(valor, list):
+            return any(
+                AnalisadorRequerimentos._contem_medicao_sar(item)
+                for item in valor
+            )
+        return False
+
+    @staticmethod
     def _tabela_para_registros(tabela: Any) -> List[Any]:
         """Converte uma tabela [cabeçalho, linha, ...] em lista de dicts; aceita lista de dicts já pronta."""
         if not isinstance(tabela, list) or not tabela:
@@ -2552,29 +2589,8 @@ class AnalisadorRequerimentos:
             normas_revogadas = []
         if not isinstance(dados_requerimento, dict):
             dados_requerimento = {}
-        campos_sar = {
-            "SAR (W/kg) Cabeça",
-            "SAR (W/kg) Tronco",
-            "SAR (W/Kg) Membro",
-        }
-
-        def contem_valor_sar_numerico(valor: object) -> bool:
-            if isinstance(valor, dict):
-                return any(
-                    (
-                        chave in campos_sar
-                        and isinstance(conteudo, (int, float))
-                        and not isinstance(conteudo, bool)
-                    )
-                    or contem_valor_sar_numerico(conteudo)
-                    for chave, conteudo in valor.items()
-                )
-            if isinstance(valor, list):
-                return any(contem_valor_sar_numerico(item) for item in valor)
-            return False
-
         exigir_avaliacao_sar = (
-            not contem_valor_sar_numerico(dados_requerimento)
+            not AnalisadorRequerimentos._contem_medicao_sar(dados_requerimento)
             and not cct_desobriga_sar
         )
         exigir_nome_comercial_valido = AnalisadorRequerimentos._tem_nome_comercial_invalido(
@@ -2763,11 +2779,14 @@ class AnalisadorRequerimentos:
         self,
         normas_aplicaveis_por_tipo: Dict[str, Dict[str, List[str]]],
         normas_verificadas_por_tipo: Dict[str, Set[str]],
-        equipamentos_rotulos: Dict[str, str]
+        equipamentos_rotulos: Dict[str, str],
+        medicao_sar_identificada: bool = False
     ) -> str:
         """Gera uma tabela única com observações e status RACT/CCT de cada norma."""
         tipos_documento = ("RACT", "CCT")
         normas_para_tabela = set()
+        if medicao_sar_identificada:
+            normas_para_tabela.add(ID_NORMA_SAR)
         for tipo in tipos_documento:
             normas_aplicaveis_tipo = normas_aplicaveis_por_tipo.get(tipo, {})
             normas_para_tabela.update(normas_aplicaveis_tipo)
@@ -2818,14 +2837,17 @@ class AnalisadorRequerimentos:
             # Norma revogada: vermelho só no(s) documento(s) em que ocorre; cinza onde não consta.
             cor_citada = "red" if norma_revogada else "blue"
             cor_ausente = "gray" if norma_revogada else "red"
-            status_ract = (
-                cor_citada if norma_id in normas_verificadas_por_tipo.get("RACT", set())
-                else cor_ausente
-            )
-            status_cct = (
-                cor_citada if norma_id in normas_verificadas_por_tipo.get("CCT", set())
-                else cor_ausente
-            )
+            if medicao_sar_identificada and norma_id == ID_NORMA_SAR:
+                status_ract = status_cct = "blue"
+            else:
+                status_ract = (
+                    cor_citada if norma_id in normas_verificadas_por_tipo.get("RACT", set())
+                    else cor_ausente
+                )
+                status_cct = (
+                    cor_citada if norma_id in normas_verificadas_por_tipo.get("CCT", set())
+                    else cor_ausente
+                )
             status_texto = (
                 f"\\textcolor{{{status_ract}}}{{RACT}}"
                 "\\textcolor{black}{/}"
@@ -3149,6 +3171,9 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 "RACT": self._coletar_normas_verificadas_por_tipo(req, TIPO_RACT),
                 "CCT": self._coletar_normas_verificadas_por_tipo(req, TIPO_CCT)
             }
+            medicao_sar_identificada = self._contem_medicao_sar(
+                req.get("dados_requerimento")
+            )
             normas_revogadas = self._coletar_normas_revogadas(
                 normas_verificadas_por_tipo
             )
@@ -3258,7 +3283,8 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
             tabela_normativos = self._gerar_tabela_normativos_latex(
                 normas_aplicaveis_por_tipo,
                 normas_verificadas_por_tipo,
-                equipamentos_rotulos
+                equipamentos_rotulos,
+                medicao_sar_identificada=medicao_sar_identificada
             )
             if tabela_normativos:
                 latex_content += tabela_normativos

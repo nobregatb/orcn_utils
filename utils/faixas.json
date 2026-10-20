@@ -1,5 +1,12 @@
 [
   {
+    "faixa": [0.119, 0.135],
+    "atos_validos": ["ato14448"],
+    "intensidade_campo_eletrico_uv_m": "2400/F(kHz)",
+    "distancia_medida_m": 300,
+    "descricao": "Sistemas de Identificação por Radiofrequências (RFID) - Tabela V do Ato 14.448"
+  },
+  {
     "faixa": [2.194, 2.254],
     "atos_validos": ["ato915"],
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
@@ -65,9 +72,44 @@
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
+    "faixa": [13.11, 13.36],
+    "atos_validos": ["ato14448"],
+    "intensidade_campo_eletrico_uv_m": 106,
+    "distancia_medida_m": 30,
+    "descricao": "Sistemas de Identificação por Radiofrequências (RFID) - Tabela V do Ato 14.448"
+  },
+  {
     "faixa": [13.36, 13.567],
     "atos_validos": ["ato915"],
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [13.41, 13.553],
+    "atos_validos": ["ato14448"],
+    "intensidade_campo_eletrico_uv_m": 334,
+    "distancia_medida_m": 30,
+    "descricao": "Sistemas de Identificação por Radiofrequências (RFID) - Tabela V do Ato 14.448"
+  },
+  {
+    "faixa": [13.553, 13.567],
+    "atos_validos": ["ato14448"],
+    "intensidade_campo_eletrico_uv_m": 15848,
+    "distancia_medida_m": 30,
+    "descricao": "Sistemas de Identificação por Radiofrequências (RFID) - Tabela V do Ato 14.448"
+  },
+  {
+    "faixa": [13.567, 13.71],
+    "atos_validos": ["ato14448"],
+    "intensidade_campo_eletrico_uv_m": 334,
+    "distancia_medida_m": 30,
+    "descricao": "Sistemas de Identificação por Radiofrequências (RFID) - Tabela V do Ato 14.448"
+  },
+  {
+    "faixa": [13.71, 14.01],
+    "atos_validos": ["ato14448"],
+    "intensidade_campo_eletrico_uv_m": 106,
+    "distancia_medida_m": 30,
+    "descricao": "Sistemas de Identificação por Radiofrequências (RFID) - Tabela V do Ato 14.448"
   },
   {
     "faixa": [13.87, 13.972],
@@ -444,9 +486,23 @@
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
+    "faixa": [860.0, 864.0],
+    "atos_validos": ["ato14448"],
+    "intensidade_campo_eletrico_uv_m": 70359,
+    "distancia_medida_m": 3,
+    "descricao": "Sistemas de Identificação por Radiofrequências (RFID) - Tabela V do Ato 14.448"
+  },
+  {
     "faixa": [864.0, 868.0],
     "atos_validos": ["ato14448"],
     "descricao": "Sistemas de Curta Distância"
+  },
+  {
+    "faixa": [868.0, 869.0],
+    "atos_validos": ["ato14448"],
+    "intensidade_campo_eletrico_uv_m": 70359,
+    "distancia_medida_m": 3,
+    "descricao": "Sistemas de Identificação por Radiofrequências (RFID) - Tabela V do Ato 14.448"
   },
   {
     "faixa": [890.0, 907.5],

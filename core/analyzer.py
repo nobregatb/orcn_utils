@@ -2815,13 +2815,16 @@ class AnalisadorRequerimentos:
             url_norma = detalhes_norma["url"]
             status_norma = (detalhes_norma.get("status") or "").strip().lower()
             norma_revogada = status_norma in ["revogada", "revogado"]
+            # Norma revogada: vermelho só no(s) documento(s) em que ocorre; cinza onde não consta.
+            cor_citada = "red" if norma_revogada else "blue"
+            cor_ausente = "gray" if norma_revogada else "red"
             status_ract = (
-                "red" if norma_revogada else
-                "blue" if norma_id in normas_verificadas_por_tipo.get("RACT", set()) else "red"
+                cor_citada if norma_id in normas_verificadas_por_tipo.get("RACT", set())
+                else cor_ausente
             )
             status_cct = (
-                "red" if norma_revogada else
-                "blue" if norma_id in normas_verificadas_por_tipo.get("CCT", set()) else "red"
+                cor_citada if norma_id in normas_verificadas_por_tipo.get("CCT", set())
+                else cor_ausente
             )
             status_texto = (
                 f"\\textcolor{{{status_ract}}}{{RACT}}"

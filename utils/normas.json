@@ -769,6 +769,14 @@
     "status": "revogada"
   },
   {
+    "id": "resolucao1630",
+    "nome": "Norma (resolucao1630) citada no requerimento 26.08421",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.08421.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "resolucao242",
     "nome": "A Resolução nº 242, citada nesse documento, foi revogada pela Resolução nº 715, de 23 de outubro de 2019.",
     "descricao": "Regulamento para Certificação e Homologação de Produtos para Telecomunicações",

@@ -118,10 +118,11 @@ class FrequenciaItem(BaseModel):
     tecnologia: Optional[str] = Field(None, alias="Tecnologia")
     especificacoes_ambiente: Optional[str] = Field(None, description="Ex: indoor ou outdoor")
     
-    # Campos de potência mapeados do JSON
+    # Campos técnicos mapeados do JSON
     potencia_max_saida_w: Optional[str] = Field(None, alias="Potência Máxima de Saída (W)")
     potencia_media_eirp_dbm: Optional[str] = Field(None, alias="Potência Média E.I.R.P. (dBm)")
     potencia_pico_eirp_dbm: Optional[str] = Field(None, alias="Potência de Pico E.I.R.P. (dBm)")
+    intensidade_campo_eletrico_uv_: Optional[str] = Field(None, alias="Intensidade de Campo (µV/m)")
 
     @model_validator(mode="after")
     def validar_regras_e_potencias(self, info: ValidationInfo) -> "FrequenciaItem":

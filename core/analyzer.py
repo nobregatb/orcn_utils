@@ -2,6 +2,7 @@ from pdf2image import convert_from_path
 import pymupdf as fitz
 import pytesseract
 import json
+import math
 import re
 import unicodedata
 from datetime import datetime, timedelta
@@ -22,10 +23,10 @@ from core.const import (
     STATUS_CONFORME, STATUS_NAO_CONFORME, STATUS_INCONCLUSIVO, STATUS_ERRO, STATUS_PROCESSADO,
     VALOR_NAO_DISPONIVEL, ENCODING_UTF8, PALAVRAS_CHAVE_MANUAL,
     CERTIFICA_TIPO_ANEXO_REAPROVEITAMENTO,
-    TIPOS_DOCUMENTOS, MIN_FILE_SIZE, CERTIFICA_CABECALHO_MODELOS,
+    TIPOS_DOCUMENTOS, MIN_FILE_SIZE, MIN_CARACTERES_PAGINA_TEXTO, CERTIFICA_CABECALHO_MODELOS,
     CERTIFICA_CABECALHO_FREQUENCIAS
 )
-from core.regras_uso_faixa import HomologacaoProduto
+from core.regras_uso_faixa import HomologacaoProduto, parse_valor_numerico
 
 # Constantes para tipos de documento (chaves da estrutura TIPOS_DOCUMENTOS)
 TIPO_CCT = 'cct'
@@ -34,8 +35,30 @@ TIPO_MANUAL = 'manual'
 TIPO_RELATORIO_ENSAIO = 'relatorio_ensaio'
 TIPO_ART = 'art'
 TIPO_FOTOS = 'fotos'
+TIPO_FOTOS_EXTERNAS = 'fotos_externas'
 TIPO_CONTRATO_SOCIAL = 'contrato_social'
 TIPO_OUTROS = 'outros'
+
+FRASE_PRODUTO_NAO_ACABADO_FOTOS_EXTERNAS = (
+    "Por se tratar de produto não acabado, o produto sob homologação é "
+    "integralmente identificado pelas fotos internas, cujo arquivo está "
+    "anexado no campo respectivo"
+)
+EXIGENCIA_CORRIGIR_FOTOS_EXTERNAS = (
+    "Corrigir  “Fotos Externas do Produto”, conforme orientação passada por "
+    "meio do item 6.6.3.2. I  do Ato nº 4083, de 31 de julho de 2020."
+)
+ID_NORMA_SAR = "ato17865"
+FRASE_NAO_VAREJO = "Este certificado não se aplica para comercialização do produto no varejo"
+TEXTO_NAO_VAREJO = (
+    f"{FRASE_NAO_VAREJO}, sendo destinado exclusivamente para assistência "
+    "técnica ou cumprimento de garantias ao consumidor."
+)
+CAMPOS_SAR = {
+    "SAR (W/kg) Cabeça",
+    "SAR (W/kg) Tronco",
+    "SAR (W/Kg) Membro",
+}
 from core.utils import (
     formatar_cnpj, desformatar_cnpj, latex_escape_path, escapar_latex, buscar_valor,
     normalizar, normalizar_dados, obter_versao_git, carregar_json, salvar_json, validar_cnpj, fullpath_para_req,
@@ -51,6 +74,21 @@ PALAVRAS_CHAVE_MANUAL_NORMALIZADAS = {
 PALAVRAS_CHAVE_MANUAL_ORIGINAIS = {
     normalizar(palavra): palavra for palavra in PALAVRAS_CHAVE_MANUAL.keys()
 }
+
+
+def _pdf_requer_ocr(pdf) -> bool:
+    """Indica PDF sem texto útil: vazio ou majoritariamente digitalizado (páginas-imagem com pouco texto)."""
+    if len(pdf) == 0:
+        return True
+    textos = [str(pagina.get_text("text")).strip() for pagina in pdf]
+    if sum(len(texto) for texto in textos) < MIN_FILE_SIZE:
+        return True
+    # A assinatura digital adiciona texto a PDFs digitalizados, então o total de caracteres não basta.
+    paginas_digitalizadas = sum(
+        1 for pagina, texto in zip(pdf, textos)
+        if len(texto) < MIN_CARACTERES_PAGINA_TEXTO and pagina.get_images()
+    )
+    return paginas_digitalizadas * 2 >= len(pdf)
 
 
 def _ignora_espacos(palavra: str) -> bool:
@@ -98,7 +136,7 @@ class CCTAnalyzerIntegrado:
                 content = ""                              
                 for pagina in pdf:
                     content += str(pagina.get_text("text")) + "\n"
-                if len(content.strip()) < MIN_FILE_SIZE:
+                if _pdf_requer_ocr(pdf):
                     #log_info(f"PDF aparentemente vazio, tentando OCR: {pdf_path.name}")
                     content = extract_pdf_content_from_ocr(pdf_path)
                 
@@ -185,22 +223,50 @@ class CCTAnalyzerIntegrado:
             with open(equipamentos_file, 'r', encoding='utf-8') as f:
                 equipamentos_data = json.load(f)
             
-            content_normalizado = normalizar(content)
-            content_normalizado = content_normalizado.replace("\n", " ")
-            content_normalizado = re.sub(r'\s+', ' ', content_normalizado).strip()
+            content_normalizado = re.sub(
+                r"\s+", " ", normalizar(content).replace("\n", " ")
+            ).strip()
+            correspondencias = []
             for equipamento in equipamentos_data:
                 if isinstance(equipamento, dict) and 'nome' in equipamento:
                     nome_equipamento = equipamento['nome']
-                    nome_normalizado = normalizar(nome_equipamento)
-                    
-                    if nome_normalizado in content_normalizado:
-                        ja_existe = any(
-                            eq.get('nome') == nome_equipamento 
-                            for eq in equipamentos_encontrados
+                    nome_normalizado = re.sub(
+                        r"\s+", " ", normalizar(nome_equipamento)
+                    ).strip()
+                    if not nome_normalizado:
+                        continue
+
+                    ocorrencias = list(re.finditer(
+                        rf"(?<!\w){re.escape(nome_normalizado)}(?!\w)",
+                        content_normalizado
+                    ))
+                    if ocorrencias:
+                        correspondencias.append(
+                            (equipamento, len(nome_normalizado), ocorrencias)
                         )
-                        
-                        if not ja_existe:
-                            equipamentos_encontrados.append(equipamento)
+
+            for equipamento, tamanho_nome, ocorrencias in correspondencias:
+                ocorrencias_independentes = [
+                    ocorrencia
+                    for ocorrencia in ocorrencias
+                    if not any(
+                        tamanho_outro_nome > tamanho_nome
+                        and any(
+                            outra.start() <= ocorrencia.start()
+                            and ocorrencia.end() <= outra.end()
+                            for outra in outras_ocorrencias
+                        )
+                        for outro_equipamento, tamanho_outro_nome, outras_ocorrencias
+                        in correspondencias
+                        if outro_equipamento is not equipamento
+                    )
+                ]
+                ja_existe = any(
+                    item.get("nome") == equipamento.get("nome")
+                    for item in equipamentos_encontrados
+                )
+                if ocorrencias_independentes and not ja_existe:
+                    equipamentos_encontrados.append(equipamento)
             
             return equipamentos_encontrados
             
@@ -623,7 +689,7 @@ class AnalisadorRequerimentos:
                 resultado = self._analisar_relatorio_ensaio(caminho_documento, resultado)
             elif tipo_documento == TIPO_ART:
                 resultado = self._analisar_art(caminho_documento, resultado)
-            elif tipo_documento == TIPO_FOTOS:
+            elif tipo_documento in (TIPO_FOTOS, TIPO_FOTOS_EXTERNAS):
                 resultado = self._analisar_fotos(caminho_documento, resultado)
             elif tipo_documento == TIPO_CONTRATO_SOCIAL:
                 resultado = self._analisar_contrato_social(caminho_documento, resultado)
@@ -667,6 +733,9 @@ class AnalisadorRequerimentos:
 
         if match:
             tipo_extraido = match.group(1).lower().strip()
+
+            if tipo_extraido == normalizar("Fotos Externas do Produto"):
+                return TIPO_FOTOS_EXTERNAS, data_documento
             
             # Primeira passada: verificar correspondências exatas com 'nome' ou 'nome_curto'
             for tipo_chave, tipo_info in TIPOS_DOCUMENTOS.items():
@@ -769,6 +838,10 @@ class AnalisadorRequerimentos:
             normas_verificadas = dados_cct.get('normas_verificadas', [])
             # Detecta frase de vínculo da validade do certificado diretamente no texto do CCT.
             contem_vinculo_homologacao = ("vinculado" in texto_normalizado) or ("vinculada" in texto_normalizado)
+            contem_frase_nao_varejo = (
+                re.sub(r"\s+", "", normalizar(FRASE_NAO_VAREJO))
+                in re.sub(r"\s+", "", texto_normalizado)
+            )
             
             # Adicionar informações detalhadas ao resultado
             resultado["dados_extraidos"] = {
@@ -782,6 +855,7 @@ class AnalisadorRequerimentos:
                 "palavras_encontradas_com_normas": palavras_encontradas_com_normas,
                 "palavras_evidencias": palavras_evidencias,
                 "contem_vinculo_homologacao": contem_vinculo_homologacao,
+                "contem_frase_nao_varejo": contem_frase_nao_varejo,
                 "modelos_json": modelos_json,
                 "modelos_encontrados_no_cct": modelos_encontrados,
                 "modelos_nao_encontrados_no_cct": modelos_nao_encontrados
@@ -942,7 +1016,7 @@ class AnalisadorRequerimentos:
                         for pagina_num in range(total_paginas):  # Analisar todas as páginas
                             texto_completo += str(doc[pagina_num].get_text()).lower() + "\n"
                         
-                        if len(texto_completo.strip()) < MIN_FILE_SIZE:
+                        if _pdf_requer_ocr(doc):
                             #log_info(f"PDF aparentemente vazio, tentando OCR: {pdf_path.name}")
                             texto_ocr = extract_pdf_content_from_ocr(caminho)
                             if texto_ocr:
@@ -1332,6 +1406,23 @@ class AnalisadorRequerimentos:
     def _analisar_fotos(self, caminho: Path, resultado: Dict) -> Dict:
         """Análise específica para Fotos do Produto."""
         resultado["observacoes"].append("Análise de Fotos: Verificando conformidade visual")
+        with fitz.open(caminho) as pdf:
+            texto = "\n".join(str(pagina.get_text("text")) for pagina in pdf)
+            if _pdf_requer_ocr(pdf):
+                texto_ocr = extract_pdf_content_from_ocr(caminho)
+                if texto_ocr:
+                    texto = texto_ocr
+
+        texto_normalizado = re.sub(r"\s+", "", normalizar(texto))
+        frase_normalizada = re.sub(
+            r"\s+",
+            "",
+            normalizar(FRASE_PRODUTO_NAO_ACABADO_FOTOS_EXTERNAS)
+        )
+        resultado["dados_extraidos"] = {
+            "contem_frase_produto_nao_acabado_ato4083":
+                frase_normalizada in texto_normalizado
+        }
         resultado["status"] = "CONFORME"  # Temporário
         return resultado
     
@@ -1373,6 +1464,64 @@ class AnalisadorRequerimentos:
             if modelo and modelo not in modelos_unicos:
                 modelos_unicos.append(modelo)
         return modelos_unicos
+
+    @staticmethod
+    def _tem_nome_comercial_invalido(dados_requerimento: Optional[Dict]) -> bool:
+        if not isinstance(dados_requerimento, dict):
+            return False
+
+        modelos = dados_requerimento.get("modelos")
+        if modelos is None:
+            requerimento = dados_requerimento.get("requerimento", {})
+            modelos = requerimento.get("modelos") if isinstance(requerimento, dict) else None
+        if not isinstance(modelos, list):
+            return False
+
+        for modelo in modelos:
+            if not isinstance(modelo, dict):
+                continue
+            nome_comercial = modelo.get("Nome Comercial")
+            if nome_comercial is None:
+                continue
+            nome_normalizado = re.sub(r"\s+", " ", str(nome_comercial)).strip().casefold()
+            nome_sem_acentos = "".join(
+                caractere
+                for caractere in unicodedata.normalize("NFD", nome_normalizado)
+                if not unicodedata.combining(caractere)
+            )
+            if nome_sem_acentos in {"-", "n/a", "na", "nao aplicavel"}:
+                return True
+        return False
+
+    @staticmethod
+    def _contem_medicao_sar(valor: object) -> bool:
+        def valor_numerico(conteudo: object) -> bool:
+            if isinstance(conteudo, bool):
+                return False
+            if isinstance(conteudo, int):
+                return True
+            if isinstance(conteudo, float):
+                return math.isfinite(conteudo)
+            if isinstance(conteudo, str):
+                valor_convertido = parse_valor_numerico(conteudo)
+                return valor_convertido is not None and math.isfinite(valor_convertido)
+            return False
+
+        if isinstance(valor, dict):
+            return any(
+                (
+                    chave in CAMPOS_SAR
+                    and valor_numerico(conteudo)
+                )
+                or AnalisadorRequerimentos._contem_medicao_sar(conteudo)
+                for chave, conteudo in valor.items()
+            )
+        if isinstance(valor, list):
+            return any(
+                AnalisadorRequerimentos._contem_medicao_sar(item)
+                for item in valor
+            )
+        return False
 
     @staticmethod
     def _tabela_para_registros(tabela: Any) -> List[Any]:
@@ -1723,30 +1872,26 @@ class AnalisadorRequerimentos:
         
         log_info(f"Encontrados {len(arquivos_pdf)} arquivos PDF passíveis de análise")
 
-        # Selecionar apenas o documento mais recente para CCT e RACT;
-        # os demais tipos continuam sendo processados normalmente.
+        # Selecionar os documentos mais recentes para CCT, RACT e Fotos Externas.
         docs_mais_recentes: Dict[str, Optional[Tuple[Path, str, datetime]]] = {
             TIPO_CCT: None,
-            TIPO_RACT: None
+            TIPO_RACT: None,
+            TIPO_FOTOS_EXTERNAS: None
         }
         docs_demais_tipos: List[Tuple[Path, str, datetime]] = []
 
         for arquivo in arquivos_pdf:
             tipo_doc, data_doc = self._determinar_tipo_documento(arquivo.name)
 
-            # Processar apenas os tipos contemplados no fluxo de análise atual
-            if tipo_doc not in [TIPO_CCT,TIPO_RACT]:
+            if tipo_doc not in docs_mais_recentes:
                 continue
 
-            if tipo_doc in [TIPO_CCT, TIPO_RACT]:
-                atual = docs_mais_recentes[tipo_doc]
-                if atual is None or data_doc > atual[2]:
-                    docs_mais_recentes[tipo_doc] = (arquivo, tipo_doc, data_doc)
-            else:
-                docs_demais_tipos.append((arquivo, tipo_doc, data_doc))
+            atual = docs_mais_recentes[tipo_doc]
+            if atual is None or data_doc > atual[2]:
+                docs_mais_recentes[tipo_doc] = (arquivo, tipo_doc, data_doc)
 
         docs_para_processar = list(docs_demais_tipos)
-        for tipo_doc in [TIPO_CCT, TIPO_RACT]:
+        for tipo_doc in [TIPO_CCT, TIPO_RACT, TIPO_FOTOS_EXTERNAS]:
             doc_recente = docs_mais_recentes[tipo_doc]
             if doc_recente is not None:
                 docs_para_processar.append(doc_recente)
@@ -2442,7 +2587,9 @@ class AnalisadorRequerimentos:
         modelos_nao_encontrados: Optional[List[str]] = None,
         exigencias_assinatura: Optional[List[str]] = None,
         normas_revogadas: Optional[List[str]] = None,
-        cct_desobriga_sar: bool = False
+        cct_desobriga_sar: bool = False,
+        exigir_correcao_fotos_externas: bool = False,
+        cct_contem_frase_nao_varejo: bool = False
     ) -> str:
         """Monta as exigências quando as declarações do CCT faltam no JSON do produto."""
         if modelos_nao_encontrados is None:
@@ -2453,30 +2600,12 @@ class AnalisadorRequerimentos:
             normas_revogadas = []
         if not isinstance(dados_requerimento, dict):
             dados_requerimento = {}
-        campos_sar = {
-            "SAR (W/kg) Cabeça",
-            "SAR (W/kg) Tronco",
-            "SAR (W/Kg) Membro",
-        }
-
-        def contem_valor_sar_numerico(valor: object) -> bool:
-            if isinstance(valor, dict):
-                return any(
-                    (
-                        chave in campos_sar
-                        and isinstance(conteudo, (int, float))
-                        and not isinstance(conteudo, bool)
-                    )
-                    or contem_valor_sar_numerico(conteudo)
-                    for chave, conteudo in valor.items()
-                )
-            if isinstance(valor, list):
-                return any(contem_valor_sar_numerico(item) for item in valor)
-            return False
-
         exigir_avaliacao_sar = (
-            not contem_valor_sar_numerico(dados_requerimento)
+            not AnalisadorRequerimentos._contem_medicao_sar(dados_requerimento)
             and not cct_desobriga_sar
+        )
+        exigir_nome_comercial_valido = AnalisadorRequerimentos._tem_nome_comercial_invalido(
+            dados_requerimento
         )
 
         produto_requerimento = dados_requerimento.get("produto", {})
@@ -2505,20 +2634,29 @@ class AnalisadorRequerimentos:
                 "A validade deste certificado está vinculada à vigência da homologação ANATEL do módulo de RF incorporado ao produto",
                 "Que a validade deste certificado está vinculada à vigência da homologação ANATEL do módulo de RF incorporado ao produto",
             ),
+            (
+                cct_contem_frase_nao_varejo,
+                TEXTO_NAO_VAREJO,
+                TEXTO_NAO_VAREJO,
+            ),
         ]
+        especificacoes_sem_espacos = re.sub(r"\s+", "", especificacoes_adicionais).casefold()
         exigencias = [
             sugestao
             for condicao_cct, frase_obrigatoria, sugestao in regras_exigencias
-            if condicao_cct and frase_obrigatoria.casefold() not in especificacoes_adicionais_normalizadas
+            if condicao_cct
+            and re.sub(r"\s+", "", frase_obrigatoria).casefold() not in especificacoes_sem_espacos
         ]
 
         tem_exigencias = bool(
             exigencias
             or exigir_avaliacao_sar
             or modelos_nao_encontrados
+            or exigir_nome_comercial_valido
             or caracteristicas_nao_conformes
             or exigencias_assinatura
             or normas_revogadas
+            or exigir_correcao_fotos_externas
         )
         cor_exigencia = "red" if tem_exigencias else "blue"
         secao_latex = (
@@ -2534,6 +2672,11 @@ class AnalisadorRequerimentos:
                 for exigencia in exigencias:
                     secao_latex += f"        \\item {escapar_latex(exigencia)}\n"
                 secao_latex += "    \\end{itemize}\n"
+            if exigir_correcao_fotos_externas:
+                secao_latex += (
+                    "    \\item "
+                    f"{escapar_latex(EXIGENCIA_CORRIGIR_FOTOS_EXTERNAS)}\n"
+                )
             if exigir_avaliacao_sar:
                 secao_latex += (
                     "    \\item "
@@ -2547,6 +2690,10 @@ class AnalisadorRequerimentos:
             if modelos_nao_encontrados:
                 secao_latex += (
                     "    \\item Informar nome(s) do(s) modelo(s) conforme CCT.\n"
+                )
+            if exigir_nome_comercial_valido:
+                secao_latex += (
+                    "    \\item Informar nome comercial válido para o(s) modelo(s).\n"
                 )
             for nome_norma in normas_revogadas:
                 secao_latex += f"    \\item {escapar_latex(nome_norma)}\n"
@@ -2650,11 +2797,14 @@ class AnalisadorRequerimentos:
         self,
         normas_aplicaveis_por_tipo: Dict[str, Dict[str, List[str]]],
         normas_verificadas_por_tipo: Dict[str, Set[str]],
-        equipamentos_rotulos: Dict[str, str]
+        equipamentos_rotulos: Dict[str, str],
+        medicao_sar_identificada: bool = False
     ) -> str:
         """Gera uma tabela única com observações e status RACT/CCT de cada norma."""
         tipos_documento = ("RACT", "CCT")
         normas_para_tabela = set()
+        if medicao_sar_identificada:
+            normas_para_tabela.add(ID_NORMA_SAR)
         for tipo in tipos_documento:
             normas_aplicaveis_tipo = normas_aplicaveis_por_tipo.get(tipo, {})
             normas_para_tabela.update(normas_aplicaveis_tipo)
@@ -2702,14 +2852,20 @@ class AnalisadorRequerimentos:
             url_norma = detalhes_norma["url"]
             status_norma = (detalhes_norma.get("status") or "").strip().lower()
             norma_revogada = status_norma in ["revogada", "revogado"]
-            status_ract = (
-                "red" if norma_revogada else
-                "blue" if norma_id in normas_verificadas_por_tipo.get("RACT", set()) else "red"
-            )
-            status_cct = (
-                "red" if norma_revogada else
-                "blue" if norma_id in normas_verificadas_por_tipo.get("CCT", set()) else "red"
-            )
+            # Norma revogada: vermelho só no(s) documento(s) em que ocorre; cinza onde não consta.
+            cor_citada = "red" if norma_revogada else "blue"
+            cor_ausente = "gray" if norma_revogada else "red"
+            if medicao_sar_identificada and norma_id == ID_NORMA_SAR:
+                status_ract = status_cct = "blue"
+            else:
+                status_ract = (
+                    cor_citada if norma_id in normas_verificadas_por_tipo.get("RACT", set())
+                    else cor_ausente
+                )
+                status_cct = (
+                    cor_citada if norma_id in normas_verificadas_por_tipo.get("CCT", set())
+                    else cor_ausente
+                )
             status_texto = (
                 f"\\textcolor{{{status_ract}}}{{RACT}}"
                 "\\textcolor{black}{/}"
@@ -2717,9 +2873,30 @@ class AnalisadorRequerimentos:
             )
 
             motivadores = []
+            indices_palavras_chave: Dict[str, Tuple[int, str, int]] = {}
             for tipo in tipos_documento:
                 for motivador in normas_aplicaveis_por_tipo.get(tipo, {}).get(norma_id, []):
-                    if motivador not in motivadores:
+                    correspondencia = re.fullmatch(r"(.+) \(x(\d+)\)", motivador)
+                    if correspondencia:
+                        palavra, contador = correspondencia.groups()
+                        chave = palavra.casefold()
+                        if chave in indices_palavras_chave:
+                            indice, palavra_existente, contador_existente = (
+                                indices_palavras_chave[chave]
+                            )
+                            contador_existente += int(contador)
+                            indices_palavras_chave[chave] = (
+                                indice, palavra_existente, contador_existente
+                            )
+                            motivadores[indice] = (
+                                f"{palavra_existente} (x{contador_existente})"
+                            )
+                        else:
+                            indices_palavras_chave[chave] = (
+                                len(motivadores), palavra, int(contador)
+                            )
+                            motivadores.append(motivador)
+                    elif motivador not in motivadores:
                         motivadores.append(motivador)
 
             if not motivadores and norma_revogada:
@@ -2952,6 +3129,7 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
             cct_contem_produto_nao_acabado = False
             cct_contem_vinculo_homologacao = False
             cct_contem_palavra_vinculado = False
+            cct_contem_frase_nao_varejo = False
             cct_strings_desobrigam_ato17865 = set()
 
             for doc in documentos:
@@ -2970,6 +3148,9 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 if "vinculado" in palavras_encontradas_cct or "vinculada" in palavras_encontradas_cct:
                     cct_contem_palavra_vinculado = True
 
+                if dados_extraidos_cct.get("contem_frase_nao_varejo"):
+                    cct_contem_frase_nao_varejo = True
+
                 if dados_extraidos_cct.get("contem_vinculo_homologacao"):
                     cct_contem_vinculo_homologacao = True
                 elif "vinculado" in palavras_encontradas_cct or "vinculada" in palavras_encontradas_cct:
@@ -2981,6 +3162,22 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                     normas_palavra = [str(n).lower() for n in info_palavra.get("normas", [])]
                     if efeito_palavra == "desobriga" and "ato17865" in normas_palavra:
                         cct_strings_desobrigam_ato17865.add(palavra)
+
+            documento_fotos_externas = next(
+                (
+                    doc for doc in documentos
+                    if doc.get("tipo") == TIPO_FOTOS_EXTERNAS
+                ),
+                None
+            )
+            dados_fotos_externas = (
+                documento_fotos_externas.get("dados_extraidos", {})
+                if documento_fotos_externas else {}
+            )
+            fotos_externas_contem_frase = dados_fotos_externas.get(
+                "contem_frase_produto_nao_acabado_ato4083",
+                False
+            )
             
             # Debug: Adicionar log para verificar se normas foram encontradas
             #log_info(f"Normas aplicáveis encontradas para {numero_req}: {len(normas_aplicaveis)} normas")
@@ -2996,6 +3193,9 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 "RACT": self._coletar_normas_verificadas_por_tipo(req, TIPO_RACT),
                 "CCT": self._coletar_normas_verificadas_por_tipo(req, TIPO_CCT)
             }
+            medicao_sar_identificada = self._contem_medicao_sar(
+                req.get("dados_requerimento")
+            )
             normas_revogadas = self._coletar_normas_revogadas(
                 normas_verificadas_por_tipo
             )
@@ -3095,13 +3295,19 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 modelos_nao_encontrados,
                 exigencias_assinatura,
                 normas_revogadas,
-                bool(cct_strings_desobrigam_ato17865)
+                cct_desobriga_sar=bool(cct_strings_desobrigam_ato17865),
+                exigir_correcao_fotos_externas=(
+                    cct_contem_produto_nao_acabado
+                    and not fotos_externas_contem_frase
+                ),
+                cct_contem_frase_nao_varejo=cct_contem_frase_nao_varejo
             )
 
             tabela_normativos = self._gerar_tabela_normativos_latex(
                 normas_aplicaveis_por_tipo,
                 normas_verificadas_por_tipo,
-                equipamentos_rotulos
+                equipamentos_rotulos,
+                medicao_sar_identificada=medicao_sar_identificada
             )
             if tabela_normativos:
                 latex_content += tabela_normativos

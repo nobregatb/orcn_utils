@@ -2680,12 +2680,10 @@ class AnalisadorRequerimentos:
             if exigir_avaliacao_sar:
                 secao_latex += (
                     "    \\item "
-                    "Registrar a avaliação da conformidade, ou não aplicabilidade, "
-                    "dos seguintes requisitos transversais vigentes aplicáveis, "
-                    "hipoteticamente, a este tipo de produto: Ato nº 17865, de 30 de "
-                    "dezembro de 2023. No caso de dispensa de ensaios de SAR, observar "
-                    "Ato nº 4083, especificamente no item 6.6.8.3 (copiar e colar "
-                    "a opção de texto pertinente no CCT).\n"
+                    "No caso de dispensa de ensaios de SAR - previstos no"
+                    "Ato nº 17865, de 30 de dezembro de 2023 - observar o "
+                    "Ato nº 4083, especificamente no item 6.6.8.3. Basta copiar e colar "
+                    "a opção de texto pertinente no CCT.\n"
                 )
             if modelos_nao_encontrados:
                 secao_latex += (
@@ -2854,22 +2852,31 @@ class AnalisadorRequerimentos:
             norma_revogada = status_norma in ["revogada", "revogado"]
             # Norma revogada: vermelho só no(s) documento(s) em que ocorre; cinza onde não consta.
             cor_citada = "red" if norma_revogada else "blue"
-            cor_ausente = "gray" if norma_revogada else "red"
+            def cor_ausente_no_tipo(tipo: str) -> str:
+                # Cinza também quando a norma não se aplica ao tipo (ex.: palavra-chave só presente no outro documento).
+                if norma_revogada or norma_id not in normas_aplicaveis_por_tipo.get(tipo, {}):
+                    return "gray"
+                return "red"
+
             if medicao_sar_identificada and norma_id == ID_NORMA_SAR:
                 status_ract = status_cct = "blue"
             else:
                 status_ract = (
                     cor_citada if norma_id in normas_verificadas_por_tipo.get("RACT", set())
-                    else cor_ausente
+                    else cor_ausente_no_tipo("RACT")
                 )
                 status_cct = (
                     cor_citada if norma_id in normas_verificadas_por_tipo.get("CCT", set())
-                    else cor_ausente
+                    else cor_ausente_no_tipo("CCT")
                 )
+            def formatar_status(cor: str, rotulo: str) -> str:
+                texto = f"\\sout{{{rotulo}}}" if cor == "gray" else rotulo
+                return f"\\textcolor{{{cor}}}{{{texto}}}"
+
             status_texto = (
-                f"\\textcolor{{{status_ract}}}{{RACT}}"
-                "\\textcolor{black}{/}"
-                f"\\textcolor{{{status_cct}}}{{CCT}}"
+                formatar_status(status_ract, "RACT")
+                + "\\textcolor{black}{/}"
+                + formatar_status(status_cct, "CCT")
             )
 
             motivadores = []

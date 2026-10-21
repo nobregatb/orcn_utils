@@ -2686,8 +2686,12 @@ class AnalisadorRequerimentos:
                     "a opção de texto pertinente no CCT.\n"
                 )
             if modelos_nao_encontrados:
+                modelos_pendentes = ", ".join(
+                    escapar_latex(modelo) for modelo in modelos_nao_encontrados
+                )
                 secao_latex += (
-                    "    \\item Informar nome(s) do(s) modelo(s) conforme CCT.\n"
+                    "    \\item Informar nome(s) do(s) modelo(s) conforme CCT. "
+                    f"(Modelos não encontrados no CCT: {modelos_pendentes})\n"
                 )
             if exigir_nome_comercial_valido:
                 secao_latex += (

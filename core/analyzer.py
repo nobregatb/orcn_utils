@@ -59,6 +59,64 @@ CAMPOS_SAR = {
     "SAR (W/kg) Tronco",
     "SAR (W/Kg) Membro",
 }
+MESES_PORTUGUES = {
+    "janeiro": 1,
+    "fevereiro": 2,
+    "marco": 3,
+    "abril": 4,
+    "maio": 5,
+    "junho": 6,
+    "julho": 7,
+    "agosto": 8,
+    "setembro": 9,
+    "outubro": 10,
+    "novembro": 11,
+    "dezembro": 12,
+}
+
+
+def _extrair_datas_documento(texto: str) -> List[datetime]:
+    """Extrai datas válidas em dd/mm/aaaa ou por extenso em português."""
+    texto_normalizado = unicodedata.normalize("NFD", texto.lower())
+    texto_normalizado = "".join(
+        caractere
+        for caractere in texto_normalizado
+        if unicodedata.category(caractere) != "Mn"
+    )
+    datas = []
+
+    padroes = (
+        (r"\b(\d{1,2})/(\d{1,2})/(\d{4})\b", "numerica"),
+        (r"\b(\d{1,2})\s+de\s+([a-z]+)\s+de\s+(\d{4})\b", "extenso"),
+    )
+    for padrao, formato in padroes:
+        for correspondencia in re.finditer(padrao, texto_normalizado):
+            primeiro, segundo, ano = correspondencia.groups()
+            try:
+                if formato == "numerica":
+                    dia, mes = int(primeiro), int(segundo)
+                else:
+                    dia = int(primeiro)
+                    mes = MESES_PORTUGUES.get(segundo, 0)
+                if mes:
+                    datas.append(datetime(int(ano), mes, dia))
+            except ValueError:
+                continue
+
+    return datas
+
+
+def _chave_selecao_documento(
+    tipo_documento: str,
+    data_conteudo: Optional[datetime],
+    data_nome_arquivo: datetime,
+) -> Tuple[datetime, datetime]:
+    """Prioriza a data do PDF em CCT/RACT e mantém a data do nome nos empates."""
+    if tipo_documento in (TIPO_CCT, TIPO_RACT):
+        return data_conteudo or datetime.min, data_nome_arquivo
+    return data_nome_arquivo, datetime.min
+
+
 from core.utils import (
     formatar_cnpj, desformatar_cnpj, latex_escape_path, escapar_latex, buscar_valor,
     normalizar, normalizar_dados, obter_versao_git, carregar_json, salvar_json, validar_cnpj, fullpath_para_req,
@@ -562,6 +620,22 @@ class AnalisadorRequerimentos:
         # Variáveis de timing
         self.tempo_inicio_analise = None
         self.tempo_fim_analise = None
+
+    def _extrair_data_mais_recente_pdf(self, caminho: Path) -> Optional[datetime]:
+        """Retorna a data mais recente encontrada no texto ou OCR do PDF."""
+        try:
+            with fitz.open(caminho) as pdf:
+                texto = "\n".join(str(pagina.get_text("text")) for pagina in pdf)
+                if _pdf_requer_ocr(pdf):
+                    texto_ocr = extract_pdf_content_from_ocr(caminho)
+                    if texto_ocr:
+                        texto = texto_ocr
+        except Exception as erro:
+            log_erro(f"Falha ao extrair datas de {caminho.name}: {erro}")
+            return None
+
+        datas = _extrair_datas_documento(texto)
+        return max(datas) if datas else None
     
     def _obter_escopo_analise(self) -> str:
         """
@@ -1873,7 +1947,9 @@ class AnalisadorRequerimentos:
         log_info(f"Encontrados {len(arquivos_pdf)} arquivos PDF passíveis de análise")
 
         # Selecionar os documentos mais recentes para CCT, RACT e Fotos Externas.
-        docs_mais_recentes: Dict[str, Optional[Tuple[Path, str, datetime]]] = {
+        docs_mais_recentes: Dict[
+            str, Optional[Tuple[Path, str, datetime, Optional[datetime]]]
+        ] = {
             TIPO_CCT: None,
             TIPO_RACT: None,
             TIPO_FOTOS_EXTERNAS: None
@@ -1886,15 +1962,35 @@ class AnalisadorRequerimentos:
             if tipo_doc not in docs_mais_recentes:
                 continue
 
+            data_conteudo = (
+                self._extrair_data_mais_recente_pdf(arquivo)
+                if tipo_doc in (TIPO_CCT, TIPO_RACT)
+                else None
+            )
             atual = docs_mais_recentes[tipo_doc]
-            if atual is None or data_doc > atual[2]:
-                docs_mais_recentes[tipo_doc] = (arquivo, tipo_doc, data_doc)
+            chave_candidata = _chave_selecao_documento(
+                tipo_doc, data_conteudo, data_doc
+            )
+            chave_atual = (
+                _chave_selecao_documento(tipo_doc, atual[3], atual[2])
+                if atual is not None
+                else None
+            )
+            if atual is None:
+                docs_mais_recentes[tipo_doc] = (
+                    arquivo, tipo_doc, data_doc, data_conteudo
+                )
+            elif chave_candidata > chave_atual:
+                docs_mais_recentes[tipo_doc] = (
+                    arquivo, tipo_doc, data_doc, data_conteudo
+                )
 
         docs_para_processar = list(docs_demais_tipos)
         for tipo_doc in [TIPO_CCT, TIPO_RACT, TIPO_FOTOS_EXTERNAS]:
             doc_recente = docs_mais_recentes[tipo_doc]
             if doc_recente is not None:
-                docs_para_processar.append(doc_recente)
+                arquivo, tipo, data_nome, _ = doc_recente
+                docs_para_processar.append((arquivo, tipo, data_nome))
 
         for doc_info in docs_para_processar:
             arquivo, tipo_doc, _ = doc_info

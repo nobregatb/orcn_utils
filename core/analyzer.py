@@ -2542,7 +2542,7 @@ class AnalisadorRequerimentos:
                     "hipoteticamente, a este tipo de produto: Ato nº 17865, de 30 de "
                     "dezembro de 2023. No caso de dispensa de ensaios de SAR, observar "
                     "Ato nº 4083, especificamente no item 6.6.8.3 (copiar e colar "
-                    "opções de texto).\n"
+                    "a opção de texto pertinente no CCT).\n"
                 )
             if modelos_nao_encontrados:
                 secao_latex += (

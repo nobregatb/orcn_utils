@@ -106,6 +106,43 @@ def _extrair_datas_documento(texto: str) -> List[datetime]:
     return datas
 
 
+def _validar_campos_certificado(
+    dados_requerimento: Optional[Dict],
+    texto_cct: str
+) -> List[str]:
+    """Retorna os campos do certificado do requerimento que não aparecem no CCT."""
+    certificado = (
+        dados_requerimento.get("certificado")
+        if isinstance(dados_requerimento, dict) else None
+    )
+    if not isinstance(certificado, dict):
+        return []
+
+    campos_data = (
+        "Data de Emissão do CCT",
+        "Data de Validade do Certificado",
+    )
+    datas_cct = set(_extrair_datas_documento(texto_cct))
+    campos_nao_encontrados = []
+
+    numero_certificado = certificado.get("Número do Certificado")
+    if numero_certificado is not None and str(numero_certificado) != "":
+        numero_sem_espacos = "".join(str(numero_certificado).split())
+        texto_cct_sem_espacos = "".join(texto_cct.split())
+        if numero_sem_espacos not in texto_cct_sem_espacos:
+            campos_nao_encontrados.append("Número do Certificado")
+
+    for campo in campos_data:
+        valor = certificado.get(campo)
+        if valor is None or str(valor) == "":
+            continue
+        datas_informadas = _extrair_datas_documento(str(valor))
+        if not datas_informadas or not any(data in datas_cct for data in datas_informadas):
+            campos_nao_encontrados.append(campo)
+
+    return campos_nao_encontrados
+
+
 def _chave_selecao_documento(
     tipo_documento: str,
     data_conteudo: Optional[datetime],
@@ -854,6 +891,9 @@ class AnalisadorRequerimentos:
                 resultado["observacoes"].append("PDF pode estar corrompido ou protegido")
                 return resultado
 
+            campos_certificado_nao_encontrados = _validar_campos_certificado(
+                dados_requerimento, conteudo
+            )
             modelos_json = self._extrair_modelos_json(dados_requerimento)
             modelos_encontrados = [
                 modelo for modelo in modelos_json
@@ -871,6 +911,9 @@ class AnalisadorRequerimentos:
             if not dados_cct:
                 resultado["status"] = STATUS_ERRO
                 resultado["nao_conformidades"].append("Falha na extração de dados do CCT")
+                resultado["dados_extraidos"] = {
+                    "campos_certificado_nao_encontrados": campos_certificado_nao_encontrados
+                }
                 return resultado
             
             # Validar dados extraídos
@@ -932,7 +975,8 @@ class AnalisadorRequerimentos:
                 "contem_frase_nao_varejo": contem_frase_nao_varejo,
                 "modelos_json": modelos_json,
                 "modelos_encontrados_no_cct": modelos_encontrados,
-                "modelos_nao_encontrados_no_cct": modelos_nao_encontrados
+                "modelos_nao_encontrados_no_cct": modelos_nao_encontrados,
+                "campos_certificado_nao_encontrados": campos_certificado_nao_encontrados
             }
             
             # Observações detalhadas
@@ -1540,32 +1584,41 @@ class AnalisadorRequerimentos:
         return modelos_unicos
 
     @staticmethod
-    def _tem_nome_comercial_invalido(dados_requerimento: Optional[Dict]) -> bool:
+    def _extrair_nomes_comerciais_invalidos(
+        dados_requerimento: Optional[Dict]
+    ) -> List[str]:
         if not isinstance(dados_requerimento, dict):
-            return False
+            return []
 
         modelos = dados_requerimento.get("modelos")
         if modelos is None:
             requerimento = dados_requerimento.get("requerimento", {})
             modelos = requerimento.get("modelos") if isinstance(requerimento, dict) else None
         if not isinstance(modelos, list):
-            return False
+            return []
 
+        nomes_invalidos = []
         for modelo in modelos:
             if not isinstance(modelo, dict):
                 continue
             nome_comercial = modelo.get("Nome Comercial")
             if nome_comercial is None:
                 continue
-            nome_normalizado = re.sub(r"\s+", " ", str(nome_comercial)).strip().casefold()
+            nome_comercial_exibicao = str(nome_comercial).strip()
+            nome_normalizado = re.sub(
+                r"\s+", " ", nome_comercial_exibicao
+            ).casefold()
             nome_sem_acentos = "".join(
                 caractere
                 for caractere in unicodedata.normalize("NFD", nome_normalizado)
                 if not unicodedata.combining(caractere)
             )
-            if nome_sem_acentos in {"-", "n/a", "na", "nao aplicavel"}:
-                return True
-        return False
+            if (
+                nome_sem_acentos in {"-", "n/a", "na", "nao aplicavel"}
+                and nome_comercial_exibicao not in nomes_invalidos
+            ):
+                nomes_invalidos.append(nome_comercial_exibicao)
+        return nomes_invalidos
 
     @staticmethod
     def _contem_medicao_sar(valor: object) -> bool:
@@ -2685,7 +2738,8 @@ class AnalisadorRequerimentos:
         normas_revogadas: Optional[List[str]] = None,
         cct_desobriga_sar: bool = False,
         exigir_correcao_fotos_externas: bool = False,
-        cct_contem_frase_nao_varejo: bool = False
+        cct_contem_frase_nao_varejo: bool = False,
+        campos_certificado_nao_encontrados: Optional[List[str]] = None
     ) -> str:
         """Monta as exigências quando as declarações do CCT faltam no JSON do produto."""
         if modelos_nao_encontrados is None:
@@ -2694,13 +2748,15 @@ class AnalisadorRequerimentos:
             exigencias_assinatura = []
         if normas_revogadas is None:
             normas_revogadas = []
+        if campos_certificado_nao_encontrados is None:
+            campos_certificado_nao_encontrados = []
         if not isinstance(dados_requerimento, dict):
             dados_requerimento = {}
         exigir_avaliacao_sar = (
             not AnalisadorRequerimentos._contem_medicao_sar(dados_requerimento)
             and not cct_desobriga_sar
         )
-        exigir_nome_comercial_valido = AnalisadorRequerimentos._tem_nome_comercial_invalido(
+        nomes_comerciais_invalidos = AnalisadorRequerimentos._extrair_nomes_comerciais_invalidos(
             dados_requerimento
         )
 
@@ -2748,11 +2804,12 @@ class AnalisadorRequerimentos:
             exigencias
             or exigir_avaliacao_sar
             or modelos_nao_encontrados
-            or exigir_nome_comercial_valido
+            or nomes_comerciais_invalidos
             or caracteristicas_nao_conformes
             or exigencias_assinatura
             or normas_revogadas
             or exigir_correcao_fotos_externas
+            or campos_certificado_nao_encontrados
         )
         cor_exigencia = "red" if tem_exigencias else "blue"
         secao_latex = (
@@ -2789,9 +2846,17 @@ class AnalisadorRequerimentos:
                     "    \\item Informar nome(s) do(s) modelo(s) conforme CCT. "
                     f"(Modelos não encontrados no CCT: {modelos_pendentes})\n"
                 )
-            if exigir_nome_comercial_valido:
+            for nome_comercial in nomes_comerciais_invalidos:
                 secao_latex += (
-                    "    \\item Informar nome comercial válido para o(s) modelo(s).\n"
+                    "    \\item Confirmar o nome comercial do(s) modelo(s) "
+                    f"como sendo \"{escapar_latex(nome_comercial)}\" ou "
+                    "corrigir informação cadastrada no sistema.\n"
+                )
+            for campo in campos_certificado_nao_encontrados:
+                secao_latex += (
+                    "    \\item O campo "
+                    f"{escapar_latex(campo)} do JSON do requerimento "
+                    "não foi encontrado no CCT.\n"
                 )
             for nome_norma in normas_revogadas:
                 secao_latex += f"    \\item {escapar_latex(nome_norma)}\n"
@@ -3348,6 +3413,9 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 )
 
             dados_cct = documento_cct.get("dados_extraidos", {}) if documento_cct else {}
+            campos_certificado_nao_encontrados = dados_cct.get(
+                "campos_certificado_nao_encontrados", []
+            )
             modelos_nao_encontrados = []
             status_modelos = None
             if documento_cct is None:
@@ -3407,7 +3475,8 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                     cct_contem_produto_nao_acabado
                     and not fotos_externas_contem_frase
                 ),
-                cct_contem_frase_nao_varejo=cct_contem_frase_nao_varejo
+                cct_contem_frase_nao_varejo=cct_contem_frase_nao_varejo,
+                campos_certificado_nao_encontrados=campos_certificado_nao_encontrados
             )
 
             tabela_normativos = self._gerar_tabela_normativos_latex(

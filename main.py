@@ -101,6 +101,71 @@ def obter_tipo_download_certifica():
             log_erro(f"Erro inesperado na seleção de tipo: {str(e)}")
             log_info("Erro inesperado. Tente novamente.")
 
+def obter_escopo_download_certifica():
+    """
+    Pergunta se o download no Certifica é de todos os requerimentos ou de um específico.
+
+    Returns:
+        str | None: "T" (todos), "E" (requerimento específico) ou None se cancelado
+    """
+    opcoes = {"1": ("T", "Todos os requerimentos"), "2": ("E", "Um requerimento específico (somente anexos)")}
+    log_info("\nO download é de:")
+    for chave, (_, descricao) in opcoes.items():
+        log_info(f"{chave}. {descricao}")
+
+    while True:
+        try:
+            opcao = input("\nDigite sua opção (1/2): ").strip()
+
+            if opcao in opcoes:
+                log_info(f"Selecionado: {opcoes[opcao][1]}")
+                return opcoes[opcao][0]
+            log_info("Opção inválida. Digite 1 ou 2.")
+
+        except KeyboardInterrupt:
+            log_info("\nOperação cancelada pelo usuário.")
+            return None
+        except Exception as e:
+            log_erro(f"Erro inesperado na seleção de escopo: {str(e)}")
+            log_info("Erro inesperado. Tente novamente.")
+
+def selecionar_requerimento_certifica(requerimentos):
+    """
+    Lista os requerimentos lidos no Certifica e pede ao usuário que escolha um.
+
+    Returns:
+        dict | None: requerimento escolhido ou None se cancelado/sem requerimentos
+    """
+    if not requerimentos:
+        log_info("❌ Nenhum requerimento encontrado na lista.")
+        return None
+
+    log_info(f"\n📁 Requerimentos disponíveis ({len(requerimentos)}):")
+    for i, requerimento in enumerate(requerimentos, 1):
+        log_info(f"{i:2d}. {requerimento['num_req']}")
+    log_info(f"{len(requerimentos)+1:2d}. Cancelar e voltar")
+
+    while True:
+        try:
+            opcao = input(f"\nSelecione o requerimento (1-{len(requerimentos)+1}): ").strip()
+
+            if opcao.lower() in ["c", "cancelar", "voltar", "0"]:
+                return None
+            if opcao.isdigit():
+                indice = int(opcao) - 1
+                if indice == len(requerimentos):
+                    return None
+                if 0 <= indice < len(requerimentos):
+                    return requerimentos[indice]
+            log_info(f"❌ Digite um número entre 1 e {len(requerimentos)+1}, ou 'c' para cancelar.")
+
+        except KeyboardInterrupt:
+            log_info("\n❌ Operação cancelada pelo usuário.")
+            return None
+        except Exception as e:
+            log_erro(f"Erro inesperado na seleção de requerimento: {str(e)}")
+            log_info("Erro inesperado. Tente novamente.")
+
 def main():
     while True:
         try:
@@ -115,7 +180,11 @@ def main():
                     continue
 
                 if sistema_download == "C":
-                    baixar_documentos_certifica(obter_tipo_download_certifica)
+                    baixar_documentos_certifica(
+                        obter_tipo_download_certifica,
+                        obter_escopo_download_certifica,
+                        selecionar_requerimento_certifica,
+                    )
                     continue
                 
                 # Obter tipo de download do usuário

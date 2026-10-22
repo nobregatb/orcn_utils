@@ -518,8 +518,11 @@ def gerar_pdf_resumo_certifica(page, pasta):
     log_info(f"✅ Resumo PDF salvo: {os.path.basename(destino)}")
 
 
-def processar_requerimento_certifica(page, requerimento):
-    """Cria a pasta do requerimento, abre seu link, lê os dados, grava o JSON e baixa os anexos."""
+def processar_requerimento_certifica(page, requerimento, somente_anexos=False):
+    """
+    Cria a pasta do requerimento, abre seu link, lê os dados, grava o JSON e baixa os anexos.
+    Com somente_anexos=True, apenas os anexos são baixados (sem JSON, ajuste de abas ou PDF do Resumo).
+    """
     num_req = requerimento["num_req"]
     if num_req.count("/") != 1:
         log_erro(f"Número de requerimento inválido (esperado 'num/ano'): '{num_req}'")
@@ -538,20 +541,23 @@ def processar_requerimento_certifica(page, requerimento):
         state="visible",
         timeout=CERTIFICA_TIMEOUT_PAGINA,
     )
-    gravar_json_requerimento_certifica(
-        requerimento,
-        extrair_dados_requerimento_certifica(page),
-        pasta,
-    )
-    falhas_campos = ajustar_campos_certifica(page)
+    falhas_campos = 0
+    if not somente_anexos:
+        gravar_json_requerimento_certifica(
+            requerimento,
+            extrair_dados_requerimento_certifica(page),
+            pasta,
+        )
+        falhas_campos = ajustar_campos_certifica(page)
     baixados, falhas = baixar_anexos_certifica(page, pasta)
     falha_resumo = False
-    try:
-        gerar_pdf_resumo_certifica(page, pasta)
-        baixados += 1
-    except Exception as e:
-        falha_resumo = True
-        log_erro(f"Falha ao gerar o PDF do Resumo do requerimento {num_req}: {e}")
+    if not somente_anexos:
+        try:
+            gerar_pdf_resumo_certifica(page, pasta)
+            baixados += 1
+        except Exception as e:
+            falha_resumo = True
+            log_erro(f"Falha ao gerar o PDF do Resumo do requerimento {num_req}: {e}")
     if falhas:
         marcar_requerimento_com_erro(num_req, f"Falha ao baixar {falhas} anexo(s)")
         log_info(f"⚠️ Requerimento {num_req} marcado com erro por falhas no processamento dos anexos")
@@ -569,10 +575,12 @@ def processar_requerimento_certifica(page, requerimento):
             log_info(f"✅ Requerimento {num_req} marcado como concluído (0 novos arquivos; anexos já existiam)")
 
 
-def baixar_documentos_certifica(obter_tipo):
+def baixar_documentos_certifica(obter_tipo, obter_escopo, obter_requerimento):
     """
-    Abre o Certifica, aguarda o login do usuário e pergunta o tipo de download.
+    Abre o Certifica, aguarda o login do usuário e pergunta o tipo e o escopo do download.
     obter_tipo: função que interage com o usuário e retorna o tipo escolhido (ou None).
+    obter_escopo: função que retorna "T" (todos) ou "E" (requerimento específico); None se cancelado.
+    obter_requerimento: recebe a lista de requerimentos lidos e retorna o escolhido (ou None).
     """
     try:
         with sync_playwright() as p:
@@ -593,12 +601,26 @@ def baixar_documentos_certifica(obter_tipo):
                 browser.close()
                 return
 
+            escopo = obter_escopo()
+            if escopo is None:
+                browser.close()
+                return
+            somente_anexos = escopo == "E"
+
             # "Todos" lê primeiro os retornos para estudo (1) e depois os em análise (2)
             tipos_a_ler = ["1", "2"] if tipo == "3" else [tipo]
             requerimentos = []
             for tipo_atual in tipos_a_ler:
                 requerimentos.extend(ler_requerimentos_do_tipo(page, tipo_atual))
             log_info(f"Total de requerimentos lidos: {len(requerimentos)}.")
+
+            # No modo específico, o usuário escolhe um único requerimento da lista lida
+            if somente_anexos:
+                escolhido = obter_requerimento(requerimentos)
+                if escolhido is None:
+                    browser.close()
+                    return
+                requerimentos = [escolhido]
 
             log_info(SEPARADOR_LINHA)
             log_info("🤖 DOWNLOAD CERTIFICA - ANEXOS")
@@ -608,6 +630,8 @@ def baixar_documentos_certifica(obter_tipo):
             # Como no SCH, requerimentos já concluídos no download_status.json são pulados
             pendentes = set(obter_requerimentos_pendentes([r["num_req"] for r in requerimentos]))
             requerimentos = [r for r in requerimentos if r["num_req"] in pendentes]
+            if somente_anexos and not requerimentos:
+                log_info("✅ O requerimento escolhido já consta como baixado em download_status.json.")
 
             if requerimentos:
                 log_info(f"⏳ {len(requerimentos)} requerimento(s) serão processados")
@@ -618,7 +642,7 @@ def baixar_documentos_certifica(obter_tipo):
                 log_info(f"▶️  Requerimento {indice}: {requerimento['num_req']}")
                 log_info(SEPARADOR_LINHA)
                 try:
-                    processar_requerimento_certifica(page, requerimento)
+                    processar_requerimento_certifica(page, requerimento, somente_anexos)
                 except Exception as e:
                     log_erro(f"Erro ao processar requerimento {requerimento.get('num_req')}: {str(e)[:100]}")
                     marcar_requerimento_com_erro(requerimento.get("num_req"), str(e)[:200])

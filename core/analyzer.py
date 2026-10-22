@@ -2776,7 +2776,7 @@ class AnalisadorRequerimentos:
             if exigir_avaliacao_sar:
                 secao_latex += (
                     "    \\item "
-                    "No caso de dispensa de ensaios de SAR - previstos no"
+                    "No caso de dispensa de ensaios de SAR - previstos no "
                     "Ato nº 17865, de 30 de dezembro de 2023 - observar o "
                     "Ato nº 4083, especificamente no item 6.6.8.3. Basta copiar e colar "
                     "a opção de texto pertinente no CCT.\n"

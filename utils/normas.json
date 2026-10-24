@@ -186,12 +186,28 @@
     "status": "vigente"
   },
   {
+    "id": "ato170187",
+    "nome": "Norma (ato170187) citada no requerimento 26.08923",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.08923.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
+  },
+  {
     "id": "ato17087",
     "nome": "Ato nº 17087, de 19 de dezembro de 2022",
     "descricao": "Requisitos Técnicos de Segurança Elétrica",
     "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1823-ato-17087",
     "entidade": "Anatel",
     "status": "vigente"
+  },
+  {
+    "id": "ato170870",
+    "nome": "Norma (ato170870) citada no requerimento 26.08711",
+    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.08711.",
+    "url": "a definir",
+    "entidade": "Anatel",
+    "status": "revogado"
   },
   {
     "id": "ato17207",

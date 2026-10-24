@@ -1668,12 +1668,10 @@ class AnalisadorRequerimentos:
             if linha and (not isinstance(linha, list) or any(linha))
         ]
 
-    def _validar_caracteristicas_tecnicas_json(
-        self,
+    @staticmethod
+    def _obter_produtos_caracteristicas(
         dados_requerimento: Optional[Dict],
-        normas_referencia: Set[str]
-    ) -> List[Dict[str, str]]:
-        """Aplica as regras de uso de faixa às características técnicas dos produtos do JSON."""
+    ) -> Optional[List[Any]]:
         caracteristicas = (
             dados_requerimento.get("caracteristicas_tecnicas")
             if isinstance(dados_requerimento, dict) else None
@@ -1695,6 +1693,68 @@ class AnalisadorRequerimentos:
                 }]
                 if isinstance(subprodutos, list):
                     produtos.extend(subprodutos)
+        return produtos
+
+    @staticmethod
+    def _extrair_linhas_caracteristicas_repetidas(
+        dados_requerimento: Optional[Dict],
+    ) -> List[Tuple[int, str]]:
+        """Retorna as linhas repetidas de cada tabela de características técnicas."""
+        produtos = AnalisadorRequerimentos._obter_produtos_caracteristicas(
+            dados_requerimento
+        )
+        if not isinstance(produtos, list):
+            return []
+
+        linhas_repetidas = []
+        for produto in produtos:
+            if not isinstance(produto, dict):
+                continue
+            registros = AnalisadorRequerimentos._tabela_para_registros(
+                produto.get("caracteristicas")
+            )
+            grupos = []
+            for registro in registros:
+                if not isinstance(registro, dict):
+                    continue
+                assinatura = {
+                    str(campo): "".join(valor.split()) if isinstance(valor, str) else valor
+                    for campo, valor in registro.items()
+                }
+                for indice, (assinatura_existente, quantidade, valores) in enumerate(grupos):
+                    if assinatura == assinatura_existente:
+                        grupos[indice] = (
+                            assinatura_existente,
+                            quantidade + 1,
+                            valores,
+                        )
+                        break
+                else:
+                    grupos.append((assinatura, 1, list(registro.values())))
+
+            for _, quantidade, valores in grupos:
+                if quantidade < 2:
+                    continue
+                celulas = [
+                    escapar_latex(str(valor).strip())
+                    for valor in valores
+                    if valor is not None
+                    and str(valor).strip()
+                    and str(valor).strip() != "-"
+                ]
+                if celulas:
+                    linhas_repetidas.append(
+                        (quantidade, "".join(f"[{valor}]" for valor in celulas))
+                    )
+        return linhas_repetidas
+
+    def _validar_caracteristicas_tecnicas_json(
+        self,
+        dados_requerimento: Optional[Dict],
+        normas_referencia: Set[str]
+    ) -> List[Dict[str, str]]:
+        """Aplica as regras de uso de faixa às características técnicas dos produtos do JSON."""
+        produtos = self._obter_produtos_caracteristicas(dados_requerimento)
 
         if not isinstance(produtos, list) or not produtos:
             return [{
@@ -2752,6 +2812,11 @@ class AnalisadorRequerimentos:
             campos_certificado_nao_encontrados = []
         if not isinstance(dados_requerimento, dict):
             dados_requerimento = {}
+        linhas_caracteristicas_repetidas = (
+            AnalisadorRequerimentos._extrair_linhas_caracteristicas_repetidas(
+                dados_requerimento
+            )
+        )
         exigir_avaliacao_sar = (
             not AnalisadorRequerimentos._contem_medicao_sar(dados_requerimento)
             and not cct_desobriga_sar
@@ -2803,6 +2868,7 @@ class AnalisadorRequerimentos:
         tem_exigencias = bool(
             exigencias
             or exigir_avaliacao_sar
+            or linhas_caracteristicas_repetidas
             or modelos_nao_encontrados
             or nomes_comerciais_invalidos
             or caracteristicas_nao_conformes
@@ -2838,6 +2904,18 @@ class AnalisadorRequerimentos:
                     "Ato nº 4083, especificamente no item 6.6.8.3. Basta copiar e colar "
                     "a opção de texto pertinente no CCT.\n"
                 )
+            if linhas_caracteristicas_repetidas:
+                secao_latex += (
+                    "    \\item Remover todas as cópias das linhas na tabela de "
+                    "características técnicas que estiverem repetidas. "
+                    "Como exemplo:\n"
+                )
+                secao_latex += "    \\begin{itemize}\n"
+                for quantidade, linha in linhas_caracteristicas_repetidas:
+                    secao_latex += (
+                        f"        \\item (x{quantidade}) {linha}\n"
+                    )
+                secao_latex += "    \\end{itemize}\n"
             if modelos_nao_encontrados:
                 modelos_pendentes = ", ".join(
                     escapar_latex(modelo) for modelo in modelos_nao_encontrados

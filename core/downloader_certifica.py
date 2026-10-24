@@ -120,15 +120,18 @@ def pares_para_dict(pares):
 
 
 def tabela_por_cabecalho(aba, texto_cabecalho):
-    """Retorna a primeira tabela da aba cujo cabeçalho contém o texto, convertida em lista de dicts."""
+    """Retorna juntas as linhas de todas as tabelas da aba com o cabeçalho indicado."""
+    registros = []
     for linhas in aba["tabelas"]:
         if not linhas or not any(texto_cabecalho.casefold() in celula.casefold() for celula in linhas[0]):
             continue
         cabecalho = linhas[0]
-        registros = [dict(zip(cabecalho, linha)) for linha in linhas[1:] if len(linha) == len(cabecalho)]
-        # Descarta linhas totalmente vazias (modelos de linha da página)
-        return [r for r in registros if any(v for v in r.values())]
-    return []
+        registros.extend(
+            dict(zip(cabecalho, linha))
+            for linha in linhas[1:]
+            if len(linha) == len(cabecalho) and any(linha)
+        )
+    return registros
 
 
 def ativar_aba_certifica(page, sufixo):

@@ -5,6 +5,7 @@ import json
 import math
 import re
 import unicodedata
+from collections import Counter
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Set#, Any 
@@ -27,6 +28,9 @@ from core.const import (
     CERTIFICA_CABECALHO_FREQUENCIAS
 )
 from core.regras_uso_faixa import HomologacaoProduto, parse_valor_numerico
+from core.caracteristicas_cct import (
+    extrair_tabelas_pdf, linhas_cct_de_tabelas, validar_caracteristicas_no_cct
+)
 
 # Constantes para tipos de documento (chaves da estrutura TIPOS_DOCUMENTOS)
 TIPO_CCT = 'cct'
@@ -976,7 +980,10 @@ class AnalisadorRequerimentos:
                 "modelos_json": modelos_json,
                 "modelos_encontrados_no_cct": modelos_encontrados,
                 "modelos_nao_encontrados_no_cct": modelos_nao_encontrados,
-                "campos_certificado_nao_encontrados": campos_certificado_nao_encontrados
+                "campos_certificado_nao_encontrados": campos_certificado_nao_encontrados,
+                "caracteristicas_nao_encontradas_no_cct": self._validar_valores_caracteristicas_no_cct(
+                    caminho, dados_requerimento
+                )
             }
             
             # Observações detalhadas
@@ -1669,9 +1676,8 @@ class AnalisadorRequerimentos:
         ]
 
     @staticmethod
-    def _obter_produtos_caracteristicas(
-        dados_requerimento: Optional[Dict],
-    ) -> Optional[List[Any]]:
+    def _obter_produtos_caracteristicas(dados_requerimento: Optional[Dict]) -> Optional[List[Any]]:
+        """Obtém a lista de produtos com características técnicas do JSON (inclui o formato legado)."""
         caracteristicas = (
             dados_requerimento.get("caracteristicas_tecnicas")
             if isinstance(dados_requerimento, dict) else None
@@ -1693,60 +1699,36 @@ class AnalisadorRequerimentos:
                 }]
                 if isinstance(subprodutos, list):
                     produtos.extend(subprodutos)
-        return produtos
 
-    @staticmethod
-    def _extrair_linhas_caracteristicas_repetidas(
-        dados_requerimento: Optional[Dict],
-    ) -> List[Tuple[int, str]]:
-        """Retorna as linhas repetidas de cada tabela de características técnicas."""
-        produtos = AnalisadorRequerimentos._obter_produtos_caracteristicas(
-            dados_requerimento
-        )
-        if not isinstance(produtos, list):
-            return []
+        return produtos if isinstance(produtos, list) else None
 
-        linhas_repetidas = []
-        for produto in produtos:
+    def _validar_valores_caracteristicas_no_cct(
+        self,
+        caminho_cct: Path,
+        dados_requerimento: Optional[Dict]
+    ) -> Optional[List[Dict]]:
+        """
+        Verifica se os valores das características técnicas do JSON constam nas tabelas do CCT.
+        Retorna as pendências, ou None quando a validação é inconclusiva (sem tabela legível no CCT).
+        """
+        produtos_json = self._obter_produtos_caracteristicas(dados_requerimento) or []
+        produtos = []
+        for indice, produto in enumerate(produtos_json, 1):
             if not isinstance(produto, dict):
                 continue
-            registros = AnalisadorRequerimentos._tabela_para_registros(
-                produto.get("caracteristicas")
-            )
-            grupos = []
-            for registro in registros:
-                if not isinstance(registro, dict):
-                    continue
-                assinatura = {
-                    str(campo): "".join(valor.split()) if isinstance(valor, str) else valor
-                    for campo, valor in registro.items()
-                }
-                for indice, (assinatura_existente, quantidade, valores) in enumerate(grupos):
-                    if assinatura == assinatura_existente:
-                        grupos[indice] = (
-                            assinatura_existente,
-                            quantidade + 1,
-                            valores,
-                        )
-                        break
-                else:
-                    grupos.append((assinatura, 1, list(registro.values())))
-
-            for _, quantidade, valores in grupos:
-                if quantidade < 2:
-                    continue
-                celulas = [
-                    escapar_latex(str(valor).strip())
-                    for valor in valores
-                    if valor is not None
-                    and str(valor).strip()
-                    and str(valor).strip() != "-"
-                ]
-                if celulas:
-                    linhas_repetidas.append(
-                        (quantidade, "".join(f"[{valor}]" for valor in celulas))
-                    )
-        return linhas_repetidas
+            nome = str(produto.get("nome", "")).strip() or f"Produto {indice}"
+            registros = self._tabela_para_registros(produto.get("caracteristicas"))
+            produtos.append((nome, [r for r in registros if isinstance(r, dict)]))
+        if not any(registros for _, registros in produtos):
+            return []
+        try:
+            linhas_cct = linhas_cct_de_tabelas(extrair_tabelas_pdf(caminho_cct))
+        except Exception as erro:
+            log_erro(f"Falha ao extrair tabelas do CCT {caminho_cct.name}: {erro}")
+            return None
+        if not linhas_cct:
+            return None
+        return validar_caracteristicas_no_cct(produtos, linhas_cct)
 
     def _validar_caracteristicas_tecnicas_json(
         self,
@@ -2799,9 +2781,12 @@ class AnalisadorRequerimentos:
         cct_desobriga_sar: bool = False,
         exigir_correcao_fotos_externas: bool = False,
         cct_contem_frase_nao_varejo: bool = False,
-        campos_certificado_nao_encontrados: Optional[List[str]] = None
+        campos_certificado_nao_encontrados: Optional[List[str]] = None,
+        caracteristicas_nao_encontradas_no_cct: Optional[List[Dict]] = None
     ) -> str:
         """Monta as exigências quando as declarações do CCT faltam no JSON do produto."""
+        if caracteristicas_nao_encontradas_no_cct is None:
+            caracteristicas_nao_encontradas_no_cct = []
         if modelos_nao_encontrados is None:
             modelos_nao_encontrados = []
         if exigencias_assinatura is None:
@@ -2812,11 +2797,6 @@ class AnalisadorRequerimentos:
             campos_certificado_nao_encontrados = []
         if not isinstance(dados_requerimento, dict):
             dados_requerimento = {}
-        linhas_caracteristicas_repetidas = (
-            AnalisadorRequerimentos._extrair_linhas_caracteristicas_repetidas(
-                dados_requerimento
-            )
-        )
         exigir_avaliacao_sar = (
             not AnalisadorRequerimentos._contem_medicao_sar(dados_requerimento)
             and not cct_desobriga_sar
@@ -2868,7 +2848,6 @@ class AnalisadorRequerimentos:
         tem_exigencias = bool(
             exigencias
             or exigir_avaliacao_sar
-            or linhas_caracteristicas_repetidas
             or modelos_nao_encontrados
             or nomes_comerciais_invalidos
             or caracteristicas_nao_conformes
@@ -2876,6 +2855,7 @@ class AnalisadorRequerimentos:
             or normas_revogadas
             or exigir_correcao_fotos_externas
             or campos_certificado_nao_encontrados
+            or caracteristicas_nao_encontradas_no_cct
         )
         cor_exigencia = "red" if tem_exigencias else "blue"
         secao_latex = (
@@ -2904,18 +2884,6 @@ class AnalisadorRequerimentos:
                     "Ato nº 4083, especificamente no item 6.6.8.3. Basta copiar e colar "
                     "a opção de texto pertinente no CCT.\n"
                 )
-            if linhas_caracteristicas_repetidas:
-                secao_latex += (
-                    "    \\item Remover todas as cópias das linhas na tabela de "
-                    "características técnicas que estiverem repetidas. "
-                    "Como exemplo:\n"
-                )
-                secao_latex += "    \\begin{itemize}\n"
-                for quantidade, linha in linhas_caracteristicas_repetidas:
-                    secao_latex += (
-                        f"        \\item (x{quantidade}) {linha}\n"
-                    )
-                secao_latex += "    \\end{itemize}\n"
             if modelos_nao_encontrados:
                 modelos_pendentes = ", ".join(
                     escapar_latex(modelo) for modelo in modelos_nao_encontrados
@@ -2936,6 +2904,42 @@ class AnalisadorRequerimentos:
                     f"{escapar_latex(campo)} do JSON do requerimento "
                     "não foi encontrado no CCT.\n"
                 )
+            if caracteristicas_nao_encontradas_no_cct:
+                # Separa os valores inexistentes no CCT dos que existem, mas em outra linha
+                # (combinação diferente), agrupando por coluna com o total de linhas afetadas.
+                ausentes: Dict[str, Counter] = {}
+                em_outra_linha: Dict[str, Counter] = {}
+                for pendencia in caracteristicas_nao_encontradas_no_cct:
+                    outras = set(map(tuple, pendencia.get("em_outra_linha", [])))
+                    for coluna, valor in map(tuple, pendencia["faltantes"]):
+                        destino = em_outra_linha if (coluna, valor) in outras else ausentes
+                        destino.setdefault(coluna, Counter())[valor] += 1
+                grupos_tabela = (
+                    (ausentes, "Os valores das características técnicas abaixo, informados no "
+                     "requerimento, estão ausentes no CCT (corrigir o requerimento ou o CCT):",
+                     "Valor(es) ausente(s) no CCT (linhas afetadas)"),
+                    (em_outra_linha, "Os valores abaixo constam no CCT, mas não combinados com os "
+                     "demais valores da mesma linha do requerimento (verificar a combinação):",
+                     "Valor(es) em outra linha do CCT (linhas afetadas)"),
+                )
+                for grupo, texto_item, titulo_valores in grupos_tabela:
+                    if not grupo:
+                        continue
+                    secao_latex += (
+                        f"    \\item {escapar_latex(texto_item)}\n"
+                        "    \\begin{longtable}{p{0.35\\textwidth}p{0.55\\textwidth}}\n"
+                        f"    \\textbf{{Coluna}} & \\textbf{{{escapar_latex(titulo_valores)}}} \\\\\n"
+                        "    \\hline\n"
+                    )
+                    for coluna, contagem in grupo.items():
+                        valores = ", ".join(
+                            f"{valor} (x{quantidade})" if quantidade > 1 else valor
+                            for valor, quantidade in contagem.items()
+                        )
+                        secao_latex += (
+                            f"    {escapar_latex(coluna)} & {escapar_latex(valores)} \\\\\n"
+                        )
+                    secao_latex += "    \\end{longtable}\n"
             for nome_norma in normas_revogadas:
                 secao_latex += f"    \\item {escapar_latex(nome_norma)}\n"
             if caracteristicas_nao_conformes:
@@ -3539,6 +3543,22 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                     f"{self._formatar_validacao_frequencias_latex(caracteristicas_validadas)}"
                     "\\end{itemize}\n\n"
                 )
+            caracteristicas_cct = dados_cct.get("caracteristicas_nao_encontradas_no_cct")
+            if documento_cct is not None and "caracteristicas_nao_encontradas_no_cct" in dados_cct:
+                if caracteristicas_cct is None:
+                    status_valores_cct = (
+                        "\\textcolor{red}{Não foi possível validar: tabela de características não identificada no CCT.}"
+                    )
+                elif not caracteristicas_cct:
+                    status_valores_cct = "\\textcolor{blue}{OK}"
+                else:
+                    status_valores_cct = None
+                if status_valores_cct:
+                    latex_content += (
+                        "\\begin{itemize}\n"
+                        f"    \\item Valores das características no CCT: {status_valores_cct}\n"
+                        "\\end{itemize}\n\n"
+                    )
             latex_content += self._construir_secao_exigencias(
                 req.get("dados_requerimento"),
                 cct_contem_ipv6,
@@ -3554,7 +3574,8 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                     and not fotos_externas_contem_frase
                 ),
                 cct_contem_frase_nao_varejo=cct_contem_frase_nao_varejo,
-                campos_certificado_nao_encontrados=campos_certificado_nao_encontrados
+                campos_certificado_nao_encontrados=campos_certificado_nao_encontrados,
+                caracteristicas_nao_encontradas_no_cct=caracteristicas_cct or []
             )
 
             tabela_normativos = self._gerar_tabela_normativos_latex(

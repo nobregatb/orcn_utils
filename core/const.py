@@ -26,6 +26,8 @@ REQUERIMENTOS_DIR_OUTBOX = "req_outbox"
 REQUERIMENTOS_DIR_REPORT = "req_report"
 UTILS_DIR = "utils"
 DOWNLOAD_LOG_FILENAME = "download_status.json"
+# Dicionário de nomenclaturas equivalentes entre CCT e requerimento (dentro de UTILS_DIR)
+EQUIVALENCIAS_CCT_FILENAME = "equivalencias_cct.json"
 
 # Caminhos completos para planilha e requerimentos
 EXCEL_PATH = rf"{TBN_FILES_FOLDER}\ORCN.xlsx"

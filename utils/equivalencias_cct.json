@@ -1,0 +1,9 @@
+{
+  "_descricao": "Grupos de nomenclaturas equivalentes entre o CCT e os dados do requerimento. Todos os termos de um grupo são tratados como o mesmo valor. A comparação ignora maiúsculas/minúsculas e acentos.",
+  "equivalencias": [
+    ["SEQUÊNCIA DIRETA", "DSSS"],
+    ["SEQUÊNCIA DIRETA", "Sequência Direta 802.11b"],
+    ["SALTO EM FREQUÊNCIA", "FHSS"],
+    ["OFDM", "OFDMA"]
+  ]
+}

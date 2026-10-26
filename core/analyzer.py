@@ -2824,7 +2824,7 @@ class AnalisadorRequerimentos:
             (
                 cct_contem_produto_nao_acabado,
                 "Produto não acabado cuja integração em outros equipamentos pode requerer nova avaliação",
-                "Que se trada de Produto não acabado cuja integração em outros equipamentos pode requerer nova avaliação;",
+                "Que se trata de Produto não acabado cuja integração em outros equipamentos pode requerer nova avaliação;",
             ),
             (
                 cct_contem_palavra_vinculado,

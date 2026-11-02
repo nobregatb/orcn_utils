@@ -178,12 +178,14 @@ def gerar_relatorio_pgd():
             )
 
             categorias = {
-                "AP - Requerimento(s) encaminhado(s) para aprovação": [],
-                "AP - Requerimento(s) em exigência": [],
-                "AP - Requerimento(s) cancelado(s)": [],
-                "AS - Requerimento(s) encaminhado(s) para aprovação": [],
-                "AS - Requerimento(s) em exigência": [],
-                "AS - Requerimento(s) cancelado(s)": [],
+                "AP-RF - Requerimento(s) encaminhado(s) para aprovação": [],
+                "AP-RF - Requerimento(s) em exigência": [],
+                "AP-RF - Requerimento(s) cancelado(s)": [],
+                "AP-RF - Requerimento(s) indeferido(s)": [],
+                "AS-RF - Requerimento(s) encaminhado(s) para aprovação": [],
+                "AS-RF - Requerimento(s) em exigência": [],
+                "AS-RF - Requerimento(s) cancelado(s)": [],
+                "AS-RF - Requerimento(s) indeferido(s)": [],
                 "ERRO": []
             }
 
@@ -199,35 +201,43 @@ def gerar_relatorio_pgd():
                 categorizado = False
                 if analise == "padrao":
                     if situacao.startswith("em aprovacao"):
-                        categorias["AP - Requerimento(s) encaminhado(s) para aprovação"].append(req)
+                        categorias["AP-RF - Requerimento(s) encaminhado(s) para aprovação"].append(req)
                         categorizado = True
                     elif situacao.startswith("exigencia"):
-                        categorias["AP - Requerimento(s) em exigência"].append(req)
+                        categorias["AP-RF - Requerimento(s) em exigência"].append(req)
                         categorizado = True
                     elif situacao.startswith("cancelamento"):
-                        categorias["AP - Requerimento(s) cancelado(s)"].append(req)
+                        categorias["AP-RF - Requerimento(s) cancelado(s)"].append(req)
+                        categorizado = True
+                    elif situacao.startswith("indeferimento"):
+                        categorias["AP-RF - Requerimento(s) indeferido(s)"].append(req)
                         categorizado = True
                 elif analise == "simplificada":
                     if situacao.startswith("em aprovacao"):
-                        categorias["AS - Requerimento(s) encaminhado(s) para aprovação"].append(req)
+                        categorias["AS-RF - Requerimento(s) encaminhado(s) para aprovação"].append(req)
                         categorizado = True
                     elif situacao.startswith("exigencia"):
-                        categorias["AS - Requerimento(s) em exigência"].append(req)
+                        categorias["AS-RF - Requerimento(s) em exigência"].append(req)
                         categorizado = True
                     elif situacao.startswith("cancelamento"):
-                        categorias["AS - Requerimento(s) cancelado(s)"].append(req)
+                        categorias["AS-RF - Requerimento(s) cancelado(s)"].append(req)
+                        categorizado = True
+                    elif situacao.startswith("indeferimento"):
+                        categorias["AS-RF - Requerimento(s) indeferido(s)"].append(req)
                         categorizado = True
 
                 if not categorizado:
                     categorias["ERRO"].append(req)
 
             ordem_categorias = [
-                "AP - Requerimento(s) encaminhado(s) para aprovação",
-                "AP - Requerimento(s) em exigência",
-                "AP - Requerimento(s) cancelado(s)",
-                "AS - Requerimento(s) encaminhado(s) para aprovação",
-                "AS - Requerimento(s) em exigência",
-                "AS - Requerimento(s) cancelado(s)",
+                "AP-RF - Requerimento(s) encaminhado(s) para aprovação",
+                "AP-RF - Requerimento(s) em exigência",
+                "AP-RF - Requerimento(s) cancelado(s)",
+                "AP-RF - Requerimento(s) indeferido(s)",
+                "AS-RF - Requerimento(s) encaminhado(s) para aprovação",
+                "AS-RF - Requerimento(s) em exigência",
+                "AS-RF - Requerimento(s) cancelado(s)",
+                "AS-RF - Requerimento(s) indeferido(s)",
                 "ERRO"
             ]
 
@@ -238,7 +248,7 @@ def gerar_relatorio_pgd():
                 for chave in ordem_categorias:
                     if categorias[chave]:
                         lista_formatada = _formatar_lista_requerimentos(categorias[chave])
-                        linhas_relatorio.append(f"\t{chave}: {lista_formatada}.")
+                        linhas_relatorio.append(f"{chave}: {lista_formatada}.")
 
             linhas_relatorio.append("")
 

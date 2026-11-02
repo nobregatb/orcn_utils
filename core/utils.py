@@ -197,6 +197,7 @@ def escapar_latex(texto: str) -> str:
         '^': '\\textasciicircum{}',
         '_': '\\_',
         '~': '\\textasciitilde{}',
+        '\u220f': r'\ensuremath{\prod}',
     }
     
     # Aplicar substituições

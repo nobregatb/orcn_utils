@@ -6,6 +6,7 @@ from core.analyzer import (
     TIPO_RACT,
     _chave_selecao_documento,
     _extrair_datas_documento,
+    _formatar_status_download_latex,
 )
 
 
@@ -60,6 +61,30 @@ class ChaveSelecaoDocumentoTest(unittest.TestCase):
         )
 
         self.assertGreater(chave_recente, chave_antiga)
+
+
+class FormatarStatusDownloadLatexTest(unittest.TestCase):
+    def test_completed_fica_azul_e_outros_status_ficam_vermelhos(self):
+        self.assertEqual(
+            _formatar_status_download_latex("completed"),
+            r"\texorpdfstring{\textcolor{blue}{completed}}{completed}",
+        )
+        self.assertEqual(
+            _formatar_status_download_latex("in_progress"),
+            r"\texorpdfstring{\textcolor{red}{in\_progress}}{in progress}",
+        )
+        self.assertEqual(
+            _formatar_status_download_latex("failed"),
+            r"\texorpdfstring{\textcolor{red}{failed}}{failed}",
+        )
+
+    def test_status_ausente_ou_invalido_e_exibido_como_desconhecido(self):
+        for status in (None, "unexpected"):
+            with self.subTest(status=status):
+                self.assertEqual(
+                    _formatar_status_download_latex(status),
+                    r"\texorpdfstring{\textcolor{red}{Desconhecido}}{Desconhecido}",
+                )
 
 
 if __name__ == "__main__":

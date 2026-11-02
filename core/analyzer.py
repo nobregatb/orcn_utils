@@ -161,7 +161,7 @@ def _chave_selecao_documento(
 from core.utils import (
     formatar_cnpj, desformatar_cnpj, latex_escape_path, escapar_latex, buscar_valor,
     normalizar, normalizar_dados, obter_versao_git, carregar_json, salvar_json, validar_cnpj, fullpath_para_req,
-    contar_ocorrencias_palavra_chave, extrair_contextos_palavra_chave
+    contar_ocorrencias_palavra_chave, extrair_contextos_palavra_chave, carregar_log_downloads
 )
 
 
@@ -192,6 +192,19 @@ def _pdf_requer_ocr(pdf) -> bool:
 
 def _ignora_espacos(palavra: str) -> bool:
     return bool(PALAVRAS_CHAVE_MANUAL_NORMALIZADAS.get(palavra, {}).get("ignorar_espacos", False))
+
+
+def _formatar_status_download_latex(status: Optional[str]) -> str:
+    """Formata o status do download para o título da seção do requerimento."""
+    if status not in ("completed", "in_progress", "failed"):
+        status = "Desconhecido"
+    cor = "blue" if status == "completed" else "red"
+    status_texto_latex = status.replace("_", r"\_")
+    status_bookmark = status.replace("_", " ")
+    return (
+        f"\\texorpdfstring{{\\textcolor{{{cor}}}{{{status_texto_latex}}}}}"
+        f"{{{status_bookmark}}}"
+    )
 
 
 PYMUPDF_DISPONIVEL = True
@@ -3182,6 +3195,7 @@ class AnalisadorRequerimentos:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         nome_arquivo = f"relatorio_analise_{timestamp}.tex"
         caminho_relatorio = self.pasta_resultados / nome_arquivo
+        status_downloads = carregar_log_downloads()
         
         # Calcular estatísticas gerais
         total_requerimentos = len(self.resultados_analise)
@@ -3284,6 +3298,8 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
         # Adicionar seção para cada requerimento
         for i, req in enumerate(self.resultados_analise, 1):
             numero_req = fullpath_para_req(req.get("numero_requerimento"))
+            status_download = status_downloads.get(numero_req, {}).get("status")
+            status_download_latex = _formatar_status_download_latex(status_download)
             documentos = req.get("documentos_analisados", [])
             tempo_analise_req = req.get("tempo_total_analise_formatado", VALOR_NAO_DISPONIVEL)
             #resumo = req.get("resumo_status", {})
@@ -3343,7 +3359,7 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
             
             latex_content += f"""
             \\newpage            
-            \\section{{Requerimento {numero_req}}}            
+            \\section{{Requerimento {numero_req} ({status_download_latex})}}
             \\begin{{itemize}}
             \\item OCD: {nome_ocd_escapado}
             {alerta_alteracao_homologacao}

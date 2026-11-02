@@ -1,6 +1,7 @@
 import os
 import re
 import time
+from datetime import date, datetime
 from playwright.sync_api import sync_playwright
 from core.log_print import log_info, log_erro
 from core.const import (
@@ -391,11 +392,31 @@ def cancelar_edicao_certifica(painel):
         pass
 
 
-def limpar_campo_aba_certifica(page, sufixo, rotulo_aba, seletor_campo, nome_campo):
+def _data_emissao_cct_ate_hoje(valor_data):
+    """Retorna se a data de emissão, em dd/mm/aaaa ou aaaa-mm-dd, não é futura."""
+    data_emissao = None
+    for formato in ("%d/%m/%Y", "%Y-%m-%d"):
+        try:
+            data_emissao = datetime.strptime(valor_data.strip(), formato).date()
+            break
+        except ValueError:
+            continue
+    return data_emissao is not None and data_emissao <= date.today()
+
+
+def limpar_campo_aba_certifica(
+    page, sufixo, rotulo_aba, seletor_campo, nome_campo, condicao_limpeza=None
+):
     """Clica em Editar, limpa o campo se estiver preenchido e salva. Retorna False em caso de erro."""
     painel = None
     try:
         painel = painel_aba_certifica(page, sufixo, rotulo_aba)
+        # Condição avaliada com os dados já extraídos, sem ler o DOM nem entrar em edição
+        if condicao_limpeza is not None and not condicao_limpeza():
+            log_info(
+                f"ℹ️ '{nome_campo}' mantido: a Data de Emissão do CCT é futura "                
+            )
+            return True
         # O valor só é carregado no campo após entrar no modo de edição
         editar_aba_certifica(painel)
         campo = painel.locator(seletor_campo)
@@ -452,7 +473,7 @@ def preencher_info_adicionais_certifica(page):
         return False
 
 
-def ajustar_campos_certifica(page):
+def ajustar_campos_certifica(page, dados):
     """Limpa/preenche os campos exigidos nas abas. Retorna o número de falhas."""
     resultados = [
         limpar_campo_aba_certifica(
@@ -463,6 +484,10 @@ def ajustar_campos_certifica(page):
         limpar_campo_aba_certifica(
             page, CERTIFICA_ABA_CERTIFICADO, "Certificado",
             'textarea[id$="AnaliseCertificadoCCT_wt45"]', "Especificações Complementares",
+            # Correção temporária para bug_data_cct_futura; remover ao encerrar o tratamento.
+            condicao_limpeza=lambda: _data_emissao_cct_ate_hoje(
+                dados.get("certificado", {}).get("Data de Emissão do CCT", "")
+            ),
         ),
     ]
     return resultados.count(False)
@@ -546,12 +571,9 @@ def processar_requerimento_certifica(page, requerimento, somente_anexos=False):
     )
     falhas_campos = 0
     if not somente_anexos:
-        gravar_json_requerimento_certifica(
-            requerimento,
-            extrair_dados_requerimento_certifica(page),
-            pasta,
-        )
-        falhas_campos = ajustar_campos_certifica(page)
+        dados = extrair_dados_requerimento_certifica(page)
+        gravar_json_requerimento_certifica(requerimento, dados, pasta)
+        falhas_campos = ajustar_campos_certifica(page, dados)
     baixados, falhas = baixar_anexos_certifica(page, pasta)
     falha_resumo = False
     if not somente_anexos:

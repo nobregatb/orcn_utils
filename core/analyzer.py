@@ -58,6 +58,11 @@ TEXTO_NAO_VAREJO = (
     f"{FRASE_NAO_VAREJO}, sendo destinado exclusivamente para assistência "
     "técnica ou cumprimento de garantias ao consumidor."
 )
+FRASES_IPV6_QUE_NAO_GERAM_EXIGENCIA = (
+    "naosuportaipv6",
+    "naoimplementaipv6",
+    "ipv6naoaplica",
+)
 CAMPOS_SAR = {
     "SAR (W/kg) Cabeça",
     "SAR (W/kg) Tronco",
@@ -77,6 +82,21 @@ MESES_PORTUGUES = {
     "novembro": 11,
     "dezembro": 12,
 }
+
+
+def _cct_exige_declaracao_ipv6(texto: str) -> bool:
+    """Indica se alguma menção a IPv6 no CCT não está em uma frase de exceção."""
+    texto_normalizado = normalizar(texto)
+    if not isinstance(texto_normalizado, str):
+        return False
+
+    for frase in re.split(r"[.!?]+", texto_normalizado):
+        frase_sem_espacos = re.sub(r"\s+", "", frase)
+        for excecao in FRASES_IPV6_QUE_NAO_GERAM_EXIGENCIA:
+            frase_sem_espacos = frase_sem_espacos.replace(excecao, "")
+        if "ipv6" in frase_sem_espacos:
+            return True
+    return False
 
 
 def _extrair_datas_documento(texto: str) -> List[datetime]:
@@ -161,7 +181,7 @@ def _chave_selecao_documento(
 from core.utils import (
     formatar_cnpj, desformatar_cnpj, latex_escape_path, escapar_latex, buscar_valor,
     normalizar, normalizar_dados, obter_versao_git, carregar_json, salvar_json, validar_cnpj, fullpath_para_req,
-    contar_ocorrencias_palavra_chave, extrair_contextos_palavra_chave, carregar_log_downloads
+    contar_ocorrencias_palavra_chave, extrair_contextos_palavra_chave
 )
 
 
@@ -192,19 +212,6 @@ def _pdf_requer_ocr(pdf) -> bool:
 
 def _ignora_espacos(palavra: str) -> bool:
     return bool(PALAVRAS_CHAVE_MANUAL_NORMALIZADAS.get(palavra, {}).get("ignorar_espacos", False))
-
-
-def _formatar_status_download_latex(status: Optional[str]) -> str:
-    """Formata o status do download para o título da seção do requerimento."""
-    if status not in ("completed", "in_progress", "failed"):
-        status = "Desconhecido"
-    cor = "blue" if status == "completed" else "red"
-    status_texto_latex = status.replace("_", r"\_")
-    status_bookmark = status.replace("_", " ")
-    return (
-        f"\\texorpdfstring{{\\textcolor{{{cor}}}{{{status_texto_latex}}}}}"
-        f"{{{status_bookmark}}}"
-    )
 
 
 PYMUPDF_DISPONIVEL = True
@@ -940,6 +947,7 @@ class AnalisadorRequerimentos:
             # Extrair e contar palavras-chave no conteúdo do CCT para manter a contagem consolidada por documento.
             texto_normalizado = normalizar(conteudo).replace("\n", " ")
             texto_normalizado = re.sub(r'\s+', ' ', texto_normalizado).strip()
+            ipv6_exige_declaracao = _cct_exige_declaracao_ipv6(conteudo)
             palavras_chave_manual = list(PALAVRAS_CHAVE_MANUAL_NORMALIZADAS.keys())
             palavras_chave_manual = sorted(palavras_chave_manual)
             palavras_encontradas = {}
@@ -988,6 +996,7 @@ class AnalisadorRequerimentos:
                 "palavras_nao_encontradas": palavras_nao_encontradas,
                 "palavras_encontradas_com_normas": palavras_encontradas_com_normas,
                 "palavras_evidencias": palavras_evidencias,
+                "ipv6_exige_declaracao": ipv6_exige_declaracao,
                 "contem_vinculo_homologacao": contem_vinculo_homologacao,
                 "contem_frase_nao_varejo": contem_frase_nao_varejo,
                 "modelos_json": modelos_json,
@@ -3195,7 +3204,6 @@ class AnalisadorRequerimentos:
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         nome_arquivo = f"relatorio_analise_{timestamp}.tex"
         caminho_relatorio = self.pasta_resultados / nome_arquivo
-        status_downloads = carregar_log_downloads()
         
         # Calcular estatísticas gerais
         total_requerimentos = len(self.resultados_analise)
@@ -3298,8 +3306,6 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
         # Adicionar seção para cada requerimento
         for i, req in enumerate(self.resultados_analise, 1):
             numero_req = fullpath_para_req(req.get("numero_requerimento"))
-            status_download = status_downloads.get(numero_req, {}).get("status")
-            status_download_latex = _formatar_status_download_latex(status_download)
             documentos = req.get("documentos_analisados", [])
             tempo_analise_req = req.get("tempo_total_analise_formatado", VALOR_NAO_DISPONIVEL)
             #resumo = req.get("resumo_status", {})
@@ -3359,7 +3365,7 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
             
             latex_content += f"""
             \\newpage            
-            \\section{{Requerimento {numero_req} ({status_download_latex})}}
+            \\section{{Requerimento {numero_req}}}            
             \\begin{{itemize}}
             \\item OCD: {nome_ocd_escapado}
             {alerta_alteracao_homologacao}
@@ -3410,7 +3416,12 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 palavras_com_normas_cct = dados_extraidos_cct.get("palavras_encontradas_com_normas", {})
                 if "e.i.r.p." in palavras_encontradas_cct:
                     cct_contem_eirp = True
-                if "ipv6" in palavras_encontradas_cct:
+                if "ipv6_exige_declaracao" in dados_extraidos_cct:
+                    cct_contem_ipv6 = (
+                        cct_contem_ipv6
+                        or bool(dados_extraidos_cct["ipv6_exige_declaracao"])
+                    )
+                elif "ipv6" in palavras_encontradas_cct:
                     cct_contem_ipv6 = True
                 if "produto nao acabado" in palavras_encontradas_cct:
                     cct_contem_produto_nao_acabado = True

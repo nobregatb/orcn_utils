@@ -58,6 +58,16 @@ TEXTO_NAO_VAREJO = (
     f"{FRASE_NAO_VAREJO}, sendo destinado exclusivamente para assistência "
     "técnica ou cumprimento de garantias ao consumidor."
 )
+FRASE_EQ093_FORNECIMENTO_USO = (
+    "No fornecimento e no uso do produto devem ser observadas as condições "
+    "estabelecido no Regulamento sobre Equipamentos de Radiocomunicação de "
+    "Radiação Restrita."
+)
+EXIGENCIA_EQ093_FORNECIMENTO_USO = (
+    "Que no fornecimento e no uso do produto devem ser observadas as condições "
+    "estabelecido no Regulamento sobre Equipamentos de Radiocomunicação de "
+    "Radiação Restrita."
+)
 FRASES_IPV6_QUE_NAO_GERAM_EXIGENCIA = (
     "naosuportaipv6",
     "naoimplementaipv6",
@@ -990,6 +1000,7 @@ class AnalisadorRequerimentos:
                 "nome_ocd": nome_ocd,
                 "quantidade_equipamentos": len(tipo_equipamento),
                 "equipamentos": [eq.get('nome', 'N/A') for eq in tipo_equipamento] if tipo_equipamento else [],
+                "equipamentos_ids": [eq.get('id') for eq in tipo_equipamento] if tipo_equipamento else [],
                 "quantidade_normas": len(normas_verificadas),
                 "normas_verificadas": normas_verificadas,
                 "palavras_encontradas": palavras_encontradas,
@@ -2791,6 +2802,30 @@ class AnalisadorRequerimentos:
         return secao_latex
 
     @staticmethod
+    def _cct_contem_apenas_eq093(documentos: List[Dict]) -> bool:
+        """Confirma que todos os CCTs identificam equipamentos e apenas do tipo EQ093."""
+        documentos_cct = [
+            documento for documento in documentos
+            if isinstance(documento, dict) and documento.get("tipo") == TIPO_CCT
+        ]
+        if not documentos_cct:
+            return False
+
+        for documento in documentos_cct:
+            dados_extraidos = documento.get("dados_extraidos", {})
+            if not isinstance(dados_extraidos, dict):
+                return False
+            equipamentos_ids = dados_extraidos.get("equipamentos_ids")
+            if (
+                not isinstance(equipamentos_ids, list)
+                or not equipamentos_ids
+                or any(equipamento_id != "EQ093" for equipamento_id in equipamentos_ids)
+            ):
+                return False
+
+        return True
+
+    @staticmethod
     def _construir_secao_exigencias(
         dados_requerimento: Optional[Dict],
         cct_contem_ipv6: bool,
@@ -2804,9 +2839,10 @@ class AnalisadorRequerimentos:
         exigir_correcao_fotos_externas: bool = False,
         cct_contem_frase_nao_varejo: bool = False,
         campos_certificado_nao_encontrados: Optional[List[str]] = None,
-        caracteristicas_nao_encontradas_no_cct: Optional[List[Dict]] = None
+        caracteristicas_nao_encontradas_no_cct: Optional[List[Dict]] = None,
+        cct_contem_apenas_eq093: bool = False
     ) -> str:
-        """Monta as exigências quando as declarações do CCT faltam no JSON do produto."""
+        """Monta exigências por declarações do CCT ausentes no JSON do produto."""
         if caracteristicas_nao_encontradas_no_cct is None:
             caracteristicas_nao_encontradas_no_cct = []
         if modelos_nao_encontrados is None:
@@ -2857,6 +2893,11 @@ class AnalisadorRequerimentos:
                 cct_contem_frase_nao_varejo,
                 TEXTO_NAO_VAREJO,
                 TEXTO_NAO_VAREJO,
+            ),
+            (
+                cct_contem_apenas_eq093,
+                FRASE_EQ093_FORNECIMENTO_USO,
+                EXIGENCIA_EQ093_FORNECIMENTO_USO,
             ),
         ]
         especificacoes_sem_espacos = re.sub(r"\s+", "", especificacoes_adicionais).casefold()
@@ -3602,7 +3643,8 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 ),
                 cct_contem_frase_nao_varejo=cct_contem_frase_nao_varejo,
                 campos_certificado_nao_encontrados=campos_certificado_nao_encontrados,
-                caracteristicas_nao_encontradas_no_cct=caracteristicas_cct or []
+                caracteristicas_nao_encontradas_no_cct=caracteristicas_cct or [],
+                cct_contem_apenas_eq093=self._cct_contem_apenas_eq093(documentos)
             )
 
             tabela_normativos = self._gerar_tabela_normativos_latex(

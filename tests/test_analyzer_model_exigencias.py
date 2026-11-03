@@ -4,7 +4,7 @@ from core.analyzer import AnalisadorRequerimentos
 
 
 class ConstruirSecaoExigenciasModelosTest(unittest.TestCase):
-    def construir_secao(self, dados_requerimento):
+    def construir_secao(self, dados_requerimento, cct_contem_apenas_eq093=False):
         return AnalisadorRequerimentos._construir_secao_exigencias(
             dados_requerimento=dados_requerimento,
             cct_contem_ipv6=False,
@@ -12,6 +12,77 @@ class ConstruirSecaoExigenciasModelosTest(unittest.TestCase):
             cct_contem_palavra_vinculado=False,
             caracteristicas_nao_conformes=[],
             cct_desobriga_sar=True,
+            cct_contem_apenas_eq093=cct_contem_apenas_eq093,
+        )
+
+    def test_exige_frase_de_radiacao_restrita_apenas_para_eq093(self):
+        secao = self.construir_secao({}, cct_contem_apenas_eq093=True)
+
+        self.assertIn(
+            "Incluir no campo Produto | Especificações Adicionais a informação:",
+            secao,
+        )
+        self.assertIn(
+            "Que no fornecimento e no uso do produto devem ser observadas as "
+            "condições estabelecido no Regulamento sobre Equipamentos de "
+            "Radiocomunicação de Radiação Restrita.",
+            secao,
+        )
+
+    def test_nao_repete_frase_de_radiacao_restrita_ja_informada(self):
+        secao = self.construir_secao(
+            {
+                "produto": {
+                    "Especificações Adicionais": (
+                        "No fornecimento e no uso do produto devem ser observadas "
+                        "as condições estabelecido no Regulamento sobre "
+                        "Equipamentos de Radiocomunicação de Radiação Restrita."
+                    ),
+                },
+            },
+            cct_contem_apenas_eq093=True,
+        )
+
+        self.assertNotIn("Incluir no campo Produto | Especificações Adicionais", secao)
+
+    def test_nao_exige_frase_de_radiacao_restrita_para_outro_tipo(self):
+        secao = self.construir_secao({}, cct_contem_apenas_eq093=False)
+
+        self.assertNotIn(
+            "Que no fornecimento e no uso do produto devem ser observadas",
+            secao,
+        )
+
+    def test_confirma_se_todos_os_equipamentos_dos_ccts_sao_eq093(self):
+        documentos = [
+            {
+                "tipo": "cct",
+                "dados_extraidos": {"equipamentos_ids": ["EQ093", "EQ093"]},
+            },
+            {
+                "tipo": "cct",
+                "dados_extraidos": {"equipamentos_ids": ["EQ093"]},
+            },
+        ]
+
+        self.assertTrue(
+            AnalisadorRequerimentos._cct_contem_apenas_eq093(documentos)
+        )
+        self.assertFalse(
+            AnalisadorRequerimentos._cct_contem_apenas_eq093(
+                [
+                    documentos[0],
+                    {
+                        "tipo": "cct",
+                        "dados_extraidos": {"equipamentos_ids": ["EQ093", "EQ094"]},
+                    },
+                ]
+            )
+        )
+        self.assertFalse(
+            AnalisadorRequerimentos._cct_contem_apenas_eq093(
+                [{"tipo": "cct", "dados_extraidos": {"equipamentos_ids": []}}]
+            )
         )
 
     def test_exibe_valor_encontrado_no_nome_comercial_invalido(self):

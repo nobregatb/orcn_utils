@@ -74,6 +74,8 @@ O sistema de análise automatizada avalia todos os documentos de um requerimento
 
 #### 📊 Saídas do Sistema
 
+Quando todos os equipamentos identificados nos CCTs de um requerimento forem do tipo `EQ093`, a análise verifica se `produto` → `Especificações Adicionais` contém a orientação sobre observar, no fornecimento e no uso, as condições do Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita. Se estiver ausente, a orientação é incluída em **Exigência**.
+
 **1. Arquivo JSON de Análise**
 - Resultado estruturado da análise de cada requerimento
 - Contém status de conformidade por documento

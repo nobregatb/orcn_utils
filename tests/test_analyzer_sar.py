@@ -47,6 +47,98 @@ class ConstruirSecaoExigenciasSarTest(unittest.TestCase):
 
         self.assertIn("Registrar a avaliação da conformidade", secao)
 
+    def test_identifica_medicao_eirp_nas_caracteristicas_tecnicas(self):
+        dados_requerimento = {
+            "caracteristicas_tecnicas": {
+                "produtos": [
+                    {
+                        "caracteristicas": [
+                            {"Potência de Pico E.I.R.P. (dBm)": ""},
+                            {"Potência Média E.I.R.P. (mW)": "1,25"},
+                        ],
+                    },
+                ],
+            },
+        }
+
+        self.assertTrue(AnalisadorRequerimentos._contem_medicao_eirp(dados_requerimento))
+
+    def test_identifica_eirp_sem_diferenciar_maiusculas_e_aceita_numero_json(self):
+        dados_requerimento = {
+            "Potência Média eIrP (W)": 0.5,
+        }
+
+        self.assertTrue(AnalisadorRequerimentos._contem_medicao_eirp(dados_requerimento))
+
+    def test_nao_identifica_medicao_eirp_vazia_ou_nao_numerica(self):
+        dados_requerimento = {
+            "caracteristicas_tecnicas": {
+                "produtos": [
+                    {
+                        "caracteristicas": [
+                            {"Potência Média E.I.R.P. (dBm)": ""},
+                            {"Potência Média E.I.R.P. (mW)": "-"},
+                            {"Potência de Pico E.I.R.P. (dBm)": "indisponível"},
+                            {"Potência Máxima (W)": "10"},
+                        ],
+                    },
+                ],
+            },
+        }
+
+        self.assertFalse(AnalisadorRequerimentos._contem_medicao_eirp(dados_requerimento))
+
+    def test_exige_preenchimento_dos_campos_eirp_quando_nao_ha_medicao(self):
+        dados_requerimento = {
+            "caracteristicas_tecnicas": {
+                "produtos": [
+                    {
+                        "caracteristicas": [
+                            {"Potência Média E.I.R.P. (dBm)": ""},
+                            {"Potência Média E.I.R.P. (mW)": "-"},
+                        ],
+                    },
+                ],
+            },
+        }
+
+        campos_sem_medicao = AnalisadorRequerimentos._obter_campos_eirp_sem_medicao(
+            dados_requerimento
+        )
+        secao = AnalisadorRequerimentos._construir_secao_exigencias(
+            dados_requerimento=dados_requerimento,
+            cct_contem_ipv6=False,
+            cct_contem_produto_nao_acabado=False,
+            cct_contem_palavra_vinculado=False,
+            caracteristicas_nao_conformes=[],
+            cct_desobriga_sar=True,
+            campos_eirp_sem_medicao=campos_sem_medicao,
+        )
+
+        self.assertIn(
+            "Não foram preenchidos os valores de Potência Média E.I.R.P. (dBm), "
+            "como informados no CCT",
+            secao,
+        )
+        self.assertIn(
+            "Não foram preenchidos os valores de Potência Média E.I.R.P. (mW), "
+            "como informados no CCT",
+            secao,
+        )
+
+    def test_nao_exige_preenchimento_eirp_quando_ha_algum_valor_numerico(self):
+        dados_requerimento = {
+            "Potência Média E.I.R.P. (dBm)": "",
+            "Potência Média E.I.R.P. (mW)": "1,25",
+        }
+
+        self.assertEqual(
+            AnalisadorRequerimentos._obter_campos_eirp_sem_medicao(
+                dados_requerimento
+            ),
+            [],
+        )
+
     def test_medicao_sar_marca_ato_17865_azul_em_ract_e_cct(self):
         dados_requerimento = {
             "caracteristicas_tecnicas": {

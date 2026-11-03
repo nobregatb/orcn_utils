@@ -1661,24 +1661,25 @@ class AnalisadorRequerimentos:
         return nomes_invalidos
 
     @staticmethod
-    def _contem_medicao_sar(valor: object) -> bool:
-        def valor_numerico(conteudo: object) -> bool:
-            if isinstance(conteudo, bool):
-                return False
-            if isinstance(conteudo, int):
-                return True
-            if isinstance(conteudo, float):
-                return math.isfinite(conteudo)
-            if isinstance(conteudo, str):
-                valor_convertido = parse_valor_numerico(conteudo)
-                return valor_convertido is not None and math.isfinite(valor_convertido)
+    def _valor_numerico_preenchido(valor: object) -> bool:
+        if isinstance(valor, bool):
             return False
+        if isinstance(valor, int):
+            return True
+        if isinstance(valor, float):
+            return math.isfinite(valor)
+        if isinstance(valor, str):
+            valor_convertido = parse_valor_numerico(valor)
+            return valor_convertido is not None and math.isfinite(valor_convertido)
+        return False
 
+    @staticmethod
+    def _contem_medicao_sar(valor: object) -> bool:
         if isinstance(valor, dict):
             return any(
                 (
                     chave in CAMPOS_SAR
-                    and valor_numerico(conteudo)
+                    and AnalisadorRequerimentos._valor_numerico_preenchido(conteudo)
                 )
                 or AnalisadorRequerimentos._contem_medicao_sar(conteudo)
                 for chave, conteudo in valor.items()
@@ -1689,6 +1690,48 @@ class AnalisadorRequerimentos:
                 for item in valor
             )
         return False
+
+    @staticmethod
+    def _contem_medicao_eirp(valor: object) -> bool:
+        if isinstance(valor, dict):
+            return any(
+                (
+                    isinstance(chave, str)
+                    and ("eirp" in chave.casefold() or "e.i.r.p." in chave.casefold())
+                    and AnalisadorRequerimentos._valor_numerico_preenchido(conteudo)
+                )
+                or AnalisadorRequerimentos._contem_medicao_eirp(conteudo)
+                for chave, conteudo in valor.items()
+            )
+        if isinstance(valor, list):
+            return any(
+                AnalisadorRequerimentos._contem_medicao_eirp(item)
+                for item in valor
+            )
+        return False
+
+    @staticmethod
+    def _obter_campos_eirp_sem_medicao(valor: object) -> List[str]:
+        campos_eirp = []
+
+        def coletar_campos(conteudo: object) -> None:
+            if isinstance(conteudo, dict):
+                for chave, valor_campo in conteudo.items():
+                    if (
+                        isinstance(chave, str)
+                        and ("eirp" in chave.casefold() or "e.i.r.p." in chave.casefold())
+                        and chave not in campos_eirp
+                    ):
+                        campos_eirp.append(chave)
+                    coletar_campos(valor_campo)
+            elif isinstance(conteudo, list):
+                for item in conteudo:
+                    coletar_campos(item)
+
+        coletar_campos(valor)
+        if AnalisadorRequerimentos._contem_medicao_eirp(valor):
+            return []
+        return campos_eirp
 
     @staticmethod
     def _tabela_para_registros(tabela: Any) -> List[Any]:
@@ -2840,7 +2883,8 @@ class AnalisadorRequerimentos:
         cct_contem_frase_nao_varejo: bool = False,
         campos_certificado_nao_encontrados: Optional[List[str]] = None,
         caracteristicas_nao_encontradas_no_cct: Optional[List[Dict]] = None,
-        cct_contem_apenas_eq093: bool = False
+        cct_contem_apenas_eq093: bool = False,
+        campos_eirp_sem_medicao: Optional[List[str]] = None
     ) -> str:
         """Monta exigências por declarações do CCT ausentes no JSON do produto."""
         if caracteristicas_nao_encontradas_no_cct is None:
@@ -2853,6 +2897,8 @@ class AnalisadorRequerimentos:
             normas_revogadas = []
         if campos_certificado_nao_encontrados is None:
             campos_certificado_nao_encontrados = []
+        if campos_eirp_sem_medicao is None:
+            campos_eirp_sem_medicao = []
         if not isinstance(dados_requerimento, dict):
             dados_requerimento = {}
         exigir_avaliacao_sar = (
@@ -2919,6 +2965,7 @@ class AnalisadorRequerimentos:
             or exigir_correcao_fotos_externas
             or campos_certificado_nao_encontrados
             or caracteristicas_nao_encontradas_no_cct
+            or campos_eirp_sem_medicao
         )
         cor_exigencia = "red" if tem_exigencias else "blue"
         secao_latex = (
@@ -2946,6 +2993,12 @@ class AnalisadorRequerimentos:
                     "Ato nº 17865, de 30 de dezembro de 2023 - observar o "
                     "Ato nº 4083, especificamente no item 6.6.8.3. Basta copiar e colar "
                     "a opção de texto pertinente no CCT.\n"
+                )
+            for campo_eirp in campos_eirp_sem_medicao:
+                secao_latex += (
+                    "    \\item "
+                    f"Não foram preenchidos os valores de {escapar_latex(campo_eirp)}, "
+                    "como informados no CCT\n"
                 )
             if modelos_nao_encontrados:
                 modelos_pendentes = ", ".join(
@@ -3644,7 +3697,13 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 cct_contem_frase_nao_varejo=cct_contem_frase_nao_varejo,
                 campos_certificado_nao_encontrados=campos_certificado_nao_encontrados,
                 caracteristicas_nao_encontradas_no_cct=caracteristicas_cct or [],
-                cct_contem_apenas_eq093=self._cct_contem_apenas_eq093(documentos)
+                cct_contem_apenas_eq093=self._cct_contem_apenas_eq093(documentos),
+                campos_eirp_sem_medicao=(
+                    self._obter_campos_eirp_sem_medicao(
+                        req.get("dados_requerimento")
+                    )
+                    if cct_contem_eirp else []
+                )
             )
 
             tabela_normativos = self._gerar_tabela_normativos_latex(
@@ -3655,16 +3714,6 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
             )
             if tabela_normativos:
                 latex_content += tabela_normativos
-
-                incluir_br = False
-                if cct_contem_eirp:
-                    if incluir_br:
-                        latex_content += "<br>"
-                    latex_content += (
-                        "Os valores de potência indicados na(s) faixa(s) de 5150 a 5350 MHz, "
-                        "5470 a 5725 MHz e 5925 a 7125 MHz referem-se à potência média E.I.R.P."
-                    )
-                    incluir_br = True
 
                 '''if cct_contem_produto_nao_acabado:
                     if incluir_br:

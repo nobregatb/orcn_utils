@@ -3,6 +3,7 @@ Este projeto automatiza o download de anexos de requerimentos do sistema SCH da 
 
 ## Orientações gerais
 - TODOS os import devem estar no cabeçalho dos arquivos .py. Nenhum import pode estar aninhado no meio do código.
+- A inclusão de uma funcionalidade não pode remover uma outra já existente. A não ser que seja explicitamente autorizado.
 - O arquivo const.py NÃO pode possuir funções, apenas constantes.
 - Funções de uso geral, utilitárias, devem estar no aquivo core/utils.py
 - Ignore todos os arquivos .py começados com tbn_* .

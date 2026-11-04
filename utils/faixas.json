@@ -1,5 +1,17 @@
 [
   {
+    "faixa": [0.009, 0.045],
+    "atos_validos": ["ato14448"],
+    "potencia_conduzida_max_dbm": 40.0,
+    "descricao": "Equipamento de Localização de Cabos (9-45 kHz, pico 10 W) - Item 12 do Ato 14.448"
+  },
+  {
+    "faixa": [0.045, 0.49],
+    "atos_validos": ["ato14448"],
+    "potencia_conduzida_max_dbm": 30.0,
+    "descricao": "Equipamento de Localização de Cabos (45-490 kHz, pico 1 W) - Item 12 do Ato 14.448"
+  },
+  {
     "faixa": [0.119, 0.135],
     "atos_validos": ["ato14448"],
     "intensidade_campo_eletrico_uv_m": "2400/F(kHz)",
@@ -212,8 +224,18 @@
     "descricao": "Controles e Brinquedos"
   },
   {
-    "faixa": [54.0, 72.0],
+    "faixa": [50.8, 50.98],
     "atos_validos": ["ato14448"],
+    "descricao": "Sistemas de Telecomando 50 MHz - Tabela VII do Ato 14.448 (uso restrito a portadores de COER)"
+  },
+  {
+    "faixa": [53.1, 53.8],
+    "atos_validos": ["ato14448"],
+    "descricao": "Sistemas de Telecomando 53 MHz - Tabela VIII do Ato 14.448 (uso restrito a portadores de COER)"
+  },
+  {
+    "faixa": [54.0, 72.0],
+    "atos_validos": ["ato14448", "ato14158"],
     "limite_eirp_mw": 50.0,
     "descricao": "Microfones sem fio"
   },
@@ -239,7 +261,7 @@
   },
   {
     "faixa": [76.0, 88.0],
-    "atos_validos": ["ato14448"],
+    "atos_validos": ["ato14448", "ato14158"],
     "descricao": "Microfones sem fio"
   },
   {
@@ -304,7 +326,7 @@
   },
   {
     "faixa": [174.0, 216.0],
-    "atos_validos": ["ato14448"],
+    "atos_validos": ["ato14448", "ato14158"],
     "descricao": "Microfones sem fio"
   },
   {
@@ -415,9 +437,19 @@
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
+    "faixa": [406.2, 413.05],
+    "atos_validos": ["resolucao773"],
+    "descricao": "STFC acesso fixo sem fio 400 MHz - Tabela I (Art. 8)"
+  },
+  {
     "faixa": [406.2, 425.0],
     "atos_validos": ["ato915"],
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [423.05, 430.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "STFC acesso fixo sem fio 400 MHz - Tabela I (Art. 8)"
   },
   {
     "faixa": [426.2, 430.0],
@@ -451,9 +483,26 @@
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
-    "faixa": [470.0, 608.0],
+    "faixa": [462.53, 462.74],
     "atos_validos": ["ato14448"],
-    "descricao": "Microfones sem fio UHF"
+    "limite_erp_mw": 500.0,
+    "descricao": "Equipamento de Radiocomunicação de Uso Geral - Tabela XII do Ato 14.448"
+  },
+  {
+    "faixa": [467.53, 467.74],
+    "atos_validos": ["ato14448"],
+    "limite_erp_mw": 500.0,
+    "descricao": "Equipamento de Radiocomunicação de Uso Geral - Tabela XII do Ato 14.448"
+  },
+  {
+    "faixa": [470.0, 608.0],
+    "atos_validos": ["ato14448", "ato14158", "resolucao773"],
+    "descricao": "Microfones sem fio UHF; Serviço de Acesso Condicionado - SeAC (Art. 31)"
+  },
+  {
+    "faixa": [614.0, 698.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Serviço de Acesso Condicionado - SeAC (Art. 31)"
   },
   {
     "faixa": [614.0, 806.0],
@@ -509,6 +558,13 @@
     "atos_validos": ["ato14448"],
     "vedacoes": ["voz", "mensagem"],
     "descricao": "Telemedição de material (Veda voz e mensagens)[cite: 1]"
+  },
+  {
+    "faixa": [894.0, 898.5],
+    "atos_validos": ["ato14448"],
+    "intensidade_campo_eletrico_uv_m": 70359,
+    "distancia_medida_m": 3,
+    "descricao": "Sistemas de Identificação por Radiofrequências (RFID) - Tabela V do Ato 14.448"
   },
   {
     "faixa": [896.0, 898.5],
@@ -569,6 +625,12 @@
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
+    "faixa": [944.0, 948.0],
+    "atos_validos": ["ato14448"],
+    "potencia_conduzida_max_dbm": 23.98,
+    "descricao": "Sistemas de Transmissão de Áudio, Vídeo ou Outras Aplicações 944-948 MHz (250 mW) - Item 20.1 do Ato 14.448"
+  },
+  {
     "faixa": [1427.0, 1518.0],
     "atos_validos": ["resolucao773"],
     "descricao": "Faixa de 1.500 MHz - Serviços de Interesse Coletivo Terrestres (TDD)[cite: 2]"
@@ -602,6 +664,12 @@
     "faixa": [1910.0, 1920.0],
     "atos_validos": ["resolucao773"],
     "descricao": "Faixa de 1.910-1.920 MHz - STFC (Tabela VIII-B)"
+  },
+  {
+    "faixa": [1910.0, 1920.0],
+    "atos_validos": ["ato14448"],
+    "descricao": "Sistemas de Transmissão de Áudio, Vídeo ou Outras Aplicações 1910-1920 MHz (250 mW, TDD) - Item 20.1 do Ato 14.448",
+    "potencia_conduzida_max_dbm": 23.98
   },
   {
     "faixa": [1920.0, 2170.0],
@@ -645,15 +713,43 @@
     "descricao": "Faixa de 2.500 MHz / 2.6 GHz - Serviços Terrestres e MMDS[cite: 2]"
   },
   {
+    "faixa": [2900.0, 3260.0],
+    "atos_validos": ["ato14448"],
+    "intensidade_campo_eletrico_uv_m": 3000,
+    "distancia_medida_m": 3,
+    "descricao": "Identificação Automática de Veículos (varredura) - Item 13.2.2 do Ato 14.448 (µV/m/MHz)"
+  },
+  {
     "faixa": [3100.0, 3300.0],
     "atos_validos": ["ato14448", "ato423"],
     "eirp_pico_max_dbm": 0.0,
     "descricao": "UWB / Imagens Médicas (Ato 423)[cite: 1]"
   },
   {
+    "faixa": [3267.0, 3332.0],
+    "atos_validos": ["ato14448"],
+    "intensidade_campo_eletrico_uv_m": 3000,
+    "distancia_medida_m": 3,
+    "descricao": "Identificação Automática de Veículos (varredura) - Item 13.2.2 do Ato 14.448 (µV/m/MHz)"
+  },
+  {
     "faixa": [3300.0, 3800.0],
     "atos_validos": ["resolucao773"],
     "descricao": "Faixa de 3.500 MHz - Serviços de Interesse Coletivo Terrestres (TDD)[cite: 2]"
+  },
+  {
+    "faixa": [3339.0, 3345.8],
+    "atos_validos": ["ato14448"],
+    "intensidade_campo_eletrico_uv_m": 3000,
+    "distancia_medida_m": 3,
+    "descricao": "Identificação Automática de Veículos (varredura) - Item 13.2.2 do Ato 14.448 (µV/m/MHz)"
+  },
+  {
+    "faixa": [3358.0, 3600.0],
+    "atos_validos": ["ato14448"],
+    "intensidade_campo_eletrico_uv_m": 3000,
+    "distancia_medida_m": 3,
+    "descricao": "Identificação Automática de Veículos (varredura) - Item 13.2.2 do Ato 14.448 (µV/m/MHz)"
   },
   {
     "faixa": [3700.0, 4200.0],
@@ -688,31 +784,31 @@
   },
   {
     "faixa": [5150.0, 5250.0],
-    "atos_validos": ["ato14448", "ato423", "ato4776"],
+    "atos_validos": ["ato14448", "ato423", "ato4776", "ato14158"],
     "ambiente_exigido": "indoor",
     "potencia_conduzida_max_dbm": 24.0,
     "descricao": "WLAN / Wi-Fi 5 GHz (Exclusivo Indoor)"
   },
   {
     "faixa": [5250.0, 5350.0],
-    "atos_validos": ["ato14448", "ato14158"],
+    "atos_validos": ["ato14448", "ato14158", "ato423", "ato4776"],
     "potencia_conduzida_max_dbm": 24.0,
     "descricao": "WLAN 5.25-5.35 GHz (Ato 14158)"
   },
   {
     "faixa": [5470.0, 5725.0],
-    "atos_validos": ["ato14448", "ato4776"],
+    "atos_validos": ["ato14448", "ato4776", "ato14158", "ato423"],
     "descricao": "WLAN com DFS (Ato 4776)"
   },
   {
     "faixa": [5725.0, 5875.0],
-    "atos_validos": ["ato14448"],
+    "atos_validos": ["ato14448", "ato423", "ato4776"],
     "potencia_conduzida_max_dbm": 30.0,
     "descricao": "Industrial, Científica e Médica - 5.8 GHz"
   },
   {
     "faixa": [5855.0, 5925.0],
-    "atos_validos": ["ato14448", "ato4776", "ato2506"],
+    "atos_validos": ["ato14448", "ato4776", "ato2506", "ato14158"],
     "eirp_max_dbm": 23.0,
     "descricao": "Comunicação Veicular ITS (Ato 4776)"
   },
@@ -723,7 +819,7 @@
   },
   {
     "faixa": [5925.0, 7125.0],
-    "atos_validos": ["ato14448", "ato423"],
+    "atos_validos": ["ato14448", "ato423", "ato14158"],
     "descricao": "Faixa de 6 GHz Não Licenciada / Wi-Fi 6E-7 (Ato 423)"
   },
   {
@@ -767,6 +863,13 @@
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
+    "faixa": [10500.0, 10550.0],
+    "atos_validos": ["ato14448"],
+    "intensidade_campo_eletrico_uv_m": 2500000,
+    "distancia_medida_m": 3,
+    "descricao": "Emissor-Sensor de Variação de Campo Eletromagnético 10,5 GHz - Tabela IV do Ato 14.448"
+  },
+  {
     "faixa": [10500.0, 10650.0],
     "atos_validos": ["ato915"],
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
@@ -802,9 +905,25 @@
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
+    "faixa": [18820.0, 18870.0],
+    "atos_validos": ["ato14448"],
+    "ambiente_exigido": "indoor",
+    "potencia_conduzida_max_dbm": 20.0,
+    "eirp_media_max_dbm": 30.0,
+    "descricao": "Rádio de Baixa Potência 19 GHz (uso interno, 100 mW) - Item 16 do Ato 14.448"
+  },
+  {
     "faixa": [18920.0, 19160.0],
     "atos_validos": ["ato915"],
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [19160.0, 19265.0],
+    "atos_validos": ["ato14448"],
+    "ambiente_exigido": "indoor",
+    "potencia_conduzida_max_dbm": 20.0,
+    "eirp_media_max_dbm": 30.0,
+    "descricao": "Rádio de Baixa Potência 19 GHz (uso interno, 100 mW; canais da Tabela XIII) - Item 16 do Ato 14.448"
   },
   {
     "faixa": [19260.0, 19700.0],
@@ -815,6 +934,17 @@
     "faixa": [21200.0, 23600.0],
     "atos_validos": ["ato915"],
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+  },
+  {
+    "faixa": [21400.0, 22000.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "HAPS/SCM 22 GHz - Tabela XVI-B/XVI-C"
+  },
+  {
+    "faixa": [22000.0, 29000.0],
+    "atos_validos": ["ato14448", "ato423", "ato4776"],
+    "eirp_pico_max_dbm": 0.0,
+    "descricao": "UWB / Radar Veicular 22-29 GHz - Tabela XIV do Ato 14.448"
   },
   {
     "faixa": [24000.0, 24250.0],
@@ -833,8 +963,8 @@
   },
   {
     "faixa": [31000.0, 31300.0],
-    "atos_validos": ["ato915"],
-    "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
+    "atos_validos": ["ato915", "resolucao773"],
+    "descricao": "Canalização do Serviço Limitado Privado (Ato 915); HAPS/SCM 31 GHz - Tabela XVI-B/XVI-C"
   },
   {
     "faixa": [31800.0, 33400.0],
@@ -847,12 +977,43 @@
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
+    "faixa": [38000.0, 39500.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "HAPS/SCM 38 GHz - Tabela XVI-B/XVI-C"
+  },
+  {
+    "faixa": [39500.0, 40000.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "SCM 39,5 GHz - Tabela XV (TDD)"
+  },
+  {
+    "faixa": [46700.0, 46900.0],
+    "atos_validos": ["ato14448", "ato14158", "ato4776"],
+    "descricao": "Sensor de Variação de Campo - Radar de Veículo 46,7-46,9 GHz - Item 9.2 do Ato 14.448"
+  },
+  {
     "faixa": [57000.0, 71000.0],
-    "atos_validos": ["ato14448", "ato4776"],
+    "atos_validos": ["ato14448"],
     "vedacoes": ["satelite"],
     "eirp_media_max_dbm": 40.0,
     "eirp_pico_max_dbm": 43.0,
-    "descricao": "Sistema Multigigabit sem Fio 57-71 GHz (Vedado em satélites)[cite: 1]"
+    "descricao": "Sistema Multigigabit sem Fio 57-71 GHz, indoor ou outdoor ponto-área (Vedado em satélites) - Item 23 do Ato 14.448"
+  },
+  {
+    "faixa": [57000.0, 71000.0],
+    "atos_validos": ["ato4776"],
+    "vedacoes": ["satelite"],
+    "eirp_media_max_dbm": 40.0,
+    "eirp_pico_max_dbm": 43.0,
+    "descricao": "Sistema Multigigabit sem Fio 57-71 GHz, indoor ou outdoor ponto-área (Vedado em satélites) - Item 23.1.3 do Ato 4776"
+  },
+  {
+    "faixa": [57000.0, 71000.0],
+    "atos_validos": ["ato423"],
+    "vedacoes": ["satelite"],
+    "eirp_media_max_dbm": 40.0,
+    "eirp_pico_max_dbm": 43.0,
+    "descricao": "Sistema Multigigabit sem Fio 57-71 GHz, ponto-área indoor ou outdoor (Vedado em satélites) - Item 23.1 do Ato 423"
   },
   {
     "faixa": [71000.0, 76000.0],
@@ -861,7 +1022,7 @@
   },
   {
     "faixa": [76000.0, 81000.0],
-    "atos_validos": ["ato14448", "ato423", "ato14158"],
+    "atos_validos": ["ato14448", "ato423", "ato14158", "ato4776"],
     "descricao": "Radares / LPR / Radar Veicular (76-81 GHz)"
   },
   {

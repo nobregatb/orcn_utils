@@ -56,6 +56,7 @@ O sistema de análise automatizada avalia todos os documentos de um requerimento
 - Validação automática de conformidade técnica
 
 **2. Tipos de Documentos Analisados**
+- O título de cada seção do requerimento no relatório inclui o status do download de `download_status.json`: `completed` em azul e `in_progress` ou `failed` em vermelho. Se o status não estiver registrado ou for inválido, exibe **Desconhecido** em vermelho.
 - **CCT (Certificado de Conformidade Técnica)**: Validação de datas, equipamentos e conformidade
 - **RACT (Relatório de Avaliação da Conformidade Técnica)**: Verificação de ensaios e normas
 - **Manual do Produto**: Análise de especificações técnicas

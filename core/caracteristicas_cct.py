@@ -94,7 +94,10 @@ def chave_coluna(cabecalho: Any) -> str:
     if "designac" in letras:
         return "emissao"
     if "tecnolog" in letras or "espalhament" in letras:
-        # Colunas de técnica de espalhamento (DSSS/OFDM) equivalem à de tecnologia no requerimento.
+        # Colunas de tecnologia e técnica de espalhamento (DSSS/OFDM) equivalem à de tecnologia.
+        return "tecnologia"
+    if ("transmissao" in letras or "transmission" in letras) and "tecnica" in letras:
+        # Coluna "Técnica de Transmissão / Transmission Technique" = tecnologia
         return "tecnologia"
     if "modulac" in letras:
         return "modulacao"

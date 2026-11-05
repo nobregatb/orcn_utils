@@ -92,6 +92,31 @@ class ValidacaoCaracteristicasCCTTest(unittest.TestCase):
         pendencias = validar([reg("2400", "0,1", "FHSS", "X", "-")], [["2400", "0,1", "DSSS", "X", "-"]])
         self.assertEqual(pendencias[0]["faltantes"], [("Tecnologias", "FHSS")])
 
+    def test_coluna_tecnica_de_transmissao_em_inglês(self):
+        """Verifica se 'Transmission Technique' (em inglês) no CCT é mapeado para 'Tecnologias' do JSON."""
+        # Cabeçalho com "Técnica de Transmissão / Transmission Technique" como coluna de tecnologia
+        cabecalho_cct = [
+            "Faixa de Frequência / Frequency Range (MHz)",
+            "Potência Máxima de Saída / Maximum Output Power (W)",
+            "Designação de Emissões / Designation of Emissions",
+            "Tipo de Modulação / Modulation Type",
+            "Técnica de Transmissão / Transmission Technique",
+        ]
+        # Dados do CCT: "SEQUÊNCIA DIRETA\nBluetooth LE" na coluna de técnica de transmissão
+        dados_cct = [["2400", "0,1", "730KF7D", "GFSK", "SEQUÊNCIA DIRETA\nBluetooth LE"]]
+        
+        # JSON com DSSS (equivalente a SEQUÊNCIA DIRETA)
+        registros_json = [reg("2400", "0,1", "DSSS", "GFSK", "730KF7D")]
+        
+        # Validar
+        resultado = validar_caracteristicas_no_cct(
+            [("Produto", registros_json)], 
+            linhas_cct_de_tabelas([[cabecalho_cct] + dados_cct])
+        )
+        # Deve aceitar: DSSS é equivalente a SEQUÊNCIA DIRETA
+        self.assertEqual(resultado, [])
+
+
 
 if __name__ == "__main__":
     unittest.main()

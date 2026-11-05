@@ -12,12 +12,30 @@
     "descricao": "Equipamento de Localização de Cabos (45-490 kHz, pico 1 W) - Item 12 do Ato 14.448"
   },
   {
+    "faixa": [0.045, 0.49],
+    "atos_validos": ["resolucao680"],
+    "intensidade_campo_eletrico_uv_m": "2400/F(kHz)",
+    "descricao": "Limites Gerais de Emissão: 2.400/f(kHz)"
+  },
+  {
     "faixa": [0.119, 0.135],
     "atos_validos": ["ato14448"],
     "intensidade_campo_eletrico_uv_m": "2400/F(kHz)",
     "distancia_medida_m": 300,
     "descricao": "Sistemas de Identificação por Radiofrequências (RFID) - Tabela V do Ato 14.448"
   },
+  {
+    "faixa": [0.49, 1.705],
+    "atos_validos": ["resolucao680"],
+    "intensidade_campo_eletrico_uv_m": "24000/F(kHz)",
+    "descricao": "Limites Gerais de Emissão: 24.000/f(kHz)"
+  },
+  {
+    "faixa": [1.705, 30],
+    "atos_validos": ["resolucao680"],
+    "intensidade_campo_eletrico_uv_m": 30,
+    "descricao": "Limites Gerais de Emissão"
+  },  
   {
     "faixa": [2.194, 2.254],
     "atos_validos": ["ato915"],
@@ -199,6 +217,12 @@
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
+    "faixa": [30, 88],
+    "atos_validos": ["resolucao680"],
+    "intensidade_campo_eletrico_uv_m": 100,
+    "descricao": "Limites Gerais de Emissão"
+  },    
+  {
     "faixa": [40.66, 40.7],
     "atos_validos": ["ato14448"],
     "descricao": "Faixa 40.66-40.70 MHz"
@@ -270,6 +294,12 @@
     "descricao": "Sistemas de Radiodifusão / Restritos"
   },
   {
+    "faixa": [88, 216],
+    "atos_validos": ["resolucao680"],
+    "intensidade_campo_eletrico_uv_m": 150,
+    "descricao": "Limites Gerais de Emissão"
+  },   
+  {
     "faixa": [148.0, 149.9],
     "atos_validos": ["ato915"],
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
@@ -329,6 +359,12 @@
     "atos_validos": ["ato14448", "ato14158"],
     "descricao": "Microfones sem fio"
   },
+  {
+    "faixa": [216, 960],
+    "atos_validos": ["resolucao680"],
+    "intensidade_campo_eletrico_uv_m": 200,
+    "descricao": "Limites Gerais de Emissão"
+  },     
   {
     "faixa": [217.00625, 218.0],
     "atos_validos": ["ato915"],
@@ -630,6 +666,12 @@
     "potencia_conduzida_max_dbm": 23.98,
     "descricao": "Sistemas de Transmissão de Áudio, Vídeo ou Outras Aplicações 944-948 MHz (250 mW) - Item 20.1 do Ato 14.448"
   },
+  {
+    "faixa": [960,100000000],
+    "atos_validos": ["resolucao680"],
+    "intensidade_campo_eletrico_uv_m": 500,
+    "descricao": "Limites Gerais de Emissão"
+  },      
   {
     "faixa": [1427.0, 1518.0],
     "atos_validos": ["resolucao773"],

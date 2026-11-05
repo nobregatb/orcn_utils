@@ -99,6 +99,44 @@ def obter_regra_frequencia(frequencia: float, normas=None) -> Optional[dict]:
     return max(regras_aplicaveis, key=_permissividade_regra)
 
 
+def obter_regra_faixa_integra(freq_min: float, freq_max: float, normas=None) -> Optional[dict]:
+    """Retorna a regra que contém INTEGRALMENTE a faixa [freq_min, freq_max].
+    
+    VALIDAÇÃO RIGOROSA: A faixa declarada deve estar completamente contida em uma ÚNICA
+    entrada de faixas.json (inclusive as bordas).
+    
+    Se `normas` for informado, filtra apenas regras compatíveis com os atos.
+    Se múltiplas regras cobrem a faixa integralmente, retorna a MENOS RESTRITIVA.
+    
+    Returns:
+        dict: A regra que contém integralmente a faixa, ou None se nenhuma regra aplica.
+    """
+    normas_ativas = normalizar_normas(normas)
+    
+    # Encontrar todas as regras que contêm integralmente [freq_min, freq_max]
+    regras_candidatas = [
+        regra for regra in BASE_REGRAS_UNIFICADAS
+        if regra["faixa"][0] <= freq_min and freq_max <= regra["faixa"][1]
+    ]
+    
+    if not regras_candidatas:
+        return None
+    
+    # Filtrar por normas se informadas
+    if normas_ativas:
+        regras_das_normas = [
+            r for r in regras_candidatas if normas_ativas.intersection(r["atos_validos"])
+        ]
+        if regras_das_normas:
+            regras_candidatas = regras_das_normas
+    
+    if not regras_candidatas:
+        return None
+    
+    # Retornar a menos restritiva (mais permissiva)
+    return max(regras_candidatas, key=_permissividade_regra)
+
+
 def _permissividade_regra(regra: dict) -> tuple:
     """Quanto maior a tupla, menos restritiva a regra (ausência de limite = sem limite)."""
     inf = float("inf")
@@ -132,19 +170,25 @@ class FrequenciaItem(BaseModel):
         except ValueError:
             raise ValueError(f"Formato inválido na propriedade 'Faixa de Frequências Tx (MHz)': '{self.faixa_frequencias_tx}'.")
 
-        # Todos os valores declarados precisam estar em faixas previstas no ato.
-        regras_encontradas = [
-            obter_regra_frequencia(freq, normas_contexto) for freq in frequencias
-        ]
-
-        for freq, regra in zip(frequencias, regras_encontradas):
-            if regra is None:
+        # VALIDAÇÃO RIGOROSA: A faixa integralmente deve estar em uma única entrada de faixas.json
+        if len(frequencias) == 2:
+            # Faixa com intervalo: [min, max]
+            freq_min, freq_max = frequencias[0], frequencias[1]
+            regra_encontrada = obter_regra_faixa_integra(freq_min, freq_max, normas_contexto)
+            if regra_encontrada is None:
+                raise ValueError(
+                    f"VIOLAÇÃO CRÍTICA: A faixa de frequências '{fmt_num(freq_min)} - {fmt_num(freq_max)} MHz' "
+                    f"não está integralmente contemplada em uma única entrada das regras regulatórias."
+                )
+        else:
+            # Frequência única
+            freq = frequencias[0]
+            regra_encontrada = obter_regra_frequencia(freq, normas_contexto)
+            if regra_encontrada is None:
                 raise ValueError(
                     f"VIOLAÇÃO CRÍTICA: A frequência '{fmt_num(freq)} MHz' não está "
                     "contemplada nas regras do Ato 14.448."
                 )
-
-        regra_encontrada = regras_encontradas[0]
 
         # 2. Validação de Restrições Ambientais e Vedações
         if regra_encontrada.get("ambiente_exigido") == "indoor":

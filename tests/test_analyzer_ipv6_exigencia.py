@@ -18,7 +18,12 @@ class CctExigeDeclaracaoIpv6Test(unittest.TestCase):
         textos = [
             "Não suporta IPv6.",
             "NÃO IMPLEMENTA IPV6!",
+            "Não suporta protocolo IPv6.",
+            "NÃO IMPLEMENTA protocolo IPV6!",
+            "Não suporta o protocolo IPv6.",
+            "NÃO IMPLEMENTA o protocolo IPV6!",
             "IPv6 não aplicável.",
+            "IPv6 não aplicáveis.",
             "N a o  s u p o r t a  I P V 6.",
         ]
 

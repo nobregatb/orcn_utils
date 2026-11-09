@@ -71,7 +71,12 @@ EXIGENCIA_EQ093_FORNECIMENTO_USO = (
 FRASES_IPV6_QUE_NAO_GERAM_EXIGENCIA = (
     "naosuportaipv6",
     "naoimplementaipv6",
+    "naoimplementaprotocoloipv6",
+    "naoimplementaoprotocoloipv6",
+    "naosuportaprotocoloipv6",
+    "naosuportaooprotocolipv6",    
     "ipv6naoaplica",
+    
 )
 CAMPOS_SAR = {
     "SAR (W/kg) Cabeça",

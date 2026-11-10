@@ -74,7 +74,7 @@ class ValidarCamposCertificadoTest(unittest.TestCase):
             ],
         )
 
-    def test_campos_nao_encontrados_geram_exigencia_por_campo(self):
+    def test_data_nao_encontrada_gera_nova_exigencia(self):
         secao = AnalisadorRequerimentos._construir_secao_exigencias(
             dados_requerimento={},
             cct_contem_ipv6=False,
@@ -88,15 +88,34 @@ class ValidarCamposCertificadoTest(unittest.TestCase):
         )
 
         self.assertIn(
+            r'\item Informar "Data de Emissão do CCT" conforme CCT.',
+            secao,
+        )
+        self.assertIn(
             r"\item O campo Número do Certificado do JSON do requerimento "
             "não foi encontrado no CCT.",
             secao,
         )
+
+    def test_duas_datas_nao_encontradas_geram_exigencia_unica(self):
+        secao = AnalisadorRequerimentos._construir_secao_exigencias(
+            dados_requerimento={},
+            cct_contem_ipv6=False,
+            cct_contem_produto_nao_acabado=False,
+            cct_contem_palavra_vinculado=False,
+            caracteristicas_nao_conformes=[],
+            campos_certificado_nao_encontrados=[
+                "Data de Emissão do CCT",
+                "Data de Validade do Certificado",
+            ],
+        )
+
         self.assertIn(
-            r"\item O campo Data de Emissão do CCT do JSON do requerimento "
-            "não foi encontrado no CCT.",
+            r'\item Informar "Data de Emissão do CCT" e '
+            r'"Data de Validade do Certificado" conforme CCT.',
             secao,
         )
+        self.assertEqual(secao.count(r"\item Informar "), 1)
 
 
 if __name__ == "__main__":

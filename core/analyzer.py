@@ -3004,17 +3004,17 @@ class AnalisadorRequerimentos:
             )
             if campos_data_nao_encontrados == campos_data_certificado:
                 secao_latex += (
-                    "    \\item Informar \\\"Data de Emissão do CCT\\\" e "
-                    "\\\"Data de Validade do Certificado\\\" conforme CCT.\n"
+                    '    \\item Informar "Data de Emissão do CCT" e '
+                    '"Data de Validade do Certificado" conforme CCT.\n'
                 )
             else:
                 if "Data de Emissão do CCT" in campos_data_nao_encontrados:
                     secao_latex += (
-                        "    \\item Informar \\\"Data de Emissão do CCT\\\" conforme CCT.\n"
+                        '    \\item Informar "Data de Emissão do CCT" conforme CCT.\n'
                     )
                 if "Data de Validade do Certificado" in campos_data_nao_encontrados:
                     secao_latex += (
-                        "    \\item Informar \\\"Data de Validade do Certificado\\\" conforme CCT.\n"
+                        '    \\item Informar "Data de Validade do Certificado" conforme CCT.\n'
                     )
             for campo in campos_certificado_nao_encontrados:
                 if campo in campos_data_certificado:

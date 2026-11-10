@@ -2995,7 +2995,30 @@ class AnalisadorRequerimentos:
                     f"como sendo \"{escapar_latex(nome_comercial)}\" ou "
                     "corrigir informação cadastrada no sistema.\n"
                 )
+            campos_data_certificado = {
+                "Data de Emissão do CCT",
+                "Data de Validade do Certificado",
+            }
+            campos_data_nao_encontrados = campos_data_certificado.intersection(
+                campos_certificado_nao_encontrados
+            )
+            if campos_data_nao_encontrados == campos_data_certificado:
+                secao_latex += (
+                    "    \\item Informar \\\"Data de Emissão do CCT\\\" e "
+                    "\\\"Data de Validade do Certificado\\\" conforme CCT.\n"
+                )
+            else:
+                if "Data de Emissão do CCT" in campos_data_nao_encontrados:
+                    secao_latex += (
+                        "    \\item Informar \\\"Data de Emissão do CCT\\\" conforme CCT.\n"
+                    )
+                if "Data de Validade do Certificado" in campos_data_nao_encontrados:
+                    secao_latex += (
+                        "    \\item Informar \\\"Data de Validade do Certificado\\\" conforme CCT.\n"
+                    )
             for campo in campos_certificado_nao_encontrados:
+                if campo in campos_data_certificado:
+                    continue
                 secao_latex += (
                     "    \\item O campo "
                     f"{escapar_latex(campo)} do JSON do requerimento "

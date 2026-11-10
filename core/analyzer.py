@@ -11,6 +11,9 @@ from typing import Dict, List, Optional, Tuple, Set#, Any
 import subprocess
 from pydantic import ValidationError
 
+# pymupdf_layout está disponível em pymupdf >= 2.0
+# Para versões anteriores, o find_tables() já oferece análise de layout robusta
+
 from core.utils import (
     extrair_normas_por_padrao, processar_requerimentos_excel, extract_pdf_content_from_ocr,
     carregar_json_com_fallback

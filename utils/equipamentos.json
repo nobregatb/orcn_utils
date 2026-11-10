@@ -325,6 +325,12 @@
   },
   {
     "escopo": "tab_requisitos",
+    "id": "EQ053",
+    "nome": "Sistema de Ramal sem fio do CPCT",
+    "categoria": 1
+  },
+  {
+    "escopo": "tab_requisitos",
     "id": "EQ054",
     "nome": "Smart TV Box",
     "categoria": 1

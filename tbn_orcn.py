@@ -7,6 +7,9 @@ import os
 import fitz # Para PyMuPDF (necessário para coordenadas e tabelas "stream")
 import camelot # Para tabelas com estrutura (lattice)
 
+# pymupdf_layout está disponível em pymupdf >= 2.0
+# Para versões anteriores, o find_tables() já oferece análise de layout robusta
+
 # --- 2. Funções de Busca Reutilizáveis (MANTIDAS) ---
 
 def buscar_string_apos_prefixo_ate_quebra_linha(texto: str, prefixo: str) -> str:

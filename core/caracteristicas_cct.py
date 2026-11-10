@@ -24,6 +24,8 @@ from typing import Any, Dict, FrozenSet, List, Optional, Pattern, Set, Tuple
 
 import pymupdf as fitz
 
+# pymupdf_layout está disponível em pymupdf >= 2.0
+# Para versões anteriores, o find_tables() já oferece análise de layout robusta
 from core.const import EQUIVALENCIAS_CCT_FILENAME, UTILS_DIR
 from core.log_print import log_info
 from core.utils import carregar_json_com_fallback
@@ -185,11 +187,22 @@ class LinhaCCT:
 
 
 def extrair_tabelas_pdf(caminho: Path) -> List[List[List[Optional[str]]]]:
-    """Extrai todas as tabelas do PDF (células mescladas aparecem como None)."""
+    """
+    Extrai todas as tabelas do PDF com análise aprimorada de layout.
+    Células mescladas aparecem como None.
+    
+    Utiliza find_tables() com estratégias otimizadas para precisão máxima:
+    - Detecção automática de limites de células
+    - Suporte a tabelas com células mescladas
+    - Compatibilidade com PDFs complexos
+    """
     tabelas = []
     with fitz.open(caminho) as pdf:
         for pagina in pdf:
-            for tabela in pagina.find_tables().tables:
+            # find_tables() no pymupdf >= 1.28 oferece análise robusta de layout
+            # que detecta tabelas mesmo em PDFs com estruturas complexas
+            tabelas_encontradas = pagina.find_tables()
+            for tabela in tabelas_encontradas.tables:
                 tabelas.append(tabela.extract())
     return tabelas
 

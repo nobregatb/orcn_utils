@@ -30,6 +30,7 @@ from core.const import (
     CERTIFICA_CABECALHO_FREQUENCIAS
 )
 from core.regras_uso_faixa import HomologacaoProduto, parse_valor_numerico
+from core.normas_status import criar_documento_normas, extrair_normas_e_data_verificacao
 # Constantes para tipos de documento (chaves da estrutura TIPOS_DOCUMENTOS)
 TIPO_CCT = 'cct'
 TIPO_RACT = 'ract'
@@ -695,7 +696,8 @@ class AnalisadorRequerimentos:
         self.equipamentos = carregar_json_com_fallback(JSON_FILES['equipamentos'])
         self.familias_equipamentos = carregar_json_com_fallback(JSON_FILES['familias_equipamentos'])
         self.requisitos = carregar_json_com_fallback(JSON_FILES['requisitos'])
-        self.normas = carregar_json_com_fallback(JSON_FILES['normas'])
+        dados_normas = carregar_json_com_fallback(JSON_FILES['normas'])
+        self.normas, self.ultima_verificacao_vigencia = extrair_normas_e_data_verificacao(dados_normas)
         self.ocds = carregar_json_com_fallback(JSON_FILES['ocds'])
         
         # Resultados da análise
@@ -2756,10 +2758,16 @@ class AnalisadorRequerimentos:
             
             # Salvar arquivo atualizado
             with open(normas_path, 'w', encoding='utf-8') as f:
-                json.dump(normas_lista, f, indent=2, ensure_ascii=False)
+                json.dump(
+                    criar_documento_normas(normas_lista, None),
+                    f,
+                    indent=2,
+                    ensure_ascii=False,
+                )
             
             # Atualizar cache interno
             self.normas = normas_lista
+            self.ultima_verificacao_vigencia = None
             
             #log_info(f"Arquivo normas.json atualizado com {len(novas_normas)} nova(s) norma(s)")
             #log_info(f"Total de normas no arquivo: {len(normas_lista)}")

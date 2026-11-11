@@ -1,1131 +1,1134 @@
-[
-  {
-    "id": "ato10002",
-    "nome": "Ato nº 10002, de 16 de novembro de 2021",
-    "descricao": "Atualizar o Anexo ao Ato nº 3151, de 12 de junho de 2020, que aprova os requisitos técnicos para avaliação da conformidade de Estação Terminal de Acesso",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1604-ato-10002",
-    "entidade": "Anatel",
+{
+  "ultima_verificacao_vigencia": "2026-11-10",
+  "normas": [
+    {
+      "id": "ato10002",
+      "nome": "Ato nº 10002, de 16 de novembro de 2021",
+      "descricao": "Atualizar o Anexo ao Ato nº 3151, de 12 de junho de 2020, que aprova os requisitos técnicos para avaliação da conformidade de Estação Terminal de Acesso",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1604-ato-10002",
+      "entidade": "Anatel",
+      "status": "acessorio"
+    },
+    {
+      "id": "ato10003",
+      "nome": "Ato nº 10003, de 16 de novembro de 2021",
+      "descricao": "Atualizar o Anexo ao Ato nº 3152, de 12 de junho de 2020",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1605-ato-1003",
+      "entidade": "Anatel",
+      "status": "acessorio"
+    },
+    {
+      "id": "ato10029",
+      "nome": "Ato nº 10029, de 14 de julho de 2023",
+      "descricao": "Requisitos técnicos para avaliação da conformidade dos seguintes transmissores e transceptores",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2023/1887-ato-10029",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato10400",
+      "nome": "Ato nº 10400, de 12 de agosto de 2026",
+      "descricao": "Alterar os seguintes itens do Anexo I do Ato nº 14.448, de 4 de dezembro de 2017",
+      "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=6404438&id_documento=18054723",
+      "entidade": "Anatel",
     "status": "acessorio"
-  },
-  {
-    "id": "ato10003",
-    "nome": "Ato nº 10003, de 16 de novembro de 2021",
-    "descricao": "Atualizar o Anexo ao Ato nº 3152, de 12 de junho de 2020",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1605-ato-1003",
-    "entidade": "Anatel",
-    "status": "acessorio"
-  },
-  {
-    "id": "ato10029",
-    "nome": "Ato nº 10029, de 14 de julho de 2023",
-    "descricao": "Requisitos técnicos para avaliação da conformidade dos seguintes transmissores e transceptores",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2023/1887-ato-10029",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato10400",
-    "nome": "Ato nº 10400, de 12 de agosto de 2026",
-    "descricao": "Alterar os seguintes itens do Anexo I do Ato nº 14.448, de 4 de dezembro de 2017",
-    "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=6404438&id_documento=18054723",
-    "entidade": "Anatel",
-    "status": "acessorio"
-  },
-  {
-    "id": "ato10988",
-    "nome": "Ato nº 10988, de 26 de julho de 2024",
-    "descricao": "Requisitos Técnicos e Operacionais para uso de Bloqueador de Sinais de Radiocomunicações (BSR), definindo as faixas de frequência para bloqueio",
-    "tipo": "Requisito Técnico (BSR)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2024/1969-ato-10988",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato1120",
-    "nome": "Ato nº 1120, de 19 de fevereiro de 2018",
-    "descricao": "Requisitos Técnicos de Compatibilidade Eletromagnética (EMC)",
-    "url": "https://www.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1181-ato-1120",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato1134",
-    "nome": "Ato nº 1134, de 03 de fevereiro de 2023",
-    "descricao": "Designar o CCPE CENTRO DE CERTIFICAÇÃO DE PRODUTOS ELETRÔNICOS LTDA., regularmente inscrito no CNPJ sob nº 48.333.960/0001-08, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 1/2023 (SEI nº 9704928), as funções de Organismo de Certificação Designado - OCD",
-    "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=10623324&id_documento=11038880",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato1135",
-    "nome": "Ato nº 1135 de 18 de fevereiro de 2013",
-    "descricao": "Procedimentos para a realização dos ensaios de avaliação da conformidade técnica de Equipamentos de Radiocomunicação de Radiação Restrita no ambiente do laboratório",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2013/1136-ato-1135",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato11542",
-    "nome": "Ato nº 11542, de 23 de agosto de 2017",
-    "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2017/1137-ato-11542",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato1306",
-    "nome": "Ato nº 1306, de 26 de fevereiro de 2021",
-    "descricao": "Alterar os seguintes itens do Anexo I ao Ato nº 14.448",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1510-ato-1306",
-    "entidade": "Anatel",
-    "status": "acessorio"
-  },
-  {
-    "id": "ato13083",
-    "nome": "Ato nº 13083, de 14 de setembro de 2022",
-    "descricao": "Aprovar os requisitos técnicos para avaliação da conformidade de telefones móveis por satélite",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1742-ato-13083",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato1326",
-    "nome": "Ato nº 1326, de 9 de Fevereiro de 2023",
-    "descricao": "Requisitos Técnicos para Avaliação da Conformidade dos produtos com Interface Usuário–Rede e Terminais do Serviço Telefônico Fixo Comutado",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/1867-ato-1326",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato1360",
-    "nome": "Norma (ato1360) citada no requerimento 26.08558",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.08558.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato1379",
-    "nome": "Ato nº 1379, de 28 de fevereiro de 2019",
-    "descricao": "Alterar os itens 6.2.5, 13.1 e 13.1.1 do Anexo I ao Ato Nº 14.448",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1244-ato-1379",
-    "entidade": "Anatel",
-    "status": "acessorio"
-  },
-  {
-    "id": "ato14010",
-    "nome": "Ato nº 14010, de 04 de outubro de 2022",
-    "descricao": "Procedimento Operacional contendo Orientações para Fornecimento do Selo de Segurança de Homologação da Anatel para Baterias de Lítio e Carregadores Utilizados em Telefones Celulares",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1744-ato-14010",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato14158",
-    "nome": "Ato nº 14158, de 1º de outubro de 2025",
-    "descricao": "Modifica o Ato nº 14.448/2017 e o Ato nº 237/2022",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2025/2070-ato-14158",
-    "entidade": "Anatel",
-    "status": "acessorio"
-  },
-  {
-    "id": "ato14430",
-    "nome": "Ato nº 14430, de 07 de outubro de 2024",
-    "descricao": "Incluir novos subitens com numeração 4.4 e 4.5 ao Anexo ao Ato nº 3151, de 12 de junho de 2020,",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1980-ato-14430",
-    "entidade": "Anatel",
-    "status": "acessorio"
-  },
-  {
-    "id": "ato14448",
-    "nome": "Ato nº 14448, de 04 de dezembro de 2017",
-    "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita",
-    "tipo": "Requisito Técnico (Radiação Restrita)",
-    "url": "https://www.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2017/1139-ato-14448",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato14468",
-    "nome": "Ato nº 14468, de 05 de dezembro de 2017",
-    "descricao": "Aprovar os requisitos técnicos para avaliação da conformidade do produto Equipamento de Rede de dados",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2017/1260-ato-14468",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato1477",
-    "nome": "Ato nº 1477, de 05 de março de 2021",
-    "descricao": "Requisitos técnicos e operacionais de condições de uso da subfaixa 3.300 MHz e 3.700 MHz, por estações no Serviço Móvel Pessoal – SMP, no Serviço de Comunicação Multimídia – SCM, no Serviço Telefônico Fixo Comutado – STFC e no Serviço Limitado Privado – SLP",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2021/1521-ato-1477",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato1630",
-    "nome": "Ato nº 1630, de 11 de março de 2021",
-    "descricao": "Procedimentos de Ensaio para Avaliação da Taxa de Absorção Específica (SAR) de Produtos para Telecomunicações, na forma do Anexo a este Ato, para efeitos de avaliação da conformidade técnica junto à Agência Nacional de Telecomunicações",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1523-ato-1630",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato16417",
-    "nome": "Ato nº 16417, de 22 de novembro de 2024",
-    "descricao": "Procedimento Operacional contendo diretrizes para auditoria da política de segurança cibernética de fornecedores de produtos e equipamentos de telecomunicações para prestadoras",
-    "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/164-atos-de-certificacao-de-produtos/2024/1992-ato-16417",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato16539",
-    "nome": "Ato nº 16539, de 27 de novembro de 2023",
-    "descricao": "Requisitos Técnicos e Operacionais de Uso das faixas de frequências associadas aos serviços de interesse coletivo, prestados por sistemas terrestres",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2023/1904-ato-16539",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato170187",
-    "nome": "Norma (ato170187) citada no requerimento 26.08923",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.08923.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato17087",
-    "nome": "Ato nº 17087, de 19 de dezembro de 2022",
-    "descricao": "Requisitos Técnicos de Segurança Elétrica",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1823-ato-17087",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato170870",
-    "nome": "Norma (ato170870) citada no requerimento 26.08711",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.08711.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato17207",
-    "nome": "Ato nº 17207, de 12 de dezembro de 2023",
-    "descricao": "Requisitos técnicos e operacionais para uso do espectro de radiofrequências por estações associadas ao Serviço Limitado Móvel Aeronáutico (SLMA)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/161-atos-de-requisitos-tecnicos-de-gestao-do-espectro/2023/1908-ato-17207",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato17394",
-    "nome": "Ato nº 17.394, de 5 de julho de 2001",
-    "descricao": "Designar a FUNDAÇÃO CPqD – CENTRO DE PESQUISA E DESENVOLVIMENTO EM TELECOMUNICAÇÕES para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade n° 003/RFGCT/RFCE/SRF, as funções de Organismo de Certificação Designado – OCD",
-    "url": "https://sistemas.anatel.gov.br/anexar-api/publico/portal-publicar/documentos?numeroPublicacao=27461",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato17423",
-    "nome": "Ato nº 17423, de 17 de novembro de 2025",
-    "descricao": "Designar a DEKRA TESTING, INSPECTION & CERTIFICATION LTDA, sociedade empresária regularmente inscrita no CNPJ sob nº 57.473.707/0001-24, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 6/2025 (SEI nº 14763987), as funções de Organismo de Certificação Designado - OCD",
-    "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=documento_visualizar&acao_origem=protocolo_pesquisar&id_documento=16531997&infra_sistema=100000100&infra_unidade_atual=110001100&infra_hash=c3a6dcc6379acc5b99ed1597c621eb2ec197819dcb685fe5519fb2156b7f7b0f",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato17542",
-    "nome": "Ato nº 17542, de 20 de dezembro de 2023",
-    "descricao": "Requisitos Técnicos e Operacionais para sistemas associados aos Serviços Auxiliares de Radiodifusão e Correlatos (SARC)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2023/1911-ato-17542",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato17865",
-    "nome": "Ato nº 17865, de 30 de dezembro de 2023",
-    "descricao": "Requisitos Técnicos quanto à exposição humana a campos elétricos, magnéticos e eletromagnéticos na faixa de radiofrequências entre 8,3 kHz e 300 GHz, na forma do Anexo a este Ato",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2023/1914-ato-17865",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato19434",
-    "nome": "Ato nº 19.434, de 28 de setembro de 2001",
-    "descricao": "Designar o OCP-TELI – ORGANIZAÇÃO CERTI FICADORA DE PRODUTOS DE TELECOMUNICAÇÕES E INFORMÁTICA para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade n° 007/RFCEC/RFCE/SRF, as funções de Organismo de Certificação Designado – OCD",
-    "url": "http://www.anatel.gov.br/Portal/verificaDocumentos/documento.asp?numeroPublicacao=30709&assuntoPublicacao=Ato%20n.%C2%BA%2019434/2001-Anatel&caminhoRel=In%C3%ADcio-Certifica%C3%A7%C3%A3o%20de%20Produtos-Apresenta%C3%A7%C3%A3o&filtro=1&documentoPath=biblioteca/atos/2001/ato_19434_2001.pdf",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato209",
-    "nome": "[NÃO USAR]Ato nº 209, de 14 de janeiro de 2019",
-    "descricao": "Requisitos Técnicos e Procedimentos de Ensaio Aplicáveis à Certificação de Produtos para Telecomunicação de Categoria I, publicada na página da Anatel na Internet, alterando os requisitos para Telefone Móvel Celular e para Estação Terminal de Acesso - ETA",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1225-ato-209",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato2091",
-    "nome": "Ato nº 2091, de 14 de fevereiro de 2025",
-    "descricao": "Requisitos Técnicos e Operacionais para uso das faixas de radiofrequências associadas ao serviço limitado privado, prestado por sistemas terrestres, aprovados pelo Ato nº 915, de 1º de fevereiro de 2024",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2025/2008-ato-2091",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato2105",
-    "nome": "Ato nº 2105, de 14 de fevereiro de 2025",
-    "descricao": "Atualizar o Anexo ao Ato nº 3151, de 12 de junho de 2020, que aprova os requisitos técnicos para avaliação da conformidade de Estação Terminal de Acesso",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2025/2010-ato-2105",
-    "entidade": "Anatel",
-    "status": "acessorio"
-  },
-  {
-    "id": "ato2220",
-    "nome": "Ato nº 2220, de 20 de abril de 2020",
-    "descricao": "Procedimento Operacional para Avaliação da Conformidade de Produtos para Telecomunicações por Certificação",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1401-ato-2220",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato2221",
-    "nome": "Ato nº 2221, de 20 de abril de 2020",
-    "descricao": "Procedimento Operacional para Marcação da Identificação da Homologação Anatel em Produtos para Telecomunicações",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1404-ato-2221",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato2222",
-    "nome": "Ato nº 2222, de 20 de abril de 2020",
-    "descricao": "Lista de Referência de Produtos para Telecomunicações na forma do Anexo a este Ato, em cumprimento às disposições do Regulamento de Avaliação da Conformidade e Homologação de Produtos para Telecomunicações",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1403-ato-2222",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato237",
-    "nome": "Ato nº 237, de 07 de janeiro de 2022",
-    "descricao": "Procedimentos de Ensaio para Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita, na forma do Anexo a este Ato, para efeitos de avaliação da conformidade técnica junto à Agência Nacional de Telecomunicações",
-    "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/155-atos-de-certificacao-de-produtos/2022/1629-ato-237",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato2436",
-    "nome": "Ato nº 2436, de 7 de março de 2023",
-    "descricao": "Requisitos mínimos mandatórios de segurança cibernética para avaliação da conformidade de equipamentos CPE (Customer Premises Equipment)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/1850-ato-2436",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato2506",
-    "nome": "Ato nº 2506, de 07 de maio de 2020",
-    "descricao": "Os itens abaixo indicados no Anexo I do Ato n° 14.448, de 04 de dezembro de 2017, que aprovou os Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita, passam a vigorar com a seguinte redação e mero reordenamento da numeração",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1413-ato-2506",
-    "entidade": "Anatel",
-    "status": "acessorio"
-  },
-  {
-    "id": "ato2873",
-    "nome": "Ato nº 2873, de 30 de abril de 2019",
-    "descricao": "Designar a BR APPROVAL-ASSOCIAÇÃO TÉCNICA DE CERTIFICAÇÃO, CNPJ 30.569.550/0001-97, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD Nº 1/2019 (SEI nº 4091483), as funções de Organismo de Certificação Designado - OCD",
-    "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=3433932&id_documento=4686417",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato2934",
-    "nome": "Ato nº 2934, de 01 de junho de 2020",
-    "descricao": "Requisitos técnicos e operacionais de uso da faixa de 2.300 MHz a 2.400 MHz para utilização por estações no Serviço Móvel Pessoal – SMP, no Serviço de Comunicação Multimídia – SCM, no Serviço Telefônico Fixo Comutado – STFC e no Serviço Limitado Privado – SLP",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2020/1441-ato-2934",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato3151",
-    "nome": "Ato nº 3151, de 12 de junho de 2020",
-    "descricao": "Requisitos técnicos para avaliação da conformidade de Estação Terminal de Acesso",
-    "tipo": "Norma Nacional (Cabos)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1429-ato-3151",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato3152",
-    "nome": "Ato nº 3152, de 12 de junho de 2020",
-    "descricao": "Requisitos técnicos para avaliação da conformidade de Telefone Móvel Celular",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1430-ato-3152",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato3153",
-    "nome": "Ato nº 3153, de 12 de junho de 2020",
-    "descricao": "Requisitos técnicos para avaliação da conformidade de Transceptor para Estação Rádio Base",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1431-ato-3153",
-    "entidade": "Anatel",
-    "status": "acessorio"
-  },
-  {
-    "id": "ato3384",
-    "nome": "Ato nº 3384, de 26 de junho de 2020",
-    "descricao": "Designar a DEKRA CERTIFICATION B.V., CNPJ 26.600.714/0001-24, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD Nº 01/2020 (SEI nº 5694684), as funções de Organismo de Certificação Designado - OCD",
-    "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=6401327&id_documento=6444156",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato3481",
-    "nome": "Ato nº 3481, de 31 de maio de 2019",
-    "descricao": "Requisitos Técnicos e Procedimentos de Ensaio para Avaliação da Conformidade de Carregador Utilizado em Telefone Celular",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1287-ato-3481",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato3484",
-    "nome": "Ato nº 3484, de 31 de maio de 2019",
-    "descricao": "Requisitos Técnicos de Ensaio para a Avaliação da Conformidade de Baterias de Lítio Utilizadas em Telefones Celulares e produtos similares (Categoria I)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1301-ato-3484",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato3639",
-    "nome": "Ato nº 3639, de 27 de março de 2024",
-    "descricao": " Designar o SEVEN COMPLIANCE LTDA, regularmente inscrito no CNPJ sob nº 28.893.275/0001-10, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 1/2024 (SEI nº 11708112), as funções de Organismo de Certificação Designado - OCD",
-    "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=13023673&id_documento=13207718",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato4077",
-    "nome": "Ato nº 4077, de 31 de julho de 2020",
-    "descricao": "Procedimento Operacional para Alteração Técnica em Produto para Telecomunicações Homologado por Certificado de Conformidade ou por Declaração de Conformidade",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1446-ato-4077",
-    "status": "vigente"
-  },
-  {
-    "id": "ato4082",
-    "nome": "Ato nº 4082, de 31 de julho de 2020",
-    "descricao": "Procedimento Operacional que Estabelece os Meios de Exercício de Direitos e de Cumprimento de Obrigações pelos Agentes Envolvidos na Avaliação da Conformidade de Produtos para Telecomunicações",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1450-ato-4082",
-    "status": "vigente"
-  },
-  {
-    "id": "ato4083",
-    "nome": "Ato nº 4083, de 31 de julho de 2020",
-    "descricao": "Procedimento Operacional para Avaliação da Conformidade de Produtos para Telecomunicações por Certificação",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1453-ato-4083",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato4084",
-    "nome": "Ato nº 4084, de 31 de julho de 2020",
-    "descricao": "Procedimento Operacional para Homologação do Certificado de Conformidade de Produtos para Telecomunicações",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1447-ato-4084",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato4085",
-    "nome": "Ato nº 4085, de 31 de julho de 2020",
-    "descricao": "Procedimento Operacional para Reconhecimento de Profissional como Especialista na Avaliação da Conformidade de Produtos para Telecomunicações",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1448-ato-4085",
-    "status": "vigente"
-  },
-  {
-    "id": "ato4088",
-    "nome": "Ato nº 4088, de 31 de julho de 2020",
-    "descricao": "Procedimento Operacional para Marcação da Identificação da Homologação Anatel em Produtos para Telecomunicações",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1451-ato-4088",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato4091",
-    "nome": "Ato nº 4091, de 31 de julho de 2020",
-    "descricao": "Procedimento Operacional para Seleção, Avaliação e Habilitação de Laboratórios de Ensaios para Fins de Avaliação da Conformidade de Produtos para Telecomunicações",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1452-ato-4091",
-    "status": "vigente"
-  },
-  {
-    "id": "ato423",
-    "nome": "Ato nº 423, de 12 de janeiro de 2022",
-    "descricao": "Alterar os seguintes itens e seus respectivos subitens do Anexo I do Ato nº 14.448",
-    "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/155-atos-de-certificacao-de-produtos/2022/1633-ato-423",
-    "entidade": "Anatel",
-    "status": "acessorio"
-  },
-  {
-    "id": "ato4470",
-    "nome": "Ato nº 4470, de 20 de agosto de 2020",
-    "descricao": "Designar a ASSOCIAÇÃO LMP CERTIFICAÇÕES, CNPJ 34.827.924/0001-88, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados nos Termos de Responsabilidade de OCD Nº 3/2020 (SEI nº 5721995) e Nº 4/2020 (SEI nº 5888705), as funções de Organismo de Certificação Designado - OCD",
-    "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=5877359&id_documento=6651984",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato458",
-    "nome": "O Ato nº 458, citado nesse documento, foi revogado pelo Ato nº 17865, de 30 de dezembro de 2023.",
-    "descricao": "Detalhar os limites de exposição ocupacional e da população em geral a campos elétricos, magnéticos e eletromagnéticos na faixa de radiofrequências entre 8,3 kHz e 300 GHz (CEMRF) gerados por estações transmissoras de radiocomunicação e por terminais de usuários, propostos pela Comissão Internacional de Proteção Contra Radiação Não Ionizante (ICNIRP)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2019/1237-ato-458",
-    "status": "revogado"
-  },
-  {
-    "id": "ato4746",
-    "nome": "Ato nº 4746, de 02 de abril de 2026",
-    "descricao": "Alterar o texto do Art. 19 do Ato nº 14.158, de 01 de outubro de 2025",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2026/2132-ato-4746",
-    "entidade": "Anatel",
-    "status": "acessorio"
-  },
-  {
-    "id": "ato4776",
-    "nome": "Ato nº 4776, de 01 de setembro de 2020",
-    "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1429-ato-3151",
-    "entidade": "Anatel",
-    "status": "acessorio"
-  },
-  {
-    "id": "ato4800",
-    "nome": "Ato nº 4800, de 01 de setembro de 2020",
-    "descricao": "Requisitos técnicos e operacionais de condições de uso das faixas acima de 2 GHz para aplicações do serviço fixo",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2020/1468-ato-4800",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato48668",
-    "nome": "ATO nº 48.668, de 22 de desembro de 2004",
-    "descricao": "Designar a Associação de Certificação de Produto para Telecomunicações, Radiodifusão, Cinema, Vídeo e Áudio-Visual – CTCP – Centro Tecnológico de Certificação e Pesquisa para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade no 012/RFCEC/RFCE/SRF, as funções de Organismo de Certificação Designado – OCD",
-    "url": "https://www.anatel.gov.br/Portal/verificaDocumentos/documento.asp?numeroPublicacao=105961&assuntoPublicacao=Ato%20n.%C2%BA%2048668/2004-Anatel&caminhoRel=In%C3%ADcio-Certifica%C3%A7%C3%A3o%20de%20Produtos-Apresenta%C3%A7%C3%A3o&filtro=1&documentoPath=biblioteca/atos/2005/ato_48668_2005.pdf",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato5155",
-    "nome": "Ato nº 5155, de 17 de abril de 2024",
-    "descricao": "Requisitos Técnicos e Procedimentos de Ensaio para Avaliação da Conformidade de Carregador Utilizado em Telefone Móvel Celular",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1947-ato-5155",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato5159",
-    "nome": "Ato nº 5159, de 08 de abril de 2022",
-    "descricao": "Requisitos Técnicos e Procedimentos de Ensaio para Avaliação da Conformidade de Carregador Utilizado em Telefone Móvel Celular",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1657-ato-5159&quot;&gt;Anatel",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato5649",
-    "nome": "Ato nº 5649, de 12 de setembro de 2019",
-    "descricao": "Orientações para homologação de produtos por declaração de conformidade destinados aos Serviços de Radioamador, Rádio do Cidadão, Móvel Marítimo, Móvel Aeronáutico e Comunicação por Satélite",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1364-ato-5649",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato57860",
-    "nome": "Ato nº 57860, de 26 de abril de 2006",
-    "descricao": "Designar a MASTER - Associação de Avaliação da Conformidade Telecom para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade no013/RFCEC/RFCE/SRF, as funções de Organismo de Certificação Designado – OCD",
-    "url": "https://www.anatel.gov.br/Portal/verificaDocumentos/documento.asp?numeroPublicacao=120761&assuntoPublicacao=Ato%20n.%C2%BA%2057860/2006-Anatel%20&caminhoRel=In%C3%ADcio-Certifica%C3%A7%C3%A3o%20de%20Produtos-Apresenta%C3%A7%C3%A3o&filtro=1&documentoPath=biblioteca/atos/2006/ato_57860_2006.pdf",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato6247",
-    "nome": "Ato nº 6247, de 05 de maio de 2022",
-    "descricao": " Designar a Moderna Tecnologia Ltda, regularmente inscrito no CNPJ sob nº 44.458.010/0001-40, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 04/2022 (SEI nº 8325756), as funções de Organismo de Certificação Designado - OCD",
-    "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=documento_visualizar&acao_origem=protocolo_pesquisar&id_documento=9500620&infra_sistema=100000100&infra_unidade_atual=110001100&infra_hash=91940960b0ea3da1302dc2c7dc0189c7b4bbc384fd65944512794d5cbb528f86",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato6506",
-    "nome": "Ato nº 6506, de 27 de agosto de 2018",
-    "descricao": "Requisitos Técnicos para Terminal de Linhas Ópticas (OLT) e Unidade de Rede Óptica (ONU) (Categoria III)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1231-ato-6506",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato7280",
-    "nome": "Ato nº 7280, de 26 de novembro de 2020",
-    "descricao": "Atualização da Lista de Referência de Produtos para Telecomunicações",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1493-ato-7280",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato77",
-    "nome": "Ato nº 77, de 05 de janeiro de 2021",
-    "descricao": "Requisitos de Segurança Cibernética para Equipamentos para Telecomunicações",
-    "tipo": "Norma Nacional (Cabos)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1505-ato-77",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato7971",
-    "nome": "Ato nº 7971, de 22 de junho de 2023",
-    "descricao": "Requisitos Técnicos para avaliação da conformidade do protocolo IPv6 em produtos para telecomunicações",
-    "tipo": "Norma Nacional (Cabos)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/160-atos-de-certificacao-de-produtos/2023/1878-ato-7971",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato8385",
-    "nome": "Ato nº 8385, de 03 de maio de 2017",
-    "descricao": "Alterar os requisitos técnicos relativos ao produto Transmissor e transceptor digital ponto a ponto",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2017/1207-ato-8385",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato8416",
-    "nome": "Ato nº 8416, de 08 de novembro de 2018",
-    "descricao": "Aprovar a alteração dos requisitos técnicos para homologação de Transmissores, Receptores e Amplificadores Lineares do Serviço de Radioamador",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1212-ato-8416",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato8767",
-    "nome": "Norma (ato8767) citada no requerimento 26.05954",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.05954.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato8769",
-    "nome": "Ato nº 8769, de 17 de maio de 2017",
-    "descricao": "Designar a Associação VERSYS de Tecnologia, CNPJ 26.352.661/0001-70, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade (SEI nº 1466076), as funções de Organismo de Certificação Designado - OCD",
-    "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=1054630&id_documento=1738552",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato883",
-    "nome": "Ato nº 883, de 01 de fevereiro de 2024",
-    "descricao": "Requisitos Técnicos e Operacionais para uso de radiofrequências por estações associadas ao Serviço Limitado Móvel Marítimo",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2024/1918-ato-883",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato915",
-    "nome": "Ato nº 915, de 01 de fevereiro de 2024",
-    "descricao": "Requisitos Técnicos e Operacionais para uso das faixas de frequências associadas ao Serviço Limitado Privado, prestado por sistemas terrestres, na forma do Anexo a este Ato",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2024/1920-ato-915",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato926",
-    "nome": "Ato nº 926, de 1 de fevereiro de 2024",
-    "descricao": "Requisitos Técnicos e Operacionais para uso de radiofrequências associadas ao Serviço de Radioamador",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2024/1919-ato-926",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato9281",
-    "nome": "Ato nº 9281, de 5 de julho de 2023",
-    "descricao": "Requisitos técnicos para avaliação da conformidade do tipo de produto Smart TV Box",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2023/1879-ato-9281",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato932",
-    "nome": "Ato nº 932, de 08 de fevereiro de 2018",
-    "descricao": "Requisitos técnicos para avaliação da conformidade de Antena Ponto a Ponto",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1203-ato-932",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato933",
-    "nome": "Ato nº 933, de 08 de fevereiro de 2018",
-    "descricao": "Requisitos técnicos para avaliação da conformidade da interface analógica de adaptadores para terminal de assinante",
-    "url": "hhttps://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1192-ato-933",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato934",
-    "nome": "Ato nº 934, de 08 de fevereiro de 2018",
-    "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores digitais para o serviço fixo em aplicações ponto-multiponto nas faixas de frequências acima de 1 GHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1227-ato-934",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato938",
-    "nome": "Ato nº 938, de 08 de fevereiro de 2018",
-    "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores monocanais analógicos AM",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1172-ato-938",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato940",
-    "nome": "Ato nº 940, de 08 de fevereiro de 2018",
-    "descricao": "Requisitos técnicos para avaliação da conformidade de terminais móveis de acesso dos serviços de telecomunicações por satélite",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1180-ato-940",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato943",
-    "nome": "Ato nº 943, de 8 de Fevereiro de 2018",
-    "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores monocanais analógicos FM e PM operando em faixas de frequências abaixo de 1 GHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1170-ato-943",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato944",
-    "nome": "Ato nº 944, de 08 de fevereiro de 2018",
-    "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores de estações rádio base e de estações repetidoras",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1197-ato-944",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato946",
-    "nome": "Ato nº 946, de 08 de fevereiro de 2018",
-    "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores digitais para o serviço fixo em aplicações ponto-multiponto nas faixas de frequências abaixo de 1 GHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1169-ato-946",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato948",
-    "nome": "Ato nº 948, de 08 de fevereiro de 2018",
-    "descricao": "Requisitos técnicos relativos ao produto Cabos de Fibras Ópticas",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1164-ato-948",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato950",
-    "nome": "O Ato nº 950, citado nesse documento, foi revogado pelo Ato nº 17087, de 19 de dezembro de 2022.",
-    "descricao": "Requisitos técnicos de segurança elétrica para avaliação da conformidade de produtos para telecomunicações",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1193-ato-950",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato954",
-    "nome": "Ato nº 954, de 08 de fevereiro de 2018",
-    "descricao": "Requisitos técnicos para Bloqueador de Sinais de Radiocomunicações (BSR)",
-    "tipo": "Requisito Técnico (BSR)",
-    "url": "https://www.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1167-ato-954",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato955",
-    "nome": "Ato nº 955, de 08 de fevereiro de 2018",
-    "descricao": "Requisitos técnicos de taxa de absorção específica (SAR) para avaliação da conformidade de produtos para telecomunicações",
-    "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article?layout=edit&id=1194",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "ato9688",
-    "nome": "Ato nº 9688, de 08 de agosto de 2025",
-    "descricao": "Designar o UL do Brasil Ltda, regularmente inscrito no CNPJ sob nº 02.839.483/0001-48, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 5/2025 (SEI nº 14160407), as funções de Organismo de Certificação Designado - OCD",
-    "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=documento_visualizar&acao_origem=protocolo_pesquisar&id_documento=15875583&infra_sistema=100000100&infra_unidade_atual=110001100&infra_hash=afe0cbfdc019cf8822c84658f9c71ae633f4624d209a5b91c1b26d03d86867aa",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "ato9960",
-    "nome": "Ato nº 9960, de 28 de junho de 2024",
-    "descricao": "Atualizar a Lista de Referência de Produtos para Telecomunicações, aprovada pelo Ato nº 7280, de 26 de novembro de 2020",
-    "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1959-ato-9960",
-    "entidade": "Anatel",
-    "status": "acessorio"
-  },
-  {
-    "id": "resolucao1",
-    "nome": "Norma (resolucao1) citada no requerimento 26.05981",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.05981.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "resolucao105",
-    "nome": "Resolução nº 105, de 26 de fevereiro de 1999",
-    "descricao": "Regulamento sobre Canalização e Condições de Uso da Faixa Inferior de 6 GHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/1999/413-resolucao-105",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao129",
-    "nome": "Resolução nº 129, de 26 de maio de 1999",
-    "descricao": "Regulamento sobre Canalização e Condições de Uso da Faixa de 15 GHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/1999/415-resolucao-129",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao1630",
-    "nome": "Norma (resolucao1630) citada no requerimento 26.08421",
-    "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.08421.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "resolucao242",
-    "nome": "A Resolução nº 242, citada nesse documento, foi revogada pela Resolução nº 715, de 23 de outubro de 2019.",
-    "descricao": "Regulamento para Certificação e Homologação de Produtos para Telecomunicações",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/15-2000/129-resolucao-242",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao303",
-    "nome": "Resolução nº 303, de 2 de julho de 2002",
-    "descricao": "Regulamento sobre Limitação da Exposição a Campos Elétricos, Magnéticos e Eletromagnéticos na Faixa de Radiofreqüências entre 9 kHz e 300 GHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/17-2002/128-resolucao-303",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao323",
-    "nome": "Resolução nº 323, citada nesse documento, foi revogada pela Resolução nº 715, de 23 de outubro de 2019.",
-    "descricao": "Norma para Certificação de Produtos para Telecomunicações",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2002/155-resolucao-323",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao359",
-    "nome": "Resolução nº 359, de 1º de abril de 2004",
-    "descricao": "Norma para Certificação e Homologação de Transmissores e Transceptores Digitais para o Serviço Fixo em Aplicações Ponto-Multiponto nas Faixas de Freqüências abaixo de 1 GHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2004/344-resolucao-359",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao360",
-    "nome": "Resolução nº 360, de 1º de abril de 2004",
-    "descricao": "Norma para Certificação e Homologação de Transmissores e Transceptores Digitais para o Serviço Fixo em Aplicações Ponto-a-Ponto nas Faixas de Freqüências abaixo de 1 GHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2004/348-resolucao-360",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao361",
-    "nome": "Resolução nº 361, de 1º de abril de 2004",
-    "descricao": "Norma para Certificação e Homologação de Transmissores e Transceptores Monocanais Analógicos FM e PM para Operação nas Faixas de Freqüências Abaixo de 1 GHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/index.php/resolucoes/2004/360-resolucao-361",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao369",
-    "nome": "Resolução nº 369, de 13 de maio de 2004",
-    "descricao": "Norma para Certificação e Homologação de Transmissores e Transceptores Digitais para o Serviço Fixo em Aplicações Ponto-a-Ponto nas Faixas de Freqüências acima de 1 GHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2004/361-resolucao-369",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao442",
-    "nome": "Resolução nº 442, de 21 de julho de 2006",
-    "descricao": "Regulamento para a Certificação de Equipamentos de Telecomunicações quanto aos Aspectos de Compatibilidade Eletromagnética",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2006/352-resolucao-442",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao454",
-    "nome": "A Resolução nº 454, citada nesse documento, foi revogada pela Resolução nº 757, de 08 de novembro de 2022, que, por sua vez, foi revogada pela Resolução Anatel nº 773, de 16 de janeiro de 2025.",
-    "descricao": "Regulamento sobre Condições de Uso de Radiofreqüências nas Faixas de 800 MHz, 900 MHz, 1.800 MHz, 1.900 MHz e 2.100 MHz",
-    "url": "hhttps://informacoes.anatel.gov.br/legislacao/resolucoes/2006/89-resolucao-454",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao455",
-    "nome": "Resolução nº 455, de 18 de dezembro de 2006",
-    "descricao": "Regulamento sobre Canalização e Condições de Uso de Radiofreqüências nas Faixas de 460 MHz, 800 MHz e 900 MHz para o Serviço Limitado Móvel Privativo (SLMP) e Serviço Móvel Especializado (SME)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2006/327-resolucao-455",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao504",
-    "nome": "Resolução nº 504, de 14 de maio de 2008",
-    "descricao": "Regulamento sobre Canalização e Condições de Uso da Faixa de Radiofreqüências de 6.430 MHz a 7.110 MHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2008/181-resolucao-504",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao506",
-    "nome": "Resolução nº 506, de 1º de julho de 2008",
-    "descricao": "Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/23-2008/104-resolucao-506",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao527",
-    "nome": "Resolução nº 527, de 8 de Abril de 2009",
-    "descricao": "Regulamento sobre Condições de Uso de Radiofreqüências por Sistemas de Banda Larga por meio de Redes de Energia Elétrica",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2009/101-resolucao-527",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao529",
-    "nome": "Resolução nº 529, de 3 de junho de 2009",
-    "descricao": "Regulamento para Certificação de Equipamentos de Telecomunicações quanto aos Aspectos de Segurança Elétrica",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2009/149-resolucao-529",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao533",
-    "nome": "Resolução nº 533, de 10 de setembro de 2009",
-    "descricao": "Norma para Certificação e Homologação de Equipamentos de Telecomunicações quanto aos Aspectos da Avaliação da Taxa de Absorção Específica (SAR)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2009/147-resolucao-533",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao544",
-    "nome": "A Resolução nº 544, citada nesse documento, foi revogada pela Resolução nº 757, de 08 de novembro de 2022, que, por sua vez, foi revogada pela Resolução Anatel nº 773, de 16 de janeiro de 2025.",
-    "descricao": "Modificar a Destinação de Radiofreqüências nas Faixas de 2.170 MHz a 2.182 MHz e de 2.500 MHz a 2.690 MHz, nos termos dos artigos seguintes, republicar, com alterações, conforme consta do Anexo I desta Resolução, o Regulamento sobre Condições de Uso de Radiofreqüências nas Faixas de 2.170 MHz a 2.182 MHz e de 2.500 MHz a 2.690 MHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2010/41-resolucao-544",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao557",
-    "nome": "Resolução nº 557, de 20 de dezembro de 2010",
-    "descricao": "Regulamento sobre Canalização e Condições de Uso de Radiofreqüências na Faixa de 380 MHz a 400 MHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2010/20-resolucao-557",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao558",
-    "nome": "Resolução nº 558, de 20 de dezembro de 2010",
-    "descricao": "Regulamento sobre Canalização e Condições de Uso de Radiofreqüências na Faixa de 450 MHz a 470 MHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2010/24-resolucao-558",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao568",
-    "nome": "Resolução nº 568, de 15 de junho de 2011",
-    "descricao": "Regulamento sobre Canalização e Condições de Uso de Radiofrequências na Faixa de 148 MHz a 174 MHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2011/35-resolucao-568",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao625",
-    "nome": "Resolução nº 625, de 11 de novembro de 20131",
-    "descricao": "Atribuição, a Destinação e o Regulamento sobre Condições de Uso de Radiofrequências na Faixa de 698 MHz a 806 MHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2013/644-resolucao-625",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao647",
-    "nome": "Resolução nº 647, de 9 de fevereiro de 2015",
-    "descricao": "Norma de adaptação dos instrumentos de permissão e de autorização do Serviço Móvel Especializado (SME) para o Serviço Móvel Pessoal (SMP), Serviço Limitado Privado (SLP) ou Serviço Limitado Especializado (SLE)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2015/787-resolucao-647",
-    "entidade": "Anatel",
-    "status": "acessorio"
-  },
-  {
-    "id": "resolucao662",
-    "nome": "A Resolução nº 662, citada nesse documento, foi revogada pela Resolução nº 752, de 22 de junho de 2022.",
-    "descricao": "Altera o Anexo III e o art. 39 do Regulamento para Certificação e Homologação de Produtos para Telecomunicações, aprovado pela Resolução nº 242, de 30 de novembro de 2000",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2016/897-resolucao-662",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao665",
-    "nome": "Resolução nº 665, de 02 de Maio de 2016",
-    "descricao": "Destina faixas de radiofrequência e aprova o Regulamento sobre Canalização e Condições de Uso da Faixa de Radiofrequências de 380 MHz a 400 MHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2016/902-resolucao-665",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao669",
-    "nome": "Resolução nº 669, de 11 de julho de 2016",
-    "descricao": "Regulamento sobre Canalização e Condições de Uso da Faixa de 15 GHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2016/907-resolucao-n-669",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao674",
-    "nome": "Resolução nº 674, de 13 de fevereiro de 2017",
-    "descricao": "Regulamento sobre Canalização e Condições de Uso de Radiofrequências na Faixa de 148 MHz a 174 MHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2017/928-resolucao-674",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao680",
-    "nome": "Resolução nº 680, de 27 de junho de 2017",
-    "descricao": "Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2017/936-resolucao-6800",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "resolucao700",
-    "nome": "Resolução nº 700, de 28 de setembro de 2018",
-    "descricao": "Regulamento sobre a Avaliação da Exposição Humana a Campos Elétricos, Magnéticos e Eletromagnéticos Associados à Operação de Estações Transmissoras de Radiocomunicação",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2018/1161-resolucao-700",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "resolucao710",
-    "nome": "A Resolução nº 710, citada nesse documento, foi revogada pela Resolução Anatel nº 772, de 16 de janeiro de 2025, que, por sua vez, foi revogada pela Resolução nº 789, de 06 de julho de 2026.",
-    "descricao": "Destinação da Faixa de Radiofrequências de 2,3 GHz ao Serviço Limitado Privado – SLP e o Regulamento sobre Condições de Uso da Faixa de Radiofrequências de 2,3 GHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2019/1284-resolucao-710",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao711",
-    "nome": "Resolução nº 711, de 28 de maio de 2019",
-    "descricao": "Destina faixas de radiofrequências e aprova o Regulamento sobre Condições de Uso da Faixa de Radiofrequências de 3,5 GHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2019/1285-resolucao-711",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao715",
-    "nome": "Resolução nº 715, de 23 de outubro de 2019",
-    "descricao": "Regulamento de Avaliação da Conformidade e de Homologação de Produtos para Telecomunicações, estabelecendo as regras gerais e os procedimentos para certificação e homologação de produtos no Brasil",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2019/1350-resolucao-715",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "resolucao718",
-    "nome": "Resolução nº 718, de 07 de fevereiro de 2020",
-    "descricao": "Altera o Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita e revoga o Regulamento para Uso de Femtocélulas em Redes do Serviço Móvel Pessoal, do Serviço Móvel Especializado e do Serviço de Comunicação Multimídia",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2020/1380-resolucao-718",
-    "entidade": "Anatel",
-    "status": "acessorio"
-  },
-  {
-    "id": "resolucao726",
-    "nome": "Resolução nº 726, de 05 de maio de 2020",
-    "descricao": "Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2020/1411-resolucao-726",
-    "entidade": "Anatel",
-    "status": "acessoria"
-  },
-  {
-    "id": "resolucao742",
-    "nome": "Resolução nº 742, de 01 de março de 2021",
-    "descricao": "Altera a Resolução nº 711, de 28 de maio de 2019, publicada no Diário Oficial da União - DOU de 29 de maio de 2019, e o Regulamento sobre Condições de Uso da Faixa de Radiofrequências de 3,5 GHz a ela anexo, bem como aprova o Regulamento sobre Condições de Uso da Faixa de Radiofrequências de 24,25 GHz a 27,90 GHz",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2021/1512-resolucao-742",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao752",
-    "nome": "Resolução nº 752, de 22 de junho de 2022",
-    "descricao": "Revoga e altera Resoluções expedidas pela Agência (Guilhotina Regulatória)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2022/1670-resolucao-752",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao757",
-    "nome": "A Resolução 757, citada nesse documento, foi revogada pela Resolução Anatel nº 773, de 16 de janeiro de 2025.",
-    "descricao": "Regulamento de Condições de Uso de Radiofrequências",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2022/1760-resolucao-",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao759",
-    "nome": "A Resolução nº 759, citada nesse documento, foi revogada pela Resolução Anatel nº 772, de 16 de janeiro de 2025, que, por sua vez, foi revogada pela Resolução nº 789, de 06 de julho de 2026.",
-    "descricao": "Plano de Atribuição, Destinação e Distribuição de Faixas de Frequências no Brasil (PDFF)",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2023/1834-resolucao-759",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "resolucao766",
-    "nome": " Revogada pela Resolução Anatel nº 772, de 16 de janeiro de 2025 que, por sua vez, foi revogada pela Resolução nº 789, de 06 de julho de 2026.",
-    "descricao": "destinações de subfaixas de radiofrequências na faixa de 4,9 GHz e acrescenta os arts. 35-A a 35-D ao Regulamento sobre Condições de Uso de Radiofrequências.",
-    "url": "a definir",
-    "entidade": "Anatel",
-    "status": "revogado"
-  },
-  {
-    "id": "resolucao772",
-    "nome": "A Resolução nº 772, citada nesse documento, foi revogada pela Resolução n° 789, de 06 de julho de 2026.",
-    "descricao": "Revogada pela Resolução n° 789, de 06 de julho de 2026",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2025/2001-resolucao-772",
-    "entidade": "Anatel",
-    "status": "revogada"
-  },
-  {
-    "id": "resolucao773",
-    "nome": "Resolução nº 773, de 16 de janeiro de 2025",
-    "descricao": "Regulamento sobre Condições de Uso de Faixas de Radiofrequências no Brasil",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2025/2002-resolucao-773",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "resolucao775",
-    "nome": "Resolução nº 775, de 28 de abril de 2025",
-    "descricao": "Regulamento de Uso Temporário de Radiofrequências",
-    "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/170-resolucoes/2025/2025-resolucao-775",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "resolucao777",
-    "nome": "Resolução nº 777, de 28 de abril de 2025",
-    "descricao": "Revoga e altera Resoluções expedidas pela Anatel e aprova o Regulamento Geral dos Serviços de Telecomunicações - RGST",
-    "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2025/2022-resolucao-777",
-    "entidade": "Anatel",
-    "status": "vigente"
-  },
-  {
-    "id": "resolucao789",
-    "nome": "Resolução nº 789, de 06 de julho de 2026",
-    "descricao": "Aprova o Plano de Atribuição, Destinação e Distribuição de Faixas de Frequências no Brasil - PDFF e altera o Regulamento sobre Canalização e Condições de Uso de Radiofrequências para os Serviços de Radiodifusão e seus Ancilares - RCC-SRA",
-    "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/175-resolucoes/2026/2157-resolucao-789",
-    "entidade": "Anatel",
-    "status": "vigente"
-  }
-]
+    },
+    {
+      "id": "ato10988",
+      "nome": "Ato nº 10988, de 26 de julho de 2024",
+      "descricao": "Requisitos Técnicos e Operacionais para uso de Bloqueador de Sinais de Radiocomunicações (BSR), definindo as faixas de frequência para bloqueio",
+      "tipo": "Requisito Técnico (BSR)",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2024/1969-ato-10988",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato1120",
+      "nome": "Ato nº 1120, de 19 de fevereiro de 2018",
+      "descricao": "Requisitos Técnicos de Compatibilidade Eletromagnética (EMC)",
+      "url": "https://www.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1181-ato-1120",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato1134",
+      "nome": "Ato nº 1134, de 03 de fevereiro de 2023",
+      "descricao": "Designar o CCPE CENTRO DE CERTIFICAÇÃO DE PRODUTOS ELETRÔNICOS LTDA., regularmente inscrito no CNPJ sob nº 48.333.960/0001-08, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 1/2023 (SEI nº 9704928), as funções de Organismo de Certificação Designado - OCD",
+      "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=10623324&id_documento=11038880",
+      "entidade": "Anatel",
+    "status": "vigente"
+    },
+    {
+      "id": "ato1135",
+      "nome": "Ato nº 1135 de 18 de fevereiro de 2013",
+      "descricao": "Procedimentos para a realização dos ensaios de avaliação da conformidade técnica de Equipamentos de Radiocomunicação de Radiação Restrita no ambiente do laboratório",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2013/1136-ato-1135",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato11542",
+      "nome": "Ato nº 11542, de 23 de agosto de 2017",
+      "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2017/1137-ato-11542",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato1306",
+      "nome": "Ato nº 1306, de 26 de fevereiro de 2021",
+      "descricao": "Alterar os seguintes itens do Anexo I ao Ato nº 14.448",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1510-ato-1306",
+      "entidade": "Anatel",
+      "status": "acessorio"
+    },
+    {
+      "id": "ato13083",
+      "nome": "Ato nº 13083, de 14 de setembro de 2022",
+      "descricao": "Aprovar os requisitos técnicos para avaliação da conformidade de telefones móveis por satélite",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1742-ato-13083",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato1326",
+      "nome": "Ato nº 1326, de 9 de Fevereiro de 2023",
+      "descricao": "Requisitos Técnicos para Avaliação da Conformidade dos produtos com Interface Usuário–Rede e Terminais do Serviço Telefônico Fixo Comutado",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/1867-ato-1326",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato1360",
+      "nome": "Norma (ato1360) citada no requerimento 26.08558",
+      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.08558.",
+      "url": "a definir",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato1379",
+      "nome": "Ato nº 1379, de 28 de fevereiro de 2019",
+      "descricao": "Alterar os itens 6.2.5, 13.1 e 13.1.1 do Anexo I ao Ato Nº 14.448",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1244-ato-1379",
+      "entidade": "Anatel",
+      "status": "acessorio"
+    },
+    {
+      "id": "ato14010",
+      "nome": "Ato nº 14010, de 04 de outubro de 2022",
+      "descricao": "Procedimento Operacional contendo Orientações para Fornecimento do Selo de Segurança de Homologação da Anatel para Baterias de Lítio e Carregadores Utilizados em Telefones Celulares",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1744-ato-14010",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato14158",
+      "nome": "Ato nº 14158, de 1º de outubro de 2025",
+      "descricao": "Modifica o Ato nº 14.448/2017 e o Ato nº 237/2022",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2025/2070-ato-14158",
+      "entidade": "Anatel",
+      "status": "acessorio"
+    },
+    {
+      "id": "ato14430",
+      "nome": "Ato nº 14430, de 07 de outubro de 2024",
+      "descricao": "Incluir novos subitens com numeração 4.4 e 4.5 ao Anexo ao Ato nº 3151, de 12 de junho de 2020,",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1980-ato-14430",
+      "entidade": "Anatel",
+      "status": "acessorio"
+    },
+    {
+      "id": "ato14448",
+      "nome": "Ato nº 14448, de 04 de dezembro de 2017",
+      "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita",
+      "tipo": "Requisito Técnico (Radiação Restrita)",
+      "url": "https://www.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2017/1139-ato-14448",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato14468",
+      "nome": "Ato nº 14468, de 05 de dezembro de 2017",
+      "descricao": "Aprovar os requisitos técnicos para avaliação da conformidade do produto Equipamento de Rede de dados",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2017/1260-ato-14468",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato1477",
+      "nome": "Ato nº 1477, de 05 de março de 2021",
+      "descricao": "Requisitos técnicos e operacionais de condições de uso da subfaixa 3.300 MHz e 3.700 MHz, por estações no Serviço Móvel Pessoal – SMP, no Serviço de Comunicação Multimídia – SCM, no Serviço Telefônico Fixo Comutado – STFC e no Serviço Limitado Privado – SLP",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2021/1521-ato-1477",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato1630",
+      "nome": "Ato nº 1630, de 11 de março de 2021",
+      "descricao": "Procedimentos de Ensaio para Avaliação da Taxa de Absorção Específica (SAR) de Produtos para Telecomunicações, na forma do Anexo a este Ato, para efeitos de avaliação da conformidade técnica junto à Agência Nacional de Telecomunicações",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1523-ato-1630",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato16417",
+      "nome": "Ato nº 16417, de 22 de novembro de 2024",
+      "descricao": "Procedimento Operacional contendo diretrizes para auditoria da política de segurança cibernética de fornecedores de produtos e equipamentos de telecomunicações para prestadoras",
+      "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/164-atos-de-certificacao-de-produtos/2024/1992-ato-16417",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato16539",
+      "nome": "Ato nº 16539, de 27 de novembro de 2023",
+      "descricao": "Requisitos Técnicos e Operacionais de Uso das faixas de frequências associadas aos serviços de interesse coletivo, prestados por sistemas terrestres",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2023/1904-ato-16539",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato170187",
+      "nome": "Norma (ato170187) citada no requerimento 26.08923",
+      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.08923.",
+      "url": "a definir",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato17087",
+      "nome": "Ato nº 17087, de 19 de dezembro de 2022",
+      "descricao": "Requisitos Técnicos de Segurança Elétrica",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1823-ato-17087",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato170870",
+      "nome": "Norma (ato170870) citada no requerimento 26.08711",
+      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.08711.",
+      "url": "a definir",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato17207",
+      "nome": "Ato nº 17207, de 12 de dezembro de 2023",
+      "descricao": "Requisitos técnicos e operacionais para uso do espectro de radiofrequências por estações associadas ao Serviço Limitado Móvel Aeronáutico (SLMA)",
+      "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/161-atos-de-requisitos-tecnicos-de-gestao-do-espectro/2023/1908-ato-17207",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato17394",
+      "nome": "Ato nº 17.394, de 5 de julho de 2001",
+      "descricao": "Designar a FUNDAÇÃO CPqD – CENTRO DE PESQUISA E DESENVOLVIMENTO EM TELECOMUNICAÇÕES para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade n° 003/RFGCT/RFCE/SRF, as funções de Organismo de Certificação Designado – OCD",
+      "url": "https://sistemas.anatel.gov.br/anexar-api/publico/portal-publicar/documentos?numeroPublicacao=27461",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato17423",
+      "nome": "Ato nº 17423, de 17 de novembro de 2025",
+      "descricao": "Designar a DEKRA TESTING, INSPECTION & CERTIFICATION LTDA, sociedade empresária regularmente inscrita no CNPJ sob nº 57.473.707/0001-24, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 6/2025 (SEI nº 14763987), as funções de Organismo de Certificação Designado - OCD",
+      "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=documento_visualizar&acao_origem=protocolo_pesquisar&id_documento=16531997&infra_sistema=100000100&infra_unidade_atual=110001100&infra_hash=c3a6dcc6379acc5b99ed1597c621eb2ec197819dcb685fe5519fb2156b7f7b0f",
+      "entidade": "Anatel",
+    "status": "vigente"
+    },
+    {
+      "id": "ato17542",
+      "nome": "Ato nº 17542, de 20 de dezembro de 2023",
+      "descricao": "Requisitos Técnicos e Operacionais para sistemas associados aos Serviços Auxiliares de Radiodifusão e Correlatos (SARC)",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2023/1911-ato-17542",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato17865",
+      "nome": "Ato nº 17865, de 30 de dezembro de 2023",
+      "descricao": "Requisitos Técnicos quanto à exposição humana a campos elétricos, magnéticos e eletromagnéticos na faixa de radiofrequências entre 8,3 kHz e 300 GHz, na forma do Anexo a este Ato",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2023/1914-ato-17865",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato19434",
+      "nome": "Ato nº 19.434, de 28 de setembro de 2001",
+      "descricao": "Designar o OCP-TELI – ORGANIZAÇÃO CERTI FICADORA DE PRODUTOS DE TELECOMUNICAÇÕES E INFORMÁTICA para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade n° 007/RFCEC/RFCE/SRF, as funções de Organismo de Certificação Designado – OCD",
+      "url": "http://www.anatel.gov.br/Portal/verificaDocumentos/documento.asp?numeroPublicacao=30709&assuntoPublicacao=Ato%20n.%C2%BA%2019434/2001-Anatel&caminhoRel=In%C3%ADcio-Certifica%C3%A7%C3%A3o%20de%20Produtos-Apresenta%C3%A7%C3%A3o&filtro=1&documentoPath=biblioteca/atos/2001/ato_19434_2001.pdf",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato209",
+      "nome": "[NÃO USAR]Ato nº 209, de 14 de janeiro de 2019",
+      "descricao": "Requisitos Técnicos e Procedimentos de Ensaio Aplicáveis à Certificação de Produtos para Telecomunicação de Categoria I, publicada na página da Anatel na Internet, alterando os requisitos para Telefone Móvel Celular e para Estação Terminal de Acesso - ETA",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1225-ato-209",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato2091",
+      "nome": "Ato nº 2091, de 14 de fevereiro de 2025",
+      "descricao": "Requisitos Técnicos e Operacionais para uso das faixas de radiofrequências associadas ao serviço limitado privado, prestado por sistemas terrestres, aprovados pelo Ato nº 915, de 1º de fevereiro de 2024",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2025/2008-ato-2091",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato2105",
+      "nome": "Ato nº 2105, de 14 de fevereiro de 2025",
+      "descricao": "Atualizar o Anexo ao Ato nº 3151, de 12 de junho de 2020, que aprova os requisitos técnicos para avaliação da conformidade de Estação Terminal de Acesso",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2025/2010-ato-2105",
+      "entidade": "Anatel",
+      "status": "acessorio"
+    },
+    {
+      "id": "ato2220",
+      "nome": "Ato nº 2220, de 20 de abril de 2020",
+      "descricao": "Procedimento Operacional para Avaliação da Conformidade de Produtos para Telecomunicações por Certificação",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1401-ato-2220",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato2221",
+      "nome": "Ato nº 2221, de 20 de abril de 2020",
+      "descricao": "Procedimento Operacional para Marcação da Identificação da Homologação Anatel em Produtos para Telecomunicações",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1404-ato-2221",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato2222",
+      "nome": "Ato nº 2222, de 20 de abril de 2020",
+      "descricao": "Lista de Referência de Produtos para Telecomunicações na forma do Anexo a este Ato, em cumprimento às disposições do Regulamento de Avaliação da Conformidade e Homologação de Produtos para Telecomunicações",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1403-ato-2222",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato237",
+      "nome": "Ato nº 237, de 07 de janeiro de 2022",
+      "descricao": "Procedimentos de Ensaio para Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita, na forma do Anexo a este Ato, para efeitos de avaliação da conformidade técnica junto à Agência Nacional de Telecomunicações",
+      "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/155-atos-de-certificacao-de-produtos/2022/1629-ato-237",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato2436",
+      "nome": "Ato nº 2436, de 7 de março de 2023",
+      "descricao": "Requisitos mínimos mandatórios de segurança cibernética para avaliação da conformidade de equipamentos CPE (Customer Premises Equipment)",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/1850-ato-2436",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato2506",
+      "nome": "Ato nº 2506, de 07 de maio de 2020",
+      "descricao": "Os itens abaixo indicados no Anexo I do Ato n° 14.448, de 04 de dezembro de 2017, que aprovou os Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita, passam a vigorar com a seguinte redação e mero reordenamento da numeração",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1413-ato-2506",
+      "entidade": "Anatel",
+      "status": "acessorio"
+    },
+    {
+      "id": "ato2873",
+      "nome": "Ato nº 2873, de 30 de abril de 2019",
+      "descricao": "Designar a BR APPROVAL-ASSOCIAÇÃO TÉCNICA DE CERTIFICAÇÃO, CNPJ 30.569.550/0001-97, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD Nº 1/2019 (SEI nº 4091483), as funções de Organismo de Certificação Designado - OCD",
+      "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=3433932&id_documento=4686417",
+      "entidade": "Anatel",
+    "status": "vigente"
+    },
+    {
+      "id": "ato2934",
+      "nome": "Ato nº 2934, de 01 de junho de 2020",
+      "descricao": "Requisitos técnicos e operacionais de uso da faixa de 2.300 MHz a 2.400 MHz para utilização por estações no Serviço Móvel Pessoal – SMP, no Serviço de Comunicação Multimídia – SCM, no Serviço Telefônico Fixo Comutado – STFC e no Serviço Limitado Privado – SLP",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2020/1441-ato-2934",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato3151",
+      "nome": "Ato nº 3151, de 12 de junho de 2020",
+      "descricao": "Requisitos técnicos para avaliação da conformidade de Estação Terminal de Acesso",
+      "tipo": "Norma Nacional (Cabos)",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1429-ato-3151",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato3152",
+      "nome": "Ato nº 3152, de 12 de junho de 2020",
+      "descricao": "Requisitos técnicos para avaliação da conformidade de Telefone Móvel Celular",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1430-ato-3152",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato3153",
+      "nome": "Ato nº 3153, de 12 de junho de 2020",
+      "descricao": "Requisitos técnicos para avaliação da conformidade de Transceptor para Estação Rádio Base",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1431-ato-3153",
+      "entidade": "Anatel",
+      "status": "acessorio"
+    },
+    {
+      "id": "ato3384",
+      "nome": "Ato nº 3384, de 26 de junho de 2020",
+      "descricao": "Designar a DEKRA CERTIFICATION B.V., CNPJ 26.600.714/0001-24, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD Nº 01/2020 (SEI nº 5694684), as funções de Organismo de Certificação Designado - OCD",
+      "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=6401327&id_documento=6444156",
+      "entidade": "Anatel",
+    "status": "vigente"
+    },
+    {
+      "id": "ato3481",
+      "nome": "Ato nº 3481, de 31 de maio de 2019",
+      "descricao": "Requisitos Técnicos e Procedimentos de Ensaio para Avaliação da Conformidade de Carregador Utilizado em Telefone Celular",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1287-ato-3481",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato3484",
+      "nome": "Ato nº 3484, de 31 de maio de 2019",
+      "descricao": "Requisitos Técnicos de Ensaio para a Avaliação da Conformidade de Baterias de Lítio Utilizadas em Telefones Celulares e produtos similares (Categoria I)",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1301-ato-3484",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato3639",
+      "nome": "Ato nº 3639, de 27 de março de 2024",
+      "descricao": " Designar o SEVEN COMPLIANCE LTDA, regularmente inscrito no CNPJ sob nº 28.893.275/0001-10, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 1/2024 (SEI nº 11708112), as funções de Organismo de Certificação Designado - OCD",
+      "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=13023673&id_documento=13207718",
+      "entidade": "Anatel",
+    "status": "vigente"
+    },
+    {
+      "id": "ato4077",
+      "nome": "Ato nº 4077, de 31 de julho de 2020",
+      "descricao": "Procedimento Operacional para Alteração Técnica em Produto para Telecomunicações Homologado por Certificado de Conformidade ou por Declaração de Conformidade",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1446-ato-4077",
+      "status": "vigente"
+    },
+    {
+      "id": "ato4082",
+      "nome": "Ato nº 4082, de 31 de julho de 2020",
+      "descricao": "Procedimento Operacional que Estabelece os Meios de Exercício de Direitos e de Cumprimento de Obrigações pelos Agentes Envolvidos na Avaliação da Conformidade de Produtos para Telecomunicações",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1450-ato-4082",
+      "status": "vigente"
+    },
+    {
+      "id": "ato4083",
+      "nome": "Ato nº 4083, de 31 de julho de 2020",
+      "descricao": "Procedimento Operacional para Avaliação da Conformidade de Produtos para Telecomunicações por Certificação",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1453-ato-4083",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato4084",
+      "nome": "Ato nº 4084, de 31 de julho de 2020",
+      "descricao": "Procedimento Operacional para Homologação do Certificado de Conformidade de Produtos para Telecomunicações",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1447-ato-4084",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato4085",
+      "nome": "Ato nº 4085, de 31 de julho de 2020",
+      "descricao": "Procedimento Operacional para Reconhecimento de Profissional como Especialista na Avaliação da Conformidade de Produtos para Telecomunicações",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1448-ato-4085",
+      "status": "vigente"
+    },
+    {
+      "id": "ato4088",
+      "nome": "Ato nº 4088, de 31 de julho de 2020",
+      "descricao": "Procedimento Operacional para Marcação da Identificação da Homologação Anatel em Produtos para Telecomunicações",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1451-ato-4088",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato4091",
+      "nome": "Ato nº 4091, de 31 de julho de 2020",
+      "descricao": "Procedimento Operacional para Seleção, Avaliação e Habilitação de Laboratórios de Ensaios para Fins de Avaliação da Conformidade de Produtos para Telecomunicações",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1452-ato-4091",
+      "status": "vigente"
+    },
+    {
+      "id": "ato423",
+      "nome": "Ato nº 423, de 12 de janeiro de 2022",
+      "descricao": "Alterar os seguintes itens e seus respectivos subitens do Anexo I do Ato nº 14.448",
+      "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/155-atos-de-certificacao-de-produtos/2022/1633-ato-423",
+      "entidade": "Anatel",
+      "status": "acessorio"
+    },
+    {
+      "id": "ato4470",
+      "nome": "Ato nº 4470, de 20 de agosto de 2020",
+      "descricao": "Designar a ASSOCIAÇÃO LMP CERTIFICAÇÕES, CNPJ 34.827.924/0001-88, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados nos Termos de Responsabilidade de OCD Nº 3/2020 (SEI nº 5721995) e Nº 4/2020 (SEI nº 5888705), as funções de Organismo de Certificação Designado - OCD",
+      "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=5877359&id_documento=6651984",
+      "entidade": "Anatel",
+    "status": "vigente"
+    },
+    {
+      "id": "ato458",
+      "nome": "O Ato nº 458, citado nesse documento, foi revogado pelo Ato nº 17865, de 30 de dezembro de 2023.",
+      "descricao": "Detalhar os limites de exposição ocupacional e da população em geral a campos elétricos, magnéticos e eletromagnéticos na faixa de radiofrequências entre 8,3 kHz e 300 GHz (CEMRF) gerados por estações transmissoras de radiocomunicação e por terminais de usuários, propostos pela Comissão Internacional de Proteção Contra Radiação Não Ionizante (ICNIRP)",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2019/1237-ato-458",
+      "status": "revogado"
+    },
+    {
+      "id": "ato4746",
+      "nome": "Ato nº 4746, de 02 de abril de 2026",
+      "descricao": "Alterar o texto do Art. 19 do Ato nº 14.158, de 01 de outubro de 2025",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2026/2132-ato-4746",
+      "entidade": "Anatel",
+      "status": "acessorio"
+    },
+    {
+      "id": "ato4776",
+      "nome": "Ato nº 4776, de 01 de setembro de 2020",
+      "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1429-ato-3151",
+      "entidade": "Anatel",
+      "status": "acessorio"
+    },
+    {
+      "id": "ato4800",
+      "nome": "Ato nº 4800, de 01 de setembro de 2020",
+      "descricao": "Requisitos técnicos e operacionais de condições de uso das faixas acima de 2 GHz para aplicações do serviço fixo",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2020/1468-ato-4800",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato48668",
+      "nome": "ATO nº 48.668, de 22 de desembro de 2004",
+      "descricao": "Designar a Associação de Certificação de Produto para Telecomunicações, Radiodifusão, Cinema, Vídeo e Áudio-Visual – CTCP – Centro Tecnológico de Certificação e Pesquisa para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade no 012/RFCEC/RFCE/SRF, as funções de Organismo de Certificação Designado – OCD",
+      "url": "https://www.anatel.gov.br/Portal/verificaDocumentos/documento.asp?numeroPublicacao=105961&assuntoPublicacao=Ato%20n.%C2%BA%2048668/2004-Anatel&caminhoRel=In%C3%ADcio-Certifica%C3%A7%C3%A3o%20de%20Produtos-Apresenta%C3%A7%C3%A3o&filtro=1&documentoPath=biblioteca/atos/2005/ato_48668_2005.pdf",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato5155",
+      "nome": "Ato nº 5155, de 17 de abril de 2024",
+      "descricao": "Requisitos Técnicos e Procedimentos de Ensaio para Avaliação da Conformidade de Carregador Utilizado em Telefone Móvel Celular",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1947-ato-5155",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato5159",
+      "nome": "Ato nº 5159, de 08 de abril de 2022",
+      "descricao": "Requisitos Técnicos e Procedimentos de Ensaio para Avaliação da Conformidade de Carregador Utilizado em Telefone Móvel Celular",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1657-ato-5159&quot;&gt;Anatel",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato5649",
+      "nome": "Ato nº 5649, de 12 de setembro de 2019",
+      "descricao": "Orientações para homologação de produtos por declaração de conformidade destinados aos Serviços de Radioamador, Rádio do Cidadão, Móvel Marítimo, Móvel Aeronáutico e Comunicação por Satélite",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1364-ato-5649",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato57860",
+      "nome": "Ato nº 57860, de 26 de abril de 2006",
+      "descricao": "Designar a MASTER - Associação de Avaliação da Conformidade Telecom para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade no013/RFCEC/RFCE/SRF, as funções de Organismo de Certificação Designado – OCD",
+      "url": "https://www.anatel.gov.br/Portal/verificaDocumentos/documento.asp?numeroPublicacao=120761&assuntoPublicacao=Ato%20n.%C2%BA%2057860/2006-Anatel%20&caminhoRel=In%C3%ADcio-Certifica%C3%A7%C3%A3o%20de%20Produtos-Apresenta%C3%A7%C3%A3o&filtro=1&documentoPath=biblioteca/atos/2006/ato_57860_2006.pdf",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato6247",
+      "nome": "Ato nº 6247, de 05 de maio de 2022",
+      "descricao": " Designar a Moderna Tecnologia Ltda, regularmente inscrito no CNPJ sob nº 44.458.010/0001-40, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 04/2022 (SEI nº 8325756), as funções de Organismo de Certificação Designado - OCD",
+      "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=documento_visualizar&acao_origem=protocolo_pesquisar&id_documento=9500620&infra_sistema=100000100&infra_unidade_atual=110001100&infra_hash=91940960b0ea3da1302dc2c7dc0189c7b4bbc384fd65944512794d5cbb528f86",
+      "entidade": "Anatel",
+    "status": "vigente"
+    },
+    {
+      "id": "ato6506",
+      "nome": "Ato nº 6506, de 27 de agosto de 2018",
+      "descricao": "Requisitos Técnicos para Terminal de Linhas Ópticas (OLT) e Unidade de Rede Óptica (ONU) (Categoria III)",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1231-ato-6506",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato7280",
+      "nome": "Ato nº 7280, de 26 de novembro de 2020",
+      "descricao": "Atualização da Lista de Referência de Produtos para Telecomunicações",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1493-ato-7280",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato77",
+      "nome": "Ato nº 77, de 05 de janeiro de 2021",
+      "descricao": "Requisitos de Segurança Cibernética para Equipamentos para Telecomunicações",
+      "tipo": "Norma Nacional (Cabos)",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2021/1505-ato-77",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato7971",
+      "nome": "Ato nº 7971, de 22 de junho de 2023",
+      "descricao": "Requisitos Técnicos para avaliação da conformidade do protocolo IPv6 em produtos para telecomunicações",
+      "tipo": "Norma Nacional (Cabos)",
+      "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/160-atos-de-certificacao-de-produtos/2023/1878-ato-7971",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato8385",
+      "nome": "Ato nº 8385, de 03 de maio de 2017",
+      "descricao": "Alterar os requisitos técnicos relativos ao produto Transmissor e transceptor digital ponto a ponto",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2017/1207-ato-8385",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato8416",
+      "nome": "Ato nº 8416, de 08 de novembro de 2018",
+      "descricao": "Aprovar a alteração dos requisitos técnicos para homologação de Transmissores, Receptores e Amplificadores Lineares do Serviço de Radioamador",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1212-ato-8416",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato8767",
+      "nome": "Norma (ato8767) citada no requerimento 26.05954",
+      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.05954.",
+      "url": "a definir",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato8769",
+      "nome": "Ato nº 8769, de 17 de maio de 2017",
+      "descricao": "Designar a Associação VERSYS de Tecnologia, CNPJ 26.352.661/0001-70, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade (SEI nº 1466076), as funções de Organismo de Certificação Designado - OCD",
+      "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=1054630&id_documento=1738552",
+      "entidade": "Anatel",
+    "status": "vigente"
+    },
+    {
+      "id": "ato883",
+      "nome": "Ato nº 883, de 01 de fevereiro de 2024",
+      "descricao": "Requisitos Técnicos e Operacionais para uso de radiofrequências por estações associadas ao Serviço Limitado Móvel Marítimo",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2024/1918-ato-883",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato915",
+      "nome": "Ato nº 915, de 01 de fevereiro de 2024",
+      "descricao": "Requisitos Técnicos e Operacionais para uso das faixas de frequências associadas ao Serviço Limitado Privado, prestado por sistemas terrestres, na forma do Anexo a este Ato",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2024/1920-ato-915",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato926",
+      "nome": "Ato nº 926, de 1 de fevereiro de 2024",
+      "descricao": "Requisitos Técnicos e Operacionais para uso de radiofrequências associadas ao Serviço de Radioamador",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2024/1919-ato-926",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato9281",
+      "nome": "Ato nº 9281, de 5 de julho de 2023",
+      "descricao": "Requisitos técnicos para avaliação da conformidade do tipo de produto Smart TV Box",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2023/1879-ato-9281",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato932",
+      "nome": "Ato nº 932, de 08 de fevereiro de 2018",
+      "descricao": "Requisitos técnicos para avaliação da conformidade de Antena Ponto a Ponto",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1203-ato-932",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato933",
+      "nome": "Ato nº 933, de 08 de fevereiro de 2018",
+      "descricao": "Requisitos técnicos para avaliação da conformidade da interface analógica de adaptadores para terminal de assinante",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1192-ato-933",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato934",
+      "nome": "Ato nº 934, de 08 de fevereiro de 2018",
+      "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores digitais para o serviço fixo em aplicações ponto-multiponto nas faixas de frequências acima de 1 GHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1227-ato-934",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato938",
+      "nome": "Ato nº 938, de 08 de fevereiro de 2018",
+      "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores monocanais analógicos AM",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1172-ato-938",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato940",
+      "nome": "Ato nº 940, de 08 de fevereiro de 2018",
+      "descricao": "Requisitos técnicos para avaliação da conformidade de terminais móveis de acesso dos serviços de telecomunicações por satélite",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1180-ato-940",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato943",
+      "nome": "Ato nº 943, de 8 de Fevereiro de 2018",
+      "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores monocanais analógicos FM e PM operando em faixas de frequências abaixo de 1 GHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1170-ato-943",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato944",
+      "nome": "Ato nº 944, de 08 de fevereiro de 2018",
+      "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores de estações rádio base e de estações repetidoras",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1197-ato-944",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato946",
+      "nome": "Ato nº 946, de 08 de fevereiro de 2018",
+      "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores digitais para o serviço fixo em aplicações ponto-multiponto nas faixas de frequências abaixo de 1 GHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1169-ato-946",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato948",
+      "nome": "Ato nº 948, de 08 de fevereiro de 2018",
+      "descricao": "Requisitos técnicos relativos ao produto Cabos de Fibras Ópticas",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1164-ato-948",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato950",
+      "nome": "O Ato nº 950, citado nesse documento, foi revogado pelo Ato nº 17087, de 19 de dezembro de 2022.",
+      "descricao": "Requisitos técnicos de segurança elétrica para avaliação da conformidade de produtos para telecomunicações",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1193-ato-950",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato954",
+      "nome": "Ato nº 954, de 08 de fevereiro de 2018",
+      "descricao": "Requisitos técnicos para Bloqueador de Sinais de Radiocomunicações (BSR)",
+      "tipo": "Requisito Técnico (BSR)",
+      "url": "https://www.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1167-ato-954",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "ato955",
+      "nome": "Ato nº 955, de 08 de fevereiro de 2018",
+      "descricao": "Requisitos técnicos de taxa de absorção específica (SAR) para avaliação da conformidade de produtos para telecomunicações",
+      "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article?layout=edit&id=1194",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato9688",
+      "nome": "Ato nº 9688, de 08 de agosto de 2025",
+      "descricao": "Designar o UL do Brasil Ltda, regularmente inscrito no CNPJ sob nº 02.839.483/0001-48, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 5/2025 (SEI nº 14160407), as funções de Organismo de Certificação Designado - OCD",
+      "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=documento_visualizar&acao_origem=protocolo_pesquisar&id_documento=15875583&infra_sistema=100000100&infra_unidade_atual=110001100&infra_hash=afe0cbfdc019cf8822c84658f9c71ae633f4624d209a5b91c1b26d03d86867aa",
+      "entidade": "Anatel",
+    "status": "vigente"
+    },
+    {
+      "id": "ato9960",
+      "nome": "Ato nº 9960, de 28 de junho de 2024",
+      "descricao": "Atualizar a Lista de Referência de Produtos para Telecomunicações, aprovada pelo Ato nº 7280, de 26 de novembro de 2020",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1959-ato-9960",
+      "entidade": "Anatel",
+      "status": "acessorio"
+    },
+    {
+      "id": "resolucao1",
+      "nome": "Norma (resolucao1) citada no requerimento 26.05981",
+      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.05981.",
+      "url": "a definir",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "resolucao105",
+      "nome": "Resolução nº 105, de 26 de fevereiro de 1999",
+      "descricao": "Regulamento sobre Canalização e Condições de Uso da Faixa Inferior de 6 GHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/1999/413-resolucao-105",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao129",
+      "nome": "Resolução nº 129, de 26 de maio de 1999",
+      "descricao": "Regulamento sobre Canalização e Condições de Uso da Faixa de 15 GHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/1999/415-resolucao-129",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao1630",
+      "nome": "Norma (resolucao1630) citada no requerimento 26.08421",
+      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.08421.",
+      "url": "a definir",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "resolucao242",
+      "nome": "A Resolução nº 242, citada nesse documento, foi revogada pela Resolução nº 715, de 23 de outubro de 2019.",
+      "descricao": "Regulamento para Certificação e Homologação de Produtos para Telecomunicações",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/15-2000/129-resolucao-242",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao303",
+      "nome": "Resolução nº 303, de 2 de julho de 2002",
+      "descricao": "Regulamento sobre Limitação da Exposição a Campos Elétricos, Magnéticos e Eletromagnéticos na Faixa de Radiofreqüências entre 9 kHz e 300 GHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/17-2002/128-resolucao-303",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao323",
+      "nome": "Resolução nº 323, citada nesse documento, foi revogada pela Resolução nº 715, de 23 de outubro de 2019.",
+      "descricao": "Norma para Certificação de Produtos para Telecomunicações",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2002/155-resolucao-323",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao359",
+      "nome": "Resolução nº 359, de 1º de abril de 2004",
+      "descricao": "Norma para Certificação e Homologação de Transmissores e Transceptores Digitais para o Serviço Fixo em Aplicações Ponto-Multiponto nas Faixas de Freqüências abaixo de 1 GHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2004/344-resolucao-359",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao360",
+      "nome": "Resolução nº 360, de 1º de abril de 2004",
+      "descricao": "Norma para Certificação e Homologação de Transmissores e Transceptores Digitais para o Serviço Fixo em Aplicações Ponto-a-Ponto nas Faixas de Freqüências abaixo de 1 GHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2004/348-resolucao-360",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao361",
+      "nome": "Resolução nº 361, de 1º de abril de 2004",
+      "descricao": "Norma para Certificação e Homologação de Transmissores e Transceptores Monocanais Analógicos FM e PM para Operação nas Faixas de Freqüências Abaixo de 1 GHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/index.php/resolucoes/2004/360-resolucao-361",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao369",
+      "nome": "Resolução nº 369, de 13 de maio de 2004",
+      "descricao": "Norma para Certificação e Homologação de Transmissores e Transceptores Digitais para o Serviço Fixo em Aplicações Ponto-a-Ponto nas Faixas de Freqüências acima de 1 GHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2004/361-resolucao-369",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao442",
+      "nome": "Resolução nº 442, de 21 de julho de 2006",
+      "descricao": "Regulamento para a Certificação de Equipamentos de Telecomunicações quanto aos Aspectos de Compatibilidade Eletromagnética",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2006/352-resolucao-442",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao454",
+      "nome": "A Resolução nº 454, citada nesse documento, foi revogada pela Resolução nº 757, de 08 de novembro de 2022, que, por sua vez, foi revogada pela Resolução Anatel nº 773, de 16 de janeiro de 2025.",
+      "descricao": "Regulamento sobre Condições de Uso de Radiofreqüências nas Faixas de 800 MHz, 900 MHz, 1.800 MHz, 1.900 MHz e 2.100 MHz",
+      "url": "hhttps://informacoes.anatel.gov.br/legislacao/resolucoes/2006/89-resolucao-454",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao455",
+      "nome": "Resolução nº 455, de 18 de dezembro de 2006",
+      "descricao": "Regulamento sobre Canalização e Condições de Uso de Radiofreqüências nas Faixas de 460 MHz, 800 MHz e 900 MHz para o Serviço Limitado Móvel Privativo (SLMP) e Serviço Móvel Especializado (SME)",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2006/327-resolucao-455",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao504",
+      "nome": "Resolução nº 504, de 14 de maio de 2008",
+      "descricao": "Regulamento sobre Canalização e Condições de Uso da Faixa de Radiofreqüências de 6.430 MHz a 7.110 MHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2008/181-resolucao-504",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao506",
+      "nome": "Resolução nº 506, de 1º de julho de 2008",
+      "descricao": "Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/23-2008/104-resolucao-506",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao527",
+      "nome": "Resolução nº 527, de 8 de Abril de 2009",
+      "descricao": "Regulamento sobre Condições de Uso de Radiofreqüências por Sistemas de Banda Larga por meio de Redes de Energia Elétrica",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2009/101-resolucao-527",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao529",
+      "nome": "Resolução nº 529, de 3 de junho de 2009",
+      "descricao": "Regulamento para Certificação de Equipamentos de Telecomunicações quanto aos Aspectos de Segurança Elétrica",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2009/149-resolucao-529",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao533",
+      "nome": "Resolução nº 533, de 10 de setembro de 2009",
+      "descricao": "Norma para Certificação e Homologação de Equipamentos de Telecomunicações quanto aos Aspectos da Avaliação da Taxa de Absorção Específica (SAR)",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2009/147-resolucao-533",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao544",
+      "nome": "A Resolução nº 544, citada nesse documento, foi revogada pela Resolução nº 757, de 08 de novembro de 2022, que, por sua vez, foi revogada pela Resolução Anatel nº 773, de 16 de janeiro de 2025.",
+      "descricao": "Modificar a Destinação de Radiofreqüências nas Faixas de 2.170 MHz a 2.182 MHz e de 2.500 MHz a 2.690 MHz, nos termos dos artigos seguintes, republicar, com alterações, conforme consta do Anexo I desta Resolução, o Regulamento sobre Condições de Uso de Radiofreqüências nas Faixas de 2.170 MHz a 2.182 MHz e de 2.500 MHz a 2.690 MHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2010/41-resolucao-544",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao557",
+      "nome": "Resolução nº 557, de 20 de dezembro de 2010",
+      "descricao": "Regulamento sobre Canalização e Condições de Uso de Radiofreqüências na Faixa de 380 MHz a 400 MHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2010/20-resolucao-557",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao558",
+      "nome": "Resolução nº 558, de 20 de dezembro de 2010",
+      "descricao": "Regulamento sobre Canalização e Condições de Uso de Radiofreqüências na Faixa de 450 MHz a 470 MHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2010/24-resolucao-558",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao568",
+      "nome": "Resolução nº 568, de 15 de junho de 2011",
+      "descricao": "Regulamento sobre Canalização e Condições de Uso de Radiofrequências na Faixa de 148 MHz a 174 MHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2011/35-resolucao-568",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao625",
+      "nome": "Resolução nº 625, de 11 de novembro de 20131",
+      "descricao": "Atribuição, a Destinação e o Regulamento sobre Condições de Uso de Radiofrequências na Faixa de 698 MHz a 806 MHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2013/644-resolucao-625",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao647",
+      "nome": "A Resolução nº 647, citada nesse documento, foi revogada pela Revogada pela Resolução Anatel nº 777, de 28 de abril de 2025",
+      "descricao": "Norma de adaptação dos instrumentos de permissão e de autorização do Serviço Móvel Especializado (SME) para o Serviço Móvel Pessoal (SMP), Serviço Limitado Privado (SLP) ou Serviço Limitado Especializado (SLE)",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2015/787-resolucao-647",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao662",
+      "nome": "A Resolução nº 662, citada nesse documento, foi revogada pela Resolução nº 752, de 22 de junho de 2022.",
+      "descricao": "Altera o Anexo III e o art. 39 do Regulamento para Certificação e Homologação de Produtos para Telecomunicações, aprovado pela Resolução nº 242, de 30 de novembro de 2000",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2016/897-resolucao-662",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao665",
+      "nome": "Resolução nº 665, de 02 de Maio de 2016",
+      "descricao": "Destina faixas de radiofrequência e aprova o Regulamento sobre Canalização e Condições de Uso da Faixa de Radiofrequências de 380 MHz a 400 MHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2016/902-resolucao-665",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao669",
+      "nome": "Resolução nº 669, de 11 de julho de 2016",
+      "descricao": "Regulamento sobre Canalização e Condições de Uso da Faixa de 15 GHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2016/907-resolucao-n-669",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao674",
+      "nome": "Resolução nº 674, de 13 de fevereiro de 2017",
+      "descricao": "Regulamento sobre Canalização e Condições de Uso de Radiofrequências na Faixa de 148 MHz a 174 MHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2017/928-resolucao-674",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao680",
+      "nome": "Resolução nº 680, de 27 de junho de 2017",
+      "descricao": "Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2017/936-resolucao-6800",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "resolucao700",
+      "nome": "Resolução nº 700, de 28 de setembro de 2018",
+      "descricao": "Regulamento sobre a Avaliação da Exposição Humana a Campos Elétricos, Magnéticos e Eletromagnéticos Associados à Operação de Estações Transmissoras de Radiocomunicação",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2018/1161-resolucao-700",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "resolucao710",
+      "nome": "A Resolução nº 710, citada nesse documento, foi revogada pela Resolução Anatel nº 772, de 16 de janeiro de 2025, que, por sua vez, foi revogada pela Resolução nº 789, de 06 de julho de 2026.",
+      "descricao": "Destinação da Faixa de Radiofrequências de 2,3 GHz ao Serviço Limitado Privado – SLP e o Regulamento sobre Condições de Uso da Faixa de Radiofrequências de 2,3 GHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2019/1284-resolucao-710",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao711",
+      "nome": "Resolução nº 711, de 28 de maio de 2019",
+      "descricao": "Destina faixas de radiofrequências e aprova o Regulamento sobre Condições de Uso da Faixa de Radiofrequências de 3,5 GHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2019/1285-resolucao-711",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao715",
+      "nome": "Resolução nº 715, de 23 de outubro de 2019",
+      "descricao": "Regulamento de Avaliação da Conformidade e de Homologação de Produtos para Telecomunicações, estabelecendo as regras gerais e os procedimentos para certificação e homologação de produtos no Brasil",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2019/1350-resolucao-715",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "resolucao718",
+      "nome": "Resolução nº 718, de 07 de fevereiro de 2020",
+      "descricao": "Altera o Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita e revoga o Regulamento para Uso de Femtocélulas em Redes do Serviço Móvel Pessoal, do Serviço Móvel Especializado e do Serviço de Comunicação Multimídia",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2020/1380-resolucao-718",
+      "entidade": "Anatel",
+      "status": "acessorio"
+    },
+    {
+      "id": "resolucao726",
+      "nome": "Resolução nº 726, de 05 de maio de 2020",
+      "descricao": "Regulamento sobre Equipamentos de Radiocomunicação de Radiação Restrita",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2020/1411-resolucao-726",
+      "entidade": "Anatel",
+      "status": "acessoria"
+    },
+    {
+      "id": "resolucao742",
+      "nome": "Resolução nº 742, de 01 de março de 2021",
+      "descricao": "Altera a Resolução nº 711, de 28 de maio de 2019, publicada no Diário Oficial da União - DOU de 29 de maio de 2019, e o Regulamento sobre Condições de Uso da Faixa de Radiofrequências de 3,5 GHz a ela anexo, bem como aprova o Regulamento sobre Condições de Uso da Faixa de Radiofrequências de 24,25 GHz a 27,90 GHz",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2021/1512-resolucao-742",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao752",
+      "nome": "Resolução nº 752, de 22 de junho de 2022",
+      "descricao": "Revoga e altera Resoluções expedidas pela Agência (Guilhotina Regulatória)",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2022/1670-resolucao-752",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao757",
+      "nome": "A Resolução 757, citada nesse documento, foi revogada pela Resolução Anatel nº 773, de 16 de janeiro de 2025.",
+      "descricao": "Regulamento de Condições de Uso de Radiofrequências",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2022/1760-resolucao-",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao759",
+      "nome": "A Resolução nº 759, citada nesse documento, foi revogada pela Resolução Anatel nº 772, de 16 de janeiro de 2025, que, por sua vez, foi revogada pela Resolução nº 789, de 06 de julho de 2026.",
+      "descricao": "Plano de Atribuição, Destinação e Distribuição de Faixas de Frequências no Brasil (PDFF)",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2023/1834-resolucao-759",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "resolucao766",
+      "nome": " Revogada pela Resolução Anatel nº 772, de 16 de janeiro de 2025 que, por sua vez, foi revogada pela Resolução nº 789, de 06 de julho de 2026.",
+      "descricao": "destinações de subfaixas de radiofrequências na faixa de 4,9 GHz e acrescenta os arts. 35-A a 35-D ao Regulamento sobre Condições de Uso de Radiofrequências.",
+      "url": "a definir",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "resolucao772",
+      "nome": "A Resolução nº 772, citada nesse documento, foi revogada pela Resolução n° 789, de 06 de julho de 2026.",
+      "descricao": "Revogada pela Resolução n° 789, de 06 de julho de 2026",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2025/2001-resolucao-772",
+      "entidade": "Anatel",
+      "status": "revogada"
+    },
+    {
+      "id": "resolucao773",
+      "nome": "Resolução nº 773, de 16 de janeiro de 2025",
+      "descricao": "Regulamento sobre Condições de Uso de Faixas de Radiofrequências no Brasil",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2025/2002-resolucao-773",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "resolucao775",
+      "nome": "Resolução nº 775, de 28 de abril de 2025",
+      "descricao": "Regulamento de Uso Temporário de Radiofrequências",
+      "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/170-resolucoes/2025/2025-resolucao-775",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "resolucao777",
+      "nome": "Resolução nº 777, de 28 de abril de 2025",
+      "descricao": "Revoga e altera Resoluções expedidas pela Anatel e aprova o Regulamento Geral dos Serviços de Telecomunicações - RGST",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2025/2022-resolucao-777",
+      "entidade": "Anatel",
+      "status": "vigente"
+    },
+    {
+      "id": "resolucao789",
+      "nome": "Resolução nº 789, de 06 de julho de 2026",
+      "descricao": "Aprova o Plano de Atribuição, Destinação e Distribuição de Faixas de Frequências no Brasil - PDFF e altera o Regulamento sobre Canalização e Condições de Uso de Radiofrequências para os Serviços de Radiodifusão e seus Ancilares - RCC-SRA",
+      "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/175-resolucoes/2026/2157-resolucao-789",
+      "entidade": "Anatel",
+      "status": "vigente"
+    }
+  ]
+}

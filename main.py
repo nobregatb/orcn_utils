@@ -5,6 +5,7 @@ from core.reporter import gerar_relatorio_pgd
 from core.menu import exibir_menu
 from core.log_print import log_info, log_erro, log_erro_critico
 from core.const import OPCOES_MENU, SEPARADOR_MENOR
+from core.normas_status import iniciar_verificacao_semanal, finalizar_verificacao_semanal
 
 def obter_sistema_download():
     """Pergunta em qual sistema o download será realizado."""
@@ -172,6 +173,8 @@ def main():
             opcao = exibir_menu()
             
             if opcao == OPCOES_MENU['download']:
+                verificacao_normas = iniciar_verificacao_semanal()
+                finalizar_verificacao_semanal(verificacao_normas)
                 log_info("Iniciando download de documentos...")
 
                 sistema_download = obter_sistema_download()

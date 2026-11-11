@@ -7,7 +7,7 @@ import re
 import unicodedata
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple, Set#, Any 
+from typing import Callable, Dict, List, Optional, Tuple, Set#, Any
 import subprocess
 from pydantic import ValidationError
 
@@ -96,6 +96,19 @@ MESES_PORTUGUES = {
     "novembro": 11,
     "dezembro": 12,
 }
+
+
+def _abrir_pdf_para_analise(
+    caminho_pdf: Path,
+    ao_falhar: Optional[Callable[[Path], None]] = None,
+):
+    """Abre PDF e sinaliza apenas falhas ocorridas durante a abertura."""
+    try:
+        return fitz.open(caminho_pdf)
+    except Exception:
+        if ao_falhar:
+            ao_falhar(caminho_pdf)
+        raise
 
 
 def _cct_exige_declaracao_ipv6(texto: str) -> bool:
@@ -228,17 +241,23 @@ def _ignora_espacos(palavra: str) -> bool:
     return bool(PALAVRAS_CHAVE_MANUAL_NORMALIZADAS.get(palavra, {}).get("ignorar_espacos", False))
 
 
-def _formatar_status_download_latex(status: Optional[str]) -> str:
+def _formatar_status_download_latex(
+    status: Optional[str],
+    erro_leitura_pdf: bool = False,
+) -> str:
     """Formata o status do download para o título da seção do requerimento."""
     if status not in ("completed", "in_progress", "failed"):
         status = "Desconhecido"
     cor = "blue" if status == "completed" else "red"
     status_texto_latex = status.replace("_", r"\_")
     status_bookmark = status.replace("_", " ")
-    return (
+    status_latex = (
         f"\\texorpdfstring{{\\textcolor{{{cor}}}{{{status_texto_latex}}}}}"
         f"{{{status_bookmark}}}"
     )
+    if erro_leitura_pdf:
+        status_latex += r" / \textcolor{red}{failed}"
+    return status_latex
 
 
 PYMUPDF_DISPONIVEL = True
@@ -264,8 +283,13 @@ class CCTAnalyzerIntegrado:
     Esta classe incorpora toda a lógica de análise de CCT sem dependências externas.
     """
     
-    def __init__(self, utils_dir: Path):
+    def __init__(
+        self,
+        utils_dir: Path,
+        ao_falhar_ao_abrir_pdf: Optional[Callable[[Path], None]] = None,
+    ):
         self.utils_dir = utils_dir
+        self.ao_falhar_ao_abrir_pdf = ao_falhar_ao_abrir_pdf
         
     def extract_pdf_content(self, pdf_path: Path) -> Optional[str]:
         """
@@ -278,7 +302,9 @@ class CCTAnalyzerIntegrado:
             
             #log_info(f"Extraindo conteúdo de: {pdf_path.name}")
             
-            with fitz.open(pdf_path) as pdf:
+            with _abrir_pdf_para_analise(
+                pdf_path, self.ao_falhar_ao_abrir_pdf
+            ) as pdf:
                 content = ""                              
                 for pagina in pdf:
                     content += str(pagina.get_text("text")) + "\n"
@@ -709,11 +735,25 @@ class AnalisadorRequerimentos:
         # Variáveis de timing
         self.tempo_inicio_analise = None
         self.tempo_fim_analise = None
+        self._requerimento_atual = None
+        self._erros_leitura_pdf: Dict[str, Set[str]] = {}
+
+    def _registrar_pdf_nao_lido(self, caminho_pdf: Path) -> None:
+        """Registra o nome do PDF quando a abertura falha durante a análise."""
+        if self._requerimento_atual is None:
+            return
+        self._erros_leitura_pdf.setdefault(self._requerimento_atual, set()).add(
+            caminho_pdf.name
+        )
+
+    def _abrir_pdf(self, caminho_pdf: Path):
+        """Abre PDF pelo fluxo de análise e registra falha apenas na abertura."""
+        return _abrir_pdf_para_analise(caminho_pdf, self._registrar_pdf_nao_lido)
 
     def _extrair_data_mais_recente_pdf(self, caminho: Path) -> Optional[datetime]:
         """Retorna a data mais recente encontrada no texto ou OCR do PDF."""
         try:
-            with fitz.open(caminho) as pdf:
+            with self._abrir_pdf(caminho) as pdf:
                 texto = "\n".join(str(pagina.get_text("text")) for pagina in pdf)
                 if _pdf_requer_ocr(pdf):
                     texto_ocr = extract_pdf_content_from_ocr(caminho)
@@ -932,7 +972,9 @@ class AnalisadorRequerimentos:
             
             # Instanciar CCTAnalyzer integrado
             utils_dir = Path(__file__).parent.parent / UTILS_DIR
-            cct_analyzer = CCTAnalyzerIntegrado(utils_dir)
+            cct_analyzer = CCTAnalyzerIntegrado(
+                utils_dir, self._registrar_pdf_nao_lido
+            )
             
             # Extrair conteúdo do PDF
             conteudo = cct_analyzer.extract_pdf_content(caminho)
@@ -1177,7 +1219,7 @@ class AnalisadorRequerimentos:
             # Tentar extrair conteúdo básico do PDF para validações adicionais
             try:
                 
-                with fitz.open(caminho) as doc:
+                with self._abrir_pdf(caminho) as doc:
                     total_paginas = len(doc)
                     resultado["observacoes"].append(f"Total de páginas: {total_paginas}")
                     
@@ -1303,7 +1345,7 @@ class AnalisadorRequerimentos:
           
             # Análise de conteúdo do PDF
             try:                
-                with fitz.open(caminho) as doc:
+                with self._abrir_pdf(caminho) as doc:
                     total_paginas = len(doc)
                     resultado["observacoes"].append(f"Total de páginas: {total_paginas}")
                     
@@ -1402,7 +1444,9 @@ class AnalisadorRequerimentos:
         try:
             # Instanciar CCTAnalyzer integrado para extração de PDF
             utils_dir = Path(__file__).parent.parent / UTILS_DIR
-            cct_analyzer = CCTAnalyzerIntegrado(utils_dir)
+            cct_analyzer = CCTAnalyzerIntegrado(
+                utils_dir, self._registrar_pdf_nao_lido
+            )
             
             # Extrai o conteúdo do PDF usando extract_pdf_content (com fallback OCR)
             texto_pdf = cct_analyzer.extract_pdf_content(caminho)
@@ -1579,7 +1623,7 @@ class AnalisadorRequerimentos:
     def _analisar_fotos(self, caminho: Path, resultado: Dict) -> Dict:
         """Análise específica para Fotos do Produto."""
         resultado["observacoes"].append("Análise de Fotos: Verificando conformidade visual")
-        with fitz.open(caminho) as pdf:
+        with self._abrir_pdf(caminho) as pdf:
             texto = "\n".join(str(pagina.get_text("text")) for pagina in pdf)
             if _pdf_requer_ocr(pdf):
                 texto_ocr = extract_pdf_content_from_ocr(caminho)
@@ -2058,6 +2102,7 @@ class AnalisadorRequerimentos:
 
     def _analisar_requerimento_individual(self, nome_requerimento: str) -> Dict:
         """Analisa todos os documentos de um requerimento específico."""
+        self._requerimento_atual = nome_requerimento
         tempo_inicio_req = datetime.now()
         #log_info(f"Iniciando análise do requerimento: {nome_requerimento}")
         pasta_req = "_" + nome_requerimento
@@ -3062,10 +3107,15 @@ class AnalisadorRequerimentos:
         return secao_latex
 
     @staticmethod
-    def _pdf_tem_assinatura_digital(caminho_pdf: Path) -> Optional[bool]:
+    def _pdf_tem_assinatura_digital(
+        caminho_pdf: Path,
+        ao_falhar_ao_abrir_pdf: Optional[Callable[[Path], None]] = None,
+    ) -> Optional[bool]:
         """Verifica se o PDF contém uma assinatura digital incorporada."""
         try:
-            with fitz.open(caminho_pdf) as pdf:
+            with _abrir_pdf_para_analise(
+                caminho_pdf, ao_falhar_ao_abrir_pdf
+            ) as pdf:
                 for pagina in pdf:
                     for campo in pagina.widgets() or ():
                         if campo.field_type != fitz.PDF_WIDGET_TYPE_SIGNATURE:
@@ -3283,6 +3333,32 @@ class AnalisadorRequerimentos:
         nome_arquivo = f"relatorio_analise_{timestamp}.tex"
         caminho_relatorio = self.pasta_resultados / nome_arquivo
         status_downloads = carregar_log_downloads()
+        erros_leitura_pdf = getattr(self, "_erros_leitura_pdf", {})
+        status_assinaturas_por_requerimento = {}
+        for requerimento in self.resultados_analise:
+            chave_requerimento = str(requerimento.get("numero_requerimento"))
+            self._requerimento_atual = chave_requerimento
+            documentos = requerimento.get("documentos_analisados", [])
+            documento_cct = next(
+                (doc for doc in documentos if doc.get("tipo") == TIPO_CCT),
+                None
+            )
+            documentos_assinatura = {
+                "RACT": next(
+                    (doc for doc in documentos if doc.get("tipo") == TIPO_RACT),
+                    None
+                ),
+                "CCT": documento_cct
+            }
+            status_assinaturas_por_requerimento[chave_requerimento] = {
+                tipo_documento: (
+                    self._pdf_tem_assinatura_digital(
+                        Path(documento["caminho"]), self._registrar_pdf_nao_lido
+                    )
+                    if documento else False
+                )
+                for tipo_documento, documento in documentos_assinatura.items()
+            }
         
         # Calcular estatísticas gerais
         total_requerimentos = len(self.resultados_analise)
@@ -3381,13 +3457,42 @@ SCH da ANATEL nos termos da Portaria Anatel nº 2257, de 03 de março de 2022 (S
     \\item \\textbf{{Versão do script:}} {{\\textgreek{{θεoγενης - {versao_git}}}}}
 \\end{{itemize}}
 """
+
+        arquivos_pdf_nao_lidos = []
+        for requerimento in self.resultados_analise:
+            chave_requerimento = str(requerimento.get("numero_requerimento"))
+            numero_requerimento = fullpath_para_req(chave_requerimento)
+            for nome_arquivo in sorted(erros_leitura_pdf.get(chave_requerimento, set())):
+                arquivos_pdf_nao_lidos.append((numero_requerimento, nome_arquivo))
+        if arquivos_pdf_nao_lidos:
+            latex_content += (
+                "\\subsection{Arquivos PDF não lidos por falha ao abrir}\n"
+                "\\begin{itemize}\n"
+            )
+            for numero_requerimento, nome_arquivo in arquivos_pdf_nao_lidos:
+                latex_content += (
+                    f"    \\item Requerimento {escapar_latex(numero_requerimento)}: "
+                    f"\\texttt{{{escapar_latex(nome_arquivo)}}}\n"
+                )
+            latex_content += "\\end{itemize}\n\n"
         
         # Adicionar seção para cada requerimento
         for i, req in enumerate(self.resultados_analise, 1):
             numero_req = fullpath_para_req(req.get("numero_requerimento"))
-            status_download = status_downloads.get(numero_req, {}).get("status")
-            status_download_latex = _formatar_status_download_latex(status_download)
+            self._requerimento_atual = str(numero_req)
             documentos = req.get("documentos_analisados", [])
+            documento_cct = next(
+                (doc for doc in documentos if doc.get("tipo") == TIPO_CCT),
+                None
+            )
+            status_assinatura = status_assinaturas_por_requerimento.get(
+                str(req.get("numero_requerimento")), {"RACT": False, "CCT": False}
+            )
+            status_download = status_downloads.get(numero_req, {}).get("status")
+            status_download_latex = _formatar_status_download_latex(
+                status_download,
+                bool(erros_leitura_pdf.get(str(req.get("numero_requerimento")))),
+            )
             tempo_analise_req = req.get("tempo_total_analise_formatado", VALOR_NAO_DISPONIVEL)
             #resumo = req.get("resumo_status", {})
             #timestamp_analise = escapar_latex(req.get('timestamp_analise', 'N/A'))
@@ -3562,26 +3667,9 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 normas_verificadas_por_tipo
             )
 
-            documento_cct = next(
-                (doc for doc in documentos if doc.get("tipo") == TIPO_CCT),
-                None
-            )
-            documentos_assinatura = {
-                "RACT": next(
-                    (doc for doc in documentos if doc.get("tipo") == TIPO_RACT),
-                    None
-                ),
-                "CCT": documento_cct
-            }
-            status_assinatura = {}
-            for tipo_documento, documento in documentos_assinatura.items():
-                status_assinatura[tipo_documento] = (
-                    self._pdf_tem_assinatura_digital(Path(documento["caminho"]))
-                    if documento else False
-                )
             exigencias_assinatura = []
-            ract_sem_assinatura = status_assinatura["RACT"] is not True
-            cct_sem_assinatura = status_assinatura["CCT"] is not True
+            ract_sem_assinatura = status_assinatura["RACT"] is False
+            cct_sem_assinatura = status_assinatura["CCT"] is False
             if ract_sem_assinatura and cct_sem_assinatura:
                 exigencias_assinatura.append(
                     "RACT/CCT não contêm assinaturas válidas."
@@ -3594,7 +3682,12 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 exigencias_assinatura.append(
                     "O CCT não contém uma assinatura válida."
                 )
-            else:
+            for tipo_documento, status in status_assinatura.items():
+                if status is None:
+                    exigencias_assinatura.append(
+                        f"Não foi possível verificar a assinatura do {tipo_documento}."
+                    )
+            if all(status is True for status in status_assinatura.values()):
                 latex_content += (
                     "\\begin{itemize}\n"
                     "    \\item Assinatura eletrônica (RACT/CCT): "
@@ -3868,6 +3961,9 @@ A seguir são apresentados os requisitos legais e normas utilizados como referê
             if escopo == "CANCELAR":
                 log_info("❌ Análise cancelada pelo usuário.")
                 return
+
+            self._requerimento_atual = None
+            self._erros_leitura_pdf = {}
             
             # Iniciar cronômetro da análise
             self.tempo_inicio_analise = datetime.now()

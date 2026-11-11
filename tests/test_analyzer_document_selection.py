@@ -1,7 +1,11 @@
 import unittest
 from datetime import datetime
+from pathlib import Path
+from tempfile import TemporaryDirectory
+from unittest.mock import patch
 
 from core.analyzer import (
+    AnalisadorRequerimentos,
     TIPO_CCT,
     TIPO_RACT,
     _chave_selecao_documento,
@@ -85,6 +89,67 @@ class FormatarStatusDownloadLatexTest(unittest.TestCase):
                     _formatar_status_download_latex(status),
                     r"\texorpdfstring{\textcolor{red}{Desconhecido}}{Desconhecido}",
                 )
+
+    def test_falha_de_leitura_acrescenta_failed_sem_substituir_download(self):
+        self.assertEqual(
+            _formatar_status_download_latex("completed", erro_leitura_pdf=True),
+            r"\texorpdfstring{\textcolor{blue}{completed}}{completed} / "
+            r"\textcolor{red}{failed}",
+        )
+
+
+class FalhaLeituraPdfRelatorioTest(unittest.TestCase):
+    def test_registra_somente_falha_ao_abrir_pdf(self):
+        analisador = AnalisadorRequerimentos.__new__(AnalisadorRequerimentos)
+        analisador._requerimento_atual = "26.09284"
+        analisador._erros_leitura_pdf = {}
+
+        with patch("core.analyzer.fitz.open", side_effect=OSError("rede indisponível")):
+            with self.assertRaises(OSError):
+                analisador._abrir_pdf(Path("documento.pdf"))
+
+        self.assertEqual(
+            analisador._erros_leitura_pdf,
+            {"26.09284": {"documento.pdf"}},
+        )
+
+    def test_lista_arquivos_aparece_antes_das_secoes_dos_requerimentos(self):
+        with TemporaryDirectory() as pasta:
+            analisador = AnalisadorRequerimentos.__new__(AnalisadorRequerimentos)
+            analisador.pasta_resultados = Path(pasta)
+            analisador.tempo_inicio_analise = None
+            analisador.tempo_fim_analise = None
+            analisador.resultados_analise = [{
+                "numero_requerimento": "26.09284",
+                "documentos_analisados": [],
+            }]
+            analisador._requerimento_atual = None
+            analisador._erros_leitura_pdf = {
+                "26.09284": {"arquivo indisponivel.pdf"},
+            }
+            analisador.equipamentos = []
+            analisador.familias_equipamentos = []
+            analisador.requisitos = []
+            analisador.normas = []
+            analisador.ocds = []
+            analisador.ultima_verificacao_vigencia = None
+
+            with patch(
+                "core.analyzer.carregar_log_downloads",
+                return_value={"09284/26": {"status": "completed"}},
+            ):
+                caminho = analisador._gerar_relatorio_latex()
+
+            relatorio = Path(caminho).read_text(encoding="utf-8")
+            self.assertLess(
+                relatorio.index("arquivo indisponivel.pdf"),
+                relatorio.index(r"\section{Requerimento 09284/26"),
+            )
+            self.assertIn(
+                r"\textcolor{blue}{completed}}{completed} / "
+                r"\textcolor{red}{failed}",
+                relatorio,
+            )
 
 
 if __name__ == "__main__":

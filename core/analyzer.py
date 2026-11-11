@@ -2923,7 +2923,7 @@ class AnalisadorRequerimentos:
             (
                 cct_contem_palavra_vinculado,
                 "A validade deste certificado está vinculada à vigência da homologação ANATEL do módulo de RF incorporado ao produto",
-                "Que a validade deste certificado está vinculada à vigência da homologação ANATEL do módulo de RF incorporado ao produto",
+                "Que a validade deste certificado está vinculada à vigência da homologação ANATEL do módulo de RF incorporado ao produto;",
             ),
             (
                 cct_contem_frase_nao_varejo,

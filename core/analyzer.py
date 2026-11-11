@@ -3027,6 +3027,14 @@ class AnalisadorRequerimentos:
             for campo in campos_certificado_nao_encontrados:
                 if campo in campos_data_certificado:
                     continue
+                if campo == "Número do Certificado":
+                    secao_latex += (
+                        "    \\item "
+                        "O Número do Certificado (CCT) informado no Certifica "
+                        "não corresponde ao número que consta no CCT anexo ao "
+                        "requerimento. Favor verificar e realizar os ajustes devidos.\n"
+                    )
+                    continue
                 secao_latex += (
                     "    \\item O campo "
                     f"{escapar_latex(campo)} do JSON do requerimento "

@@ -92,8 +92,9 @@ class ValidarCamposCertificadoTest(unittest.TestCase):
             secao,
         )
         self.assertIn(
-            r"\item O campo Número do Certificado do JSON do requerimento "
-            "não foi encontrado no CCT.",
+            r"\item O Número do Certificado (CCT) informado no Certifica "
+            "não corresponde ao número que consta no CCT anexo ao "
+            "requerimento. Favor verificar e realizar os ajustes devidos.",
             secao,
         )
 

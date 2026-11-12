@@ -64,7 +64,7 @@ FRASE_EQ093_FORNECIMENTO_USO = (
 )
 EXIGENCIA_EQ093_FORNECIMENTO_USO = (
     "Que no fornecimento e no uso do produto devem ser observadas as condições "
-    "estabelecido no Regulamento sobre Equipamentos de Radiocomunicação de "
+    "estabelecidas no Regulamento sobre Equipamentos de Radiocomunicação de "
     "Radiação Restrita."
 )
 FRASES_IPV6_QUE_NAO_GERAM_EXIGENCIA = (

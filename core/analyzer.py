@@ -3088,7 +3088,7 @@ class AnalisadorRequerimentos:
             for nome_norma in normas_revogadas:
                 secao_latex += f"    \\item {escapar_latex(nome_norma)}\n"
             if caracteristicas_nao_conformes:
-                secao_latex += "    \\item Corrigir as características técnicas:\n"
+                secao_latex += "    \\item Preencher ESPECIFICAÇÕES conforme CCT - há divergência(s).\n"
                 secao_latex += "    \\begin{itemize}\n"
                 for validacao in caracteristicas_nao_conformes:
                     faixa = escapar_latex(validacao["faixa"])

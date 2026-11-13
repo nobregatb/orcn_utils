@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 
 from core.analyzer import AnalisadorRequerimentos
 
@@ -29,6 +30,7 @@ class ConstruirSecaoExigenciasSarTest(unittest.TestCase):
         secao = self.construir_secao(dados_requerimento)
 
         self.assertNotIn("Registrar a avaliação da conformidade", secao)
+
 
     def test_campos_sar_sem_medicao_geram_exigencia(self):
         dados_requerimento = {
@@ -175,6 +177,32 @@ class ConstruirSecaoExigenciasSarTest(unittest.TestCase):
         self.assertIn(r"\textcolor{blue}{CCT}", tabela)
         self.assertNotIn(r"\textcolor{red}{RACT}", tabela)
         self.assertNotIn(r"\textcolor{red}{CCT}", tabela)
+
+
+class ValidarCaracteristicasTecnicasTest(unittest.TestCase):
+    def setUp(self):
+        self.analisador = object.__new__(AnalisadorRequerimentos)
+
+    def test_aceita_frequencia_fundamental_como_faixa_de_transmissao(self):
+        with patch("core.analyzer.HomologacaoProduto.model_validate") as validar:
+            resultado = self.analisador._validar_registros_frequencia(
+                [{"Frequência Fundamental (MHz)": "314,98"}], set()
+            )
+
+        self.assertEqual(resultado[0]["valida"], "sim")
+        frequencia_validada = validar.call_args.args[0]["frequencias"][0]
+        self.assertEqual(
+            frequencia_validada["Faixa de Frequências Tx (MHz)"], "314,98"
+        )
+
+    def test_ignora_caracteristica_sem_campo_de_frequencia(self):
+        with patch("core.analyzer.HomologacaoProduto.model_validate") as validar:
+            resultado = self.analisador._validar_registros_frequencia(
+                [{"Tempo de Transmissão": "5", "Unidade": "s"}], set()
+            )
+
+        self.assertEqual(resultado, [])
+        validar.assert_not_called()
 
 
 if __name__ == "__main__":

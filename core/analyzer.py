@@ -1943,11 +1943,19 @@ class AnalisadorRequerimentos:
                 continue
 
             frequencia_validacao = dict(frequencia)
-            faixa = frequencia.get("Faixa de Frequências Tx (MHz)")
-            if faixa is None:
-                faixa = frequencia.get(CERTIFICA_CABECALHO_FREQUENCIAS)
-                if faixa is not None:
-                    frequencia_validacao["Faixa de Frequências Tx (MHz)"] = faixa
+            cabecalhos_frequencia = (
+                "Faixa de Frequências Tx (MHz)",
+                CERTIFICA_CABECALHO_FREQUENCIAS,
+                "Frequência Fundamental (MHz)",
+            )
+            cabecalho_frequencia = next(
+                (cabecalho for cabecalho in cabecalhos_frequencia if cabecalho in frequencia),
+                None,
+            )
+            if cabecalho_frequencia is None:
+                continue
+            faixa = frequencia[cabecalho_frequencia]
+            frequencia_validacao["Faixa de Frequências Tx (MHz)"] = faixa
             faixa_exibicao = str(faixa).strip() if faixa is not None else f"Frequência {indice}"
 
             try:

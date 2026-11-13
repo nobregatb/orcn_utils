@@ -7,7 +7,7 @@ import re
 import unicodedata
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Callable, Dict, List, Optional, Tuple, Set#, Any
+from typing import Any, Callable, Dict, List, Optional, Tuple, Set
 import subprocess
 from pydantic import ValidationError
 
@@ -2224,7 +2224,7 @@ class AnalisadorRequerimentos:
                 docs_mais_recentes[tipo_doc] = (
                     arquivo, tipo_doc, data_doc, data_conteudo
                 )
-            elif chave_candidata > chave_atual:
+            elif chave_atual is not None and chave_candidata > chave_atual:
                 docs_mais_recentes[tipo_doc] = (
                     arquivo, tipo_doc, data_doc, data_conteudo
                 )
@@ -3180,7 +3180,13 @@ class AnalisadorRequerimentos:
             ) as pdf:
                 for pagina in pdf:
                     for campo in pagina.widgets() or ():
-                        if campo.field_type != fitz.PDF_WIDGET_TYPE_SIGNATURE:
+                        tipo_assinatura = getattr(
+                            fitz, "PDF_WIDGET_TYPE_SIGNATURE", None
+                        )
+                        if (
+                            tipo_assinatura is None
+                            or getattr(campo, "field_type", None) != tipo_assinatura
+                        ):
                             continue
 
                         xref_campo = campo.xref
@@ -3762,7 +3768,7 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 "campos_certificado_nao_encontrados", []
             )
             campos_cadastrais_nao_encontrados = dados_cct.get(
-                "campos_cadastrais_nao_encontrados", []
+                "campos_cadastrais_nao_encontrados", {}
             )
             modelos_nao_encontrados = []
             status_modelos = None

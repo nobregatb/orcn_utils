@@ -939,7 +939,7 @@ def _mapear_dados_json_para_excel(
         
         
         # Criar linha vazia com tamanho correto (11 colunas total)
-        nova_linha = [None] * 11
+        nova_linha: List[Any] = [None] * 11
         
         # Mapear campos do JSON para posições da planilha
         # Coluna A (índice 0): classificação da análise

@@ -2576,6 +2576,38 @@ class AnalisadorRequerimentos:
         
         return normas_aplicaveis
 
+    def _coletar_normas_obrigatorias_nao_citadas_ract(
+        self,
+        req_dados: Dict,
+        normas_verificadas_por_tipo: Dict[str, Set[str]],
+        medicao_sar_identificada: bool = False,
+        cct_desobriga_sar: bool = False,
+    ) -> List[Dict[str, str]]:
+        """Retorna normas vigentes aplicáveis ainda não citadas no RACT."""
+        normas_ract = normas_verificadas_por_tipo.get("RACT", set())
+        normas_aplicaveis = self._coletar_normas_aplicaveis_requerimento(req_dados)
+        normas_obrigatorias = []
+
+        for norma_id in normas_aplicaveis:
+            if norma_id in normas_ract:
+                continue
+
+            detalhes_norma = self._obter_detalhes_norma(norma_id)
+            status_norma = (detalhes_norma.get("status") or "").strip().casefold()
+            if status_norma != "vigente":
+                continue
+            if norma_id == ID_NORMA_SAR and (
+                medicao_sar_identificada or cct_desobriga_sar
+            ):
+                continue
+
+            normas_obrigatorias.append({
+                "nome": detalhes_norma.get("nome", norma_id),
+                "descricao": detalhes_norma.get("descricao", ""),
+            })
+
+        return sorted(normas_obrigatorias, key=lambda norma: norma["nome"].casefold())
+
     def _coletar_normas_verificadas_requerimento(self, req_dados: Dict) -> Set[str]:
         """
         Coleta todas as normas que foram verificadas nos documentos do requerimento.
@@ -2963,9 +2995,10 @@ class AnalisadorRequerimentos:
         campos_certificado_nao_encontrados: Optional[List[str]] = None,
         cct_contem_apenas_eq093: bool = False,
         campos_eirp_sem_medicao: Optional[List[str]] = None,
-        campos_cadastrais_nao_encontrados: Optional[Dict[str, List[str]]] = None
+        campos_cadastrais_nao_encontrados: Optional[Dict[str, List[str]]] = None,
+        normas_obrigatorias_nao_citadas_ract: Optional[List[Dict[str, str]]] = None,
     ) -> str:
-        """Monta exigências por declarações do CCT ausentes no JSON do produto."""
+        """Monta exigências do requerimento, incluindo normas vigentes não citadas no RACT."""
         if modelos_nao_encontrados is None:
             modelos_nao_encontrados = []
         if exigencias_assinatura is None:
@@ -2978,6 +3011,8 @@ class AnalisadorRequerimentos:
             campos_eirp_sem_medicao = []
         if campos_cadastrais_nao_encontrados is None:
             campos_cadastrais_nao_encontrados = {}
+        if normas_obrigatorias_nao_citadas_ract is None:
+            normas_obrigatorias_nao_citadas_ract = []
         if not isinstance(dados_requerimento, dict):
             dados_requerimento = {}
         exigir_avaliacao_sar = (
@@ -3045,6 +3080,7 @@ class AnalisadorRequerimentos:
             or campos_certificado_nao_encontrados
             or campos_eirp_sem_medicao
             or campos_cadastrais_nao_encontrados
+            or normas_obrigatorias_nao_citadas_ract
         )
         cor_exigencia = "red" if tem_exigencias else "blue"
         secao_latex = (
@@ -3149,6 +3185,19 @@ class AnalisadorRequerimentos:
                 )
             for nome_norma in normas_revogadas:
                 secao_latex += f"    \\item {escapar_latex(nome_norma)}\n"
+            if normas_obrigatorias_nao_citadas_ract:
+                secao_latex += (
+                    "    \\item Registrar explicitamente no RACT a avaliação da conformidade, "
+                    "ou a não aplicabilidade, dos seguintes requisitos transversais vigentes aplicáveis:\n"
+                    "    \\begin{itemize}\n"
+                )
+                for norma in normas_obrigatorias_nao_citadas_ract:
+                    nome_norma = escapar_latex(norma["nome"])
+                    descricao_norma = escapar_latex(norma["descricao"])
+                    secao_latex += (
+                        f'        \\item {nome_norma} - {descricao_norma}\n'
+                    )
+                secao_latex += "    \\end{itemize}\n"
             if caracteristicas_nao_conformes:
                 secao_latex += "    \\item Preencher ESPECIFICAÇÕES conforme CCT - há divergência(s).\n"
                 secao_latex += "    \\begin{itemize}\n"
@@ -3734,6 +3783,14 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
             normas_revogadas = self._coletar_normas_revogadas(
                 normas_verificadas_por_tipo
             )
+            normas_obrigatorias_nao_citadas_ract = (
+                self._coletar_normas_obrigatorias_nao_citadas_ract(
+                    req,
+                    normas_verificadas_por_tipo,
+                    medicao_sar_identificada=medicao_sar_identificada,
+                    cct_desobriga_sar=bool(cct_strings_desobrigam_ato17865),
+                )
+            )
 
             exigencias_assinatura = []
             ract_sem_assinatura = status_assinatura["RACT"] is False
@@ -3833,6 +3890,7 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 campos_certificado_nao_encontrados=campos_certificado_nao_encontrados,
                 cct_contem_apenas_eq093=self._cct_contem_apenas_eq093(documentos),
                 campos_cadastrais_nao_encontrados=campos_cadastrais_nao_encontrados,
+                normas_obrigatorias_nao_citadas_ract=normas_obrigatorias_nao_citadas_ract,
                 campos_eirp_sem_medicao=(
                     self._obter_campos_eirp_sem_medicao(
                         req.get("dados_requerimento")

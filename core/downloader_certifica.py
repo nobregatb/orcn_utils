@@ -135,6 +135,16 @@ def tabela_por_cabecalho(aba, texto_cabecalho):
     return registros
 
 
+def extrair_dados_fabricante(aba):
+    """Pares da aba Fabricante; UNIDADES FABRIS vira a lista de nomes das unidades (ListRecords)."""
+    dados = pares_para_dict(aba["pares"])
+    # O rótulo vem sem valor: cada unidade é um item da lista, cujo primeiro filho é o nome
+    unidades = [registro[0] for registro in aba["registros"] if registro and registro[0]]
+    if unidades:
+        dados["UNIDADES FABRIS"] = unidades
+    return dados
+
+
 def ativar_aba_certifica(page, sufixo):
     """Ativa a aba e espera seu painel terminar de carregar antes da leitura."""
     rotulos = {
@@ -209,7 +219,7 @@ def extrair_dados_requerimento_certifica(page):
     }, *aba_especificacoes["subprodutos"]]
 
     return {
-        "fabricante": pares_para_dict(ler_aba_certifica(page, CERTIFICA_ABA_FABRICANTE)["pares"]),
+        "fabricante": extrair_dados_fabricante(ler_aba_certifica(page, CERTIFICA_ABA_FABRICANTE)),
         "solicitante": pares_para_dict(pares[:corte]),
         "ocd": pares_para_dict(pares[corte + 1:]),
         "lab": lab,

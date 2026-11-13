@@ -187,6 +187,7 @@ CERTIFICA_JS_LER_ABA = """(sufixo) => {
         [...t.rows].map(r => [...r.cells].map(valorCelula)));
     const registros = [...aba.querySelectorAll('.ListRecords > div')]
         .map(r => [...r.children].map(limpo));
+    const tabelasSubprodutos = new Set();
     const subprodutos = [...aba.querySelectorAll('.ListRecords')].flatMap(lista => {
         let nome = '';
         return [...lista.children].flatMap(item => {
@@ -197,13 +198,17 @@ CERTIFICA_JS_LER_ABA = """(sufixo) => {
                 if (texto) nome = texto;
                 return [];
             }
+            if (nome) tabelasSubproduto.forEach(t => tabelasSubprodutos.add(t));
             return tabelasSubproduto.map(t => ({
                 nome,
                 caracteristicas: [...t.rows].map(r => [...r.cells].map(valorCelula))
             }));
         }).filter(subproduto => subproduto.nome);
     });
-    return {pares, tabelas, registros, subprodutos};
+    const tabelas_produto_principal = [...aba.querySelectorAll('table')]
+        .filter(t => !tabelasSubprodutos.has(t))
+        .map(t => [...t.rows].map(r => [...r.cells].map(valorCelula)));
+    return {pares, tabelas, registros, subprodutos, tabelas_produto_principal};
 }"""
 
 # Seletores CSS

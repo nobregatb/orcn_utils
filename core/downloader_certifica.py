@@ -14,7 +14,7 @@ from core.const import (
     CERTIFICA_ABA_FABRICANTE, CERTIFICA_ABA_SOLICITANTE, CERTIFICA_ABA_PRODUTO,
     CERTIFICA_ABA_ESPECIFICACOES, CERTIFICA_ABA_LABORATORIO, CERTIFICA_ABA_CERTIFICADO,
     CERTIFICA_ROTULO_INICIO_OCD, CERTIFICA_CABECALHO_MODELOS,
-    CERTIFICA_CABECALHO_FREQUENCIAS, CERTIFICA_CAMPOS_LABORATORIO,
+    CERTIFICA_CAMPOS_LABORATORIO,
     CERTIFICA_JS_LER_ABA, CERTIFICA_TIPOS_ANEXO_BAIXAR, CERTIFICA_ABA_ANEXOS,
     CERTIFICA_TEXTO_ANEXO_DESATIVADO, CERTIFICA_TIMEOUT_DOWNLOAD, CERTIFICA_TIMEOUT_GERAR_PDF,
     CERTIFICA_JS_LER_ANEXOS, CARACTERES_INVALIDOS, SEPARADOR_LINHA,
@@ -121,10 +121,12 @@ def pares_para_dict(pares):
 
 
 def tabela_por_cabecalho(aba, texto_cabecalho):
-    """Retorna juntas as linhas de todas as tabelas da aba com o cabeçalho indicado."""
+    """Retorna as linhas das tabelas com o cabeçalho indicado, ou de todas quando ausente."""
     registros = []
     for linhas in aba["tabelas"]:
-        if not linhas or not any(texto_cabecalho.casefold() in celula.casefold() for celula in linhas[0]):
+        if not linhas or (texto_cabecalho is not None and not any(
+            texto_cabecalho.casefold() in celula.casefold() for celula in linhas[0]
+        )):
             continue
         cabecalho = linhas[0]
         registros.extend(
@@ -214,7 +216,8 @@ def extrair_dados_requerimento_certifica(page):
     produtos = [{
         "nome": str(produto.get("Produto") or "").strip(),
         "caracteristicas": tabela_por_cabecalho(
-            aba_especificacoes, CERTIFICA_CABECALHO_FREQUENCIAS
+            {"tabelas": aba_especificacoes.get("tabelas_produto_principal", aba_especificacoes["tabelas"])},
+            None,
         ),
     }, *aba_especificacoes["subprodutos"]]
 

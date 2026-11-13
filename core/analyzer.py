@@ -194,6 +194,42 @@ def _validar_campos_certificado(
     return campos_nao_encontrados
 
 
+def _validar_campos_cadastrais(
+    dados_requerimento: Optional[Dict],
+    texto_cct: str
+) -> Dict[str, List[str]]:
+    """Retorna os campos cadastrais preenchidos que não aparecem no CCT."""
+    if not isinstance(dados_requerimento, dict):
+        return {}
+
+    campos_por_bloco = (
+        ("fabricante", ("UNIDADES FABRIS", "CNPJ")),
+        ("solicitante", ("CPF/CPNJ Solicitante",)),
+    )
+    campos_nao_encontrados = {}
+
+    for bloco, campos in campos_por_bloco:
+        dados_bloco = dados_requerimento.get(bloco)
+        if not isinstance(dados_bloco, dict):
+            continue
+
+        campos_bloco_nao_encontrados = []
+        for campo in campos:
+            valor = dados_bloco.get(campo)
+            valores = valor if isinstance(valor, (list, tuple, set)) else [valor]
+            if any(
+                item is not None
+                and str(item).strip()
+                and str(item) not in texto_cct
+                for item in valores
+            ):
+                campos_bloco_nao_encontrados.append(campo)
+        if campos_bloco_nao_encontrados:
+            campos_nao_encontrados[bloco] = campos_bloco_nao_encontrados
+
+    return campos_nao_encontrados
+
+
 def _chave_selecao_documento(
     tipo_documento: str,
     data_conteudo: Optional[datetime],
@@ -988,6 +1024,9 @@ class AnalisadorRequerimentos:
             campos_certificado_nao_encontrados = _validar_campos_certificado(
                 dados_requerimento, conteudo
             )
+            campos_cadastrais_nao_encontrados = _validar_campos_cadastrais(
+                dados_requerimento, conteudo
+            )
             modelos_json = self._extrair_modelos_json(dados_requerimento)
             modelos_encontrados = [
                 modelo for modelo in modelos_json
@@ -1006,7 +1045,8 @@ class AnalisadorRequerimentos:
                 resultado["status"] = STATUS_ERRO
                 resultado["nao_conformidades"].append("Falha na extração de dados do CCT")
                 resultado["dados_extraidos"] = {
-                    "campos_certificado_nao_encontrados": campos_certificado_nao_encontrados
+                    "campos_certificado_nao_encontrados": campos_certificado_nao_encontrados,
+                    "campos_cadastrais_nao_encontrados": campos_cadastrais_nao_encontrados
                 }
                 return resultado
             
@@ -1073,7 +1113,8 @@ class AnalisadorRequerimentos:
                 "modelos_json": modelos_json,
                 "modelos_encontrados_no_cct": modelos_encontrados,
                 "modelos_nao_encontrados_no_cct": modelos_nao_encontrados,
-                "campos_certificado_nao_encontrados": campos_certificado_nao_encontrados
+                "campos_certificado_nao_encontrados": campos_certificado_nao_encontrados,
+                "campos_cadastrais_nao_encontrados": campos_cadastrais_nao_encontrados
             }
             
             # Observações detalhadas
@@ -2921,7 +2962,8 @@ class AnalisadorRequerimentos:
         cct_contem_frase_nao_varejo: bool = False,
         campos_certificado_nao_encontrados: Optional[List[str]] = None,
         cct_contem_apenas_eq093: bool = False,
-        campos_eirp_sem_medicao: Optional[List[str]] = None
+        campos_eirp_sem_medicao: Optional[List[str]] = None,
+        campos_cadastrais_nao_encontrados: Optional[Dict[str, List[str]]] = None
     ) -> str:
         """Monta exigências por declarações do CCT ausentes no JSON do produto."""
         if modelos_nao_encontrados is None:
@@ -2934,6 +2976,8 @@ class AnalisadorRequerimentos:
             campos_certificado_nao_encontrados = []
         if campos_eirp_sem_medicao is None:
             campos_eirp_sem_medicao = []
+        if campos_cadastrais_nao_encontrados is None:
+            campos_cadastrais_nao_encontrados = {}
         if not isinstance(dados_requerimento, dict):
             dados_requerimento = {}
         exigir_avaliacao_sar = (
@@ -3000,6 +3044,7 @@ class AnalisadorRequerimentos:
             or exigir_correcao_fotos_externas
             or campos_certificado_nao_encontrados
             or campos_eirp_sem_medicao
+            or campos_cadastrais_nao_encontrados
         )
         cor_exigencia = "red" if tem_exigencias else "blue"
         secao_latex = (
@@ -3084,6 +3129,23 @@ class AnalisadorRequerimentos:
                     "    \\item O campo "
                     f"{escapar_latex(campo)} do JSON do requerimento "
                     "não foi encontrado no CCT.\n"
+                )
+            descricoes_campos_cadastrais = {
+                "fabricante": ("Fabricante", "informado(s)"),
+                "solicitante": ("Solicitante", "informado(s)"),
+                "lab": ("Laboratório", "informado(s)"),
+            }
+            for bloco, campos in campos_cadastrais_nao_encontrados.items():
+                descricao = descricoes_campos_cadastrais.get(bloco)
+                if not descricao or not campos:
+                    continue
+                entidade, quantidade = descricao
+                campos_formatados = ", ".join(f'"{campo}"' for campo in campos)
+                secao_latex += (
+                    "    \\item "
+                    f"{escapar_latex(campos_formatados)} do {entidade} "
+                    f"{quantidade} no Certifica não consta(m) no CCT - "
+                    "favor verificar/corrigir, nos termos do item 6.6.8.1. do Ato nº 4083, de 31 de julho de 2020.\n"
                 )
             for nome_norma in normas_revogadas:
                 secao_latex += f"    \\item {escapar_latex(nome_norma)}\n"
@@ -3699,6 +3761,9 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
             campos_certificado_nao_encontrados = dados_cct.get(
                 "campos_certificado_nao_encontrados", []
             )
+            campos_cadastrais_nao_encontrados = dados_cct.get(
+                "campos_cadastrais_nao_encontrados", []
+            )
             modelos_nao_encontrados = []
             status_modelos = None
             if documento_cct is None:
@@ -3761,6 +3826,7 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                 cct_contem_frase_nao_varejo=cct_contem_frase_nao_varejo,
                 campos_certificado_nao_encontrados=campos_certificado_nao_encontrados,
                 cct_contem_apenas_eq093=self._cct_contem_apenas_eq093(documentos),
+                campos_cadastrais_nao_encontrados=campos_cadastrais_nao_encontrados,
                 campos_eirp_sem_medicao=(
                     self._obter_campos_eirp_sem_medicao(
                         req.get("dados_requerimento")

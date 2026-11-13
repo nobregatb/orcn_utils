@@ -3,6 +3,7 @@ import unittest
 from core.analyzer import (
     AnalisadorRequerimentos,
     _validar_campos_certificado,
+    _validar_campos_cadastrais,
 )
 
 
@@ -117,6 +118,108 @@ class ValidarCamposCertificadoTest(unittest.TestCase):
             secao,
         )
         self.assertEqual(secao.count(r"\item Informar "), 1)
+
+    def test_identifica_blocos_com_campos_informados_ausentes_do_cct(self):
+        dados_requerimento = {
+            "fabricante": {
+                "Razão Social": "Fabricante Alfa",
+                "UNIDADES FABRIS": ["Unidade Sul", "Unidade Norte"],
+                "CNPJ": "12.345.678/0001-90",
+            },
+            "solicitante": {
+                "CPF/CPNJ Solicitante": "123.456.789-00",
+                "Nome/Razão Social": "Solicitante Alfa",
+            },
+            "lab": {"Nome": "Laboratório Alfa"},
+        }
+
+        campos_nao_encontrados = _validar_campos_cadastrais(
+            dados_requerimento,
+            "Fabricante Alfa Unidade Sul 12.345.678/0001-90 "
+            "123.456.789-00 Solicitante Alfa Laboratório Alfa",
+        )
+
+        self.assertEqual(
+            campos_nao_encontrados,
+            {"fabricante": ["UNIDADES FABRIS"]},
+        )
+
+    def test_valida_cnpj_do_fabricante_sem_validar_razao_social_ou_lab(self):
+        dados_requerimento = {
+            "fabricante": {
+                "Razão Social": "Razão Social ausente do CCT",
+                "UNIDADES FABRIS": "",
+                "CNPJ": "12.345.678/0001-90",
+            },
+            "lab": {"Nome": "Laboratório ausente do CCT"},
+        }
+
+        campos_nao_encontrados = _validar_campos_cadastrais(
+            dados_requerimento,
+            "",
+        )
+
+        self.assertEqual(
+            campos_nao_encontrados,
+            {"fabricante": ["CNPJ"]},
+        )
+
+    def test_ignora_campos_vazios_e_compara_valores_literalmente(self):
+        dados_requerimento = {
+            "fabricante": {
+                "Razão Social": "Fabricante Alfa",
+                "UNIDADES FABRIS": "",
+                "CNPJ": None,
+            },
+            "solicitante": {
+                "CPF/CPNJ Solicitante": "ABC-123",
+                "Nome/Razão Social": "",
+            },
+            "lab": {"Nome": "Laboratório Alfa"},
+        }
+
+        campos_nao_encontrados = _validar_campos_cadastrais(
+            dados_requerimento,
+            "fabricante alfa abc-123 Laboratório Alfa",
+        )
+
+        self.assertEqual(
+            campos_nao_encontrados,
+            {
+                "solicitante": ["CPF/CPNJ Solicitante"],
+            },
+        )
+
+    def test_monta_bullets_cadastrais_para_os_blocos_ausentes(self):
+        secao = AnalisadorRequerimentos._construir_secao_exigencias(
+            dados_requerimento={},
+            cct_contem_ipv6=False,
+            cct_contem_produto_nao_acabado=False,
+            cct_contem_palavra_vinculado=False,
+            caracteristicas_nao_conformes=[],
+            cct_desobriga_sar=True,
+            campos_cadastrais_nao_encontrados={
+                "fabricante": ["UNIDADES FABRIS"],
+                "solicitante": ["CPF/CPNJ Solicitante"],
+            },
+        )
+
+        self.assertIn(
+            r'\item "UNIDADES FABRIS" do Fabricante '
+            "informado(s) no Certifica não consta(m) no CCT - favor verificar/corrigir, "
+            "nos termos do item 6.6.8.1. do Ato nº 4083, de 31 de julho de 2020.",
+            secao,
+        )
+        self.assertIn(
+            r'\item "CPF/CPNJ Solicitante" do Solicitante '
+            "informado(s) no Certifica não consta(m) no CCT - favor verificar/corrigir, "
+            "nos termos do item 6.6.8.1. do Ato nº 4083, de 31 de julho de 2020.",
+            secao,
+        )
+        self.assertNotIn('"Razão Social"', secao)
+        self.assertNotIn('"CNPJ"', secao)
+        self.assertNotIn('"Nome/Razão Social"', secao)
+        self.assertNotIn('"Nome" do Laboratório', secao)
 
 
 if __name__ == "__main__":

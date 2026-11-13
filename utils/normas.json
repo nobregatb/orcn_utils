@@ -1,5 +1,5 @@
 {
-  "ultima_verificacao_vigencia": "2026-11-10",
+  "ultima_verificacao_vigencia": null,
   "normas": [
     {
       "id": "ato10002",
@@ -31,7 +31,7 @@
       "descricao": "Alterar os seguintes itens do Anexo I do Ato nº 14.448, de 4 de dezembro de 2017",
       "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=6404438&id_documento=18054723",
       "entidade": "Anatel",
-    "status": "acessorio"
+      "status": "acessorio"
     },
     {
       "id": "ato10988",
@@ -56,7 +56,7 @@
       "descricao": "Designar o CCPE CENTRO DE CERTIFICAÇÃO DE PRODUTOS ELETRÔNICOS LTDA., regularmente inscrito no CNPJ sob nº 48.333.960/0001-08, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 1/2023 (SEI nº 9704928), as funções de Organismo de Certificação Designado - OCD",
       "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=10623324&id_documento=11038880",
       "entidade": "Anatel",
-    "status": "vigente"
+      "status": "vigente"
     },
     {
       "id": "ato1135",
@@ -71,6 +71,14 @@
       "nome": "Ato nº 11542, de 23 de agosto de 2017",
       "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita",
       "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2017/1137-ato-11542",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "ato1223",
+      "nome": "Norma (ato1223) citada no requerimento 26.09271",
+      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.09271.",
+      "url": "a definir",
       "entidade": "Anatel",
       "status": "revogado"
     },
@@ -233,7 +241,7 @@
       "descricao": "Designar a DEKRA TESTING, INSPECTION & CERTIFICATION LTDA, sociedade empresária regularmente inscrita no CNPJ sob nº 57.473.707/0001-24, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 6/2025 (SEI nº 14763987), as funções de Organismo de Certificação Designado - OCD",
       "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=documento_visualizar&acao_origem=protocolo_pesquisar&id_documento=16531997&infra_sistema=100000100&infra_unidade_atual=110001100&infra_hash=c3a6dcc6379acc5b99ed1597c621eb2ec197819dcb685fe5519fb2156b7f7b0f",
       "entidade": "Anatel",
-    "status": "vigente"
+      "status": "vigente"
     },
     {
       "id": "ato17542",
@@ -250,6 +258,14 @@
       "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2023/1914-ato-17865",
       "entidade": "Anatel",
       "status": "vigente"
+    },
+    {
+      "id": "ato1787",
+      "nome": "Norma (ato1787) citada no requerimento 26.09253",
+      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.09253.",
+      "url": "a definir",
+      "entidade": "Anatel",
+      "status": "revogado"
     },
     {
       "id": "ato19434",
@@ -337,7 +353,7 @@
       "descricao": "Designar a BR APPROVAL-ASSOCIAÇÃO TÉCNICA DE CERTIFICAÇÃO, CNPJ 30.569.550/0001-97, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD Nº 1/2019 (SEI nº 4091483), as funções de Organismo de Certificação Designado - OCD",
       "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=3433932&id_documento=4686417",
       "entidade": "Anatel",
-    "status": "vigente"
+      "status": "vigente"
     },
     {
       "id": "ato2934",
@@ -378,7 +394,7 @@
       "descricao": "Designar a DEKRA CERTIFICATION B.V., CNPJ 26.600.714/0001-24, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD Nº 01/2020 (SEI nº 5694684), as funções de Organismo de Certificação Designado - OCD",
       "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=6401327&id_documento=6444156",
       "entidade": "Anatel",
-    "status": "vigente"
+      "status": "vigente"
     },
     {
       "id": "ato3481",
@@ -402,7 +418,7 @@
       "descricao": " Designar o SEVEN COMPLIANCE LTDA, regularmente inscrito no CNPJ sob nº 28.893.275/0001-10, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 1/2024 (SEI nº 11708112), as funções de Organismo de Certificação Designado - OCD",
       "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=13023673&id_documento=13207718",
       "entidade": "Anatel",
-    "status": "vigente"
+      "status": "vigente"
     },
     {
       "id": "ato4077",
@@ -470,7 +486,7 @@
       "descricao": "Designar a ASSOCIAÇÃO LMP CERTIFICAÇÕES, CNPJ 34.827.924/0001-88, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados nos Termos de Responsabilidade de OCD Nº 3/2020 (SEI nº 5721995) e Nº 4/2020 (SEI nº 5888705), as funções de Organismo de Certificação Designado - OCD",
       "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=5877359&id_documento=6651984",
       "entidade": "Anatel",
-    "status": "vigente"
+      "status": "vigente"
     },
     {
       "id": "ato458",
@@ -549,7 +565,7 @@
       "descricao": " Designar a Moderna Tecnologia Ltda, regularmente inscrito no CNPJ sob nº 44.458.010/0001-40, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 04/2022 (SEI nº 8325756), as funções de Organismo de Certificação Designado - OCD",
       "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=documento_visualizar&acao_origem=protocolo_pesquisar&id_documento=9500620&infra_sistema=100000100&infra_unidade_atual=110001100&infra_hash=91940960b0ea3da1302dc2c7dc0189c7b4bbc384fd65944512794d5cbb528f86",
       "entidade": "Anatel",
-    "status": "vigente"
+      "status": "vigente"
     },
     {
       "id": "ato6506",
@@ -615,7 +631,7 @@
       "descricao": "Designar a Associação VERSYS de Tecnologia, CNPJ 26.352.661/0001-70, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade (SEI nº 1466076), as funções de Organismo de Certificação Designado - OCD",
       "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=procedimento_trabalhar&id_procedimento=1054630&id_documento=1738552",
       "entidade": "Anatel",
-    "status": "vigente"
+      "status": "vigente"
     },
     {
       "id": "ato883",
@@ -752,7 +768,7 @@
       "descricao": "Designar o UL do Brasil Ltda, regularmente inscrito no CNPJ sob nº 02.839.483/0001-48, para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Avaliação da Conformidade e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade de OCD nº 5/2025 (SEI nº 14160407), as funções de Organismo de Certificação Designado - OCD",
       "url": "https://sei.anatel.gov.br/sei/controlador.php?acao=documento_visualizar&acao_origem=protocolo_pesquisar&id_documento=15875583&infra_sistema=100000100&infra_unidade_atual=110001100&infra_hash=afe0cbfdc019cf8822c84658f9c71ae633f4624d209a5b91c1b26d03d86867aa",
       "entidade": "Anatel",
-    "status": "vigente"
+      "status": "vigente"
     },
     {
       "id": "ato9960",

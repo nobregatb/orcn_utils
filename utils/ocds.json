@@ -155,9 +155,16 @@
   },
   {
     "cnpj": "16.884.899/0001-92",
-    "nome": "BRICS Certificações ",
+    "nome": "BRICS Certificações",
     "sigla": "-OCD",
     "email": "",
     "data_atualizacao": "08/10/2026"
+  },
+  {
+    "cnpj": "28.893.275/0001-10",
+    "nome": "Seven Compliance",
+    "sigla": "7C",
+    "email": "7compliance.com",
+    "data_atualizacao": "10/11/2026"
   }
 ]

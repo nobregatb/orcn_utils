@@ -73,7 +73,7 @@ FRASES_IPV6_QUE_NAO_GERAM_EXIGENCIA = (
     "naoimplementaprotocoloipv6",
     "naoimplementaoprotocoloipv6",
     "naosuportaprotocoloipv6",
-    "naosuportaooprotocolipv6",    
+    "naosuportaoprotocoloipv6",
     "ipv6naoaplica",
     
 )
@@ -2514,8 +2514,17 @@ class AnalisadorRequerimentos:
 
                 dados_extraidos = doc.get("dados_extraidos", {})
                 palavras_com_normas = dados_extraidos.get("palavras_encontradas_com_normas", {})
+
+                # Uma declaração explícita de não suporte no CCT torna o Ato 7971 não aplicável.
+                ipv6_nao_aplicavel_no_cct = (
+                    doc.get("tipo") == TIPO_CCT
+                    and dados_extraidos.get("ipv6_exige_declaracao") is False
+                )
                 
                 for palavra, info in palavras_com_normas.items():
+                    if ipv6_nao_aplicavel_no_cct and palavra.casefold() == "ipv6":
+                        continue
+
                     contador = info.get("contador", 0)
                     normas = info.get("normas", [])
                     efeito = str(info.get("efeito", "aplica")).lower()

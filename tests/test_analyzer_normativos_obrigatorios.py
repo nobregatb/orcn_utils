@@ -32,6 +32,12 @@ class NormativosObrigatoriosNaoCitadosRactTest(unittest.TestCase):
                 "descricao": "Requisitos SAR",
                 "status": "vigente",
             },
+            {
+                "id": "ato7971",
+                "nome": "Ato nº 7971",
+                "descricao": "Requisitos IPv6",
+                "status": "vigente",
+            },
         ]
 
     def test_compara_somente_com_ract_e_ignora_normas_nao_vigentes(self):
@@ -106,6 +112,65 @@ class NormativosObrigatoriosNaoCitadosRactTest(unittest.TestCase):
         )
 
         self.assertEqual(normas, [])
+
+    def test_ipv6_nao_aplicavel_no_cct_nao_gera_exigencia_transversal(self):
+        self.analisador.requisitos = []
+        self.analisador.equipamentos = []
+        req_dados = {
+            "documentos_analisados": [
+                {
+                    "tipo": "cct",
+                    "dados_extraidos": {
+                        "ipv6_exige_declaracao": False,
+                        "palavras_encontradas_com_normas": {
+                            "ipv6": {
+                                "contador": 1,
+                                "normas": ["ato7971"],
+                                "efeito": "aplica",
+                            },
+                        },
+                    },
+                },
+            ],
+        }
+
+        normas = self.analisador._coletar_normas_obrigatorias_nao_citadas_ract(
+            req_dados,
+            {"RACT": set()},
+        )
+
+        self.assertEqual(normas, [])
+
+    def test_ipv6_sem_excecao_no_cct_gera_exigencia_transversal(self):
+        self.analisador.requisitos = []
+        self.analisador.equipamentos = []
+        req_dados = {
+            "documentos_analisados": [
+                {
+                    "tipo": "cct",
+                    "dados_extraidos": {
+                        "ipv6_exige_declaracao": True,
+                        "palavras_encontradas_com_normas": {
+                            "ipv6": {
+                                "contador": 1,
+                                "normas": ["ato7971"],
+                                "efeito": "aplica",
+                            },
+                        },
+                    },
+                },
+            ],
+        }
+
+        normas = self.analisador._coletar_normas_obrigatorias_nao_citadas_ract(
+            req_dados,
+            {"RACT": set()},
+        )
+
+        self.assertEqual(
+            normas,
+            [{"nome": "Ato nº 7971", "descricao": "Requisitos IPv6"}],
+        )
 
     def test_ato_17865_e_excluido_quando_houver_medicao_ou_desobrigacao(self):
         with patch.object(

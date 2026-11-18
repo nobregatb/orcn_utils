@@ -608,15 +608,35 @@
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
-    "faixa": [898.5, 960.0],
+    "faixa": [898.5, 901.0],
     "atos_validos": ["resolucao773"],
-    "descricao": "Faixa de 900 MHz - Serviços de Interesse Coletivo Terrestres (FDD)[cite: 2]"
+    "descricao": "Faixa de 900 MHz - Bloco 1 (par 898,5-901 / 943,5-946 MHz, FDD)"
   },
   {
     "faixa": [902.0, 907.5],
     "atos_validos": ["ato14448"],
     "potencia_conduzida_max_dbm": 30.0,
     "descricao": "Espalhamento Espectral / ISM 902-907.5 MHz"
+  },
+  {
+    "faixa": [905.0, 907.5],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 900 MHz - Bloco 2 (par 905-907,5 / 950-952,5 MHz, FDD)"
+  },
+  {
+    "faixa": [907.5, 910.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 900 MHz - Bloco 3 (par 907,5-910 / 952,5-955 MHz, FDD)"
+  },
+  {
+    "faixa": [910.0, 912.5],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 900 MHz - Bloco 4 (par 910-912,5 / 955-957,5 MHz, FDD)"
+  },
+  {
+    "faixa": [912.5, 915.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 900 MHz - Bloco 5 (par 912,5-915 / 957,5-960 MHz, FDD)"
   },
   {
     "faixa": [915.0, 928.0],
@@ -661,10 +681,35 @@
     "descricao": "Canalização do Serviço Limitado Privado (Ato 915)"
   },
   {
+    "faixa": [943.5, 946.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 900 MHz - Bloco 1 (par 898,5-901 / 943,5-946 MHz, FDD)"
+  },
+  {
     "faixa": [944.0, 948.0],
     "atos_validos": ["ato14448"],
     "potencia_conduzida_max_dbm": 23.98,
     "descricao": "Sistemas de Transmissão de Áudio, Vídeo ou Outras Aplicações 944-948 MHz (250 mW) - Item 20.1 do Ato 14.448"
+  },
+  {
+    "faixa": [950.0, 952.5],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 900 MHz - Bloco 2 (par 905-907,5 / 950-952,5 MHz, FDD)"
+  },
+  {
+    "faixa": [952.5, 955.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 900 MHz - Bloco 3 (par 907,5-910 / 952,5-955 MHz, FDD)"
+  },
+  {
+    "faixa": [955.0, 957.5],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 900 MHz - Bloco 4 (par 910-912,5 / 955-957,5 MHz, FDD)"
+  },
+  {
+    "faixa": [957.5, 960.0],
+    "atos_validos": ["resolucao773"],
+    "descricao": "Faixa de 900 MHz - Bloco 5 (par 912,5-915 / 957,5-960 MHz, FDD)"
   },
   {
     "faixa": [960,100000000],

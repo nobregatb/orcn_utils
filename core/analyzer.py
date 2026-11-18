@@ -29,7 +29,12 @@ from core.const import (
     TIPOS_DOCUMENTOS, MIN_FILE_SIZE, MIN_CARACTERES_PAGINA_TEXTO, CERTIFICA_CABECALHO_MODELOS,
     CERTIFICA_CABECALHO_FREQUENCIAS
 )
-from core.regras_uso_faixa import HomologacaoProduto, parse_valor_numerico
+from core.regras_uso_faixa import (
+    HomologacaoProduto,
+    fmt_num,
+    parse_frequencias_mhz,
+    parse_valor_numerico,
+)
 from core.normas_status import criar_documento_normas, extrair_normas_e_data_verificacao
 # Constantes para tipos de documento (chaves da estrutura TIPOS_DOCUMENTOS)
 TIPO_CCT = 'cct'
@@ -1920,7 +1925,12 @@ class AnalisadorRequerimentos:
         if not nao_conformes:
             return "\\textcolor{blue}{OK}\n"
         latex = "\n\\begin{itemize}\n"
+        itens_emitidos = set()
         for validacao in nao_conformes:
+            chave = (validacao["faixa"], validacao["mensagem"])
+            if chave in itens_emitidos:
+                continue
+            itens_emitidos.add(chave)
             faixa = escapar_latex(validacao["faixa"])
             mensagem = escapar_latex(validacao["mensagem"])
             latex += f"    \\item {faixa}: \\textcolor{{red}}{{Não conforme}} -- {mensagem}\n"
@@ -1968,6 +1978,23 @@ class AnalisadorRequerimentos:
                     item["msg"].removeprefix("Value error, ")
                     for item in erro.errors()
                 ]
+                if any("VIOLAÇÃO DE ESCOPO:" in mensagem for mensagem in mensagens):
+                    valores_frequencia = parse_frequencias_mhz(str(faixa))
+                    faixa_formatada = "-".join(
+                        fmt_num(valor) for valor in valores_frequencia
+                    )
+                    mensagens = [
+                        (
+                            "Verificar compatibilidade da faixa de frequência "
+                            f"({faixa_formatada} MHz) incluída no CCT/RACT e os "
+                            "normativos de canalização e condições de uso de "
+                            "espectro informados no processo de certificação. "
+                            f"(frequência: {fmt_num(valores_frequencia[0])} MHz)"
+                        )
+                        if "VIOLAÇÃO DE ESCOPO:" in mensagem
+                        else mensagem
+                        for mensagem in mensagens
+                    ]
                 resultado.append({
                     "faixa": faixa_exibicao,
                     "valida": "não",
@@ -3218,9 +3245,26 @@ class AnalisadorRequerimentos:
             if caracteristicas_nao_conformes:
                 secao_latex += "    \\item Preencher ESPECIFICAÇÕES conforme CCT - há divergência(s).\n"
                 secao_latex += "    \\begin{itemize}\n"
+                caracteristicas_emitidas = set()
                 for validacao in caracteristicas_nao_conformes:
-                    faixa = escapar_latex(validacao["faixa"])
-                    mensagem = escapar_latex(validacao["mensagem"])
+                    faixa_original = validacao["faixa"]
+                    mensagem_original = validacao["mensagem"]
+                    if mensagem_original.startswith(
+                        "Verificar compatibilidade da faixa de frequência "
+                    ):
+                        produto = re.sub(r"\s+\([^()]*\)$", "", faixa_original)
+                        chave = (produto, mensagem_original)
+                        if chave in caracteristicas_emitidas:
+                            continue
+                        caracteristicas_emitidas.add(chave)
+                        secao_latex += (
+                            f"        \\item {escapar_latex(produto)} -- "
+                            f"{escapar_latex(mensagem_original)}\n"
+                        )
+                        continue
+
+                    faixa = escapar_latex(faixa_original)
+                    mensagem = escapar_latex(mensagem_original)
                     secao_latex += (
                         f"        \\item {faixa}: "
                         f"\\textcolor{{red}}{{Não conforme}} -- {mensagem}\n"

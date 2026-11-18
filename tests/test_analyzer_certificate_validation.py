@@ -222,5 +222,61 @@ class ValidarCamposCertificadoTest(unittest.TestCase):
         self.assertNotIn('"Nome" do Laboratório', secao)
 
 
+class ValidarExigenciaEscopoFrequenciasTest(unittest.TestCase):
+    def test_substitui_violacao_de_escopo_e_consolida_duplicatas(self):
+        analisador = AnalisadorRequerimentos.__new__(AnalisadorRequerimentos)
+        registro = {"Faixa de Frequências Tx (MHz)": "898,0;901,0"}
+        validacoes = analisador._validar_caracteristicas_tecnicas_json(
+            {
+                "caracteristicas_tecnicas": {
+                    "produtos": [
+                        {
+                            "nome": "Estação Terminal de Acesso",
+                            "caracteristicas": [registro, registro.copy()],
+                        },
+                    ],
+                },
+            },
+            {
+                "ato16539",
+                "ato77",
+                "ato3151",
+                "ato1120",
+                "ato17087",
+                "resolucao773",
+                "ato7971",
+            },
+        )
+
+        texto = AnalisadorRequerimentos._formatar_validacao_frequencias_latex(
+            validacoes
+        )
+        exigencia = (
+            "Verificar compatibilidade da faixa de frequência (898-901 MHz) "
+            "incluída no CCT/RACT e os normativos de canalização e condições "
+            "de uso de espectro informados no processo de certificação. "
+            "(frequência: 898 MHz)"
+        )
+        secao = AnalisadorRequerimentos._construir_secao_exigencias(
+            dados_requerimento={},
+            cct_contem_ipv6=False,
+            cct_contem_produto_nao_acabado=False,
+            cct_contem_palavra_vinculado=False,
+            caracteristicas_nao_conformes=validacoes,
+            cct_desobriga_sar=True,
+        )
+
+        self.assertEqual(len(validacoes), 2)
+        self.assertEqual(texto.count(exigencia), 1)
+        self.assertEqual(secao.count(exigencia), 1)
+        self.assertIn(
+            f"Estação Terminal de Acesso -- {exigencia}",
+            secao,
+        )
+        self.assertNotIn("(898,0;901,0)", secao)
+        self.assertNotIn("Não conforme", secao)
+        self.assertNotIn("VIOLAÇÃO DE ESCOPO", secao)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -4078,21 +4078,21 @@ A seguir são apresentados os requisitos legais e normas utilizados como referê
                 "pdflatex", 
                 "-output-directory", str(self.pasta_resultados.resolve()),
                 caminho_latex_absoluto
-            ], capture_output=True, text=True, cwd=str(self.pasta_resultados.resolve()))
+            ], capture_output=True, text=True, encoding='utf-8', errors='replace', cwd=str(self.pasta_resultados.resolve()))
             
             if resultado.returncode == 0:
                 resultado = subprocess.run([
                     "pdflatex", 
                     "-output-directory", str(self.pasta_resultados.resolve()),
                     caminho_latex_absoluto
-                ], capture_output=True, text=True, cwd=str(self.pasta_resultados.resolve()))
+                ], capture_output=True, text=True, encoding='utf-8', errors='replace', cwd=str(self.pasta_resultados.resolve()))
 
                 if resultado.returncode == 0:
                     resultado = subprocess.run([
                         "pdflatex", 
                         "-output-directory", str(self.pasta_resultados.resolve()),
                         caminho_latex_absoluto
-                    ], capture_output=True, text=True, cwd=str(self.pasta_resultados.resolve()))
+                    ], capture_output=True, text=True, encoding='utf-8', errors='replace', cwd=str(self.pasta_resultados.resolve()))
         
                     if resultado.returncode == 0:
                         caminho_pdf = caminho_latex_absoluto.replace(EXT_TEX, EXT_PDF)

@@ -77,7 +77,7 @@ def _comparar_datas_flexivel(data_citacao: str, data_normativo: str, aceitar_var
     Args:
         data_citacao: Data extraída da citação (ex: "04 de dezembro de 2017" ou "04/12/2017" ou "2017")
         data_normativo: Data extraída do normas.json (ex: "04 de dezembro de 2017")
-        aceitar_variacoes: Se True, aceita variações como "04" vs "4"
+        aceitar_variacoes: Se True, aceita variações como "04" vs "4" e "fevereiro 2017" vs "fevereiro de 2017"
         
     Returns:
         True se as datas correspondem, False caso contrário
@@ -97,6 +97,14 @@ def _comparar_datas_flexivel(data_citacao: str, data_normativo: str, aceitar_var
         normativo_sem_zero = re.sub(r'0(\d)', r'\1', normativo_norm)
         
         if citacao_sem_zero == normativo_sem_zero:
+            return True
+        
+        # Remover "de" antes de anos para aceitar "fevereiro 2018" e "fevereiro de 2018"
+        # Exemplo: "19defevereiro2018" vs "19defevereirode2018"
+        citacao_sem_de = re.sub(r'de(\d{4})', r'\1', citacao_sem_zero)
+        normativo_sem_de = re.sub(r'de(\d{4})', r'\1', normativo_sem_zero)
+        
+        if citacao_sem_de == normativo_sem_de:
             return True
         
         # Também comparar apenas o ano se a citação tiver apenas o ano
@@ -165,6 +173,8 @@ def _verificar_data_apos_normativo(texto: str, posicao_normativo: int, numero_no
     # , de 2017
     # , de 04 de dezembro de 2017
     # , de 04/12/2017
+    # , de 04 de dezembro 2017  (sem "de" antes do ano)
+    # , de 04/12/2017
     
     texto_apos = texto[posicao_fim_normativo:posicao_fim_normativo + 300]
     
@@ -174,9 +184,11 @@ def _verificar_data_apos_normativo(texto: str, posicao_normativo: int, numero_no
     # , de 2021
     # de janeiro de 2022
     # , de 04 de dezembro de 2017
+    # , de 04 de dezembro 2017  (sem "de" antes do ano)
     # , de 04/12/2017
     # / 2017
-    padrao_data = r'^[\s,]*(?:de\s+)?(?:\d{1,2}\s+de\s+)?\w+\s+de\s+\d{4}|^[\s,]*(?:de|/)?\s*\d{4}'
+    # Tornando o "de" antes do ano OPCIONAL
+    padrao_data = r'^[\s,]*(?:de\s+)?(?:\d{1,2}\s+de\s+)?\w+\s+(?:de\s+)?\d{4}|^[\s,]*(?:de|/)?\s*\d{4}'
     
     if re.search(padrao_data, texto_apos, re.IGNORECASE):
         return True

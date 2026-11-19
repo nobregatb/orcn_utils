@@ -11,7 +11,7 @@ from threading import Thread
 from urllib.request import Request, urlopen
 
 from core.const import JSON_FILES
-from core.log_print import log_erro, log_info
+from core.log_print import log_erro
 
 
 CAMPO_ULTIMA_VERIFICACAO = "ultima_verificacao_vigencia"
@@ -141,10 +141,8 @@ def iniciar_verificacao_semanal():
 
     elegiveis = _normas_elegiveis(normas)
     if not elegiveis:
-        log_info("Verificação semanal de vigência dispensada: não há normas pendentes.")
         return None
     if _ja_verificadas_nesta_semana(data_verificacao):
-        log_info("Verificação semanal de vigência já realizada nesta semana; nenhuma consulta necessária.")
         return None
 
     resultado = {"consultas": {}, "falhas": {}}
@@ -165,11 +163,6 @@ def iniciar_verificacao_semanal():
                 try:
                     revogada = tarefa.result()
                     resultado["consultas"][norma_id] = revogada
-                    situacao = "marcador de revogação encontrado" if revogada else "nenhum marcador de revogação encontrado"
-                    log_info(
-                        f"Verificação de vigência [{concluidas}/{total}] "
-                        f"{norma_id} - {nome}: {situacao}."
-                    )
                 except Exception as erro:
                     resultado["falhas"][norma_id] = str(erro)
                     log_erro(
@@ -177,7 +170,6 @@ def iniciar_verificacao_semanal():
                         f"{norma_id} - {nome}: falha inconclusiva: {erro}"
                     )
 
-    log_info(f"Verificação semanal de vigência iniciada: 0/{len(elegiveis)} normas verificadas.")
     thread = Thread(target=consultar_todas, name="verificacao-semanal-normas", daemon=True)
     thread.start()
     return thread, resultado
@@ -199,12 +191,10 @@ def finalizar_verificacao_semanal(execucao):
             dados = json.load(arquivo)
         normas, data_verificacao = extrair_normas_e_data_verificacao(dados)
 
-        atualizadas = []
         for norma in normas:
             norma_id = norma.get("id")
             if norma_id in resultado["consultas"] and resultado["consultas"][norma_id]:
                 norma["status"] = "revogado" if _eh_ato(norma) else "revogada"
-                atualizadas.append(norma_id)
 
         if not falhas:
             data_verificacao = date.today().isoformat()
@@ -214,11 +204,5 @@ def finalizar_verificacao_semanal(execucao):
             json.dump(criar_documento_normas(normas, data_verificacao), arquivo, indent=2, ensure_ascii=False)
         caminho_temporario.replace(caminho)
 
-        if falhas:
-            log_info("Verificação inconclusiva; status e data global preservados para nova tentativa.")
-        else:
-            log_info(f"Verificação semanal de vigência concluída em {date.today().isoformat()}.")
-        for norma_id in atualizadas:
-            log_info(f"Norma identificada como revogada: {norma_id}.")
     except Exception as erro:
         log_erro(f"Não foi possível salvar os resultados da verificação de normas: {erro}")

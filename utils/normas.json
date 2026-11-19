@@ -706,6 +706,14 @@
       "status": "vigente"
     },
     {
+      "id": "ato942",
+      "nome": "Norma (ato942) citada no requerimento 26.09877",
+      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.09877.",
+      "url": "a definir",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
       "id": "ato943",
       "nome": "Ato nº 943, de 8 de Fevereiro de 2018",
       "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores monocanais analógicos FM e PM operando em faixas de frequências abaixo de 1 GHz",
@@ -891,6 +899,14 @@
       "status": "revogada"
     },
     {
+      "id": "resolucao498",
+      "nome": "Norma (resolucao498) citada no requerimento 26.09877",
+      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.09877.",
+      "url": "a definir",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
       "id": "resolucao504",
       "nome": "Resolução nº 504, de 14 de maio de 2008",
       "descricao": "Regulamento sobre Canalização e Condições de Uso da Faixa de Radiofreqüências de 6.430 MHz a 7.110 MHz",
@@ -963,6 +979,22 @@
       "status": "revogada"
     },
     {
+      "id": "resolucao583",
+      "nome": "Norma (resolucao583) citada no requerimento 26.09877",
+      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.09877.",
+      "url": "a definir",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
+      "id": "resolucao584",
+      "nome": "Norma (resolucao584) citada no requerimento 26.09877",
+      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.09877.",
+      "url": "a definir",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
       "id": "resolucao625",
       "nome": "Resolução nº 625, de 11 de novembro de 20131",
       "descricao": "Atribuição, a Destinação e o Regulamento sobre Condições de Uso de Radiofrequências na Faixa de 698 MHz a 806 MHz",
@@ -1019,6 +1051,14 @@
       "status": "vigente"
     },
     {
+      "id": "resolucao688",
+      "nome": "Norma (resolucao688) citada no requerimento 26.09877",
+      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.09877.",
+      "url": "a definir",
+      "entidade": "Anatel",
+      "status": "revogado"
+    },
+    {
       "id": "resolucao700",
       "nome": "Resolução nº 700, de 28 de setembro de 2018",
       "descricao": "Regulamento sobre a Avaliação da Exposição Humana a Campos Elétricos, Magnéticos e Eletromagnéticos Associados à Operação de Estações Transmissoras de Radiocomunicação",
@@ -1057,6 +1097,14 @@
       "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2020/1380-resolucao-718",
       "entidade": "Anatel",
       "status": "acessorio"
+    },
+    {
+      "id": "resolucao721",
+      "nome": "Norma (resolucao721) citada no requerimento 26.09877",
+      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.09877.",
+      "url": "a definir",
+      "entidade": "Anatel",
+      "status": "revogado"
     },
     {
       "id": "resolucao726",

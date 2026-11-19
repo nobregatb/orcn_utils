@@ -52,7 +52,7 @@ def test_normas_com_url_sei_nao_sao_elegiveis_para_verificacao():
     assert [norma["id"] for norma in _normas_elegiveis(normas)] == ["ato_site"]
 
 
-def test_verificacao_registra_progresso_e_resultado_por_normativo(tmp_path, monkeypatch, capsys):
+def test_verificacao_bem_sucedida_nao_imprime_logs_informativos(tmp_path, monkeypatch, capsys):
     caminho_normas = tmp_path / "normas.json"
     caminho_normas.write_text(json.dumps([
         {"id": "ato123", "nome": "Ato nº 123", "url": "https://example.test/ato", "status": "vigente"},
@@ -69,11 +69,34 @@ def test_verificacao_registra_progresso_e_resultado_por_normativo(tmp_path, monk
     normas_status.finalizar_verificacao_semanal(execucao)
     saida = capsys.readouterr().out
 
-    assert "Verificação semanal de vigência iniciada: 0/2" in saida
-    assert "Verificação de vigência [1/2]" in saida
-    assert "Verificação de vigência [2/2]" in saida
-    assert "ato123 - Ato nº 123: marcador de revogação encontrado." in saida
-    assert "resolucao456 - Resolução nº 456: nenhum marcador de revogação encontrado." in saida
+    assert saida == ""
+    documento = json.loads(caminho_normas.read_text(encoding="utf-8"))
+    assert documento["normas"][0]["status"] == "revogado"
+
+
+def test_verificacao_imprime_apenas_logs_de_erro(tmp_path, monkeypatch, capsys):
+    caminho_normas = tmp_path / "normas.json"
+    caminho_normas.write_text(json.dumps([
+        {"id": "ato123", "nome": "Ato nº 123", "url": "https://example.test/ato", "status": "vigente"},
+        {"id": "resolucao456", "nome": "Resolução nº 456", "url": "https://example.test/resolucao", "status": "vigente"},
+    ]), encoding="utf-8")
+    monkeypatch.setitem(normas_status.JSON_FILES, "normas", str(caminho_normas))
+
+    def consultar(norma):
+        if norma["id"] == "resolucao456":
+            raise TimeoutError("timeout")
+        return True
+
+    monkeypatch.setattr(normas_status, "_consultar_norma", consultar)
+
+    execucao = normas_status.iniciar_verificacao_semanal()
+    normas_status.finalizar_verificacao_semanal(execucao)
+    linhas = capsys.readouterr().out.splitlines()
+
+    assert linhas
+    assert all(linha.startswith("[Erro]") for linha in linhas)
+    assert any("resolucao456" in linha and "timeout" in linha for linha in linhas)
+    assert not any("ato123" in linha for linha in linhas)
 
 
 def test_salva_consultas_bem_sucedidas_mesmo_quando_outra_norma_falha(tmp_path, monkeypatch):

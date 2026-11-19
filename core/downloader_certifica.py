@@ -26,6 +26,7 @@ from core.utils import (
     obter_requerimentos_pendentes,
     marcar_requerimento_concluido, marcar_requerimento_com_erro,
 )
+from core.homologacao_reaproveitamento import processar_reaproveitamento_homologacao_apos_download
 
 
 def pagina_contem_texto(page, texto):
@@ -588,6 +589,12 @@ def processar_requerimento_certifica(page, requerimento, somente_anexos=False):
         gravar_json_requerimento_certifica(requerimento, dados, pasta)
         falhas_campos = ajustar_campos_certifica(page, dados)
     baixados, falhas = baixar_anexos_certifica(page, pasta)
+    
+    # Processa reaproveitamento de homologação após download dos anexos
+    if not somente_anexos:
+        caminho_json = os.path.join(pasta, f"{os.path.basename(pasta)[1:]}.json")
+        processar_reaproveitamento_homologacao_apos_download(pasta, caminho_json, page)
+    
     falha_resumo = False
     if not somente_anexos:
         try:

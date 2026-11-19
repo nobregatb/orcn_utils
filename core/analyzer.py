@@ -36,6 +36,7 @@ from core.regras_uso_faixa import (
     parse_valor_numerico,
 )
 from core.normas_status import criar_documento_normas, extrair_normas_e_data_verificacao
+from core.validador_normativos import validar_citacoes_normativos, consolidar_exigencias_normativos, validar_modulos_rf_atrelados
 # Constantes para tipos de documento (chaves da estrutura TIPOS_DOCUMENTOS)
 TIPO_CCT = 'cct'
 TIPO_RACT = 'ract'
@@ -1122,6 +1123,17 @@ class AnalisadorRequerimentos:
                 "campos_cadastrais_nao_encontrados": campos_cadastrais_nao_encontrados
             }
             
+            # Validar citações de normativos no CCT
+            exigencias_validacao_normativos_cct, detalhes_cct = validar_citacoes_normativos(conteudo)
+            if exigencias_validacao_normativos_cct:
+                resultado["exigencias_validacao_normativos_cct"] = exigencias_validacao_normativos_cct
+                resultado["detalhes_validacao_normativos_cct"] = detalhes_cct
+            
+            # Validar presença de módulos RF atrelados no CCT
+            exigencia_modulos_rf_atrelados = validar_modulos_rf_atrelados(conteudo)
+            if exigencia_modulos_rf_atrelados:
+                resultado["exigencia_modulos_rf_atrelados_cct"] = exigencia_modulos_rf_atrelados
+            
             # Observações detalhadas
             resultado["observacoes"].extend([
                 f"OCD identificado: {nome_ocd}",
@@ -1317,6 +1329,9 @@ class AnalisadorRequerimentos:
                         normas_verificadas = self._extract_normas_from_ract(texto_completo)
                         resultado["normas_verificadas"] = normas_verificadas
                         
+                        # Validar citações de normativos no RACT
+                        exigencias_validacao_normativos_ract, detalhes_ract = validar_citacoes_normativos(texto_completo)
+                        
                         # CORREÇÃO: Adicionar também ao dados_extraidos para consistência
                         resultado["dados_extraidos"] = {
                             "normas_verificadas": normas_verificadas,
@@ -1326,6 +1341,11 @@ class AnalisadorRequerimentos:
                             "palavras_encontradas_com_normas": palavras_encontradas_com_normas,
                             "palavras_evidencias": palavras_evidencias
                         }
+                        
+                        # Adicionar exigências de validação de normativos se houver
+                        if exigencias_validacao_normativos_ract:
+                            resultado["exigencias_validacao_normativos_ract"] = exigencias_validacao_normativos_ract
+                            resultado["detalhes_validacao_normativos_ract"] = detalhes_ract
                         
                         if normas_verificadas:
                             conformidades.append(f"{len(normas_verificadas)} norma(s) verificada(s) encontrada(s)")
@@ -3041,12 +3061,15 @@ class AnalisadorRequerimentos:
         campos_eirp_sem_medicao: Optional[List[str]] = None,
         campos_cadastrais_nao_encontrados: Optional[Dict[str, List[str]]] = None,
         normas_obrigatorias_nao_citadas_ract: Optional[List[Dict[str, str]]] = None,
+        exigencias_validacao_normativos: Optional[List[str]] = None,
     ) -> str:
         """Monta exigências do requerimento, incluindo normas vigentes não citadas no RACT."""
         if modelos_nao_encontrados is None:
             modelos_nao_encontrados = []
         if exigencias_assinatura is None:
             exigencias_assinatura = []
+        if exigencias_validacao_normativos is None:
+            exigencias_validacao_normativos = []
         if normas_revogadas is None:
             normas_revogadas = []
         if campos_certificado_nao_encontrados is None:
@@ -3125,6 +3148,7 @@ class AnalisadorRequerimentos:
             or campos_eirp_sem_medicao
             or campos_cadastrais_nao_encontrados
             or normas_obrigatorias_nao_citadas_ract
+            or exigencias_validacao_normativos
         )
         cor_exigencia = "red" if tem_exigencias else "blue"
         secao_latex = (
@@ -3227,6 +3251,8 @@ class AnalisadorRequerimentos:
                     f"{quantidade} no Certifica não consta(m) no CCT - "
                     "favor verificar/corrigir, nos termos do item 6.6.8.1. do Ato nº 4083, de 31 de julho de 2020.\n"
                 )
+            for exigencia_normativo in exigencias_validacao_normativos:
+                secao_latex += f"    \\item {escapar_latex(exigencia_normativo)}\n"
             for nome_norma in normas_revogadas:
                 secao_latex += f"    \\item {escapar_latex(nome_norma)}\n"
             if normas_obrigatorias_nao_citadas_ract:
@@ -3881,6 +3907,47 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                     "\\end{itemize}\n\n"
                 )
 
+            # Coletar exigências de validação de normativos de RACT e CCT
+            exigencias_validacao_normativos = []
+            detalhes_consolidados = []
+            
+            # Exigências de RACT
+            documento_ract = next(
+                (doc for doc in documentos if doc.get("tipo") == TIPO_RACT),
+                None
+            )
+            if documento_ract:
+                exigencias_ract = documento_ract.get("exigencias_validacao_normativos_ract", [])
+                detalhes_ract = documento_ract.get("detalhes_validacao_normativos_ract", [])
+                exigencias_validacao_normativos.extend(exigencias_ract)
+                detalhes_consolidados.extend(detalhes_ract)
+            
+            # Exigências de CCT
+            if documento_cct:
+                exigencias_cct = documento_cct.get("exigencias_validacao_normativos_cct", [])
+                detalhes_cct = documento_cct.get("detalhes_validacao_normativos_cct", [])
+                exigencias_validacao_normativos.extend(exigencias_cct)
+                detalhes_consolidados.extend(detalhes_cct)
+            
+            # Consolidar exigências em uma única, se houver múltiplas
+            exigencia_normativos_consolidada = None
+            if exigencias_validacao_normativos:
+                # Passar detalhes consolidados para uma consolidação mais precisa
+                exigencia_normativos_consolidada = consolidar_exigencias_normativos(
+                    exigencias_validacao_normativos, 
+                    detalhes_consolidados if detalhes_consolidados else None
+                )
+                if exigencia_normativos_consolidada:
+                    exigencias_validacao_normativos = [exigencia_normativos_consolidada]
+            
+            # Coletar exigência de módulos RF atrelados (se houver)
+            exigencia_modulos_rf_atrelados = None
+            if documento_cct:
+                exigencia_modulos_rf_atrelados = documento_cct.get("exigencia_modulos_rf_atrelados_cct")
+                if exigencia_modulos_rf_atrelados:
+                    # Adicionar à lista de exigências de validação normativos para consistência
+                    exigencias_validacao_normativos.append(exigencia_modulos_rf_atrelados)
+
             dados_cct = documento_cct.get("dados_extraidos", {}) if documento_cct else {}
             campos_certificado_nao_encontrados = dados_cct.get(
                 "campos_certificado_nao_encontrados", []
@@ -3957,7 +4024,8 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                         req.get("dados_requerimento")
                     )
                     if cct_contem_eirp else []
-                )
+                ),
+                exigencias_validacao_normativos=exigencias_validacao_normativos
             )
 
             tabela_normativos = self._gerar_tabela_normativos_latex(

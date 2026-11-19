@@ -15,7 +15,8 @@ from core.log_print import log_info, log_erro
 
 
 # Padrões para identificação de normativo
-PADRAO_NORMATIVO = r'(Ato|RESOLUÇÃO|Resolução)\s+(?:nº|N°|n\.|\(nº\))?\s*(\d+)'
+# Aceita: "Ato nº", "Ato N°", "Ato n.", "Ato n " (sem ponto), "Ato (nº)"
+PADRAO_NORMATIVO = r'(Ato|RESOLUÇÃO|Resolução)\s+(?:nº|N°|n\.?|\(nº\))?\s*(\d+)'
 
 # Padrões para data após normativo (com lookahead para validar que há data)
 PADRAO_NORMATIVO_COM_DATA = r'(Ato|RESOLUÇÃO|Resolução)\s+(?:nº|N°|n\.|\(nº\))?\s*(\d+)(?=\s*(?:/|de)\s*\d)'
@@ -175,6 +176,9 @@ def _verificar_data_apos_normativo(texto: str, posicao_normativo: int, numero_no
     # , de 04/12/2017
     # , de 04 de dezembro 2017  (sem "de" antes do ano)
     # , de 04/12/2017
+    # (19/02/2018)  - Com parênteses
+    # 19/02/2018   - Com espaço
+    # / 2018 ou /2018 (após o número do ato)
     
     texto_apos = texto[posicao_fim_normativo:posicao_fim_normativo + 300]
     
@@ -187,11 +191,15 @@ def _verificar_data_apos_normativo(texto: str, posicao_normativo: int, numero_no
     # , de 04 de dezembro 2017  (sem "de" antes do ano)
     # , de 04/12/2017
     # / 2017
+    # (19/02/2018)
+    # /2018 (formato "nº 1120/2018")
     # Tornando o "de" antes do ano OPCIONAL
-    padrao_data = r'^[\s,]*(?:de\s+)?(?:\d{1,2}\s+de\s+)?\w+\s+(?:de\s+)?\d{4}|^[\s,]*(?:de|/)?\s*\d{4}'
+    # Padrão expandido com alternativas para formatos com barra após número
+    padrao_data = r'^[\s,]*(?:de\s+)?(?:\d{1,2}\s+de\s+)?\w+\s+(?:de\s+)?\d{4}|^[\s,]*(?:de|/)?\s*\d{4}|^[\s(]*\d{1,2}/\d{2}/\d{4}|^\s*/\s*\d{4}|^[/]\d{4}'
     
     if re.search(padrao_data, texto_apos, re.IGNORECASE):
         return True
+    
     
     return False
 
@@ -267,20 +275,25 @@ def validar_citacoes_normativos(texto: str, aceitar_variacoes: bool = True) -> T
     normativos_com_falha = set()
     
     for tipo, numero, texto_completo, posicao in normativos_encontrados:
-        # Se já validamos esse normativo (passou ou falhou), pular
-        if numero in normativos_validados or numero in normativos_com_falha:
+        # Se já validamos que este normativo PASSOU, pular
+        if numero in normativos_validados:
             continue
+        
+        # Se já sabe que falhou, pular (mas continua checando as demais citações em caso de múltiplas)
+        # IMPORTANTE: NÃO pulamos se está em normativos_com_falha, pois pode haver outra citação correta
         
         # Verificar se há data após este normativo
         if _verificar_data_apos_normativo(texto, posicao, numero, texto_completo):
-            # Ter um referência de data é suficiente para aprovar este normativo
+            # Uma única referência de data válida é suficiente para aprovar este normativo
+            # Remove de falhas se estava lá (em caso de múltiplas citações, a primeira pode ter falhado)
             normativos_validados.add(numero)
+            normativos_com_falha.discard(numero)
             continue
         
-        # Se não passou na validação, registrar como falha
+        # Se não passou na validação e ainda não foi validado, registrar como potencial falha
         # MAS APENAS SE O NORMATIVO ESTÁ NO ARQUIVO normas.json
         # Isso evita criar exigências para normativos que não deveriam ser validados
-        if numero in normas_por_numero:
+        if numero in normas_por_numero and numero not in normativos_validados:
             normativos_com_falha.add(numero)
     
     # Construir lista de exigências e detalhes apenas para normativos que FALHARAM

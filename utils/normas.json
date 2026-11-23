@@ -183,7 +183,7 @@
       "id": "ato16417",
       "nome": "Ato nº 16417, de 22 de novembro de 2024",
       "descricao": "Procedimento Operacional contendo diretrizes para auditoria da política de segurança cibernética de fornecedores de produtos e equipamentos de telecomunicações para prestadoras",
-      "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/164-atos-de-certificacao-de-produtos/2024/1992-ato-16417",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2024/1992-ato-16417",
       "entidade": "Anatel",
       "status": "vigente"
     },
@@ -223,7 +223,7 @@
       "id": "ato17207",
       "nome": "Ato nº 17207, de 12 de dezembro de 2023",
       "descricao": "Requisitos técnicos e operacionais para uso do espectro de radiofrequências por estações associadas ao Serviço Limitado Móvel Aeronáutico (SLMA)",
-      "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/161-atos-de-requisitos-tecnicos-de-gestao-do-espectro/2023/1908-ato-17207",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2023/1908-ato-17207",
       "entidade": "Anatel",
       "status": "vigente"
     },
@@ -281,7 +281,7 @@
       "descricao": "Requisitos Técnicos e Procedimentos de Ensaio Aplicáveis à Certificação de Produtos para Telecomunicação de Categoria I, publicada na página da Anatel na Internet, alterando os requisitos para Telefone Móvel Celular e para Estação Terminal de Acesso - ETA",
       "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1225-ato-209",
       "entidade": "Anatel",
-      "status": "vigente"
+      "status": "revogado"
     },
     {
       "id": "ato2091",
@@ -327,7 +327,7 @@
       "id": "ato237",
       "nome": "Ato nº 237, de 07 de janeiro de 2022",
       "descricao": "Procedimentos de Ensaio para Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita, na forma do Anexo a este Ato, para efeitos de avaliação da conformidade técnica junto à Agência Nacional de Telecomunicações",
-      "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/155-atos-de-certificacao-de-produtos/2022/1629-ato-237",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1629-ato-237",
       "entidade": "Anatel",
       "status": "vigente"
     },
@@ -476,7 +476,7 @@
       "id": "ato423",
       "nome": "Ato nº 423, de 12 de janeiro de 2022",
       "descricao": "Alterar os seguintes itens e seus respectivos subitens do Anexo I do Ato nº 14.448",
-      "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/155-atos-de-certificacao-de-produtos/2022/1633-ato-423",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1633-ato-423",
       "entidade": "Anatel",
       "status": "acessorio"
     },
@@ -597,7 +597,7 @@
       "nome": "Ato nº 7971, de 22 de junho de 2023",
       "descricao": "Requisitos Técnicos para avaliação da conformidade do protocolo IPv6 em produtos para telecomunicações",
       "tipo": "Norma Nacional (Cabos)",
-      "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/160-atos-de-certificacao-de-produtos/2023/1878-ato-7971",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2023/1878-ato-7971",
       "entidade": "Anatel",
       "status": "vigente"
     },
@@ -766,7 +766,7 @@
       "id": "ato955",
       "nome": "Ato nº 955, de 08 de fevereiro de 2018",
       "descricao": "Requisitos técnicos de taxa de absorção específica (SAR) para avaliação da conformidade de produtos para telecomunicações",
-      "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article?layout=edit&id=1194",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1194-ato-955",
       "entidade": "Anatel",
       "status": "revogado"
     },
@@ -1156,7 +1156,7 @@
     },
     {
       "id": "resolucao772",
-      "nome": "A Resolução nº 772, citada nesse documento, foi revogada pela Resolução n° 789, de 06 de julho de 2026.",
+      "nome": "A Resolução Anatel nº 772, citada nesse documento, foi revogada pela Resolução n° 789, de 06 de julho de 2026.",
       "descricao": "Revogada pela Resolução n° 789, de 06 de julho de 2026",
       "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2025/2001-resolucao-772",
       "entidade": "Anatel",
@@ -1164,7 +1164,7 @@
     },
     {
       "id": "resolucao773",
-      "nome": "Resolução nº 773, de 16 de janeiro de 2025",
+      "nome": "Resolução Anatel nº 773, de 16 de janeiro de 2025",
       "descricao": "Regulamento sobre Condições de Uso de Faixas de Radiofrequências no Brasil",
       "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2025/2002-resolucao-773",
       "entidade": "Anatel",
@@ -1172,15 +1172,15 @@
     },
     {
       "id": "resolucao775",
-      "nome": "Resolução nº 775, de 28 de abril de 2025",
+      "nome": "Resolução Anatel nº 775, de 28 de abril de 2025",
       "descricao": "Regulamento de Uso Temporário de Radiofrequências",
-      "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/170-resolucoes/2025/2025-resolucao-775",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2025/2025-resolucao-775",
       "entidade": "Anatel",
       "status": "vigente"
     },
     {
       "id": "resolucao777",
-      "nome": "Resolução nº 777, de 28 de abril de 2025",
+      "nome": "Resolução Anatel nº 777, de 28 de abril de 2025",
       "descricao": "Revoga e altera Resoluções expedidas pela Anatel e aprova o Regulamento Geral dos Serviços de Telecomunicações - RGST",
       "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2025/2022-resolucao-777",
       "entidade": "Anatel",
@@ -1188,9 +1188,9 @@
     },
     {
       "id": "resolucao789",
-      "nome": "Resolução nº 789, de 06 de julho de 2026",
+      "nome": "Resolução Anatel nº 789, de 06 de julho de 2026",
       "descricao": "Aprova o Plano de Atribuição, Destinação e Distribuição de Faixas de Frequências no Brasil - PDFF e altera o Regulamento sobre Canalização e Condições de Uso de Radiofrequências para os Serviços de Radiodifusão e seus Ancilares - RCC-SRA",
-      "url": "https://informacoes.anatel.gov.br/legislacao/component/content/article/175-resolucoes/2026/2157-resolucao-789",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2026/2157-resolucao-789",
       "entidade": "Anatel",
       "status": "vigente"
     }

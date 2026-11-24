@@ -1,5 +1,5 @@
 {
-  "ultima_verificacao_vigencia": null,
+  "ultima_verificacao_vigencia": "2026-11-24",
   "normas": [
     {
       "id": "ato10002",
@@ -75,14 +75,6 @@
       "status": "revogado"
     },
     {
-      "id": "ato1223",
-      "nome": "Norma (ato1223) citada no requerimento 26.09271",
-      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.09271.",
-      "url": "a definir",
-      "entidade": "Anatel",
-      "status": "revogado"
-    },
-    {
       "id": "ato1306",
       "nome": "Ato nº 1306, de 26 de fevereiro de 2021",
       "descricao": "Alterar os seguintes itens do Anexo I ao Ato nº 14.448",
@@ -105,14 +97,6 @@
       "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/1867-ato-1326",
       "entidade": "Anatel",
       "status": "vigente"
-    },
-    {
-      "id": "ato1360",
-      "nome": "Norma (ato1360) citada no requerimento 26.08558",
-      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.08558.",
-      "url": "a definir",
-      "entidade": "Anatel",
-      "status": "revogado"
     },
     {
       "id": "ato1379",
@@ -196,28 +180,12 @@
       "status": "vigente"
     },
     {
-      "id": "ato170187",
-      "nome": "Norma (ato170187) citada no requerimento 26.08923",
-      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.08923.",
-      "url": "a definir",
-      "entidade": "Anatel",
-      "status": "revogado"
-    },
-    {
       "id": "ato17087",
       "nome": "Ato nº 17087, de 19 de dezembro de 2022",
       "descricao": "Requisitos Técnicos de Segurança Elétrica",
       "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2022/1823-ato-17087",
       "entidade": "Anatel",
       "status": "vigente"
-    },
-    {
-      "id": "ato170870",
-      "nome": "Norma (ato170870) citada no requerimento 26.08711",
-      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.08711.",
-      "url": "a definir",
-      "entidade": "Anatel",
-      "status": "revogado"
     },
     {
       "id": "ato17207",
@@ -231,7 +199,7 @@
       "id": "ato17394",
       "nome": "Ato nº 17.394, de 5 de julho de 2001",
       "descricao": "Designar a FUNDAÇÃO CPqD – CENTRO DE PESQUISA E DESENVOLVIMENTO EM TELECOMUNICAÇÕES para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade n° 003/RFGCT/RFCE/SRF, as funções de Organismo de Certificação Designado – OCD",
-      "url": "https://sistemas.anatel.gov.br/anexar-api/publico/portal-publicar/documentos?numeroPublicacao=27461",
+      "url": "https://www.anatel.gov.br/Portal/verificaDocumentos/documento.asp?numeroPublicacao=27461&assuntoPublicacao=Ato%20n.%C2%BA%2017394/2001-Anatel&caminhoRel=In%C3%ADcio-Certifica%C3%A7%C3%A3o%20de%20Produtos-Apresenta%C3%A7%C3%A3o&filtro=1&documentoPath=biblioteca/atos/2001/ato_17394_2001.pdf",
       "entidade": "Anatel",
       "status": "vigente"
     },
@@ -258,14 +226,6 @@
       "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-requisitos-tecnicos-de-gestao-do-espectro/2023/1914-ato-17865",
       "entidade": "Anatel",
       "status": "vigente"
-    },
-    {
-      "id": "ato1787",
-      "nome": "Norma (ato1787) citada no requerimento 26.09253",
-      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.09253.",
-      "url": "a definir",
-      "entidade": "Anatel",
-      "status": "revogado"
     },
     {
       "id": "ato19434",
@@ -408,7 +368,7 @@
       "id": "ato3484",
       "nome": "Ato nº 3484, de 31 de maio de 2019",
       "descricao": "Requisitos Técnicos de Ensaio para a Avaliação da Conformidade de Baterias de Lítio Utilizadas em Telefones Celulares e produtos similares (Categoria I)",
-      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1301-ato-3484",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2019/1288-ato-3484",
       "entidade": "Anatel",
       "status": "vigente"
     },
@@ -507,7 +467,7 @@
       "id": "ato4776",
       "nome": "Ato nº 4776, de 01 de setembro de 2020",
       "descricao": "Requisitos Técnicos para a Avaliação da Conformidade de Equipamentos de Radiocomunicação de Radiação Restrita",
-      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1429-ato-3151",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2020/1467-ato-4776",
       "entidade": "Anatel",
       "status": "acessorio"
     },
@@ -521,7 +481,7 @@
     },
     {
       "id": "ato48668",
-      "nome": "ATO nº 48.668, de 22 de desembro de 2004",
+      "nome": "Ato nº 48.668, de 22 de dezembro de 2004",
       "descricao": "Designar a Associação de Certificação de Produto para Telecomunicações, Radiodifusão, Cinema, Vídeo e Áudio-Visual – CTCP – Centro Tecnológico de Certificação e Pesquisa para exercer, em nome da Anatel, nos termos aprovados pelo Regulamento para Certificação e Homologação de Produtos para Telecomunicações e consolidados no Termo de Responsabilidade no 012/RFCEC/RFCE/SRF, as funções de Organismo de Certificação Designado – OCD",
       "url": "https://www.anatel.gov.br/Portal/verificaDocumentos/documento.asp?numeroPublicacao=105961&assuntoPublicacao=Ato%20n.%C2%BA%2048668/2004-Anatel&caminhoRel=In%C3%ADcio-Certifica%C3%A7%C3%A3o%20de%20Produtos-Apresenta%C3%A7%C3%A3o&filtro=1&documentoPath=biblioteca/atos/2005/ato_48668_2005.pdf",
       "entidade": "Anatel",
@@ -571,9 +531,9 @@
       "id": "ato6506",
       "nome": "Ato nº 6506, de 27 de agosto de 2018",
       "descricao": "Requisitos Técnicos para Terminal de Linhas Ópticas (OLT) e Unidade de Rede Óptica (ONU) (Categoria III)",
-      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1231-ato-6506",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1205-ato-6506",
       "entidade": "Anatel",
-      "status": "vigente"
+      "status": "revogado"
     },
     {
       "id": "ato7280",
@@ -616,14 +576,6 @@
       "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1212-ato-8416",
       "entidade": "Anatel",
       "status": "vigente"
-    },
-    {
-      "id": "ato8767",
-      "nome": "Norma (ato8767) citada no requerimento 26.05954",
-      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.05954.",
-      "url": "a definir",
-      "entidade": "Anatel",
-      "status": "revogado"
     },
     {
       "id": "ato8769",
@@ -707,15 +659,15 @@
     },
     {
       "id": "ato942",
-      "nome": "Norma (ato942) citada no requerimento 26.09877",
-      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.09877.",
-      "url": "a definir",
+      "nome": "Ato nº 942, de 08 de fevereiro de 2018",
+      "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e retransmissores para o Sistema Brasileiro de Televisão Digital Terrestre",
+      "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1191-ato-942",
       "entidade": "Anatel",
       "status": "revogado"
     },
     {
       "id": "ato943",
-      "nome": "Ato nº 943, de 8 de Fevereiro de 2018",
+      "nome": "Ato nº 943, de 08 de Fevereiro de 2018",
       "descricao": "Requisitos técnicos para avaliação da conformidade de transmissores e transceptores monocanais analógicos FM e PM operando em faixas de frequências abaixo de 1 GHz",
       "url": "https://informacoes.anatel.gov.br/legislacao/atos-de-certificacao-de-produtos/2018/1170-ato-943",
       "entidade": "Anatel",
@@ -787,14 +739,6 @@
       "status": "acessorio"
     },
     {
-      "id": "resolucao1",
-      "nome": "Norma (resolucao1) citada no requerimento 26.05981",
-      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.05981.",
-      "url": "a definir",
-      "entidade": "Anatel",
-      "status": "revogado"
-    },
-    {
       "id": "resolucao105",
       "nome": "Resolução nº 105, de 26 de fevereiro de 1999",
       "descricao": "Regulamento sobre Canalização e Condições de Uso da Faixa Inferior de 6 GHz",
@@ -809,14 +753,6 @@
       "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/1999/415-resolucao-129",
       "entidade": "Anatel",
       "status": "revogada"
-    },
-    {
-      "id": "resolucao1630",
-      "nome": "Norma (resolucao1630) citada no requerimento 26.08421",
-      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.08421.",
-      "url": "a definir",
-      "entidade": "Anatel",
-      "status": "revogado"
     },
     {
       "id": "resolucao242",
@@ -900,11 +836,11 @@
     },
     {
       "id": "resolucao498",
-      "nome": "Norma (resolucao498) citada no requerimento 26.09877",
-      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.09877.",
-      "url": "a definir",
+      "nome": "Revogada pela Resolução nº 686/2017",
+      "descricao": "Norma para Certificação e Homologação de Transmissores e Retransmissores para o Sistema Brasileiro de Televisão Digital Terrestre",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2008/180-resolucao-498",
       "entidade": "Anatel",
-      "status": "revogado"
+      "status": "revogada"
     },
     {
       "id": "resolucao504",
@@ -980,19 +916,19 @@
     },
     {
       "id": "resolucao583",
-      "nome": "Norma (resolucao583) citada no requerimento 26.09877",
-      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.09877.",
-      "url": "a definir",
+      "nome": "Revogada pela Resolução nº 721/2020",
+      "descricao": "Regulamento Técnico para Prestação do Serviço de Radiodifusão de Sons e Imagens e de Retransmissão de Televisão",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2012/146-resolucao-583",
       "entidade": "Anatel",
-      "status": "revogado"
+      "status": "revogada"
     },
     {
       "id": "resolucao584",
-      "nome": "Norma (resolucao584) citada no requerimento 26.09877",
-      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.09877.",
-      "url": "a definir",
+      "nome": "Revogada pela Resolução nº 688/2017",
+      "descricao": "Alteração do Regulamento sobre Canalização e Condições de Uso de Radiofrequências para os Serviços Auxiliar de Radiodifusão e Correlatos – SARC, de Repetição de Televisão – RpTV e de Televisão em Circuito Fechado com Utilização de Radioenlace – CFTV, e dá outras providências",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2012/145-resolucao-584",
       "entidade": "Anatel",
-      "status": "revogado"
+      "status": "revogada"
     },
     {
       "id": "resolucao625",
@@ -1052,11 +988,11 @@
     },
     {
       "id": "resolucao688",
-      "nome": "Norma (resolucao688) citada no requerimento 26.09877",
-      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.09877.",
-      "url": "a definir",
+      "nome": "Revogada pela Resolução nº 759, de 19 de janeiro de 2023",
+      "descricao": "Regulamento sobre Destinação e Condições de Uso de Radiofrequências para os Serviços Auxiliar de Radiodifusão e Correlatos – SARC, de Repetição de Televisão – RpTV, de Televisão em Circuito Fechado com Utilização de Radioenlace – CFTV, Serviço Limitado Móvel Aeronáutico – SLMA e Serviço Limitado Privado – SLP, e dá outras providências",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2017/954-resolucao-688",
       "entidade": "Anatel",
-      "status": "revogado"
+      "status": "revogada"
     },
     {
       "id": "resolucao700",
@@ -1100,11 +1036,11 @@
     },
     {
       "id": "resolucao721",
-      "nome": "Norma (resolucao721) citada no requerimento 26.09877",
-      "descricao": "Norma precisando de definição detalhada. Citada no requerimento 26.09877.",
-      "url": "a definir",
+      "nome": "Resolução nº 721, de 11 de fevereiro de 2020",
+      "descricao": "Destina faixas de radiofrequência e aprova o Regulamento sobre Canalização e Condições de Uso de Radiofrequências para os Serviços de Radiodifusão e seus Ancilares",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2020/1383-resolucao-721",
       "entidade": "Anatel",
-      "status": "revogado"
+      "status": "vigente"
     },
     {
       "id": "resolucao726",
@@ -1150,7 +1086,7 @@
       "id": "resolucao766",
       "nome": " Revogada pela Resolução Anatel nº 772, de 16 de janeiro de 2025 que, por sua vez, foi revogada pela Resolução nº 789, de 06 de julho de 2026.",
       "descricao": "destinações de subfaixas de radiofrequências na faixa de 4,9 GHz e acrescenta os arts. 35-A a 35-D ao Regulamento sobre Condições de Uso de Radiofrequências.",
-      "url": "a definir",
+      "url": "https://informacoes.anatel.gov.br/legislacao/resolucoes/2023/1899-resolucao-766",
       "entidade": "Anatel",
       "status": "revogado"
     },

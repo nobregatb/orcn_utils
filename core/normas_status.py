@@ -75,6 +75,11 @@ def _normas_elegiveis(normas):
         if isinstance(norma, dict)
         and str(norma.get("status", "")).casefold() not in {"revogado", "revogada"}
         and not str(norma.get("url", "")).strip().casefold().startswith("https://sei.anatel.gov.br")
+        and not re.search(
+            r"\.pdf(?:[?#].*)?$",
+            str(norma.get("url", "")).strip(),
+            re.IGNORECASE,
+        )
     ]
 
 

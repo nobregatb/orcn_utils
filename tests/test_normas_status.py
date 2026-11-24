@@ -52,6 +52,16 @@ def test_normas_com_url_sei_nao_sao_elegiveis_para_verificacao():
     assert [norma["id"] for norma in _normas_elegiveis(normas)] == ["ato_site"]
 
 
+def test_normas_com_url_pdf_nao_sao_elegiveis_para_verificacao():
+    normas = [
+        {"id": "ato_pdf", "url": "https://informacoes.anatel.gov.br/ato.pdf", "status": "vigente"},
+        {"id": "ato_pdf_com_parametros", "url": "https://informacoes.anatel.gov.br/ato.PDF?download=1", "status": "vigente"},
+        {"id": "ato_site", "url": "https://informacoes.anatel.gov.br/ato", "status": "vigente"},
+    ]
+
+    assert [norma["id"] for norma in _normas_elegiveis(normas)] == ["ato_site"]
+
+
 def test_verificacao_bem_sucedida_nao_imprime_logs_informativos(tmp_path, monkeypatch, capsys):
     caminho_normas = tmp_path / "normas.json"
     caminho_normas.write_text(json.dumps([

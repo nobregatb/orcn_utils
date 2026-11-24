@@ -125,6 +125,7 @@ O sistema utiliza arquivos de configuração JSON para definir:
 - **`familias_equipamentos.json`**: Famílias de equipamentos identificadas por ID para agrupamento na lista do relatório
 - **`requisitos.json`**: Mapeamento equipamento-norma
 - **`normas.json`**: Especificações técnicas por norma
+- A verificação semanal de vigência ignora URLs do SEI e URLs de arquivos PDF (extensão `.pdf`, mesmo quando seguida por parâmetros).
 - **`ocds.json`**: Códigos OCDS para classificação
 
 #### 🚨 Status de Análise

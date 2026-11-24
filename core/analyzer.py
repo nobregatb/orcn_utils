@@ -2941,7 +2941,7 @@ class AnalisadorRequerimentos:
             # Salvar arquivo atualizado
             with open(normas_path, 'w', encoding='utf-8') as f:
                 json.dump(
-                    criar_documento_normas(normas_lista, None),
+                    criar_documento_normas(normas_lista, self.ultima_verificacao_vigencia),
                     f,
                     indent=2,
                     ensure_ascii=False,
@@ -2949,7 +2949,6 @@ class AnalisadorRequerimentos:
             
             # Atualizar cache interno
             self.normas = normas_lista
-            self.ultima_verificacao_vigencia = None
             
             #log_info(f"Arquivo normas.json atualizado com {len(novas_normas)} nova(s) norma(s)")
             #log_info(f"Total de normas no arquivo: {len(normas_lista)}")

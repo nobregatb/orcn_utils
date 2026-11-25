@@ -236,6 +236,67 @@ def _validar_campos_cadastrais(
     return campos_nao_encontrados
 
 
+def _validar_email_fabricante(
+    dados_requerimento: Optional[Dict],
+    ocds_list: Optional[List[Dict]] = None
+) -> Optional[Tuple[int, str]]:
+    """
+    Valida o e-mail do fabricante conforme as regras:
+    1. Se for do domínio anatel.gov.br ou de um OCD cadastrado em OCDs.json, é inválido (tipo 1)
+    2. Se não atender ao padrão básico de e-mail, é inválido (tipo 2)
+    
+    Args:
+        dados_requerimento: Dicionário com dados do requerimento (contém bloco 'fabricante')
+        ocds_list: Lista de OCDs do arquivo OCDs.json
+        
+    Returns:
+        Tupla (tipo_erro, email) se houver erro, None se e-mail é válido ou ausente
+        tipo_erro: 1 para domínio proibido, 2 para formato inválido
+    """
+    if not isinstance(dados_requerimento, dict):
+        return None
+    
+    fabricante = dados_requerimento.get("fabricante")
+    if not isinstance(fabricante, dict):
+        return None
+    
+    # Procura pelo e-mail do fabricante (pode ser "E-mail", "Email", "email", etc)
+    email = None
+    for chave in fabricante.keys():
+        if chave.lower() in ("e-mail", "email"):
+            email = fabricante[chave]
+            break
+    
+    if not email or not isinstance(email, str):
+        return None
+    
+    email = email.strip()
+    if not email:
+        return None
+    
+    email_normalizado = email.lower()
+    
+    # Regra 1: Verificar se é do domínio anatel.gov.br
+    if email_normalizado.endswith("@anatel.gov.br"):
+        return (1, email)
+    
+    # Regra 1: Verificar se é de um OCD cadastrado em OCDs.json
+    if ocds_list and isinstance(ocds_list, list):
+        for ocd in ocds_list:
+            if not isinstance(ocd, dict):
+                continue
+            dominio_ocd = ocd.get("email", "").strip().lower()
+            if dominio_ocd and email_normalizado.endswith(f"@{dominio_ocd}"):
+                return (1, email)
+    
+    # Regra 2: Validar se o e-mail tem formato básico válido
+    # Padrão simples: algo@algo.algo
+    if not re.match(r'^[^@\s]+@[^@\s]+\.[^@\s]+$', email_normalizado):
+        return (2, email)
+    
+    return None
+
+
 def _chave_selecao_documento(
     tipo_documento: str,
     data_conteudo: Optional[datetime],
@@ -3061,6 +3122,7 @@ class AnalisadorRequerimentos:
         campos_cadastrais_nao_encontrados: Optional[Dict[str, List[str]]] = None,
         normas_obrigatorias_nao_citadas_ract: Optional[List[Dict[str, str]]] = None,
         exigencias_validacao_normativos: Optional[List[str]] = None,
+        validacao_email_fabricante: Optional[Tuple[int, str]] = None,
     ) -> str:
         """Monta exigências do requerimento, incluindo normas vigentes não citadas no RACT."""
         if modelos_nao_encontrados is None:
@@ -3148,6 +3210,7 @@ class AnalisadorRequerimentos:
             or campos_cadastrais_nao_encontrados
             or normas_obrigatorias_nao_citadas_ract
             or exigencias_validacao_normativos
+            or validacao_email_fabricante
         )
         cor_exigencia = "red" if tem_exigencias else "blue"
         secao_latex = (
@@ -3297,6 +3360,18 @@ class AnalisadorRequerimentos:
                 secao_latex += "    \\end{itemize}\n"
             for exigencia in exigencias_assinatura:
                 secao_latex += f"    \\item {escapar_latex(exigencia)}\n"
+            if validacao_email_fabricante:
+                tipo_erro, email = validacao_email_fabricante
+                if tipo_erro == 1:
+                    secao_latex += (
+                        f"    \\item O e-mail {escapar_latex(email)} "
+                        "não é válido, deve-se informar um e-mail do próprio fabricante.\n"
+                    )
+                elif tipo_erro == 2:
+                    secao_latex += (
+                        f"    \\item O e-mail {escapar_latex(email)} "
+                        "não parece válido, favor verificar/corrigir cadastro, se necessário.\n"
+                    )
             secao_latex += "\\end{enumerate}\n"
         else:
             secao_latex += "\\textit{Nenhuma identificada.}\n"
@@ -3984,6 +4059,12 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                     "\\end{itemize}\n\n"
                 )
 
+            # Validar e-mail do fabricante
+            validacao_email_fabricante = _validar_email_fabricante(
+                req.get("dados_requerimento"),
+                self.ocds
+            )
+
             caracteristicas_validadas = self._validar_caracteristicas_tecnicas_json(
                 req.get("dados_requerimento"),
                 set(normas_aplicaveis.keys())
@@ -4024,7 +4105,8 @@ Lista das palavras-chave \\textcolor{blue}{encontradas (multiplicidade)} neste r
                     )
                     if cct_contem_eirp else []
                 ),
-                exigencias_validacao_normativos=exigencias_validacao_normativos
+                exigencias_validacao_normativos=exigencias_validacao_normativos,
+                validacao_email_fabricante=validacao_email_fabricante
             )
 
             tabela_normativos = self._gerar_tabela_normativos_latex(
